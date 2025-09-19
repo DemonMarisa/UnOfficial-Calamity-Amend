@@ -1,0 +1,8 @@
+﻿Items: {
+	Sword: {
+		// DisplayName: Test Sword
+		// Tooltip: ""
+	}
+}
+
+Keybinds.WeaponSkill.DisplayName: 武器战技

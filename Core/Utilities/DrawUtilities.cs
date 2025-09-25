@@ -1,6 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.ModLoader;
+using UCA.Assets;
+using UCA.Assets.Effects;
 
 namespace UCA.Core.Utilities
 {
@@ -31,6 +34,15 @@ namespace UCA.Core.Utilities
             SpriteEffects flipSprite = (proj.spriteDirection * Main.player[proj.owner].gravDir == -1) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
             Main.spriteBatch.Draw(texture, drawPosition, null, lightColor, drawRotation + rotOffset, rotationPoint, proj.scale * Main.player[proj.owner].gravDir * scale, flipSprite, 0f);
+        }
+
+        public static void FastApplyEdgeMeltsShader(float Opacity, Vector2 TextureSize, Color color, float EdgeWidth = 0.01f, int Pass = 0)
+        {
+            UCAShaderRegister.EdgeMeltsShader.Parameters["progress"].SetValue(Opacity);
+            UCAShaderRegister.EdgeMeltsShader.Parameters["InPutTextureSize"].SetValue(TextureSize);
+            UCAShaderRegister.EdgeMeltsShader.Parameters["EdgeColor"].SetValue(color.ToVector4());
+            UCAShaderRegister.EdgeMeltsShader.Parameters["EdgeWidth"].SetValue(EdgeWidth);
+            UCAShaderRegister.EdgeMeltsShader.CurrentTechnique.Passes[Pass].Apply();
         }
     }
 }

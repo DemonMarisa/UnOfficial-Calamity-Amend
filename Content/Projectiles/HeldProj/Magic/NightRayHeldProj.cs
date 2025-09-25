@@ -11,6 +11,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
+using UCA.Content.ItemOverride.Magic;
 using UCA.Content.Items.Magic.Ray;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
@@ -19,7 +20,7 @@ using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
 using static Terraria.GameContent.Animations.IL_Actions.Sprites;
 
-namespace UCA.Content.Projectiles.HeldProj
+namespace UCA.Content.Projectiles.HeldProj.Magic
 {
     public class NightRayHeldProj : BaseHeldProj
     {
@@ -49,6 +50,10 @@ namespace UCA.Content.Projectiles.HeldProj
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
         }
+        public override bool StillInUse()
+        {
+            return AniProgress >= InToAni && Main.mouseLeft;
+        }
 
         public override void HoldoutAI()
         {
@@ -72,11 +77,11 @@ namespace UCA.Content.Projectiles.HeldProj
                 Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.06f;
 
                 // 在NPC周围发射一个十字的激光
-                CarnageRay.UseCount++;
-                if (CarnageRay.UseCount > 4)
+                NightsRayOverride.UseCount++;
+                if (NightsRayOverride.UseCount > 4)
                 {
                     CrossFire();
-                    CarnageRay.UseCount = 0;
+                    NightsRayOverride.UseCount = 0;
                 }
                 UseDelay = Owner.HeldItem.useTime;
 
@@ -100,6 +105,11 @@ namespace UCA.Content.Projectiles.HeldProj
             }
         }
 
+        public override bool CanDel()
+        {
+            return AniProgress == 0 && !Main.mouseLeft;
+        }
+
         public override void PostAI()
         {
             // 设置玩家手持效果
@@ -110,6 +120,7 @@ namespace UCA.Content.Projectiles.HeldProj
 
             if (!Main.mouseLeft)
             {
+                AniProgress--;
                 ShaderOpacity = MathHelper.Lerp(ShaderOpacity, 1f, 0.12f);
                 return;
             }
@@ -126,11 +137,6 @@ namespace UCA.Content.Projectiles.HeldProj
             {
                 ShaderOpacity = 0;
             }
-        }
-
-        public override bool CanUseHoldAI()
-        {
-            return Main.mouseLeft;
         }
 
         public void CrossFire()
@@ -207,6 +213,14 @@ namespace UCA.Content.Projectiles.HeldProj
                 }
             }
         }
+
+        public override void OnKill(int timeLeft)
+        {
+            Main.mouseRight = false;
+            Owner.controlLeft = false;
+            Owner.itemTime = 0;
+            Owner.itemAnimation = 0;
+        }
         public override bool ExtraPreDraw(ref Color lightColor)
         {
             Main.spriteBatch.End();
@@ -230,7 +244,7 @@ namespace UCA.Content.Projectiles.HeldProj
 
             Vector2 rotationPoint = RotPoint;
 
-            SpriteEffects flipSprite = (Owner.direction * Main.player[Projectile.owner].gravDir == -1) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            SpriteEffects flipSprite = Owner.direction * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
             Main.spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(lightColor), drawRotation, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, default);
 

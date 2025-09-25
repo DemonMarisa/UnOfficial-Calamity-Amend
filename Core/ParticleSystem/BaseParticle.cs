@@ -74,6 +74,24 @@ namespace UCA.Core.ParticleSystem
 
             OnSpawn();
             return this;
+        }       
+        /// <summary>     
+        /// 在世界内生成粒子   
+        /// </summary>
+        /// <returns></returns>
+        public BaseParticle SpawnToPriority()
+        {
+            if (Main.netMode == NetmodeID.Server)
+                return this;
+
+            // 初始化时间
+            Time = 0;
+
+            // 用于控制总数的列表
+            BaseParticleManager.PriorityActiveParticles.Add(this);
+
+            OnSpawn();
+            return this;
         }
         public virtual void OnSpawn() { }
 

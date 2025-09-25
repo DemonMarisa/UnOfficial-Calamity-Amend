@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace UCA.Core.Utilities
 {
@@ -26,6 +27,10 @@ namespace UCA.Core.Utilities
             => t < 0.5f ? 2 * t * t : 1 - MathF.Pow(-2 * t + 2, 2) / 2;
         public static float EaseInCubic(float t)
             => t * t * t;
+
+        public static float EaseOutCubic(float t)
+            => (float)(1 - Math.Pow(1 - t, 3));
+
 
         public static float EaseOutBack(float t)
         {

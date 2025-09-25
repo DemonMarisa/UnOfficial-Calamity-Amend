@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.CalPlayer;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Content.Particiles;
@@ -32,15 +33,23 @@ namespace UCA.Content.Items
 			Item.autoReuse = true;
 		}
 
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+        {
+			velocity *= 4;
+            for (int i = 0; i < 35; i++)
+			{
+                new LilyLiquid(Main.MouseWorld, velocity.RotatedByRandom(MathHelper.PiOver4 * 0.6f) * Main.rand.NextFloat(0.15f, 1.2f), Color.DarkRed, 64, 0, 1, 2).Spawn();
+            }
+            for (int i = 0; i < 25; i++)
+            {
+                new LilyLiquid(Main.MouseWorld, velocity.RotatedByRandom(MathHelper.PiOver4 * 0.6f) * Main.rand.NextFloat(0.15f, 1.2f), Color.Black, 64, 0, 1, 2).Spawn();
+            }
+            return false;
+        }
+
         public override bool? UseItem(Player player)
         {
-			Vector2 SpawnPos = Main.MouseWorld + Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(100, 200);
-            Vector2 SpawnPosToMouseWorld = (Main.MouseWorld - SpawnPos).SafeNormalize(Vector2.UnitX);
-			float rot = SpawnPosToMouseWorld.ToRotation() + 1;
-            new Line(SpawnPos, Vector2.Zero, new Color(255, 255, 255, 0), Main.rand.Next(60, 90), rot, 1, 0.15f, true, Main.MouseWorld).Spawn();
-            CalamityPlayer calamityPlayer = player.Calamity();
-            calamityPlayer.cooldowns.Remove(NightBoost.ID);
-            player.UCA().NightShieldHP = 0;
+			// new LilyLiquid(Main.MouseWorld, Vector2.Zero, Color.White, 64, 0, 1, 1f).Spawn();
             return base.UseItem(player);
         }   
 

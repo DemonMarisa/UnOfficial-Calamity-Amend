@@ -9,7 +9,8 @@ namespace UCA.Core.ParticleSystem
     {
         // 别在外部可以修改了，至少别人都加了readonly（
         public static readonly List<BaseParticle> ActiveParticles = [];
-
+        // 先绘制先更新的粒子
+        public static readonly List<BaseParticle> PriorityActiveParticles = [];
         // 储存所有粒子类型的ID
         // public static readonly Dictionary<Type, int> particleTypes;
         #region 加载卸载
@@ -37,6 +38,8 @@ namespace UCA.Core.ParticleSystem
             if (Main.dedServ)
                 return;
 
+            UpdatePriorityParticles();
+
             if (ActiveParticles.Count == 0)
                 return;
 
@@ -58,7 +61,28 @@ namespace UCA.Core.ParticleSystem
                 return false;
             });
         }
+        public static void UpdatePriorityParticles()
+        {
+            if (PriorityActiveParticles.Count == 0)
+                return;
 
+            for (int i = 0; i < PriorityActiveParticles.Count; i++)
+            {
+                PriorityActiveParticles[i].Update();
+                PriorityActiveParticles[i].Position += PriorityActiveParticles[i].Velocity;
+                PriorityActiveParticles[i].Time++;
+            }
+            // 移除生命周期已结束的粒子
+            PriorityActiveParticles.RemoveAll(particle =>
+            {
+                if (particle.Time >= particle.Lifetime)
+                {
+                    particle.OnKill();
+                    return true;
+                }
+                return false;
+            });
+        }
         // 绘制粒子
         public static void DrawParticles(On_Main.orig_DrawDust orig, Main self)
         {
@@ -66,6 +90,47 @@ namespace UCA.Core.ParticleSystem
             orig(self);
 
             #region 渲染粒子
+            #region 渲染优先粒子
+            if (PriorityActiveParticles.Count != 0)
+            {
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+
+                for (int i = 0; i < PriorityActiveParticles.Count; i++)
+                {
+                    if (PriorityActiveParticles[i].BlendState != BlendState.AlphaBlend)
+                        continue;
+
+                    PriorityActiveParticles[i].Draw(Main.spriteBatch);
+                }
+
+                Main.spriteBatch.End();
+
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+
+                for (int i = 0; i < PriorityActiveParticles.Count; i++)
+                {
+                    if (PriorityActiveParticles[i].BlendState != BlendState.NonPremultiplied)
+                        continue;
+
+                    PriorityActiveParticles[i].Draw(Main.spriteBatch);
+                }
+
+                Main.spriteBatch.End();
+
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+
+                for (int i = 0; i < PriorityActiveParticles.Count; i++)
+                {
+                    if (PriorityActiveParticles[i].BlendState != BlendState.Additive)
+                        continue;
+
+                    PriorityActiveParticles[i].Draw(Main.spriteBatch);
+                }
+
+                Main.spriteBatch.End();
+            }
+            #endregion
+            #region 渲染常规粒子
 
             if (ActiveParticles.Count != 0)
             {
@@ -104,7 +169,8 @@ namespace UCA.Core.ParticleSystem
                 }
 
                 Main.spriteBatch.End();
-            }            
+            }
+            #endregion
             #endregion
         }
     }

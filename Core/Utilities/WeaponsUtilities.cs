@@ -16,7 +16,7 @@ namespace UCA.Core.Utilities
         public static Vector2 GetPlayerToMouseVector2(this Player player)
         {
             Vector2 vector = Main.MouseWorld - player.Center;
-            vector.SafeNormalize(Vector2.UnitX);
+            vector = vector.SafeNormalize(Vector2.UnitX);
             return vector;
         }
 
@@ -26,8 +26,8 @@ namespace UCA.Core.Utilities
             float num2 = (float)Math.Sin(radians);
             Vector2 vector = spinningpoint - center;
             Vector2 result = center;
-            result.X += vector.X * num - vector.Y * num2 * Xmult;
-            result.Y += vector.X * num2 + vector.Y * num * Ymult;
+            result.X += (vector.X * num - vector.Y * num2) * Xmult;
+            result.Y += (vector.X * num2 + vector.Y * num) * Ymult;
             return result;
         }
     }

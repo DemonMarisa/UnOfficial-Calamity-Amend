@@ -1,6 +1,7 @@
 ﻿using CalamityMod;
 using CalamityMod.CalPlayer;
 using Terraria;
+using Terraria.ModLoader;
 using UCA.Core.GlobalInstance.Players;
 
 namespace UCA.Core.Utilities
@@ -32,6 +33,11 @@ namespace UCA.Core.Utilities
                 InComingDamage *= 1 - player.endurance;
             }
             return InComingDamage;
+        }
+
+        public static bool HasProj<T>(this Player player) where T : ModProjectile
+        {
+            return player.ownedProjectileCounts[ModContent.ProjectileType<T>()] > 0;
         }
     }
 }

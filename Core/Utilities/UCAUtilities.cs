@@ -22,5 +22,19 @@ namespace UCA.Core.Utilities
         {
             return proj.GetGlobalProjectile<UCAGlobalProj>();
         }
+
+        public static bool PressLeftAndRightClick()
+        {
+            return Main.mouseLeft && Main.mouseRight;
+        }
+        public static bool JustPressLeftClick()
+        {
+            return Main.mouseLeft && !Main.mouseRight;
+        }
+
+        public static bool JustPressRightClick()
+        {
+            return !Main.mouseLeft && Main.mouseRight;
+        }
     }
 }

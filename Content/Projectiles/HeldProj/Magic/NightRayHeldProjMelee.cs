@@ -1,16 +1,13 @@
 ﻿using CalamityMod;
 using CalamityMod.Graphics.Primitives;
 using CalamityMod.Items.Weapons.Magic;
-using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Mono.Cecil;
 using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
-using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets;
@@ -24,15 +21,15 @@ using UCA.Core.BaseClass;
 using UCA.Core.GlobalInstance.Players;
 using UCA.Core.Utilities;
 
-namespace UCA.Content.Projectiles.HeldProj
+namespace UCA.Content.Projectiles.HeldProj.Magic
 {
     public class NightRayHeldProjMelee : BaseHeldProj, IPixelatedPrimitiveRenderer
     {
         public PixelationPrimitiveLayer LayerToRenderTo => PixelationPrimitiveLayer.AfterPlayers;
 
         public override LocalizedText DisplayName => CalamityUtils.GetItemName<NightsRay>();
-        public override string Texture => $"{ProjPath.HeldProjPath}" + "NightRayHeldProj";
-        public Vector2 RotVector => new Vector2((12) * Owner.direction, 7).BetterRotatedBy(Owner.GetPlayerToMouseVector2().ToRotation(), default, 0.5f, 1f);
+        public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/NightRayHeldProj";
+        public Vector2 RotVector => new Vector2(12 * Owner.direction, 7).BetterRotatedBy(Owner.GetPlayerToMouseVector2().ToRotation(), default, 0.5f, 1f);
 
         public override Vector2 RotPoint => TextureAssets.Projectile[Type].Size() / 2;
 
@@ -125,7 +122,7 @@ namespace UCA.Content.Projectiles.HeldProj
                     new Line(firePos, Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(3, 7), color, Main.rand.Next(60, 90), 0, 1, 0.2f, false, firePos).Spawn();
                 }
 
-                CarnageRay.UseCount++;
+                NightsRayOverride.UseCount++;
                 for (int j = 0; j < 2; j++)
                 {
                     Vector2 SpawnPos = Owner.Center + new Vector2(Main.rand.Next(100, 200), 0).RotatedByRandom(MathHelper.TwoPi);
@@ -158,7 +155,7 @@ namespace UCA.Content.Projectiles.HeldProj
             }
         }
         #endregion
-        public override void DelCondition()
+        public override void InDel()
         {
             if (DelTimer > 0)
                 DelTimer--;
@@ -215,7 +212,7 @@ namespace UCA.Content.Projectiles.HeldProj
 
             Vector2 rotationPoint = RotPoint;
 
-            SpriteEffects flipSprite = (Owner.direction * Main.player[Projectile.owner].gravDir == -1) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            SpriteEffects flipSprite = Owner.direction * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
             Main.spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(lightColor), drawRotation, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, default);
 
@@ -248,7 +245,7 @@ namespace UCA.Content.Projectiles.HeldProj
             Vector2 ShieledPos = drawPosition + new Vector2(60, 0).RotatedBy(Projectile.rotation);
             float drawRotation = Projectile.rotation + (Owner.direction == -1 ? MathHelper.Pi : 0f) + RotOffset * Owner.direction;
 
-            SpriteEffects flipSprite = (Owner.direction * Main.player[Projectile.owner].gravDir == -1) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            SpriteEffects flipSprite = Owner.direction * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
             Main.spriteBatch.Draw(UCATextureRegister.NightRayShield.Value, ShieledPos / 2, null, new Color(255, 0, 255, 255), drawRotation + MathHelper.PiOver4 * Owner.direction,
                 UCATextureRegister.NightRayShield.Size() / 2, new Vector2(XScale, 1) * Projectile.scale * Main.player[Projectile.owner].gravDir * 0.175f, flipSprite, default);
@@ -322,6 +319,8 @@ namespace UCA.Content.Projectiles.HeldProj
 
                     if ((int)Owner.ApplyPlayerDefAndDR(realDamage, false) < Owner.UCA().NightShieldHP)
                     {
+                        projectile.velocity *= -0.7f;
+                        projectile.velocity += Main.rand.NextVector2Circular(2f, 2f);
                         Owner.UCA().NightShieldHP -= (int)Owner.ApplyPlayerDefAndDR(realDamage, false);
                         projectile.UCA().HasThroughNightShield = true;
                     }
@@ -343,13 +342,6 @@ namespace UCA.Content.Projectiles.HeldProj
                     projectile.Calamity().DealsDefenseDamage = false;
 
                     projectile.UCA().HasThroughNightShield = true;
-
-                    // 应用伤害的难度增幅，如果最终伤害高于150则不进行反弹
-                    if (projectile.damage < (int)UCAUtilities.PreModeBoostProjDamage(UCAPlayer.NightShieldMaxHP))
-                    {
-                        projectile.velocity *= -0.7f;
-                        projectile.velocity += Main.rand.NextVector2Circular(2f, 2f);
-                    }
 
                     projectile.netUpdate = true;
                     

@@ -1,10 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
+using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Content.MetaBalls;
-using UCA.Content.Projectiles.HeldProj;
+using UCA.Content.Projectiles.HeldProj.Magic;
 using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
 
@@ -57,12 +58,13 @@ namespace UCA.Content.Projectiles.Magic.Ray
                         float DistanceToNPC = Vector2.Distance(Projectile.Center, npc.Center);
                         float PredictMult = DistanceToNPC / 48;
                         Vector2 direction = (npc.Center + npc.velocity * PredictMult - Projectile.Center).SafeNormalize(Vector2.Zero) * 3;
-                        int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, direction, ModContent.ProjectileType<NightEnergy>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 0);
+                        int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, direction, ModContent.ProjectileType<NightEnergy>(), Projectile.damage / 2, Projectile.knockBack, Projectile.owner, 0);
                         Main.projectile[p].penetrate = 1;
                     }
                     else
                     {
-                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2 * (Main.rand.NextBool() ? 1 : -1)), ModContent.ProjectileType<NightEnergy>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 0);
+                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2 * (Main.rand.NextBool() ? 1 : -1)),
+                            ModContent.ProjectileType<NightEnergy>(), Projectile.damage / 2, Projectile.knockBack, Projectile.owner, 0);
                     }
                 }
                 else
@@ -106,6 +108,20 @@ namespace UCA.Content.Projectiles.Magic.Ray
             SoundEngine.PlaySound(SoundsMenu.NightRayHit, Projectile.Center);
         }
 
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            Player player = Main.player[Projectile.owner];
+            float distanecToNPC = Vector2.Distance(player.Center, target.Center);
+            float mult = 1f;
+            int mindistance = 300;
+            if (distanecToNPC < mindistance)
+                mult = 2f;
+            else
+                mult = MathHelper.Clamp(2f - (distanecToNPC - mindistance) / 600f, 0.75f, 2f);
+
+            modifiers.FinalDamage *= mult;
+        }
+
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             for (int i = 0; i < 10; i++)
@@ -113,6 +129,8 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 Vector2 spawnVec = Projectile.velocity.RotateRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.2f, 0.3f);
                 ShadowMetaBall.SpawnParticle(target.Center, spawnVec, 0.3f * ScaleMult);
             }
+
+            target.AddBuff(BuffID.ShadowFlame, 180);
         }
     }
 }

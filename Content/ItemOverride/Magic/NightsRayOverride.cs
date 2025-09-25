@@ -2,28 +2,26 @@
 using CalamityMod.Items.Weapons.Magic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Mono.Cecil;
 using System.Collections.Generic;
 using System.Reflection;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Common.Misc;
 using UCA.Content.Paths;
-using UCA.Content.Projectiles.HeldProj;
+using UCA.Content.Projectiles.HeldProj.Magic;
 using UCA.Content.UCACooldowns;
 using UCA.Core.GlobalInstance.Players;
 using UCA.Core.Keybinds;
 using UCA.Core.Utilities;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace UCA.Content.ItemOverride.Magic
 {
     public class NightsRayOverride : GlobalItem
     {
+        public static int UseCount = 0;
         public override bool InstancePerEntity => true;
         public override bool AppliesToEntity(Item item, bool lateInstatiation)
         {
@@ -74,10 +72,6 @@ namespace UCA.Content.ItemOverride.Magic
         {
             return true;
         }
-        public override bool AllowPrefix(Item item, int pre)
-        {
-            return true;
-        }
 
         public override bool Shoot(Item item, Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
@@ -96,7 +90,7 @@ namespace UCA.Content.ItemOverride.Magic
 
         public override void HoldItem(Item item, Player player)
         {
-            if (UCAKeybind.WeaponSkillHotKey.JustPressed)
+            if (UCAKeybind.WeaponSkillHotKey.JustPressed && !Main.blockMouse && !Main.mouseText)
             {
                 if (player.ownedProjectileCounts[ModContent.ProjectileType<NightRaySkillProj>()] < 1 && player.ownedProjectileCounts[ModContent.ProjectileType<NightRayHeldProj>()] < 1 && player.ownedProjectileCounts[ModContent.ProjectileType<NightRayHeldProjMelee>()] < 1)
                     if (player.CheckMana(player.ActiveItem(), (int)(200 * player.manaCost), true, false))

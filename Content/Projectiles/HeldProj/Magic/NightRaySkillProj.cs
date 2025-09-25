@@ -17,17 +17,16 @@ using UCA.Content.UCACooldowns;
 using UCA.Core.GlobalInstance.Players;
 using UCA.Core.Utilities;
 
-namespace UCA.Content.Projectiles.HeldProj
+namespace UCA.Content.Projectiles.HeldProj.Magic
 {
     public class NightRaySkillProj : ModProjectile, ILocalizedModType
     {
         public override LocalizedText DisplayName => CalamityUtils.GetItemName<NightsRay>();
 
         public Player Owner => Main.player[Projectile.owner];
-        public override string Texture => $"{ProjPath.HeldProjPath}" + "NightRayHeldProj";
+        public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/NightRayHeldProj";
 
         public Vector2 BeginPos => Owner.Center + new Vector2(45 * Owner.direction, -10);
-
         public Vector2 MedPos => Owner.Center + new Vector2(45 * Owner.direction, -35);
         public Vector2 EndPos => Owner.Center + new Vector2(45 * Owner.direction, -50);
 
@@ -59,6 +58,7 @@ namespace UCA.Content.Projectiles.HeldProj
             float TargetRot = (Owner.Center - Projectile.Center).ToRotation() + MathHelper.PiOver2;
             Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, TargetRot + Owner.direction * 0.1f * 1.5f);
             Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, TargetRot + Owner.direction * -0.1f * 1.2f);
+
             // 基础信息
             Projectile.velocity = Vector2.Zero;
             AniProgress++;
@@ -152,7 +152,7 @@ namespace UCA.Content.Projectiles.HeldProj
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             float drawRotation = Projectile.rotation + (Projectile.spriteDirection == -1 ? MathHelper.Pi : 0f);
             Vector2 rotationPoint = ModContent.Request<Texture2D>(Texture).Value.Size() / 2f;
-            SpriteEffects flipSprite = (Projectile.spriteDirection * Main.player[Projectile.owner].gravDir == -1) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            SpriteEffects flipSprite = Projectile.spriteDirection * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             // spriteBatch会自动把textures0设置为当前使用的材质，所以需要你手动改一下
             Main.spriteBatch.Draw(ModContent.Request<Texture2D>(Texture).Value, drawPosition, null, Color.White, drawRotation - MathHelper.PiOver4, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
 

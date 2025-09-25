@@ -21,6 +21,8 @@ namespace UCA.Core.BaseClass
         public virtual float RotAmount => 1f;
 
         public Player Owner => Main.player[Projectile.owner];
+
+        public bool Active => (Owner.channel || Owner.controlUseTile) && !Owner.noItems && !Owner.CCed;
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.NeedsUUID[Projectile.type] = true;
@@ -53,22 +55,25 @@ namespace UCA.Core.BaseClass
             {
                 UpdateAim(Projectile.Center);
 
-                bool stillInUse = (player.channel || player.controlUseTile) && !player.noItems && !player.CCed;
-                // Spawn in the Prism's lasers on the first frame if the player is capable of using the item.
-                if (stillInUse && CanUseHoldAI())
+                if (StillInUse())
                 {
                     HoldoutAI();
                 }
-                else
+                else if (CanDel())
                 {
-                    DelCondition();
+                    InDel();
                 }
             }
 
             // 确保不会使用的时候消失
             Projectile.timeLeft = 2;
         }
-        public virtual bool CanUseHoldAI()
+        public virtual bool StillInUse()
+        {
+            return Active;
+        }
+
+        public virtual bool CanDel()
         {
             return true;
         }
@@ -77,7 +82,6 @@ namespace UCA.Core.BaseClass
         {
             Projectile.rotation = Projectile.velocity.ToRotation();
 
-            //Vector2 offset = new Vector2(OffsetX, OffsetY * player.direction).RotatedBy(Projectile.rotation);
             Projectile.Center = playerHandPos + Posffset;
 
             Projectile.spriteDirection = Projectile.direction;
@@ -88,7 +92,6 @@ namespace UCA.Core.BaseClass
             player.itemAnimation = 2;
 
             player.itemRotation = (Projectile.velocity * Projectile.direction).ToRotation();
-
         }
         #endregion
 
@@ -121,10 +124,9 @@ namespace UCA.Core.BaseClass
         /// <summary>
         /// 删除条件<br/>
         /// </summary>
-        public virtual void DelCondition()
+        public virtual void InDel()
         {
-            if (UseDelay <= 0)
-                Projectile.Kill();
+            Projectile.Kill();
         }
 
         public override bool PreDraw(ref Color lightColor)

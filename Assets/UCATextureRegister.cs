@@ -16,6 +16,7 @@ namespace UCA.Assets
             WhiteCircle = ModContent.Request<Texture2D>($"UCA/Assets/Textures/WhiteCircle");
             InvisibleProj = ModContent.Request<Texture2D>($"UCA/Assets/Textures/InvisibleProj");
             LoadExtraTextures();
+            LoadParticileTextures();
         }
 
         public override void Unload()
@@ -24,6 +25,7 @@ namespace UCA.Assets
             WhiteCircle = null;
             InvisibleProj = null;
             UnLoadExtraTextures();
+            UnLoadParticileTextures();
         }
     }
 }

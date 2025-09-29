@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CalamityMod;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using UCA.Core.Utilities;
 
 namespace UCA.Core.BaseClass
 {
@@ -21,6 +23,8 @@ namespace UCA.Core.BaseClass
         public virtual float RotAmount => 1f;
 
         public Player Owner => Main.player[Projectile.owner];
+
+        public Vector2 LocalMouseWorld => Owner.Calamity().mouseWorld;
 
         public bool Active => (Owner.channel || Owner.controlUseTile) && !Owner.noItems && !Owner.CCed;
         public override void SetStaticDefaults()
@@ -64,7 +68,6 @@ namespace UCA.Core.BaseClass
                     InDel();
                 }
             }
-
             // 确保不会使用的时候消失
             Projectile.timeLeft = 2;
         }
@@ -75,7 +78,7 @@ namespace UCA.Core.BaseClass
 
         public virtual bool CanDel()
         {
-            return true;
+            return UseDelay <= 0;
         }
         #region 更新玩家视觉效果
         public virtual void UpdatePlayerVisuals(Player player, Vector2 playerHandPos)
@@ -86,7 +89,7 @@ namespace UCA.Core.BaseClass
 
             Projectile.spriteDirection = Projectile.direction;
 
-            player.ChangeDir(Main.MouseWorld.X > player.Center.X ? 1 : -1);
+            player.ChangeDir(Owner.LocalMouseWorld().X > player.Center.X ? 1 : -1);
             player.heldProj = Projectile.whoAmI;
             player.itemTime = 2;
             player.itemAnimation = 2;
@@ -98,7 +101,7 @@ namespace UCA.Core.BaseClass
         #region 更新弹幕朝向
         public virtual void UpdateAim(Vector2 source)
         {
-            Vector2 aim = Vector2.Normalize(Main.MouseWorld - source);
+            Vector2 aim = Vector2.Normalize(Owner.LocalMouseWorld() - source);
             if (aim.HasNaNs())
             {
                 aim = -Vector2.UnitY;

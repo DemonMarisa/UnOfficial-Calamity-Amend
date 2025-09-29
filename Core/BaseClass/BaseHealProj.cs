@@ -12,7 +12,7 @@ namespace UCA.Core.BaseClass
         #region 别名
         public virtual float FlySpeed => 12f;
         public virtual float Acceleration => 35f;
-        public virtual int HealAmt => Main.rand.Next(3, 7);
+        public virtual int HealAmt => Main.rand.Next(5, 10);
 
         public virtual bool UsePredictMult => true;
         public Player Healer => Main.player[Projectile.owner];

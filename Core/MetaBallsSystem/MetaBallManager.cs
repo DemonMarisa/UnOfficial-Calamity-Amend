@@ -16,6 +16,9 @@ namespace UCA.Core.MetaBallsSystem
         #region 加载卸载
         public override void Load()
         {
+            if (Main.dedServ)
+                return;
+
             // 遍历所有mod，寻找BaseMetaBall的子类并实例化并添加到静态表单中
             foreach (Mod mod in ModLoader.Mods)
             {
@@ -44,6 +47,9 @@ namespace UCA.Core.MetaBallsSystem
 
         public override void Unload()
         {
+            if (Main.dedServ)
+                return;
+
             Main.QueueMainThreadAction(() =>
             {
                 // 卸载资源
@@ -117,6 +123,12 @@ namespace UCA.Core.MetaBallsSystem
         #region 最终输出渲染
         public virtual void DrawRenderTarget(On_Main.orig_DrawDust orig, Main self)
         {
+            if (Main.dedServ)
+            {
+                orig(self);
+                return;
+            }
+
             orig(self);
 
             foreach (BaseMetaBall baseMetaBall in MetaBallCollection)

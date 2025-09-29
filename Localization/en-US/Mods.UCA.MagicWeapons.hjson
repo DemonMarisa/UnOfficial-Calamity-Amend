@@ -1,4 +1,11 @@
 CarnageRay: {
 	DisplayName: Carnage Ray
-	Tooltip: ""
+	Tooltip:
+		'''
+		The farther along the ray hit enemies are, the more damage they take(75% - 150%)
+		Light click Will release carnage balls around the ray
+		Right click will stab forward and consume mana to shoot homein blood orb.
+		Weapon Skill:
+		Press the [KEY] Key, consume 200 mana to Slash forward and releasing homein blood orb.
+		'''
 }

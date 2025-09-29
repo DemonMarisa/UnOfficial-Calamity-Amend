@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Buffs.DamageOverTime;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -13,6 +14,7 @@ using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
+using UCA.Content.UCACooldowns;
 using UCA.Core.AnimationHandle;
 using UCA.Core.Enums;
 using UCA.Core.Utilities;
@@ -57,9 +59,11 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             animationHelper.MaxAniProgress[(int)AnimationState.Middle] = 40;
             animationHelper.MaxAniProgress[(int)AnimationState.End] = 40;
 
-            Dir = Main.MouseWorld.X > Owner.Center.X ? 1 : -1;
+            Dir = Owner.LocalMouseWorld().X > Owner.Center.X ? 1 : -1;
 
             BeginRot = Owner.GetPlayerToMouseVector2().ToRotation();
+
+            Owner.AddCooldown(CarnageBoost.ID, 600);
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
@@ -85,17 +89,65 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             Projectile.velocity = Projectile.rotation.ToRotationVector2();
             Projectile.timeLeft = 2;
 
+            if (Projectile.owner == Main.myPlayer)
+                AllAI();
+
+            Projectile.netUpdate = true;
+
+            if (!animationHelper.HasFinish[(int)AnimationState.Middle])
+            {
+                int Lenth = LengthOffset + 50;
+                int Spawn = 9;
+                float Scale = 0.2f;
+
+                // 进行一定的补正，因为这里最初面向的没有椭圆挥砍，所以先这样打补丁了
+                float BA = BeginRot + MathHelper.PiOver2;
+                float Progress = BA / MathHelper.Pi;
+                float AngleOffset = MathHelper.Lerp(MathHelper.PiOver2, -MathHelper.PiOver2, Progress);
+
+                Vector2 SpawnLength = Vector2.UnitX.BetterRotatedBy(Projectile.rotation + AngleOffset, default, 2, 1) * Lenth * Main.rand.NextFloat(0.9f, 1.1f);
+                Vector2 BaseOffset = Vector2.UnitX.BetterRotatedBy(Projectile.rotation + AngleOffset, default, 2, 1) * 50;
+
+                SpawnLength = SpawnLength.RotatedBy(BeginRot);
+                BaseOffset = BaseOffset.RotatedBy(BeginRot);
+
+                HitBoxLength = (int)(SpawnLength.Length() + BaseOffset.Length());
+                for (int i = 1; i < Spawn; i++)
+                {
+                    Vector2 FinalLength = SpawnLength * ((float)i / Spawn);
+
+                    CarnageMetaBall.SpawnParticle(Projectile.Center + FinalLength + BaseOffset,
+                        Projectile.velocity.RotatedBy(MathHelper.PiOver2) * Main.rand.NextFloat(0f, 1.2f) * -6f * Owner.direction, Scale, Projectile.rotation + MathHelper.PiOver2, true);
+
+                    Scale *= 0.97f;
+                }
+                for (int i = 1; i < 6; i++)
+                {
+                    Vector2 FinalLength = SpawnLength * ((float)i / 6);
+
+                    new LilyLiquid(Projectile.Center + FinalLength + BaseOffset,
+                        Projectile.velocity.RotatedBy(MathHelper.PiOver2) * Main.rand.NextFloat(0f, 1.2f) * -6f * Owner.direction, Color.Red, 64, 0, 1, 1.5f).Spawn();
+
+                    new LilyLiquid(Projectile.Center + FinalLength + BaseOffset,
+                        Projectile.velocity.RotatedBy(MathHelper.PiOver2) * Main.rand.NextFloat(0f, 1.2f) * -6f * Owner.direction, Color.Black, 64, 0, 1, 1.5f).Spawn();
+                }
+            }
+        }
+        public void AllAI()
+        {
             float baseRotation = Projectile.velocity.ToRotation();
             float directionVerticality = MathF.Abs(Projectile.velocity.X);
             float offset = MathHelper.Pi;
+
             if (Owner.direction == -1)
                 offset = 0;
+
             Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, baseRotation + Owner.direction * directionVerticality * 1.5f + offset);
             Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, baseRotation + Owner.direction * directionVerticality * 1.2f + offset);
 
             if (!animationHelper.HasFinish[(int)AnimationState.Begin])
             {
-                Dir = Main.MouseWorld.X > Owner.Center.X ? 1 : -1;
+                Dir = Owner.LocalMouseWorld().X > Owner.Center.X ? 1 : -1;
 
                 BeginRot = Utils.AngleTowards(BeginRot, Owner.GetPlayerToMouseVector2().ToRotation(), 0.05f);
 
@@ -139,45 +191,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             else
             {
                 Projectile.Kill();
-            }
-
-            if (!animationHelper.HasFinish[(int)AnimationState.Middle])
-            {
-                int Lenth = LengthOffset + 50;
-                int Spawn = 9;
-                float Scale = 0.2f;
-
-                // 进行一定的补正，因为这里最初面向的没有椭圆挥砍，所以先这样打补丁了
-                float BA = BeginRot + MathHelper.PiOver2;
-                float Progress = BA / MathHelper.Pi;
-                float AngleOffset = MathHelper.Lerp(MathHelper.PiOver2, -MathHelper.PiOver2, Progress);
-
-                Vector2 SpawnLength = Vector2.UnitX.BetterRotatedBy(Projectile.rotation + AngleOffset, default, 2, 1) * Lenth * Main.rand.NextFloat(0.9f, 1.1f);
-                Vector2 BaseOffset = Vector2.UnitX.BetterRotatedBy(Projectile.rotation + AngleOffset, default, 2, 1) * 50;
-
-                SpawnLength = SpawnLength.RotatedBy(BeginRot);
-                BaseOffset = BaseOffset.RotatedBy(BeginRot);
-
-                HitBoxLength = (int)(SpawnLength.Length() + BaseOffset.Length());
-                for (int i = 1; i < Spawn; i++)
-                {
-                    Vector2 FinalLength = SpawnLength * ((float)i / Spawn);
-
-                    CarnageMetaBall.SpawnParticle(Projectile.Center + FinalLength + BaseOffset,
-                        Projectile.velocity.RotatedBy(MathHelper.PiOver2) * Main.rand.NextFloat(0f, 1.2f) * -6f * Owner.direction, Scale, Projectile.rotation + MathHelper.PiOver2, true);
-
-                    Scale *= 0.97f;
-                }
-                for (int i = 1; i < 6; i++)
-                {
-                    Vector2 FinalLength = SpawnLength * ((float)i / 6);
-
-                    new LilyLiquid(Projectile.Center + FinalLength + BaseOffset,
-                        Projectile.velocity.RotatedBy(MathHelper.PiOver2) * Main.rand.NextFloat(0f, 1.2f) * -6f * Owner.direction, Color.Red, 64, 0, 1, 1.5f).Spawn();
-
-                    new LilyLiquid(Projectile.Center + FinalLength + BaseOffset,
-                        Projectile.velocity.RotatedBy(MathHelper.PiOver2) * Main.rand.NextFloat(0f, 1.2f) * -6f * Owner.direction, Color.Black, 64, 0, 1, 1.5f).Spawn();
-                }
             }
         }
         #region 处理准备动画
@@ -316,8 +329,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            Vector2 ToMouseVector = Owner.GetPlayerToMouseVector2();
-
+            Vector2 ToMouseVector = target.Center - Owner.Center;
+            ToMouseVector = ToMouseVector.SafeNormalize(Vector2.UnitX);
             for (int i = 0; i < 10; i++)
             {
                 Vector2 shootVel = ToMouseVector.RotatedByRandom(MathHelper.PiOver4 * 0.7f) * Main.rand.NextFloat(0.2f, 1.2f) * 24f;
@@ -338,7 +351,13 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
 
             }
 
+            Owner.Calamity().GeneralScreenShakePower += 2;
+
             SoundEngine.PlaySound(SoundsMenu.CarnageSkillMeleeHit, Projectile.Center);
+
+            Owner.AddCooldown(CarnageBoost.ID, 1200);
+
+            target.AddBuff(ModContent.BuffType<BurningBlood>(), 600);
         }
     }
 }

@@ -1,3 +1,6 @@
 NightEnergy.DisplayName: 暗影能量
-// CarnageEnergy.DisplayName: Carnage Energy
-// CarnageBall.DisplayName: Carnage Ball
+CarnageEnergy.DisplayName: 死亡能量
+CarnageBall.DisplayName: 沸腾之血
+PlasmaSpark.DisplayName: 等离子火花
+PlasmaPrimarySpark.DisplayName: 暗影炎爆弹
+PlasmaBlast.DisplayName: 暗影炎爆炸

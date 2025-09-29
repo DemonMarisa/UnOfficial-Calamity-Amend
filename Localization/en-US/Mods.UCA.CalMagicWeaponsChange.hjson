@@ -1,12 +1,20 @@
 NightRay:
 	'''
-	[c/FF8C00:UnOfficial Calamity Amend Change£º]
-	Effects remake
-	Light click Will release dark beams around the ray
+	[c/FF8C00:UnOfficial Calamity Amend Changeï¿½ï¿½]
+	The closer along the ray hit enemies are, the more damage they take(200% - 75%)
+	Light click will release dark beams around the ray
 	Right click will expand the shield,consume mana and can rebound incoming projectiles.
 	The shield can absorb up to 400 damage.
 	The shield can provide damage reduction and defense
-	Weapon Skill£º
+	Weapon Skillï¿½ï¿½
 	Press the {0} key, raise the Night's Ray, and consume 200 mana.
 	You will receive a 30-second comprehensive attack and defense buff, and shield will be fully restored.
+	'''
+PlasmaRod:
+	'''
+	[c/FF8C00:UnOfficial Calamity Amend Changeï¿½ï¿½]
+	Light click will release Plasma beams, split into eight homein beams upon hitting.
+	Right click will launch a shadow fireball, exploding upon hitting
+	Weapon Skillï¿½ï¿½
+	Press the [KEY] Key, consume 50 mana to Slash forward
 	'''

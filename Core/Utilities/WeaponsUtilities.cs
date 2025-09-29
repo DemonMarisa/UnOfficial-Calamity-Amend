@@ -15,7 +15,7 @@ namespace UCA.Core.Utilities
 
         public static Vector2 GetPlayerToMouseVector2(this Player player)
         {
-            Vector2 vector = Main.MouseWorld - player.Center;
+            Vector2 vector = player.LocalMouseWorld() - player.Center;
             vector = vector.SafeNormalize(Vector2.UnitX);
             return vector;
         }

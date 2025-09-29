@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Graphics.Primitives;
 using CalamityMod.Items.Weapons.Magic;
 using Microsoft.Xna.Framework;
@@ -28,7 +29,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
         public int YOffset = 7;
         public override LocalizedText DisplayName => CalamityUtils.GetItemName<CarnageRay>();
         public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/CarnageRayHeldProj";
-        public Vector2 RotVector => new Vector2((12 + XOffset) * Owner.direction, YOffset).BetterRotatedBy(Owner.GetPlayerToMouseVector2().ToRotation(), default, 0.5f, 1f);
+        public Vector2 RotVector => new Vector2((12 + XOffset) * Owner.direction, YOffset).BetterRotatedBy(Owner.GetPlayerToMouseVector2().ToRotation(), default);
 
         public override Vector2 RotPoint => TextureAssets.Projectile[Type].Size() / 2;
 
@@ -69,10 +70,16 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
         {
             if (target.friendly)
                 return false;
-            else if (CanHit)
-                return true;
             else
-                return false;
+                return true;
+        }
+
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
+            // Otherwise, perform an AABB line collision check to check the whole beam.
+            float _ = float.NaN;
+            bool c = Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center, Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.Zero) * 55, 33f, ref _);
+            return c;
         }
 
         public override bool StillInUse()
@@ -115,7 +122,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
                 #endregion
 
                 SoundEngine.PlaySound(SoundsMenu.CarnageBallSpawn, Projectile.Center);
-                SoundEngine.PlaySound(SoundsMenu.CarnageRightUse, Projectile.Center);
                 #region 处理额外弹幕
 
                 Vector2 SpawnPos = Owner.Center + new Vector2(Main.rand.Next(100, 300), 0).RotatedByRandom(MathHelper.TwoPi);
@@ -144,6 +150,12 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             float directionVerticality = MathF.Abs(Projectile.velocity.X);
             Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, baseRotation + Owner.direction * directionVerticality * 1.5f);
             Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, baseRotation + Owner.direction * directionVerticality * 1.2f);
+
+            if (AniProgress == IinToAni)
+            {
+                SoundEngine.PlaySound(SoundsMenu.CarnageRightUse, Projectile.Center);
+            }
+
             if (UseDelay <= 0)
             {
                 CanHit = true;
@@ -217,7 +229,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             SpriteEffects flipSprite = Owner.direction * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
             Main.spriteBatch.Draw(texture, drawPosition / 2, frame, Color.White, drawRotation, origin, Projectile.scale * Main.player[Projectile.owner].gravDir * 0.5f * 0.15f, flipSprite, default);
-
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -255,7 +266,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
         #region 对原的覆写
         public override void UpdateAim(Vector2 source)
         {
-            Vector2 aim = Vector2.Normalize(Main.MouseWorld - (Owner.Center));
+            Vector2 aim = Vector2.Normalize(Owner.LocalMouseWorld() - Owner.Center);
             if (aim.HasNaNs())
             {
                 aim = -Vector2.UnitY;
@@ -306,6 +317,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
                 CarnageMetaBall.SpawnParticle(Projectile.Center, spawnVec, Main.rand.NextFloat(0.4f, 0.6f), 0, true);
             }
 
+            target.AddBuff(ModContent.BuffType<BurningBlood>(), 600);
         }
     }
 }

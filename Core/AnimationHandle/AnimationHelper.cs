@@ -15,6 +15,8 @@ namespace UCA.Core.AnimationHandle
         public float[] Auxfloat = [];
 
         public bool[] HasFinish = [];
+
+        public float[] RotVelocity = [];
         public AnimationHelper(int TotalAniUnit)
         {
             // 使用 new int[length] 来创建指定长度的数组
@@ -25,6 +27,8 @@ namespace UCA.Core.AnimationHandle
             Auxfloat = new float[TotalAniUnit];
 
             HasFinish = new bool[TotalAniUnit];
+
+            RotVelocity = new float[TotalAniUnit];
         }
     }
 }

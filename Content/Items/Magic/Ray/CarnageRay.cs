@@ -1,21 +1,15 @@
 ﻿using CalamityMod;
 using Microsoft.Xna.Framework;
-using Mono.Cecil;
-using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Common.Misc;
 using UCA.Content.Projectiles.HeldProj.Magic;
-using UCA.Content.UCACooldowns;
 using UCA.Core.BaseClass;
-using UCA.Core.GlobalInstance.Players;
 using UCA.Core.Keybinds;
 using UCA.Core.Utilities;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace UCA.Content.Items.Magic.Ray
 {
@@ -87,19 +81,21 @@ namespace UCA.Content.Items.Magic.Ray
 
         public override void HoldItem(Player player)
         {
-            
+            if (player.whoAmI != Main.myPlayer)
+                return;
+
             if (UCAKeybind.WeaponSkillHotKey.JustPressed && !Main.blockMouse && !Main.mouseText)
             {
                 if (player.ownedProjectileCounts[ModContent.ProjectileType<CarnageRaySkillProj>()] < 1 && player.ownedProjectileCounts[ModContent.ProjectileType<CarnageRayHeldProjMelee>()] < 1 && player.ownedProjectileCounts[ModContent.ProjectileType<CarnageRayHeldProj>()] < 1)
                 {
-                    if (player.CheckMana(player.ActiveItem(), (int)(200 * player.manaCost), false, false))
+                    if (player.CheckMana(player.ActiveItem(), (int)(200 * player.manaCost), true, false))
                     {
-                        player.PickAmmo(Item, out int toshoot, out float speed, out int Damage, out float kb, out AmmoID.None);
+                        float kb = player.GetWeaponKnockback(Item);
+                        int Damage = player.GetWeaponDamage(Item);
                         Projectile.NewProjectileDirect(player.GetSource_ItemUse(Item), player.Center, Vector2.Zero, ModContent.ProjectileType<CarnageRaySkillProj>(), Damage, kb, player.whoAmI);
                     }
                 }
             }
-            
         }
 
         public override void AddRecipes()

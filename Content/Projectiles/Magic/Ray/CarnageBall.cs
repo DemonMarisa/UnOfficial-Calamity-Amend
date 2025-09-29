@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CalamityMod.Buffs.DamageOverTime;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
 using UCA.Assets;
@@ -90,7 +91,8 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             Player player = Main.player[Projectile.owner];
             float distanecToNPC = Vector2.Distance(player.Center, target.Center);
-            float mult = 1f;
+
+            float mult;
             int mindistance = 300;
             if (distanecToNPC < mindistance)
                 mult = 0.75f;
@@ -109,6 +111,8 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
             if (CanSpawnHeal)
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * 3f, ModContent.ProjectileType<CarnageHeal>(), 0, Projectile.knockBack, Projectile.owner, 1);
+           
+            target.AddBuff(ModContent.BuffType<BurningBlood>(), 60);
         }
     }
 }

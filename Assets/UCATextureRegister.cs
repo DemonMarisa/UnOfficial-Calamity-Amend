@@ -17,6 +17,7 @@ namespace UCA.Assets
             InvisibleProj = ModContent.Request<Texture2D>($"UCA/Assets/Textures/InvisibleProj");
             LoadExtraTextures();
             LoadParticileTextures();
+            LoadENDERTextures();
         }
 
         public override void Unload()
@@ -26,6 +27,7 @@ namespace UCA.Assets
             InvisibleProj = null;
             UnLoadExtraTextures();
             UnLoadParticileTextures();
+            UnLoadENDERTextures();
         }
     }
 }

@@ -13,6 +13,8 @@ namespace UCA.Core.GlobalInstance.Projectiles
         public bool HasThroughNightShield = false;
 
         public bool HasThroughNightShieldOverMax = false;
+
+        public int DamageDefence = 0;
         public override void ModifyHitPlayer(Projectile projectile, Player target, ref Player.HurtModifiers modifiers)
         {
             if (HasThroughNightShield)
@@ -32,7 +34,7 @@ namespace UCA.Core.GlobalInstance.Projectiles
             }
             else
             {
-                info.Damage -= UCAPlayer.NightShieldMaxHP;
+                info.Damage -= DamageDefence;
                 uCAPlayer.NightShieldCanDefense = false;
             }
         }

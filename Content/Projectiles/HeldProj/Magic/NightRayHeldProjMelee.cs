@@ -327,10 +327,10 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
                     else
                     {
                         SoundEngine.PlaySound(SoundsMenu.NightRayShieldBreak, Projectile.Center);
-                        Owner.UCA().NightShieldHP = 0;
                         projectile.UCA().HasThroughNightShield = true;
                         projectile.UCA().HasThroughNightShieldOverMax = true;
-
+                        projectile.UCA().DamageDefence = Owner.UCA().NightShieldHP;
+                        Owner.UCA().NightShieldHP = 0;
                         for (int i = 0; i < 50; i++)
                         {
                             Color color = Color.Lerp(Color.LightPink, Color.Purple, Main.rand.NextFloat(0, 1f));
@@ -376,38 +376,5 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             }
         }
         #endregion
-        /*
-public static void StabsAI()
-{
-   Owner.itemTime = 2;
-   Owner.itemAnimation = 2;
-
-   // 基础信息
-   AniProgress++;
-   Projectile.timeLeft = 2;
-
-   // 设置玩家手持效果
-   float baseRotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
-   float directionVerticality = MathF.Abs(Projectile.velocity.X);
-   Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, baseRotation + Owner.direction * directionVerticality * 1.5f);
-   Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, baseRotation + Owner.direction * directionVerticality * 1.2f);
-   if (UseDelay <= 0)
-   {
-       UseDelay = 45;
-       AniProgress = 0;
-   }
-
-   float InToAni = 10;
-   if (AniProgress < InToAni)
-   {
-       ShaderOpacity = MathHelper.Lerp(ShaderOpacity, 0, 0.12f);
-       XOffset = MathHelper.Lerp(-8, 20, EasingHelper.EaseInBack(AniProgress / InToAni));
-   }
-   else
-   {
-       XOffset = MathHelper.Lerp(XOffset, -8, 0.12f);
-   }
-}
-*/
     }
 }

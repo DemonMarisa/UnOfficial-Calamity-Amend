@@ -25,7 +25,7 @@ namespace UCA.Content.Particiles
         public int rowCount = 0;
 
         public float RotOffset = 0;
-        public override string Texture => "UCA/Assets/ParticilesTextures/LilyLiquid";
+        public override string Texture => "UCA/Assets/LILES/LilyLiquid";
         public override void OnSpawn()
         {
             RotOffset = Main.rand.NextFloat(-0.15f, 0.15f);
@@ -35,10 +35,6 @@ namespace UCA.Content.Particiles
 
         public override void Update()
         {
-            /*
-            if (LifetimeRatio > 0.1f)
-                Velocity.Y += 1;
-            */
             Velocity *= 0.9f;
             Opacity = MathHelper.Lerp(Opacity, MathHelper.Lerp(Opacity, 0, 0.3f), 0.12f);
             Scale = MathHelper.Lerp(Scale, MathHelper.Lerp(Scale, 0, 0.3f), 0.12f);

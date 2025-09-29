@@ -7,6 +7,8 @@ namespace UCA.Content.Projectiles.HealPRoj
 {
     public class CarnageHeal : BaseHealProj
     {
+        public override int HealAmt => Main.rand.Next(3, 7);
+
         public override void ExAI()
         {
             CarnageMetaBall.SpawnParticle(Projectile.Center, Projectile.rotation.ToRotationVector2(), 0.15f, Projectile.rotation, true);

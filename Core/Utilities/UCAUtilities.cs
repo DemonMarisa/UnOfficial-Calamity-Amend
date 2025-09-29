@@ -1,8 +1,8 @@
-﻿using System;
+﻿using CalamityMod;
+using Microsoft.Xna.Framework;
+using System;
 using Terraria;
-using Terraria.ModLoader;
 using UCA.Core.GlobalInstance.Items;
-using UCA.Core.GlobalInstance.Players;
 using UCA.Core.GlobalInstance.Projectiles;
 
 namespace UCA.Core.Utilities
@@ -35,6 +35,11 @@ namespace UCA.Core.Utilities
         public static bool JustPressRightClick()
         {
             return !Main.mouseLeft && Main.mouseRight;
+        }
+
+        public static Vector2 LocalMouseWorld(this Player player)
+        {
+            return player.Calamity().mouseWorld;
         }
     }
 }

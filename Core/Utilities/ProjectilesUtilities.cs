@@ -31,12 +31,14 @@ namespace UCA.Core.Utilities
             foreach (NPC npc in Main.ActiveNPCs)
             {
                 float exDist = npc.width + npc.height;
+
                 //单位不可被追踪 或者 超出索敌距离则continue
                 if (Vector2.Distance(p.Center, npc.Center) > distStoraged + exDist)
                     continue;
 
                 if (!npc.active || npc.friendly || npc.lifeMax < 5 || !npc.CanBeChasedBy(p.Center, false))
                     continue;
+
                 //补: 如果优先搜索Boss单位, 且附近至少有一个。我们直接存储这个Boss单位
                 //已经获取到的会被标记，使其不会再跑一遍搜索.
                 if (npc.boss && bossFirst && !alreadyGetBoss)

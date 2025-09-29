@@ -36,13 +36,12 @@ namespace UCA.Core.GlobalInstance.Players
                 NightShieldCanDefense = false;
 
             ExternalDR = 0;
-            ReSetCount();
-            
         }
 
         public override void PostUpdateMiscEffects()
         {
             AddNightBoost();
+            AddCarnageBoost();
         }
 
         public override void PostUpdate()

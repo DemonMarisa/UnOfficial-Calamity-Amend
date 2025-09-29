@@ -36,6 +36,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
         public float OwnervelocityMult = 1;
 
         public float Opacity = 1;
+
         public override void SetDefaults()
         {
             Projectile.width = 60;
@@ -46,15 +47,17 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
         }
+
         public override void OnSpawn(IEntitySource source)
         {
         }
+
         public override void AI()
         {
             Owner.itemTime = 2;
             Owner.itemAnimation = 2;
 
-            Owner.ChangeDir(Main.MouseWorld.X > Owner.Center.X ? 1 : -1);
+            Owner.ChangeDir(Owner.LocalMouseWorld().X > Owner.Center.X ? 1 : -1);
             float TargetRot = (Owner.Center - Projectile.Center).ToRotation() + MathHelper.PiOver2;
             Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, TargetRot + Owner.direction * 0.1f * 1.5f);
             Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, TargetRot + Owner.direction * -0.1f * 1.2f);

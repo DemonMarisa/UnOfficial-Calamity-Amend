@@ -112,14 +112,13 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
         {
             return AniProgress == 0 && !Main.mouseLeft;
         }
-
         public override void OnKill(int timeLeft)
         {
             Main.mouseRight = false;
-            Owner.controlLeft = false;
             Owner.itemTime = 0;
             Owner.itemAnimation = 0;
         }
+
 
         public override bool PreDraw(ref Color lightColor)
         {

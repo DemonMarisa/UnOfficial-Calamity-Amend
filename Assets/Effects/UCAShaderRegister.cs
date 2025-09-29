@@ -13,6 +13,7 @@ namespace UCA.Assets.Effects
         internal const string ShaderPrefix = "UCA:";
         public static Effect MetaballShader;
         public static Effect EdgeMeltsShader;
+        public static Effect ColorShader;
         public override void Load()
         {
             if (Main.dedServ)
@@ -28,6 +29,9 @@ namespace UCA.Assets.Effects
 
             EdgeMeltsShader = LoadShader("EdgeMeltsShader");
             RegisterMiscShader(EdgeMeltsShader, "UCAEdgeMeltsPass", "EdgeMeltsShader");
+
+            ColorShader = LoadShader("ColorShader");
+            RegisterMiscShader(ColorShader, "UCAColorPass", "ColorShader");
         }
 
         public static void RegisterMiscShader(Effect shader, string passName, string registrationName)

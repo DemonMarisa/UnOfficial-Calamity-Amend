@@ -1,11 +1,15 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
+using CalamityMod.Items.Weapons.Magic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Content.Particiles;
+using UCA.Content.Paths;
 using UCA.Content.UCACooldowns;
 using UCA.Core.Utilities;
 
@@ -31,25 +35,19 @@ namespace UCA.Content.Items
 			Item.rare = ItemRarityID.Blue;
 			Item.UseSound = SoundID.Item1;
 			Item.autoReuse = true;
+			Item.shoot = ProjectileID.WoodenArrowFriendly;
+			Item.shootSpeed = 3;
 		}
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-			velocity *= 4;
-            for (int i = 0; i < 35; i++)
-			{
-                new LilyLiquid(Main.MouseWorld, velocity.RotatedByRandom(MathHelper.PiOver4 * 0.6f) * Main.rand.NextFloat(0.15f, 1.2f), Color.DarkRed, 64, 0, 1, 2).Spawn();
-            }
-            for (int i = 0; i < 25; i++)
-            {
-                new LilyLiquid(Main.MouseWorld, velocity.RotatedByRandom(MathHelper.PiOver4 * 0.6f) * Main.rand.NextFloat(0.15f, 1.2f), Color.Black, 64, 0, 1, 2).Spawn();
-            }
+            new Fire(Main.MouseWorld, Vector2.Zero, Color.Violet, Main.rand.Next(60, 90), Main.rand.NextFloat(MathHelper.TwoPi), 1f, 1f).Spawn();
             return false;
         }
 
         public override bool? UseItem(Player player)
         {
-			// new LilyLiquid(Main.MouseWorld, Vector2.Zero, Color.White, 64, 0, 1, 1f).Spawn();
+            // new Flame(Main.MouseWorld, Vector2.Zero, Color.White, 64, 0, 1, 1f).Spawn();
             return base.UseItem(player);
         }   
 

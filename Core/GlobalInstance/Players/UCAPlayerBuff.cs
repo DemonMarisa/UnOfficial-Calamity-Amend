@@ -11,17 +11,12 @@ namespace UCA.Core.GlobalInstance.Players
 {
     public partial class UCAPlayer : ModPlayer
     {
-
-        public void ReSetCount()
-        {
-        }
-
         public void AddNightBoost()
         {
             if (Player.HasCooldown(NightBoost.ID))
             {
-                Player.GetDamage<GenericDamageClass>() += 0.1f;
-                Player.GetCritChance<GenericDamageClass>() += 5;
+                Player.GetDamage<GenericDamageClass>() += 0.15f;
+
                 Player.manaCost *= 0.95f;
                 ExternalDR += 0.05f;
                 Player.statDefense += 10;
@@ -40,5 +35,25 @@ namespace UCA.Core.GlobalInstance.Players
                 }
             }
         }
+
+        public void AddCarnageBoost()
+        {
+            if (Player.HasCooldown(CarnageBoost.ID))
+            {
+                Player.GetCritChance<GenericDamageClass>() += 15;
+                Player.manaCost *= 0.95f;
+
+                if (Player.miscCounter % 2 == 0)
+                    CarnageMetaBall.SpawnParticle(Player.Center - new Vector2(Main.rand.Next(-25, 25), 0),
+                        Vector2.UnitY * Main.rand.NextFloat(2, 6f) * -1f,
+                        Main.rand.NextFloat(0.3f, 0.5f), MathHelper.PiOver2);
+
+                if (Player.miscCounter % 6 == 0)
+                {
+                    Player.Heal(1);
+                }
+            }
+        }
+
     }
 }

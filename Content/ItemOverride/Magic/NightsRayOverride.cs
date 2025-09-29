@@ -13,20 +13,18 @@ using UCA.Common.Misc;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.HeldProj.Magic;
 using UCA.Content.UCACooldowns;
+using UCA.Core.BaseClass;
 using UCA.Core.GlobalInstance.Players;
 using UCA.Core.Keybinds;
 using UCA.Core.Utilities;
 
 namespace UCA.Content.ItemOverride.Magic
 {
-    public class NightsRayOverride : GlobalItem
+    public class NightsRayOverride : BaseWeaponOverride
     {
         public static int UseCount = 0;
         public override bool InstancePerEntity => true;
-        public override bool AppliesToEntity(Item item, bool lateInstatiation)
-        {
-            return item.type == ModContent.ItemType<NightsRay>();
-        }
+        public override int OverrideType { get => ModContent.ItemType<NightsRay>(); set => ModContent.ItemType<NightsRay>(); }
 
         public override void Load()
         {
@@ -72,8 +70,7 @@ namespace UCA.Content.ItemOverride.Magic
         {
             return true;
         }
-
-        public override bool Shoot(Item item, Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+        public override void CustomShoot(Item item, Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             if (player.altFunctionUse == 2)
             {
@@ -85,23 +82,21 @@ namespace UCA.Content.ItemOverride.Magic
                 if (player.ownedProjectileCounts[ModContent.ProjectileType<NightRayHeldProj>()] < 1)
                     Projectile.NewProjectileDirect(source, position, velocity, ModContent.ProjectileType<NightRayHeldProj>(), damage, knockback, player.whoAmI);
             }
-            return false;
         }
 
-        public override void HoldItem(Item item, Player player)
+        public override void WeaponSkill(Item item, Player player)
         {
-            if (UCAKeybind.WeaponSkillHotKey.JustPressed && !Main.blockMouse && !Main.mouseText)
-            {
-                if (player.ownedProjectileCounts[ModContent.ProjectileType<NightRaySkillProj>()] < 1 && player.ownedProjectileCounts[ModContent.ProjectileType<NightRayHeldProj>()] < 1 && player.ownedProjectileCounts[ModContent.ProjectileType<NightRayHeldProjMelee>()] < 1)
-                    if (player.CheckMana(player.ActiveItem(), (int)(200 * player.manaCost), true, false))
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<NightRaySkillProj>()] < 1 && player.ownedProjectileCounts[ModContent.ProjectileType<NightRayHeldProj>()] < 1 && player.ownedProjectileCounts[ModContent.ProjectileType<NightRayHeldProjMelee>()] < 1)
+                if (!player.HasCooldown(NightBoost.ID) && player.CheckMana(player.ActiveItem(), (int)(200 * player.manaCost), true, false))
                     Projectile.NewProjectileDirect(item.GetSource_FromThis(), player.Center, Vector2.Zero, ModContent.ProjectileType<NightRaySkillProj>(), 0, 0, player.whoAmI);
-            }
+        }
 
+        public override void UpdateHoldItem(Item item, Player player)
+        {
             player.AddCooldown(NightShield.ID, UCAPlayer.NightShieldMaxHP);
             if (player.Calamity().cooldowns.TryGetValue(NightShield.ID, out var Durability))
                 Durability.timeLeft = player.UCA().NightShieldHP;
         }
-
 
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {

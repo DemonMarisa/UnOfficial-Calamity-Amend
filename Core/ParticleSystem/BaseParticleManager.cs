@@ -11,17 +11,16 @@ namespace UCA.Core.ParticleSystem
         public static readonly List<BaseParticle> ActiveParticles = [];
         // 先绘制先更新的粒子
         public static readonly List<BaseParticle> PriorityActiveParticles = [];
-        // 储存所有粒子类型的ID
-        // public static readonly Dictionary<Type, int> particleTypes;
         #region 加载卸载
-        public override void Load()
-        {
-            On_Main.DrawDust += DrawParticles;
-        }
-        public override void Unload()
-        {
-            On_Main.DrawDust -= DrawParticles;
-        }
+        // 扔给统一的管理了
+        //public override void Load()
+        //{
+        //    On_Main.DrawDust += DrawParticles;
+        //}
+        //public override void Unload()
+        //{
+        //    On_Main.DrawDust -= DrawParticles;
+        //}
         #endregion
 
         /// <summary>
@@ -35,9 +34,6 @@ namespace UCA.Core.ParticleSystem
         // 粒子更新
         public override void PostUpdateDusts()
         {
-            if (Main.dedServ)
-                return;
-
             UpdatePriorityParticles();
 
             if (ActiveParticles.Count == 0)
@@ -134,6 +130,18 @@ namespace UCA.Core.ParticleSystem
 
             if (ActiveParticles.Count != 0)
             {
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+
+                for (int i = 0; i < ActiveParticles.Count; i++)
+                {
+                    if (ActiveParticles[i].BlendState != BlendState.Additive)
+                        continue;
+
+                    ActiveParticles[i].Draw(Main.spriteBatch);
+                }
+
+                Main.spriteBatch.End();
+
                 Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
                 for (int i = 0; i < ActiveParticles.Count; i++)
@@ -151,18 +159,6 @@ namespace UCA.Core.ParticleSystem
                 for (int i = 0; i < ActiveParticles.Count; i++)
                 {
                     if (ActiveParticles[i].BlendState != BlendState.NonPremultiplied)
-                        continue;
-
-                    ActiveParticles[i].Draw(Main.spriteBatch);
-                }
-
-                Main.spriteBatch.End();
-
-                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
-
-                for (int i = 0; i < ActiveParticles.Count; i++)
-                {
-                    if (ActiveParticles[i].BlendState != BlendState.Additive)
                         continue;
 
                     ActiveParticles[i].Draw(Main.spriteBatch);

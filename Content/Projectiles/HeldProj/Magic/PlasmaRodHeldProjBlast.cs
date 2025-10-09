@@ -178,6 +178,19 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
 
         public override void OnKill(int timeLeft)
         {
+            if (Main.mouseRight)
+            {
+                if (Projectile.ai[1] == 1)
+                {
+                    Projectile.ai[1] = -1;
+                }
+                else
+                {
+                    Projectile.ai[1] = 1;
+                }
+                animationHelper = new AnimationHelper();
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, Type, Projectile.damage, Projectile.knockBack, Projectile.owner, 0, Projectile.ai[1]);
+            }
         }
     }
 }

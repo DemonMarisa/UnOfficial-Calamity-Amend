@@ -6,19 +6,16 @@ using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
-using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
 using UCA.Content.ItemOverride.Magic;
-using UCA.Content.Items.Magic.Ray;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.Magic.Ray;
 using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
-using static Terraria.GameContent.Animations.IL_Actions.Sprites;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic
 {
@@ -26,13 +23,9 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
     {
         public override LocalizedText DisplayName => CalamityUtils.GetItemName<NightsRay>();
         public Vector2 RotVector => new Vector2(12 * Owner.direction, 7).BetterRotatedBy(Owner.GetPlayerToMouseVector2().ToRotation(), default, 0.5f, 1f);
-
         public override Vector2 RotPoint => TextureAssets.Projectile[Type].Size() / 2;
-
         public override Vector2 Posffset => new Vector2(RotVector.X, RotVector.Y) * Owner.direction;
-
         public override float RotAmount => 0.25f;
-
         public override float RotOffset => MathHelper.PiOver4;
 
         public float ShaderOpacity = 0;
@@ -153,7 +146,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
                     Vector2 CrossfirePos = npc.Center + Vector2.UnitX.RotatedBy(MathHelper.PiOver2 * i).RotatedBy(RandomOffset) * 250;
                     Vector2 toNPCVector = (npc.Center + npc.velocity * PredictMult - CrossfirePos).SafeNormalize(Vector2.UnitX) * 1.5f;
                     GenUnDeathSign(CrossfirePos, 0.4f);
-                    int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), CrossfirePos, toNPCVector, ModContent.ProjectileType<NightEnergy>(), Projectile.damage, Projectile.knockBack, Owner.whoAmI);
+                    int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), CrossfirePos, toNPCVector, ModContent.ProjectileType<NightEnergySplit>(), Projectile.damage, Projectile.knockBack, Owner.whoAmI);
                     Main.projectile[p].tileCollide = false;
                     Main.projectile[p].penetrate = 1;
                 }
@@ -165,7 +158,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
                 {
                     Vector2 CrossRandomfirePos = RandomPos + Vector2.UnitX.RotatedBy(MathHelper.PiOver2 * i).RotatedBy(RandomOffset) * 250;
                     Vector2 toPosVector = (RandomPos - CrossRandomfirePos).SafeNormalize(Vector2.UnitX) * 1.5f;
-                    int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + CrossRandomfirePos, toPosVector, ModContent.ProjectileType<NightEnergy>(), Projectile.damage, Projectile.knockBack, Owner.whoAmI);
+                    int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + CrossRandomfirePos, toPosVector, ModContent.ProjectileType<NightEnergySplit>(), Projectile.damage, Projectile.knockBack, Owner.whoAmI);
                     Main.projectile[p].tileCollide = false;
                     Main.projectile[p].penetrate = 1;
                 }

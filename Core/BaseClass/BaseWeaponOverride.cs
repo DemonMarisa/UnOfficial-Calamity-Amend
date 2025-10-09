@@ -1,12 +1,8 @@
-﻿using CalamityMod;
-using CalamityMod.Items.Weapons.Magic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
-using UCA.Content.Projectiles.HeldProj.Magic;
 using UCA.Core.Keybinds;
-using UCA.Core.Utilities;
 
 namespace UCA.Core.BaseClass
 {

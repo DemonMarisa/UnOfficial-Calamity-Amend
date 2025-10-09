@@ -8,9 +8,14 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using UCA.Content.DrawNodes;
 using UCA.Content.Particiles;
 using UCA.Content.Paths;
+using UCA.Content.Projectiles.Magic.Ray;
+using UCA.Content.Projectiles.Misc.Test;
 using UCA.Content.UCACooldowns;
+using UCA.Core.Graphics.DrawNode;
+using UCA.Core.MetaBallsSystem;
 using UCA.Core.Utilities;
 
 namespace UCA.Content.Items
@@ -41,7 +46,18 @@ namespace UCA.Content.Items
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            new Fire(Main.MouseWorld, Vector2.Zero, Color.Violet, Main.rand.Next(60, 90), Main.rand.NextFloat(MathHelper.TwoPi), 1f, 1f).Spawn();
+            for (int i = 0; i < 9; i++)
+            {
+                float offset = MathHelper.TwoPi / 9;
+                Color RandomColor = Color.White;
+                Vector2 firVel = Vector2.UnitX.RotatedBy(offset * i).RotatedByRandom(0.3f);
+                new Butterfly(Main.MouseWorld, firVel, RandomColor, 360, 0, 1, 0.2f, Main.rand.NextFloat(1f, 1.4f)).Spawn();
+            }
+            /*
+			NodeManager.ActivePixelNode.Clear();
+            NodeManager.ActiveNode.Clear();
+			*/
+            // Projectile.NewProjectile(source, position, velocity * 1.5f, ModContent.ProjectileType<TerraEnergy>(), damage, knockback, player.whoAmI);
             return false;
         }
 

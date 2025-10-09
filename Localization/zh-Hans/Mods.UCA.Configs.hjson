@@ -2,7 +2,12 @@ UCAConfig: {
 	// DisplayName: UnOfficial Calamity Amend Config
 
 	ParticleLimit: {
-		Label: аёвсиооч
+		Label: О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
 		Tooltip: ""
+	}
+
+	UCATurnoffCorner: {
+		// Label: U C A Turnoff Corner
+		// Tooltip: ""
 	}
 }

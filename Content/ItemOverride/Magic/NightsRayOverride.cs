@@ -60,6 +60,7 @@ namespace UCA.Content.ItemOverride.Magic
             item.noUseGraphic = true;
             item.channel = true;
             item.UCA().UseWeaponSkill = true;
+            item.UCA().DrawSmallIcon = true;
         }
         public override bool CanUseItem(Item item, Player player)
         {
@@ -113,7 +114,7 @@ namespace UCA.Content.ItemOverride.Magic
             self.CreateRecipe().
                 AddIngredient(ItemID.Vilethorn).
                 AddIngredient(ItemID.MagicMissile).
-                AddIngredient(ItemID.WandofSparking).
+                AddIngredient(ModContent.ItemType<PlasmaRod>()).
                 AddIngredient(ItemID.ThunderStaff).
                 AddTile(TileID.DemonAltar).
                 Register();

@@ -16,5 +16,9 @@ namespace UCA.Content.Configs
         [Increment(1)]
         [DefaultValue(2000)]
         public int ParticleLimit { get; set; }
+
+        [BackgroundColor(211, 211, 211, 192)]
+        [DefaultValue(false)]
+        public bool UCATurnoffCorner { get; set; }
     }
 }

@@ -52,13 +52,17 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
 
         public override void HoldoutAI()
         {
-            Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Owner.GetPlayerToMouseVector2().ToRotation() - MathHelper.PiOver2);
             if (UseDelay <= 0 && Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.HeldItem.mana * Owner.manaCost), true, false))
             {
                 SoundEngine.PlaySound(SoundsMenu.PlasmaRodAttack, Projectile.Center);
                 FirePorj();
                 UseDelay = Owner.HeldItem.useTime;
             }
+        }
+
+        public override void PostAI()
+        {
+            Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Owner.GetPlayerToMouseVector2().ToRotation() - MathHelper.PiOver2);
         }
 
         public void FirePorj()
@@ -71,7 +75,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
                 Color RandomColor = Color.Lerp(Color.DarkViolet, Color.LightPink, Main.rand.NextFloat(0, 1));
                 new MediumGlowBall(Projectile.Center + FireOffset, Projectile.velocity.RotatedBy(offset * i), RandomColor, 60, 0, 1, 0.2f, Main.rand.NextFloat(2f, 2.2f)).Spawn();
             }
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + FireOffset, Projectile.velocity * 6f, ModContent.ProjectileType<PlasmaSpark>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + FireOffset, Projectile.velocity * 2f, ModContent.ProjectileType<PlasmaSpark>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
             Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.1f;
         }
 

@@ -37,11 +37,14 @@ namespace UCA.Content.Particiles
 
         public override void Update()
         {
-            Vector2 idealVelocity = -Vector2.UnitY.RotatedBy(MathHelper.Lerp(-MathHelper.TwoPi, MathHelper.TwoPi, (float)Math.Sin(Time / 36f + SeedOffset) * 0.5f + 0.5f)) * Speed;
-            float movementInterpolant = MathHelper.Lerp(0.01f, 0.25f, Utils.GetLerpValue(0, Lifetime / 2, Time, true));
-            Velocity = Vector2.Lerp(Velocity, idealVelocity, movementInterpolant);
-            Velocity = Velocity.SafeNormalize(-Vector2.UnitY) * Speed;
-
+            if (Speed != 0)
+            {
+                Vector2 idealVelocity = -Vector2.UnitY.RotatedBy(MathHelper.Lerp(-MathHelper.TwoPi, MathHelper.TwoPi, (float)Math.Sin(Time / 36f + SeedOffset) * 0.5f + 0.5f)) * Speed;
+                float movementInterpolant = MathHelper.Lerp(0.01f, 0.25f, Utils.GetLerpValue(0, Lifetime / 2, Time, true));
+                Velocity = Vector2.Lerp(Velocity, idealVelocity, movementInterpolant);
+                Velocity = Velocity.SafeNormalize(-Vector2.UnitY) * Speed;
+            }
+            Velocity *= 0.9f;
             Scale = MathHelper.Lerp(BeginScale, 0, EasingHelper.EaseOutCubic(LifetimeRatio)) ;
         }
 

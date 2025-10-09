@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
@@ -13,7 +15,7 @@ namespace UCA.Core.Utilities
         /// 将当前渲染目标设置为提供的渲染目标。
         /// </summary>
         /// <param name="rt">要交换到的渲染目标</param>
-        public static bool SwapToTarget(RenderTarget2D rt)
+        public static bool SwapToTarget(this RenderTarget2D rt)
         {
             GraphicsDevice gD = Main.graphics.GraphicsDevice;
             SpriteBatch spriteBatch = Main.spriteBatch;
@@ -44,5 +46,39 @@ namespace UCA.Core.Utilities
             UCAShaderRegister.EdgeMeltsShader.Parameters["EdgeWidth"].SetValue(EdgeWidth);
             UCAShaderRegister.EdgeMeltsShader.CurrentTechnique.Passes[Pass].Apply();
         }
+
+        public static void GenFlowersDust(Vector2 pos)
+        {
+            // 复制的原版小黄色烟花的代码
+            Vector2 randomCirclePointVector = Vector2.One.RotatedByRandom(MathHelper.ToRadians(32f));
+            float lerpStart = Main.rand.Next(9, 14) * 0.66f; ;
+            float lerpEnd = Main.rand.Next(2, 4) * 0.66f;
+            for (float i = 0; i < 9f; ++i)
+            {
+                for (int j = 0; j < 2; ++j)
+                {
+                    Vector2 randomCirclePointRotated = randomCirclePointVector.RotatedBy((j == 0 ? 1 : -1) * MathHelper.TwoPi / 18);
+                    for (float k = 0f; k < 20f; ++k)
+                    {
+                        Vector2 randomCirclePointLerped = Vector2.Lerp(randomCirclePointVector, randomCirclePointRotated, k / 20f);
+                        float lerpMultiplier = MathHelper.Lerp(lerpStart, lerpEnd, k / 20f);
+                        int dustIndex = Dust.NewDust(pos, 6, 6, DustID.Firework_Pink, 0f, 0f, 100, default, 1.3f);
+                        Main.dust[dustIndex].velocity *= 0.1f;
+                        Main.dust[dustIndex].noGravity = true;
+                        Main.dust[dustIndex].velocity += randomCirclePointLerped * lerpMultiplier;
+                    }
+                }
+                randomCirclePointVector = randomCirclePointVector.RotatedBy(MathHelper.TwoPi / 9);
+            }
+        }
+
+        public static void SetRasterizerState()
+        {
+            RasterizerState rasterizerState = new RasterizerState();
+            rasterizerState.CullMode = CullMode.None;
+            rasterizerState.FillMode = FillMode.WireFrame;
+            Main.instance.GraphicsDevice.RasterizerState = rasterizerState;
+        }
+
     }
 }

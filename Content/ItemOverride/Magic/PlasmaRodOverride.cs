@@ -1,10 +1,7 @@
 ﻿using CalamityMod;
 using CalamityMod.Items.Weapons.Magic;
-using CalamityMod.Projectiles.Magic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Mono.Cecil;
-using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
@@ -14,13 +11,10 @@ using Terraria.ModLoader;
 using UCA.Common.Misc;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.HeldProj.Magic;
-using UCA.Content.UCACooldowns;
 using UCA.Core.BaseClass;
-using UCA.Core.GlobalInstance.Players;
 using UCA.Core.Keybinds;
 using UCA.Core.MiscDate;
 using UCA.Core.Utilities;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace UCA.Content.ItemOverride.Magic
 {
@@ -58,6 +52,7 @@ namespace UCA.Content.ItemOverride.Magic
             item.channel = true;
 
             item.UCA().UseWeaponSkill = true;
+            item.UCA().DrawSmallIcon = true;
         }
 
         public override bool AltFunctionUse(Item item, Player player)

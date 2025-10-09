@@ -13,7 +13,6 @@ using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
 using UCA.Content.ItemOverride.Magic;
-using UCA.Content.Items.Magic.Ray;
 using UCA.Content.Particiles;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
@@ -141,13 +140,13 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
                         float PredictMult = DistanceToNPC / 48;
                         Vector2 ToNPCVel = (npc.Center - SpawnPos + npc.velocity * PredictMult).SafeNormalize(Projectile.rotation.ToRotationVector2());
                         NightRayHeldProj.GenUnDeathSign(SpawnPos, 0.4f);
-                        int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), SpawnPos, ToNPCVel * 4, ModContent.ProjectileType<NightEnergy>(), Projectile.damage, Projectile.knockBack, Owner.whoAmI);
+                        int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), SpawnPos, ToNPCVel * 4, ModContent.ProjectileType<NightEnergySplit>(), Projectile.damage, Projectile.knockBack, Owner.whoAmI);
                         Main.projectile[p].penetrate = 1;
                     }
                     else
                     {
                         NightRayHeldProj.GenUnDeathSign(SpawnPos, 0.4f);
-                        int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), SpawnPos, Projectile.rotation.ToRotationVector2() * 4, ModContent.ProjectileType<NightEnergy>(), Projectile.damage, Projectile.knockBack, Owner.whoAmI);
+                        int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), SpawnPos, Projectile.rotation.ToRotationVector2() * 4, ModContent.ProjectileType<NightEnergySplit>(), Projectile.damage, Projectile.knockBack, Owner.whoAmI);
                         Main.projectile[p].penetrate = 1;
                     }
                 }
@@ -257,7 +256,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null);
 
             Vector2 SpreadLinePos = drawPosition + FireOffset;
-            Main.spriteBatch.Draw(UCATextureRegister.SpreadLine.Value, SpreadLinePos / 2, null, new Color(153, 50, 204, 214) * (1 - ShaderOpacity), drawRotation + MathHelper.PiOver4 * Owner.direction,
+
+            Main.spriteBatch.Draw(UCATextureRegister.SpreadLine.Value, SpreadLinePos / 2, null, new Color(185, 0, 204, 255) * (1 - ShaderOpacity), drawRotation + MathHelper.PiOver4 * Owner.direction,
                 UCATextureRegister.SpreadLine.Size() / 2, new Vector2(XScale * 1.2f * (1 - OpacityOffset * 0.7f), 1) * Projectile.scale * Main.player[Projectile.owner].gravDir * 0.175f, flipSprite, default);
 
             Main.spriteBatch.End();

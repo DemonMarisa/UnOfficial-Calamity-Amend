@@ -9,6 +9,9 @@
 增加更智能的NPC
 一些针对灾厄本体的QOL
 
+目前多开bug：
+与大修一同加载时需要关闭手持效果并重加载
+
 工程源代码：
 https://github.com/DemonMarisa/UnOfficial-Calamity-Amend
 有些资产来源是网络，如果有其他Mod作者发现自己的资产被使用，请联系我删除

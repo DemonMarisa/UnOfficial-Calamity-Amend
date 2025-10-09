@@ -19,30 +19,8 @@ namespace UCA.Core.MetaBallsSystem
             if (Main.dedServ)
                 return;
 
-            // 遍历所有mod，寻找BaseMetaBall的子类并实例化并添加到静态表单中
-            foreach (Mod mod in ModLoader.Mods)
-            {
-                foreach (Type type in AssemblyManager.GetLoadableTypes(mod.Code))
-                {
-                    if (type.IsAbstract)
-                        continue;
-                    if (type.IsSubclassOf(typeof(BaseMetaBall)))
-                        MetaBallCollection.Add(Activator.CreateInstance(type) as BaseMetaBall);
-                }
-            }
-
-            // 初始化每一个元球的渲染目标
-            Main.QueueMainThreadAction(() =>
-            {
-                foreach (BaseMetaBall baseMetaBall in MetaBallCollection)
-                {
-                    baseMetaBall.AlphaTexture?.Dispose();
-                    baseMetaBall.AlphaTexture = new RenderTarget2D(Main.graphics.GraphicsDevice, Main.screenWidth, Main.screenHeight);
-                }
-            });
-
             On_Main.CheckMonoliths += PrepareRenderTarget;
-            On_Main.DrawDust += DrawRenderTarget;
+            // On_Main.DrawDust += DrawRenderTarget;
         }
 
         public override void Unload()
@@ -62,7 +40,7 @@ namespace UCA.Core.MetaBallsSystem
             MetaBallCollection.Clear();
 
             On_Main.CheckMonoliths -= PrepareRenderTarget;
-            On_Main.DrawDust -= DrawRenderTarget;
+            // On_Main.DrawDust -= DrawRenderTarget;
         }
         #endregion
 
@@ -74,25 +52,13 @@ namespace UCA.Core.MetaBallsSystem
                 if (!baseMetaBall.Active())
                     continue;
 
-                if (RenderTargetsManager.ScreenSizeChanged)
-                {
-                    Main.QueueMainThreadAction(() =>
-                    {
-                        foreach (BaseMetaBall baseMetaBall in MetaBallCollection)
-                        {
-                            baseMetaBall.AlphaTexture?.Dispose();
-                            baseMetaBall.AlphaTexture = new RenderTarget2D(Main.graphics.GraphicsDevice, Main.screenWidth, Main.screenHeight);
-                        }
-                    });
-                }
-
                 baseMetaBall.Update();
             }
         }
         #endregion
 
         #region 进行离屏渲染
-        public virtual void PrepareRenderTarget(On_Main.orig_CheckMonoliths orig)
+        public static void PrepareRenderTarget(On_Main.orig_CheckMonoliths orig)
         {
             if (Main.dedServ)
             {
@@ -121,7 +87,7 @@ namespace UCA.Core.MetaBallsSystem
         #endregion
 
         #region 最终输出渲染
-        public virtual void DrawRenderTarget(On_Main.orig_DrawDust orig, Main self)
+        public static void DrawRenderTarget(On_Main.orig_DrawDust orig, Main self)
         {
             if (Main.dedServ)
             {

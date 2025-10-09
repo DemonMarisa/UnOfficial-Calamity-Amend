@@ -16,6 +16,7 @@ using UCA.Assets;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Core.BaseClass;
+using UCA.Core.Graphics.Primitives.Trail;
 using UCA.Core.Utilities;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -42,7 +43,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             // 保存旧朝向与旧位置
             ProjectileID.Sets.TrailingMode[Type] = 2;
             // 一共爆粗20个数据
-            ProjectileID.Sets.TrailCacheLength[Type] = 20;
+            ProjectileID.Sets.TrailCacheLength[Type] = 15;
         }
 
         public override void SetDefaults()
@@ -95,71 +96,45 @@ namespace UCA.Content.Projectiles.Magic.Ray
             {
                 Vector2 home = (Target.Center - Projectile.Center);
                 VelocityLength = MathHelper.Lerp(VelocityLength, 9, 0.02f);
-                Projectile.rotation = Projectile.rotation.AngleTowards(home.ToRotation(), MathHelper.ToRadians(1f));
+                Projectile.rotation = Projectile.rotation.AngleTowards(home.ToRotation(), MathHelper.ToRadians(1.5f));
                 Projectile.velocity = Projectile.rotation.ToRotationVector2() * VelocityLength;
             }
         }
 
         public void RenderPixelatedPrimitives(SpriteBatch spriteBatch, PixelationPrimitiveLayer layer)
         {
-            Vector2 DrawPos = Projectile.Center - Main.screenPosition;
-
-            List<Vector2> validPositions = [];
-            List<float> validRot = [];
+            Vector2 HalfProj = new Vector2(Projectile.width / 2, Projectile.height / 2);
+            List<TrailDrawDate> trailDrawDate = [];
+            List<TrailDrawDate> SecondtrailDrawDate = [];
+            List<TrailDrawDate> ThirdtrailDrawDate = [];
+            DrawSetting drawSetting = new(ModContent.Request<Texture2D>($"UCA/Assets/LILES/Slash01").Value, false, true);
 
             for (int i = 0; i < Projectile.oldPos.Length; i++)
             {
                 if (Projectile.oldPos[i] != Vector2.Zero)
                 {
-                    validPositions.Add(Projectile.oldPos[i]);
-                    validRot.Add(Projectile.oldRot[i]);
+                    Vector2 DrawPos = Projectile.oldPos[i] - Main.screenPosition + HalfProj - new Vector2(-18, 0).RotatedBy(Projectile.oldRot[i]);
+
+                    TrailDrawDate TrailDrawDate = new(DrawPos, new Color(208, 0, 255, 0), new Vector2(0, 12), Projectile.oldRot[i]);
+                    trailDrawDate.Add(TrailDrawDate);
+
+                    TrailDrawDate TrailDrawDate2 = new(DrawPos, new Color(255, 255, 255, 0), new Vector2(0, 4), Projectile.oldRot[i]);
+                    SecondtrailDrawDate.Add(TrailDrawDate2);
+
+                    TrailDrawDate TrailDrawDate3 = new(DrawPos, new Color(186, 50, 205, 0), new Vector2(0, 20), Projectile.oldRot[i]);
+                    ThirdtrailDrawDate.Add(TrailDrawDate3);
                 }
             }
 
-            List<VertexPosition2DColorTexture> Vertexlist = new List<VertexPosition2DColorTexture>();
+            TrailRender.RenderTrail(trailDrawDate.ToArray(), drawSetting);
+            TrailRender.RenderTrail(SecondtrailDrawDate.ToArray(), drawSetting);
+            TrailRender.RenderTrail(ThirdtrailDrawDate.ToArray(), drawSetting);
 
-            for (int i = 0; i < validPositions.Count; i++)
-            {
-                Vector2 validpos = validPositions[i] - Main.screenPosition + new Vector2(Projectile.width / 2, Projectile.height / 2) + new Vector2(18, 0).RotatedBy(Projectile.rotation);
-                float progress = (float)i / validPositions.Count;
-                Color DrawColor = new(208, 0, 255, 0);
-                Vertexlist.Add(new VertexPosition2DColorTexture(validpos / 2 - new Vector2(0, 12).RotatedBy(validRot[i]), DrawColor, new Vector2(progress, 0), 0));
-                Vertexlist.Add(new VertexPosition2DColorTexture(validpos / 2 + new Vector2(0, 12).RotatedBy(validRot[i]), DrawColor, new Vector2(progress, 1), 0));
-            }
-
-            List<VertexPosition2DColorTexture> SecondVertexlist = new List<VertexPosition2DColorTexture>();
-
-            for (int i = 0; i < validPositions.Count; i++)
-            {
-                Vector2 validpos = validPositions[i] - Main.screenPosition + new Vector2(Projectile.width / 2, Projectile.height / 2) + new Vector2(18, 0).RotatedBy(Projectile.rotation);
-                float progress = (float)i / validPositions.Count;
-                Color DrawColor = new(255, 255, 255, 0);
-                SecondVertexlist.Add(new VertexPosition2DColorTexture(validpos / 2 - new Vector2(0, 4).RotatedBy(validRot[i]), DrawColor, new Vector2(progress, 0), 0));
-                SecondVertexlist.Add(new VertexPosition2DColorTexture(validpos / 2 + new Vector2(0, 4).RotatedBy(validRot[i]), DrawColor, new Vector2(progress, 1), 0));
-            }
-
-            List<VertexPosition2DColorTexture> ThirdVertexlist = new List<VertexPosition2DColorTexture>();
-
-            for (int i = 0; i < validPositions.Count; i++)
-            {
-                Vector2 validpos = validPositions[i] - Main.screenPosition + new Vector2(Projectile.width / 2, Projectile.height / 2) + new Vector2(18, 0).RotatedBy(Projectile.rotation);
-                float progress = (float)i / validPositions.Count;
-                Color DrawColor = new(186, 50, 205, 0);
-                ThirdVertexlist.Add(new VertexPosition2DColorTexture(validpos / 2 - new Vector2(0, 20).RotatedBy(validRot[i]), DrawColor, new Vector2(progress, 0), 0));
-                ThirdVertexlist.Add(new VertexPosition2DColorTexture(validpos / 2 + new Vector2(0, 20).RotatedBy(validRot[i]), DrawColor, new Vector2(progress, 1), 0));
-            }
-
-            Main.graphics.GraphicsDevice.Textures[0] = ModContent.Request<Texture2D>($"UCA/Assets/LILES/Slash01").Value;
-            Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
-            Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, SecondVertexlist.ToArray(), 0, Vertexlist.Count - 2);
-            Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, Vertexlist.ToArray(), 0, Vertexlist.Count - 2);
-            Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, ThirdVertexlist.ToArray(), 0, Vertexlist.Count - 2);
-
-
+            Vector2 DrawTexPos = Projectile.Center - Main.screenPosition;
             Texture2D texture = ModContent.Request<Texture2D>("UCA/Content/Particiles/GlowBall").Value;
-            spriteBatch.Draw(texture, DrawPos / 2, null, new Color(0, 0, 0, 255), 0, texture.Size() / 2, Projectile.scale * 0.3f, SpriteEffects.None, 0);
-            spriteBatch.Draw(UCATextureRegister.BallSoft.Value, DrawPos / 2, null, new Color(148, 0, 255, 0), 0, UCATextureRegister.BallSoft.Size() / 2, Projectile.scale * 0.4f, SpriteEffects.None, 0);
-            spriteBatch.Draw(UCATextureRegister.Spirit.Value, DrawPos / 2, null, new Color(255, 255, 255, 0), DrawRot, UCATextureRegister.Spirit.Size() / 2, Projectile.scale * 0.2f, SpriteEffects.None, 0);
+            spriteBatch.Draw(texture, DrawTexPos / 2, null, new Color(0, 0, 0, 255), 0, texture.Size() / 2, Projectile.scale * 0.3f, SpriteEffects.None, 0);
+            spriteBatch.Draw(UCATextureRegister.BallSoft.Value, DrawTexPos / 2, null, new Color(148, 0, 255, 0), 0, UCATextureRegister.BallSoft.Size() / 2, Projectile.scale * 0.4f, SpriteEffects.None, 0);
+            spriteBatch.Draw(UCATextureRegister.Spirit.Value, DrawTexPos / 2, null, new Color(255, 255, 255, 0), DrawRot, UCATextureRegister.Spirit.Size() / 2, Projectile.scale * 0.2f, SpriteEffects.None, 0);
         }
 
         public override bool PreDraw(ref Color lightColor)

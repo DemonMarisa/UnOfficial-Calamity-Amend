@@ -14,6 +14,8 @@ namespace UCA.Assets.Effects
         public static Effect MetaballShader;
         public static Effect EdgeMeltsShader;
         public static Effect ColorShader;
+        public static Effect TerraRayVinesShader;
+        public static Effect TerrarRayLaser;
         public override void Load()
         {
             if (Main.dedServ)
@@ -32,6 +34,12 @@ namespace UCA.Assets.Effects
 
             ColorShader = LoadShader("ColorShader");
             RegisterMiscShader(ColorShader, "UCAColorPass", "ColorShader");
+
+            TerraRayVinesShader = LoadShader("TerraRayVinesShader");
+            RegisterMiscShader(TerraRayVinesShader, "UCATerraRayVinesPass", "TerraRayVinesShader");
+
+            TerrarRayLaser = LoadShader("TerrarRayLaser");
+            RegisterMiscShader(TerrarRayLaser, "UCATerrarRayLaserPass", "TerrarRayLaser");
         }
 
         public static void RegisterMiscShader(Effect shader, string passName, string registrationName)

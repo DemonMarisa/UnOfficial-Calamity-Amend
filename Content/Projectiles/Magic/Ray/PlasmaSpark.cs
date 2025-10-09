@@ -30,7 +30,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Projectile.tileCollide = true;
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 240;
-            Projectile.extraUpdates = 10;
+            Projectile.extraUpdates = 50;
         }
         public override void OnSpawn(IEntitySource source)
         {

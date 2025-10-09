@@ -9,3 +9,8 @@ CarnageRay: {
 		Press the [KEY] Key, consume 200 mana to Slash forward and releasing homein blood orb.
 		'''
 }
+
+TerraRay: {
+	DisplayName: Terra Ray
+	Tooltip: ""
+}

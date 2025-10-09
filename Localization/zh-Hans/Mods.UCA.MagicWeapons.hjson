@@ -10,3 +10,8 @@ CarnageRay: {
 		血珠的吸血无视吸血CD
 		'''
 }
+
+TerraRay: {
+	// DisplayName: Terra Ray
+	// Tooltip: ""
+}

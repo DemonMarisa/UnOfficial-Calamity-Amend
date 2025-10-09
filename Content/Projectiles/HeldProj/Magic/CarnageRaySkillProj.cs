@@ -9,7 +9,7 @@ using Terraria.DataStructures;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets;
-using UCA.Content.Items.Magic.Ray;
+using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Content.Paths;
@@ -166,7 +166,10 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             else if (!animationHelper.HasFinish[(int)AnimationState.Middle])
             {
                 if (animationHelper.AniProgress[(int)AnimationState.Middle] == 1)
+                {
+                    Projectile.UCA().OnceHitEffect = true;
                     SoundEngine.PlaySound(SoundsMenu.CarnageSwingBeign, Projectile.Center);
+                }
 
                 Projectile.extraUpdates = 10;
                 animationHelper.AniProgress[(int)AnimationState.Middle]++;
@@ -351,7 +354,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
 
             }
 
-            Owner.Calamity().GeneralScreenShakePower += 2;
+            if (Projectile.UCA().OnceHitEffect)
+                Owner.Calamity().GeneralScreenShakePower += 4;
 
             SoundEngine.PlaySound(SoundsMenu.CarnageSkillMeleeHit, Projectile.Center);
 

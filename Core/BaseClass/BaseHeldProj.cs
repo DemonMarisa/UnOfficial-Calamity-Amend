@@ -1,11 +1,6 @@
 ﻿using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -153,6 +148,11 @@ namespace UCA.Core.BaseClass
         }
         public virtual void MorePreDraw(ref Color lightColor)
         {
+        }
+
+        public override bool ShouldUpdatePosition()
+        {
+            return false;
         }
     }
 }

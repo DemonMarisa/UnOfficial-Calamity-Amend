@@ -14,6 +14,8 @@ namespace UCA.Assets
         public static Asset<Texture2D> SpreadLine { get; private set; }
         public static Asset<Texture2D> CarnageBackGround { get; private set; }
         public static Asset<Texture2D> CarnageStabs { get; private set; }
+        public static Asset<Texture2D> TerrarRayFlow { get; private set; }
+        public static Asset<Texture2D> Wood { get; private set; }
         public static void LoadExtraTextures()
         {
             Noise = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/Noise");
@@ -23,6 +25,8 @@ namespace UCA.Assets
             SpreadLine = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/SpreadLine");
             CarnageBackGround = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/Carnage");
             CarnageStabs = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/CarnageStabs");
+            TerrarRayFlow = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/TerraRayFlow");
+            Wood = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/Wood");
         }
         public static void UnLoadExtraTextures()
         {
@@ -33,6 +37,8 @@ namespace UCA.Assets
             SpreadLine = null;
             CarnageBackGround = null;
             CarnageStabs = null;
+            TerrarRayFlow = null;
+            Wood = null;
         }
     }
 }

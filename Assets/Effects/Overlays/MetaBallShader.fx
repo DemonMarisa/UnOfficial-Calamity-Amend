@@ -20,19 +20,6 @@ float uTime;
 // 描边颜色
 float4 edgeColor;
 
-// 输入一个UV的坐标，随后会将他转化为目标的像素坐标
-// 再将像素坐标转换为对应背景的UV坐标，最后模一个1
-float2 convertToScreenUV(float2 coords)// 转换为目标坐标
-{
-    // 转化为目标的像素坐标
-    float2 pixelPos = coords * renderTargetSize;
-    // 由于背景材质可能与目标大小不一样，所以需要转换为对应背景的UV坐标
-    float2 bgUV = pixelPos / bakcGroundSize;
-    // 模一个1限制到0-1之间
-    bgUV = frac(bgUV);
-    return bgUV;
-}
-
 float4 MetaBallFunction(float2 coords : TEXCOORD0) : COLOR0
 {
     // 根据材质与坐标指定的基础颜色

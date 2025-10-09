@@ -13,7 +13,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
-using UCA.Content.Items.Magic.Ray;
+using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Content.Paths;
@@ -158,6 +158,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
 
             if (UseDelay <= 0)
             {
+                Projectile.UCA().OnceHitEffect = true;
                 CanHit = true;
                 StabsFrame = 0;
                 UseDelay = 45;
@@ -290,31 +291,34 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            CanHit = false;
-            if (Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.HeldItem.mana * Owner.manaCost), true, false))
+            if (Projectile.UCA().OnceHitEffect)
             {
-                for (int i = 0; i < Main.rand.Next(5, 9); i++)
+                CanHit = false;
+                if (Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.HeldItem.mana * Owner.manaCost), true, false))
                 {
-                    Vector2 SpawnPos = Owner.Center + new Vector2(Main.rand.Next(300, 500), 0).RotatedByRandom(MathHelper.TwoPi);
-
-                    for (int j = 0; j < 10; j++)
+                    for (int i = 0; i < Main.rand.Next(5, 9); i++)
                     {
-                        new LilyLiquid(SpawnPos, Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0f, 1.2f) * -6f, Color.Red, 64, 0, 1, 1.5f).Spawn();
-                    }
-                    for (int x = 0; x < 5; x++)
-                    {
-                        new LilyLiquid(SpawnPos, Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0f, 1.2f) * -6f, Color.Black, 64, 0, 1, 1.5f).Spawn();
-                    }
+                        Vector2 SpawnPos = Owner.Center + new Vector2(Main.rand.Next(300, 500), 0).RotatedByRandom(MathHelper.TwoPi);
 
-                    int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), SpawnPos, Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * 3f, ModContent.ProjectileType<CarnageBall>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 1);
-                    Main.projectile[p].tileCollide = false;
+                        for (int j = 0; j < 10; j++)
+                        {
+                            new LilyLiquid(SpawnPos, Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0f, 1.2f) * -6f, Color.Red, 64, 0, 1, 1.5f).Spawn();
+                        }
+                        for (int x = 0; x < 5; x++)
+                        {
+                            new LilyLiquid(SpawnPos, Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0f, 1.2f) * -6f, Color.Black, 64, 0, 1, 1.5f).Spawn();
+                        }
+
+                        int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), SpawnPos, Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * 3f, ModContent.ProjectileType<CarnageBall>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 1);
+                        Main.projectile[p].tileCollide = false;
+                    }
                 }
-            }
-            
-            for (int i = 0; i < 15; i++)
-            {
-                Vector2 spawnVec = Projectile.velocity.RotateRandom(0.3f) * Main.rand.NextFloat(0.1f, 1.6f) * 24f;
-                CarnageMetaBall.SpawnParticle(Projectile.Center, spawnVec, Main.rand.NextFloat(0.4f, 0.6f), 0, true);
+
+                for (int i = 0; i < 15; i++)
+                {
+                    Vector2 spawnVec = Projectile.velocity.RotateRandom(0.3f) * Main.rand.NextFloat(0.1f, 1.6f) * 24f;
+                    CarnageMetaBall.SpawnParticle(Projectile.Center, spawnVec, Main.rand.NextFloat(0.4f, 0.6f), 0, true);
+                }
             }
 
             target.AddBuff(ModContent.BuffType<BurningBlood>(), 600);

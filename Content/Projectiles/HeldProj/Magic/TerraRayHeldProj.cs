@@ -51,9 +51,13 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             animationHelper.MaxAniProgress[AnimationState.Begin] = 15;
         }
 
+        public override bool StillInUse()
+        {
+            return Active && !UCAUtilities.JustPressRightClick();
+        }
+
         public override void HoldoutAI()
         {
-            Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Owner.GetPlayerToMouseVector2().ToRotation() - MathHelper.PiOver2);
             if (UseDelay <= 0 && Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.HeldItem.mana * Owner.manaCost), true, false))
             {
                 SoundEngine.PlaySound(SoundsMenu.PlasmaRodAttack, Projectile.Center);
@@ -67,29 +71,10 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             SoundEngine.PlaySound(SoundID.Item91, Projectile.Center);
             Vector2 FireOffset = new Vector2(54, 0).RotatedBy(Projectile.rotation);
             GenStar(Projectile.Center + FireOffset, MathHelper.PiOver2 + Projectile.rotation);
-            #region 生成环形粒子
-            for (int i = 0; i < 30; i++)
-            {
-                float offset = MathHelper.TwoPi / 30;
-                Color RandomColor = Color.Lerp(Color.LightGreen, Color.ForestGreen, Main.rand.NextFloat(0, 1));
-                Vector2 firVel = Vector2.UnitX.BetterRotatedBy(offset * i,default, 0.75f, 1f);
-                new MediumGlowBall(Projectile.Center + FireOffset, firVel.RotatedBy(Projectile.rotation) * 1.5f, RandomColor, 60, 0, 1, 0.2f, 0).Spawn();
-            }
-            #endregion
-            #region 生成蝴蝶
-            for (int i = 0; i < 6; i++)
-            {
-                float offset = MathHelper.TwoPi / 6;
-                Color RandomColor = Color.Lerp(Color.LightGreen, Color.ForestGreen, Main.rand.NextFloat(0, 1));
-                Vector2 firVel = Vector2.UnitX.RotatedBy(offset * i).RotatedByRandom(0.3f);
-                new Butterfly(Projectile.Center + FireOffset, firVel * Main.rand.NextFloat(0.3f, 0.9f), RandomColor, 120, 0, 1, 0.2f, Main.rand.NextFloat(0.3f, 1.4f)).Spawn();
-            }
-            #endregion
             #region 生成伴随主弹幕的树
             Vector2 firVec = Projectile.velocity * 3f;
             Vector2 ProjFireOffset = new Vector2(24, 0).RotatedBy(Projectile.rotation);
             Vector2 firPos = Projectile.Center + ProjFireOffset;
-            
             for (int i = 0; i < 2; i++)
             {
                 float XScale = Main.rand.NextFloat(2, 5);
@@ -104,12 +89,13 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
                 new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.SaddleBrown, 0, DrawLayer.AfterDust, XScale2, -1, Height2).Spawn();
             }
             #endregion
+
             // 生成弹幕
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + ProjFireOffset, firVec * 0.0001f, ModContent.ProjectileType<TerraLaser>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
             // 后坐力
             Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.1f;
         }
-        public static void GenStar(Vector2 pos, float rotoffset, float Xmult = 0.8f)
+        public void GenStar(Vector2 pos, float rotoffset, float Xmult = 0.8f)
         {
             // 控制属性分别是：多少个点，生成步进，生成位置
             int PointCount = 9;
@@ -162,6 +148,24 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
                 Color color = Main.rand.NextBool() ? Color.DarkGreen : Color.SaddleBrown;
                 new TerraTree(firPos, firVec * Main.rand.NextFloat(0.3f, 0.6f), color, 0, DrawLayer.BeforeDust, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
             }
+            #region 生成环形粒子
+            for (int i = 0; i < 30; i++)
+            {
+                float offset = MathHelper.TwoPi / 30;
+                Color RandomColor = Color.Lerp(Color.LightGreen, Color.ForestGreen, Main.rand.NextFloat(0, 1));
+                Vector2 firVel = Vector2.UnitX.BetterRotatedBy(offset * i, default, 0.75f, 1f);
+                new MediumGlowBall(firPos, firVel.RotatedBy(Projectile.rotation) * 1.5f, RandomColor, 60, 0, 1, 0.2f, 0).Spawn();
+            }
+            #endregion
+            #region 生成蝴蝶
+            for (int i = 0; i < 6; i++)
+            {
+                float offset = MathHelper.TwoPi / 6;
+                Color RandomColor = Color.Lerp(Color.LightGreen, Color.ForestGreen, Main.rand.NextFloat(0, 1));
+                Vector2 firVel = Vector2.UnitX.RotatedBy(offset * i).RotatedByRandom(0.3f);
+                new Butterfly(firPos, firVel * Main.rand.NextFloat(0.3f, 0.9f), RandomColor, 120, 0, 1, 0.2f, Main.rand.NextFloat(0.3f, 1.4f)).Spawn();
+            }
+            #endregion
         }
         public override void PostAI()
         {
@@ -190,7 +194,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
 
         public override bool CanDel()
         {
-            return base.CanDel() && Opacity > 0.68f;
+            return base.CanDel() && !UCAUtilities.JustPressRightClick();
         }
         public override void OnKill(int timeLeft)
         {

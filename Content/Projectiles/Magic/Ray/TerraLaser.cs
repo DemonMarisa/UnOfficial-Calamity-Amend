@@ -3,12 +3,12 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
 using UCA.Content.DrawNodes;
 using UCA.Content.Particiles;
-using UCA.Content.Projectiles.HeldProj.Magic;
 using UCA.Core.BaseClass;
 using UCA.Core.Graphics;
 using UCA.Core.Graphics.Primitives.Trail;
@@ -24,6 +24,11 @@ namespace UCA.Content.Projectiles.Magic.Ray
         public float Opacity = 0f;
         public int MaxLife = 75;
         public int AniProgress = 0;
+        public List<Vector2> FirePos = [];
+        public override void SetStaticDefaults()
+        {
+            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 4400;
+        }
         public override void SetDefaults()
         {
             Projectile.width = 24;
@@ -77,12 +82,12 @@ namespace UCA.Content.Projectiles.Magic.Ray
             #region 当全部出现后发射的粒子
             if (Projectile.ai[0] == 0 && AniProgress > 125)
             {
-                for (int i = 0; i < OldPos.Count; i += 2)
+                for (int i = 0; i < OldPos.Count; i += 5)
                 {
                     Color RandomColor = Color.Lerp(Color.LightGreen, Color.Green, Main.rand.NextFloat(0, 1));
                     new MediumGlowBall(OldPos[i], -Projectile.velocity, RandomColor, 180, 0, 1, 0.12f, Main.rand.NextFloat(1f, 1.4f)).Spawn();
                 }
-                for (int i = 0; i < OldPos.Count; i += 12)
+                for (int i = 0; i < OldPos.Count; i += 20)
                 {
                     Color RandomColor = Color.Lerp(Color.Pink, Color.Green, Main.rand.NextFloat(0, 1));
                     new Petal(OldPos[i], -Vector2.UnitY * 12f, RandomColor, 360, 0, 1, 0.1f, Main.rand.NextFloat(1f, 1.4f)).Spawn();
@@ -90,28 +95,56 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 Projectile.ai[0]++;
             }
             #endregion
+            #region 发射弹幕
+            ShootLaser();
+
+            if (Projectile.timeLeft == 45)
+                ShootLance();
+            #endregion
+        }
+        #region 发射长矛
+        public void ShootLance()
+        {
+            for (int i = 0; i < FirePos.Count; i++)
+            {
+                NPC npc = Projectile.FindClosestTarget(2000, true);
+                GenStar(FirePos[i], MathHelper.PiOver2 + Projectile.rotation, 1);
+                if (npc != null)
+                {
+                    float DistanceToNPC = Vector2.Distance(FirePos[i], npc.Center);
+                    float PredictMult = DistanceToNPC / 45;
+                    Vector2 ToNPCVel = (npc.Center - FirePos[i] + npc.velocity * PredictMult).SafeNormalize(Projectile.rotation.ToRotationVector2());
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), FirePos[i], ToNPCVel * Main.rand.NextFloat(8, 10), ModContent.ProjectileType<TerraLance>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                }
+            }
+        }
+        #endregion
+        #region 发射激光
+        public void ShootLaser()
+        {
             int MaxGenProj = 6;
             if (Projectile.ai[1] < MaxGenProj && Projectile.timeLeft % 4 == 0)
             {
-                NPC npc = Projectile.FindClosestTarget(1500, true);
-                Vector2 genPos = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitX) * 340f * (Projectile.ai[1]);
+                Vector2 genPos = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitX) * 350f * (Projectile.ai[1]);
+                if (Projectile.ai[1] == 0)
+                    genPos = Projectile.Center + new Vector2(30, 0).RotatedBy(Projectile.rotation);
+                NPC npc = Projectile.FindClosestTarget(1500, genPos, true);
                 if (npc is not null)
                 {
                     float DistanceToNPC = Vector2.Distance(genPos, npc.Center);
-                    float PredictMult = DistanceToNPC / 48;
-                    Vector2 direction = (npc.Center - genPos).SafeNormalize(Vector2.Zero) * 6;
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), genPos, direction, ModContent.ProjectileType<TerraEnergy>(), Projectile.damage / 2, Projectile.knockBack, Projectile.owner, 0);
+                    float PredictMult = DistanceToNPC / 60;
+                    Vector2 direction = (npc.Center + npc.velocity * PredictMult - genPos).SafeNormalize(Vector2.Zero) * 12;
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), genPos, direction, ModContent.ProjectileType<TerraEnergy>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
                 }
-                else
-                {
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), genPos, Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2 * (Main.rand.NextBool() ? 1 : -1)),
-                        ModContent.ProjectileType<TerraEnergy>(), Projectile.damage / 2, Projectile.knockBack, Projectile.owner, 0);
-                }
+                FirePos.Add(genPos);
                 if (Projectile.ai[1] != 0)
-                GenStar(genPos, 0, 1f);
+                    GenStar(genPos, 0, 1f);
+
                 Projectile.ai[1]++;
             }
         }
+        #endregion
+        #region 生成星星
         public static void GenStar(Vector2 pos, float rotoffset, float Xmult = 0.8f)
         {
             // 控制属性分别是：多少个点，生成步进，生成位置
@@ -180,9 +213,38 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 new MediumGlowBall(firPos, firVel * 1.5f, RandomColor, 60, 0, 1, 0.2f, 0).Spawn();
             }
         }
-
+        #endregion
         public override void OnKill(int timeLeft)
         {
+        }
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            // 生成枝条
+            Vector2 firPos = target.Center;
+            for (int i = 0; i < 6; i++)
+            {
+                float rot = MathHelper.TwoPi / 6;
+                float XScale = Main.rand.NextFloat(9, 12);
+                float Height = Main.rand.NextFloat(4f, 6f);
+
+                Vector2 firVec = Vector2.UnitX.RotatedBy(rot * i);
+                Color color = Main.rand.NextBool() ? Color.DarkGreen : Color.SaddleBrown;
+                new TerraTree(firPos, firVec * Main.rand.NextFloat(0.3f, 0.6f), color, 0, DrawLayer.BeforeDust, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
+            }
+            for (int i = 0; i < 3; i++)
+            {
+                float offset = MathHelper.TwoPi / 6;
+                Color RandomColor = Color.Lerp(Color.LightGreen, Color.ForestGreen, Main.rand.NextFloat(0, 1));
+                Vector2 firVel = Vector2.UnitX.RotatedBy(offset * i).RotatedByRandom(0.3f);
+                new Butterfly(firPos, firVel * Main.rand.NextFloat(0.3f, 0.9f), RandomColor, 120, 0, 1, 0.2f, Main.rand.NextFloat(0.3f, 1.4f)).Spawn();
+            }
+            for (int i = 0; i < 10; i++)
+            {
+                float offset = MathHelper.TwoPi / 10;
+                Color RandomColor = Color.Lerp(Color.LightGreen, Color.ForestGreen, Main.rand.NextFloat(0, 1));
+                Vector2 firVel = Vector2.UnitX.BetterRotatedBy(offset * i, default, 0.75f, 1f);
+                new MediumGlowBall(firPos, firVel * 1.5f, RandomColor, 60, 0, 1, 0.2f, 0).Spawn();
+            }
         }
         public override bool PreDraw(ref Color lightColor)
         {
@@ -224,7 +286,6 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
-
         }
     }
 }

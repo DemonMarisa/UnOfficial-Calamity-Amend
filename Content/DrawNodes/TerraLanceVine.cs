@@ -3,43 +3,31 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
 using UCA.Core.Graphics;
 using UCA.Core.Graphics.DrawNode;
 using UCA.Core.Graphics.Primitives.Trail;
+using UCA.Core.Utilities;
 
 namespace UCA.Content.DrawNodes
 {
-    public class TerraTree : DrawNode
+    public class TerraLanceVine : DrawNode
     {
-        public TerraTree(Vector2 position, Vector2 velocity, Color color, float Rot, DrawLayer layer)
+        public TerraLanceVine(Vector2 position, Vector2 velocity, Color color, DrawLayer layer, int lifetime, float Xscale, int filp, float height)
         {
             Position = position;
             Velocity = velocity;
             DrawColor = color;
-            Rotation = Rot;
-            Layer = layer;
-
-            XScale = Main.rand.NextFloat(2, 5);
-            Filp = Main.rand.NextBool() ? 1 : -1;
-            Height = Main.rand.NextFloat(9, 18f);
-        }
-
-        public TerraTree(Vector2 position, Vector2 velocity, Color color, float Rot, DrawLayer layer, float Xscale, int filp, float height)
-        {
-            Position = position;
-            Velocity = velocity;
-            DrawColor = color;
-            Rotation = Rot;
             Filp = filp;
             Layer = layer;
+            Lifetime = lifetime;
 
             XScale = Xscale;
             Filp = filp;
             Height = height;
         }
-
         public List<Vector2> OldPos = [];
         public List<float> OldRot = [];
         public Vector2 oldDustPos;
@@ -48,27 +36,19 @@ namespace UCA.Content.DrawNodes
         public float XScale;
         public int Filp;
         public float Height;
-        public bool CanAdd = true;
+        public bool BeginFadeOut = false;
 
-        public int TotalPoint = 90;
-        public override void OnSpawn()
-        {
-            Lifetime = 360;
-            ExtraUpdate = 4;
-            Opacity = 1f;
-        }
+        public int TotalPoint = 40;
+        public int FadeIn = 0;
+
+        public bool firstFrame = true;
         public override void Update()
         {
-            if (!CanAdd)
+            if (firstFrame)
             {
-                Opacity = MathHelper.Lerp(Opacity, 1f, 0.01f);
-                return;
+                ExtraUpdate = 5;
+                firstFrame = false;
             }
-
-            Opacity = MathHelper.Lerp(Opacity, 0.2f, 0.08f);
-
-            if (Time > TotalPoint)
-                CanAdd = false;
 
             oldDustPos = DustPos;
             // 设置弹幕旋转
@@ -92,6 +72,12 @@ namespace UCA.Content.DrawNodes
             // 记录
             OldPos.Add(DustPos);
             OldRot.Add(rot);
+
+            if (OldPos.Count > TotalPoint)
+                OldPos.RemoveAt(0);
+
+            if (OldRot.Count > TotalPoint)
+                OldRot.RemoveAt(0);
         }
         public override void Draw(SpriteBatch sb)
         {
@@ -99,7 +85,7 @@ namespace UCA.Content.DrawNodes
             sb.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
-           
+
             UCAShaderRegister.TerraRayVinesShader.Parameters["progress"].SetValue(Opacity);
             UCAShaderRegister.TerraRayVinesShader.Parameters["InPutTextureSize"].SetValue(new Vector2(1024, 1024));
             UCAShaderRegister.TerraRayVinesShader.Parameters["EdgeColor"].SetValue(DrawColor.ToVector4());
@@ -111,12 +97,12 @@ namespace UCA.Content.DrawNodes
             for (int i = 0; i < OldPos.Count; i++)
             {
                 // 淡入
-                float YScale = i / 10f;
+                float YScale = i / 15f;
                 // 淡出
-                if (i > OldPos.Count - 10f)
+                if (i > OldPos.Count - 15f)
                 {
                     fadeOut++;
-                    YScale = 1 - (fadeOut / 10f);
+                    YScale = 1 - (fadeOut / 15f);
                 }
                 if (YScale > 1)
                     YScale = 1;

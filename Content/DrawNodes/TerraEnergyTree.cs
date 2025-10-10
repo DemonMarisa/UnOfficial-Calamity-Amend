@@ -8,36 +8,24 @@ using UCA.Assets.Effects;
 using UCA.Core.Graphics;
 using UCA.Core.Graphics.DrawNode;
 using UCA.Core.Graphics.Primitives.Trail;
+using static Terraria.GameContent.Animations.IL_Actions.Sprites;
 
 namespace UCA.Content.DrawNodes
 {
-    public class TerraTree : DrawNode
+    public class TerraEnergyTree : DrawNode
     {
-        public TerraTree(Vector2 position, Vector2 velocity, Color color, float Rot, DrawLayer layer)
+        public TerraEnergyTree(Vector2 position, Vector2 velocity, Color color,int life, float Xscale, int filp, float height)
         {
             Position = position;
             Velocity = velocity;
             DrawColor = color;
-            Rotation = Rot;
-            Layer = layer;
-
-            XScale = Main.rand.NextFloat(2, 5);
-            Filp = Main.rand.NextBool() ? 1 : -1;
-            Height = Main.rand.NextFloat(9, 18f);
-        }
-
-        public TerraTree(Vector2 position, Vector2 velocity, Color color, float Rot, DrawLayer layer, float Xscale, int filp, float height)
-        {
-            Position = position;
-            Velocity = velocity;
-            DrawColor = color;
-            Rotation = Rot;
-            Filp = filp;
-            Layer = layer;
 
             XScale = Xscale;
             Filp = filp;
             Height = height;
+
+            Lifetime = life;
+            Opacity = 1f;
         }
 
         public List<Vector2> OldPos = [];
@@ -49,23 +37,22 @@ namespace UCA.Content.DrawNodes
         public int Filp;
         public float Height;
         public bool CanAdd = true;
-
-        public int TotalPoint = 90;
+        public int Father;
+        public int TotalPoint = 120;
         public override void OnSpawn()
         {
-            Lifetime = 360;
-            ExtraUpdate = 4;
+            Lifetime = 480;
             Opacity = 1f;
         }
         public override void Update()
         {
             if (!CanAdd)
             {
-                Opacity = MathHelper.Lerp(Opacity, 1f, 0.01f);
+                Opacity = MathHelper.Lerp(Opacity, 1f, 0.005f);
                 return;
             }
 
-            Opacity = MathHelper.Lerp(Opacity, 0.2f, 0.08f);
+            Opacity = MathHelper.Lerp(Opacity, 0.2f, 0.01f);
 
             if (Time > TotalPoint)
                 CanAdd = false;
@@ -128,9 +115,6 @@ namespace UCA.Content.DrawNodes
             }
             Main.graphics.GraphicsDevice.Textures[0] = UCATextureRegister.Wood.Value;
             Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, Vertexlist.ToArray(), 0, Vertexlist.Count - 2);
-
-            sb.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null);
         }
     }
 }

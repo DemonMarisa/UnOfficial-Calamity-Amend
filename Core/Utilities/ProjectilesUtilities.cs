@@ -63,7 +63,48 @@ namespace UCA.Core.Utilities
             //返回这个NPC实例
             return acceptableTarget;
         }
+        public static NPC FindClosestTarget(this Projectile p, float maxDist, Vector2 center, bool bossFirst = false, bool ignoreTiles = true, bool arrayFirst = false)
+        {
+            //bro我真的要遍历整个NPC吗？
+            float distStoraged = maxDist;
+            NPC tryGetBoss = null;
+            NPC acceptableTarget = null;
+            bool alreadyGetBoss = false;
+            foreach (NPC npc in Main.ActiveNPCs)
+            {
+                float exDist = npc.width + npc.height;
 
+                //单位不可被追踪 或者 超出索敌距离则continue
+                if (Vector2.Distance(center, npc.Center) > distStoraged + exDist)
+                    continue;
+
+                if (!npc.active || npc.friendly || npc.lifeMax < 5 || !npc.CanBeChasedBy(p.Center, false))
+                    continue;
+
+                //补: 如果优先搜索Boss单位, 且附近至少有一个。我们直接存储这个Boss单位
+                //已经获取到的会被标记，使其不会再跑一遍搜索.
+                if (npc.boss && bossFirst && !alreadyGetBoss)
+                {
+                    tryGetBoss = npc;
+                    alreadyGetBoss = true;
+                }
+
+                //搜索符合条件的敌人, 准备返回这个NPC实例
+                float curNpcDist = Vector2.Distance(npc.Center, center);
+                if (curNpcDist < distStoraged && (ignoreTiles || Collision.CanHit(center, 1, 1, npc.Center, 1, 1)))
+                {
+                    distStoraged = curNpcDist;
+                    acceptableTarget = npc;
+                    if (tryGetBoss != null & bossFirst)
+                        acceptableTarget = tryGetBoss;
+                    //如果是数组优先，直接在这返回实例
+                    if (arrayFirst)
+                        return acceptableTarget;
+                }
+            }
+            //返回这个NPC实例
+            return acceptableTarget;
+        }
         public static float PostModeBoostProjDamage(float damage)
         {
             float realDamage = damage * 2;
@@ -122,6 +163,11 @@ namespace UCA.Core.Utilities
             }
             //设定速度
             proj.velocity = velo;
+        }
+
+        public static Vector2 HalfProjectile(this Projectile proj)
+        {
+            return new Vector2(proj.width / 2, proj.height / 2);
         }
     }
 }

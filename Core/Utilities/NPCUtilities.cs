@@ -1,6 +1,5 @@
-﻿
-using Terraria;
-using UCA.Core.GlobalInstance.NPC;
+﻿using Terraria;
+using UCA.Core.GlobalInstance.NPCs;
 using UCA.Core.GlobalInstance.Players;
 
 namespace UCA.Core.Utilities

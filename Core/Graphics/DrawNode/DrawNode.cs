@@ -39,7 +39,7 @@ namespace UCA.Core.Graphics.DrawNode
         /// 0表示节点刚生成，1表示节点消失。
         /// </summary>
         public float LifetimeRatio => Time / (float)Lifetime;
-        public DrawLayer Layer;
+        public DrawLayer Layer = DrawLayer.BeforeDust;
         /// <summary>
         /// 在世界内生成粒子
         /// </summary>

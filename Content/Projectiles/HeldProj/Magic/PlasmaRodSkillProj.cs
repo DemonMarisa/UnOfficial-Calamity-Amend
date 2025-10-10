@@ -96,10 +96,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             Projectile.velocity = Projectile.rotation.ToRotationVector2();
             Projectile.timeLeft = 2;
 
-            if (Projectile.owner == Main.myPlayer)
-            {
-                AllAI();
-            }
+            AllAI();
 
             Projectile.netUpdate = true;
         }
@@ -175,18 +172,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
                 new Fire(BeginPos, Projectile.velocity.RotatedBy(MathHelper.PiOver2), Color.Violet, 64, Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.2f).Spawn();
                 new Fire(BeginPos, Projectile.velocity.RotatedBy(MathHelper.PiOver2), Color.DarkViolet, 64, Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.1f).Spawn();
             }
-        }
-
-        public void FireProj()
-        {
-            Vector2 FireOffset = new Vector2(54, 0).RotatedBy(BeginRot);
-            for (int i = 0; i < 35; i++)
-            {
-                float offset = MathHelper.TwoPi / 35;
-                Color RandomColor = Color.Lerp(Color.DarkViolet, Color.LightPink, Main.rand.NextFloat(0, 1));
-                new MediumGlowBall(Projectile.Center + FireOffset, Projectile.velocity.RotatedBy(offset * i), RandomColor, 60, 0, 1, 0.2f, Main.rand.NextFloat(2f, 2.2f)).Spawn();
-            }
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + FireOffset, BeginRot.ToRotationVector2() * 2f, ModContent.ProjectileType<PlasmaPrimarySpark>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
         }
 
         public void RenderPixelatedPrimitives(SpriteBatch spriteBatch, PixelationPrimitiveLayer layer)

@@ -75,21 +75,24 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             Vector2 firVec = Projectile.velocity * 3f;
             Vector2 ProjFireOffset = new Vector2(24, 0).RotatedBy(Projectile.rotation);
             Vector2 firPos = Projectile.Center + ProjFireOffset;
+            
             for (int i = 0; i < 2; i++)
             {
-                float XScale = Main.rand.NextFloat(2, 5);
-                float Height = Main.rand.NextFloat(9, 18f);
-
-                new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.ForestGreen, 0, DrawLayer.BeforeDust, XScale, 1, Height).Spawn();
-                new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.LightGreen, 0, DrawLayer.AfterDust, XScale, -1, Height).Spawn();
-
-                float XScale2 = Main.rand.NextFloat(3, 6);
-                float Height2 = Main.rand.NextFloat(11, 22);
-                new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.DarkGreen, 0, DrawLayer.BeforeDust, XScale2, 1, Height2).Spawn();
-                new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.SaddleBrown, 0, DrawLayer.AfterDust, XScale2, -1, Height2).Spawn();
+                new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.DarkGreen, 0, DrawLayer.AfterDust, Main.rand.NextFloat(2, 5), -1, Main.rand.NextFloat(9, 18f)).Spawn();
+                new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.ForestGreen, 0, DrawLayer.AfterDust, Main.rand.NextFloat(3, 6), 1, Main.rand.NextFloat(11, 22)).Spawn();
+                new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.LightGreen, 0, DrawLayer.AfterDust, Main.rand.NextFloat(2, 5), -1, Main.rand.NextFloat(9, 18f)).Spawn();
+                new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.SaddleBrown, 0, DrawLayer.AfterDust, Main.rand.NextFloat(3, 6), 1, Main.rand.NextFloat(11, 22)).Spawn();
             }
             #endregion
-
+            
+            for (int i = 0; i < 2; i++)
+            {
+                Vector2 firePos = -Projectile.velocity.RotateRandom(MathHelper.PiOver4) * Main.rand.Next(250, 350);
+                Vector2 firvel = Owner.GetPlayerToMouseVector2();
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + firePos, firvel * 9, ModContent.ProjectileType<TerraLance>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                GenStar(Projectile.Center + firePos, MathHelper.PiOver2 + Projectile.rotation);
+            }
+            
             // 生成弹幕
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + ProjFireOffset, firVec * 0.0001f, ModContent.ProjectileType<TerraLaser>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
             // 后坐力
@@ -99,7 +102,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
         {
             // 控制属性分别是：多少个点，生成步进，生成位置
             int PointCount = 9;
-            int GenStep = 20;
+            int GenStep = 5;
             float OutSidePoint = 50f;
             float InSidePoint = 35f;
             float RotOffset = rotoffset;
@@ -158,9 +161,9 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             }
             #endregion
             #region 生成蝴蝶
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 3; i++)
             {
-                float offset = MathHelper.TwoPi / 6;
+                float offset = MathHelper.TwoPi / 3;
                 Color RandomColor = Color.Lerp(Color.LightGreen, Color.ForestGreen, Main.rand.NextFloat(0, 1));
                 Vector2 firVel = Vector2.UnitX.RotatedBy(offset * i).RotatedByRandom(0.3f);
                 new Butterfly(firPos, firVel * Main.rand.NextFloat(0.3f, 0.9f), RandomColor, 120, 0, 1, 0.2f, Main.rand.NextFloat(0.3f, 1.4f)).Spawn();
@@ -194,7 +197,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
 
         public override bool CanDel()
         {
-            return base.CanDel() && !UCAUtilities.JustPressRightClick();
+            return UseDelay <= 0 && !UCAUtilities.JustPressLeftClick();
         }
         public override void OnKill(int timeLeft)
         {

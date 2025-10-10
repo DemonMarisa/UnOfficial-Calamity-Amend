@@ -25,6 +25,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         public int MaxLife = 75;
         public int AniProgress = 0;
         public List<Vector2> FirePos = [];
+        public int HitCount = 0;
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 4400;
@@ -40,7 +41,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 10 * (Projectile.extraUpdates + 1);
+            Projectile.localNPCHitCooldown = 20 * (Projectile.extraUpdates + 1);
         }
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
@@ -97,7 +98,6 @@ namespace UCA.Content.Projectiles.Magic.Ray
             #endregion
             #region 发射弹幕
             ShootLaser();
-
             if (Projectile.timeLeft == 45)
                 ShootLance();
             #endregion
@@ -137,6 +137,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), genPos, direction, ModContent.ProjectileType<TerraEnergy>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
                 }
                 FirePos.Add(genPos);
+
                 if (Projectile.ai[1] != 0)
                     GenStar(genPos, 0, 1f);
 
@@ -149,7 +150,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             // 控制属性分别是：多少个点，生成步进，生成位置
             int PointCount = 9;
-            int GenStep = 10;
+            int GenStep = 5;
             float OutSidePoint = 50f;
             float InSidePoint = 35f;
             float RotOffset = rotoffset;
@@ -187,10 +188,12 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 }
             }
             // 生成枝条
+            
             Vector2 firPos = pos;
-            for (int i = 0; i < 6; i++)
+            
+            for (int i = 0; i < 5; i++)
             {
-                float rot = MathHelper.TwoPi / 6;
+                float rot = MathHelper.TwoPi / 5;
                 float XScale = Main.rand.NextFloat(9, 12);
                 float Height = Main.rand.NextFloat(4f, 6f);
 
@@ -198,19 +201,16 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 Color color = Main.rand.NextBool() ? Color.DarkGreen : Color.SaddleBrown;
                 new TerraTree(firPos, firVec * Main.rand.NextFloat(0.3f, 0.6f), color, 0, DrawLayer.BeforeDust, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
             }
-            for (int i = 0; i < 3; i++)
+            
+            for (int i = 0; i < 2; i++)
             {
-                float offset = MathHelper.TwoPi / 6;
                 Color RandomColor = Color.Lerp(Color.LightGreen, Color.ForestGreen, Main.rand.NextFloat(0, 1));
-                Vector2 firVel = Vector2.UnitX.RotatedBy(offset * i).RotatedByRandom(0.3f);
-                new Butterfly(firPos, firVel * Main.rand.NextFloat(0.3f, 0.9f), RandomColor, 120, 0, 1, 0.2f, Main.rand.NextFloat(0.3f, 1.4f)).Spawn();
+                new Butterfly(firPos, Vector2.Zero, RandomColor, 120, 0, 1, 0.2f, Main.rand.NextFloat(0.3f, 1.4f)).Spawn();
             }
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 5; i++)
             {
-                float offset = MathHelper.TwoPi / 10;
                 Color RandomColor = Color.Lerp(Color.LightGreen, Color.ForestGreen, Main.rand.NextFloat(0, 1));
-                Vector2 firVel = Vector2.UnitX.BetterRotatedBy(offset * i, default, 0.75f, 1f);
-                new MediumGlowBall(firPos, firVel * 1.5f, RandomColor, 60, 0, 1, 0.2f, 0).Spawn();
+                new MediumGlowBall(firPos, Vector2.Zero, RandomColor, 60, 0, 1, 0.2f, 0).Spawn();
             }
         }
         #endregion
@@ -219,31 +219,30 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
+            if (HitCount > 3)
+                return;
+            HitCount++;
             // 生成枝条
             Vector2 firPos = target.Center;
-            for (int i = 0; i < 6; i++)
-            {
-                float rot = MathHelper.TwoPi / 6;
-                float XScale = Main.rand.NextFloat(9, 12);
-                float Height = Main.rand.NextFloat(4f, 6f);
-
-                Vector2 firVec = Vector2.UnitX.RotatedBy(rot * i);
-                Color color = Main.rand.NextBool() ? Color.DarkGreen : Color.SaddleBrown;
-                new TerraTree(firPos, firVec * Main.rand.NextFloat(0.3f, 0.6f), color, 0, DrawLayer.BeforeDust, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
-            }
             for (int i = 0; i < 3; i++)
             {
-                float offset = MathHelper.TwoPi / 6;
+                float rot = MathHelper.TwoPi / 3;
+                float XScale = Main.rand.NextFloat(9, 12);
+                float Height = Main.rand.NextFloat(4f, 9f);
+
+                Vector2 firVec = Vector2.UnitX.RotatedBy(rot * i).RotatedByRandom(MathHelper.TwoPi);
+                Color color = Main.rand.NextBool() ? Color.ForestGreen : Color.SaddleBrown;
+                new TerraTree(firPos, firVec * Main.rand.NextFloat(0.8f, 1.4f), color, 0, DrawLayer.BeforeDust, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
+            }
+            for (int i = 0; i < 2; i++)
+            {
                 Color RandomColor = Color.Lerp(Color.LightGreen, Color.ForestGreen, Main.rand.NextFloat(0, 1));
-                Vector2 firVel = Vector2.UnitX.RotatedBy(offset * i).RotatedByRandom(0.3f);
-                new Butterfly(firPos, firVel * Main.rand.NextFloat(0.3f, 0.9f), RandomColor, 120, 0, 1, 0.2f, Main.rand.NextFloat(0.3f, 1.4f)).Spawn();
+                new Butterfly(firPos, Vector2.Zero, RandomColor, 120, 0, 1, 0.2f, Main.rand.NextFloat(0.3f, 1.4f)).Spawn();
             }
             for (int i = 0; i < 10; i++)
             {
-                float offset = MathHelper.TwoPi / 10;
                 Color RandomColor = Color.Lerp(Color.LightGreen, Color.ForestGreen, Main.rand.NextFloat(0, 1));
-                Vector2 firVel = Vector2.UnitX.BetterRotatedBy(offset * i, default, 0.75f, 1f);
-                new MediumGlowBall(firPos, firVel * 1.5f, RandomColor, 60, 0, 1, 0.2f, 0).Spawn();
+                new MediumGlowBall(firPos, Vector2.Zero, RandomColor, 60, 0, 1, 0.2f, Main.rand.NextFloat(3f, 4f)).Spawn();
             }
         }
         public override bool PreDraw(ref Color lightColor)

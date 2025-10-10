@@ -5,10 +5,8 @@ using System.Collections.Generic;
 using Terraria;
 using UCA.Assets;
 using UCA.Assets.Effects;
-using UCA.Core.Graphics;
 using UCA.Core.Graphics.DrawNode;
 using UCA.Core.Graphics.Primitives.Trail;
-using static Terraria.GameContent.Animations.IL_Actions.Sprites;
 
 namespace UCA.Content.DrawNodes
 {
@@ -38,7 +36,7 @@ namespace UCA.Content.DrawNodes
         public float Height;
         public bool CanAdd = true;
         public int Father;
-        public int TotalPoint = 120;
+        public int TotalPoint = 110;
         public override void OnSpawn()
         {
             Lifetime = 480;
@@ -48,11 +46,13 @@ namespace UCA.Content.DrawNodes
         {
             if (!CanAdd)
             {
-                Opacity = MathHelper.Lerp(Opacity, 1f, 0.005f);
+                Opacity = MathHelper.Lerp(Opacity, 1f, 0.03f);
+                if (Opacity > 0.95f)
+                    Time = Lifetime;
                 return;
             }
 
-            Opacity = MathHelper.Lerp(Opacity, 0.2f, 0.01f);
+            Opacity = MathHelper.Lerp(Opacity, 0f, 0.03f);
 
             if (Time > TotalPoint)
                 CanAdd = false;
@@ -82,11 +82,12 @@ namespace UCA.Content.DrawNodes
         }
         public override void Draw(SpriteBatch sb)
         {
-            sb.End();
-            sb.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.graphics.GraphicsDevice.Textures[0] = UCATextureRegister.Wood.Value;
+            Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
+
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
-           
+
             UCAShaderRegister.TerraRayVinesShader.Parameters["progress"].SetValue(Opacity);
             UCAShaderRegister.TerraRayVinesShader.Parameters["InPutTextureSize"].SetValue(new Vector2(1024, 1024));
             UCAShaderRegister.TerraRayVinesShader.Parameters["EdgeColor"].SetValue(DrawColor.ToVector4());
@@ -113,7 +114,7 @@ namespace UCA.Content.DrawNodes
                 Vertexlist.Add(new VertexPositionColorTexture2D(DrawPos - new Vector2(0, 3 * YScale).RotatedBy(OldRot[i]), DrawColor, new Vector3(progress, 0, 0)));
                 Vertexlist.Add(new VertexPositionColorTexture2D(DrawPos + new Vector2(0, 3 * YScale).RotatedBy(OldRot[i]), DrawColor, new Vector3(progress, 1, 0)));
             }
-            Main.graphics.GraphicsDevice.Textures[0] = UCATextureRegister.Wood.Value;
+
             Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, Vertexlist.ToArray(), 0, Vertexlist.Count - 2);
         }
     }

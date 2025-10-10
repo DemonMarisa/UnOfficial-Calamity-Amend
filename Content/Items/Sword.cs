@@ -47,6 +47,19 @@ namespace UCA.Content.Items
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
+            #region 生成伴随主弹幕的树
+            Vector2 firVec = velocity;
+            Vector2 ProjFireOffset = new Vector2(24, 0).RotatedBy(0);
+            Vector2 firPos = player.Center + ProjFireOffset;
+
+            for (int i = 0; i < 2; i++)
+            {
+                new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.DarkGreen, 0, DrawLayer.AfterDust, Main.rand.NextFloat(2, 5), -1, Main.rand.NextFloat(9, 18f)).Spawn();
+                new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.ForestGreen, 0, DrawLayer.AfterDust, Main.rand.NextFloat(3, 6), 1, Main.rand.NextFloat(11, 22)).Spawn();
+                new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.LightGreen, 0, DrawLayer.AfterDust, Main.rand.NextFloat(2, 5), -1, Main.rand.NextFloat(9, 18f)).Spawn();
+                new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.SaddleBrown, 0, DrawLayer.AfterDust, Main.rand.NextFloat(3, 6), 1, Main.rand.NextFloat(11, 22)).Spawn();
+            }
+            #endregion
             Projectile.NewProjectile(source, position, velocity * 2f, ModContent.ProjectileType<TerraLance>(), damage, knockback, player.whoAmI);
             return false;
         }

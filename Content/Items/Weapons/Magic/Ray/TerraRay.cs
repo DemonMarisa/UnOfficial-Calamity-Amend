@@ -56,8 +56,8 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
         {
             if (player.altFunctionUse == 2)
             {
-                if (player.ownedProjectileCounts[ModContent.ProjectileType<CarnageRayHeldProjMelee>()] < 1)
-                    Projectile.NewProjectileDirect(source, position, velocity, ModContent.ProjectileType<CarnageRayHeldProjMelee>(), damage, knockback, player.whoAmI);
+                if (player.ownedProjectileCounts[ModContent.ProjectileType<TerraRayHeldProjSpecial>()] < 1)
+                    Projectile.NewProjectileDirect(source, position, velocity, ModContent.ProjectileType<TerraRayHeldProjSpecial>(), damage, knockback, player.whoAmI);
             }
             else
             {

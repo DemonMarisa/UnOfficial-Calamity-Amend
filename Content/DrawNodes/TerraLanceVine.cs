@@ -38,7 +38,7 @@ namespace UCA.Content.DrawNodes
         public float Height;
         public bool BeginFadeOut = false;
 
-        public int TotalPoint = 40;
+        public int TotalPoint = 35;
         public int FadeIn = 0;
 
         public bool firstFrame = true;
@@ -81,8 +81,6 @@ namespace UCA.Content.DrawNodes
         }
         public override void Draw(SpriteBatch sb)
         {
-            sb.End();
-            sb.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
 
@@ -114,9 +112,6 @@ namespace UCA.Content.DrawNodes
             }
             Main.graphics.GraphicsDevice.Textures[0] = UCATextureRegister.Wood.Value;
             Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, Vertexlist.ToArray(), 0, Vertexlist.Count - 2);
-
-            sb.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null);
         }
     }
 }

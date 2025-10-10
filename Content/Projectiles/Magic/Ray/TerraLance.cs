@@ -137,9 +137,8 @@ namespace UCA.Content.Projectiles.Magic.Ray
             {
                 for (int i = 0; i < 5; i++)
                 {
-                    float rot = MathHelper.TwoPi / 5;
                     Color RandomColor = Color.Lerp(Color.LightGreen, Color.Green, Main.rand.NextFloat(0, 1));
-                    new MediumGlowBall(Projectile.Center, Vector2.UnitX.RotatedBy(rot * i), RandomColor, 180, 0, 1, 0.12f, Main.rand.NextFloat(0.5f, 0.7f)).Spawn();
+                    new MediumGlowBall(Projectile.Center, Vector2.Zero, RandomColor, 180, 0, 1, 0.12f, Main.rand.NextFloat(0.5f, 0.7f)).Spawn();
                 }
             }
         }
@@ -159,14 +158,14 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override bool PreDraw(ref Color lightColor)
         {
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+
             for (int i = 0; i < Vine.Count; i++)
             {
                 Vine[i].Draw(Main.spriteBatch);
             }
-            
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
-
+           
             DrawLaser(Color.DarkGreen, 1.2f);
             DrawLaser(Color.LightGreen, 0.8f);
             DrawLaser(Color.White, 0.2f);

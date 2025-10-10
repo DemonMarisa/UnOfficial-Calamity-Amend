@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CalamityMod.Graphics.Primitives;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using UCA.Assets.Effects;
 using UCA.Core.Graphics;
 using UCA.Core.Graphics.DrawNode;
 using UCA.Core.Graphics.Primitives.Trail;
+using UCA.Core.Utilities;
 
 namespace UCA.Content.DrawNodes
 {
@@ -39,7 +41,6 @@ namespace UCA.Content.DrawNodes
             Filp = filp;
             Height = height;
         }
-
         public List<Vector2> OldPos = [];
         public List<float> OldRot = [];
         public Vector2 oldDustPos;
@@ -74,7 +75,7 @@ namespace UCA.Content.DrawNodes
             // 设置弹幕旋转
             Rotation = Velocity.ToRotation();
             // 半径的缩放
-            float radiusScale = MathHelper.Lerp(0f, 1f, Utils.GetLerpValue(0f, 10f, Time, true));
+            float radiusScale = MathHelper.Lerp(0f, 1f, Utils.GetLerpValue(0f, 5f, Time, true));
             // X向量，为了和外部速度联动这样写
             float standVector2X = Velocity.Length();
             // Y向量偏移
@@ -96,19 +97,22 @@ namespace UCA.Content.DrawNodes
         public override void Draw(SpriteBatch sb)
         {
             sb.End();
-            sb.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            sb.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.graphics.GraphicsDevice.Textures[0] = UCATextureRegister.Wood.Value;
+            Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
+
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
-           
+
             UCAShaderRegister.TerraRayVinesShader.Parameters["progress"].SetValue(Opacity);
             UCAShaderRegister.TerraRayVinesShader.Parameters["InPutTextureSize"].SetValue(new Vector2(1024, 1024));
             UCAShaderRegister.TerraRayVinesShader.Parameters["EdgeColor"].SetValue(DrawColor.ToVector4());
             UCAShaderRegister.TerraRayVinesShader.Parameters["EdgeWidth"].SetValue(0.2f);
             UCAShaderRegister.TerraRayVinesShader.CurrentTechnique.Passes[0].Apply();
-
+            
             List<VertexPositionColorTexture2D> Vertexlist = new List<VertexPositionColorTexture2D>();
             float fadeOut = 0;
-            for (int i = 0; i < OldPos.Count; i++)
+            for (int i = 0; i < OldPos.Count; i += 2)
             {
                 // 淡入
                 float YScale = i / 10f;
@@ -126,11 +130,11 @@ namespace UCA.Content.DrawNodes
                 Vertexlist.Add(new VertexPositionColorTexture2D(DrawPos - new Vector2(0, 3 * YScale).RotatedBy(OldRot[i]), DrawColor, new Vector3(progress, 0, 0)));
                 Vertexlist.Add(new VertexPositionColorTexture2D(DrawPos + new Vector2(0, 3 * YScale).RotatedBy(OldRot[i]), DrawColor, new Vector3(progress, 1, 0)));
             }
-            Main.graphics.GraphicsDevice.Textures[0] = UCATextureRegister.Wood.Value;
+
             Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, Vertexlist.ToArray(), 0, Vertexlist.Count - 2);
 
             sb.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null);
+            sb.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
         }
     }
 }

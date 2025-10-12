@@ -81,13 +81,15 @@ namespace UCA.Content.Projectiles.Magic.Ray
             if (inToFadeOut)
             {
                 Opacity = MathHelper.Lerp(Opacity, 0f, 0.01f);
+                if (Opacity < 0.05f)
+                    Projectile.Kill();
                 Projectile.velocity *= 0.8f;
                 Projectile.damage = 0;
             }
             else
             {
                 #region 发射粒子
-                if (Projectile.timeLeft % 15 == 0)
+                if (Projectile.timeLeft % 25 == 0)
                 {
                     Color RandomColor = Color.Lerp(Color.LightGreen, Color.Green, Main.rand.NextFloat(0, 1));
                     new MediumGlowBall(Projectile.Center, -Projectile.velocity, RandomColor, 180, 0, 1, 0.12f, Main.rand.NextFloat(0.5f, 0.7f)).Spawn();

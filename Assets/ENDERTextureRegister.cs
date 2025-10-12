@@ -1,6 +1,8 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using CalamityMod.Projectiles.Melee;
+using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria.ModLoader;
+using UCA.Content.Particiles;
 
 namespace UCA.Assets
 {
@@ -14,6 +16,10 @@ namespace UCA.Assets
         public static Asset<Texture2D> BallSoft { get; private set; }
         public static Asset<Texture2D> Slash01 { get; private set; }
         public static Asset<Texture2D> Ring04 { get; private set; }
+        public static Asset<Texture2D> Butterfly { get; private set; }
+        public static Asset<Texture2D> Petal { get; private set; }
+        public static Asset<Texture2D> Tornado { get; private set; }
+        public static Asset<Texture2D> Mowa11 { get; private set; }
         #endregion
         #region 来自马格诺利亚的
         public static string CollectableLightPath = "UCA/Assets/MAGNOLIA/CollectableLight";
@@ -33,6 +39,10 @@ namespace UCA.Assets
             BallSoft = ModContent.Request<Texture2D>($"UCA/Assets/LILES/BallSoft");
             Slash01 = ModContent.Request<Texture2D>($"UCA/Assets/LILES/Slash01");
             Ring04 = ModContent.Request<Texture2D>($"UCA/Assets/LILES/Ring04");
+            Butterfly = ModContent.Request<Texture2D>($"UCA/Assets/LILES/Butterfly");
+            Petal = ModContent.Request<Texture2D>($"UCA/Assets/LILES/Petal");
+            Tornado = ModContent.Request<Texture2D>($"UCA/Assets/LILES/Tornado");
+            Mowa11 = ModContent.Request<Texture2D>($"UCA/Assets/LILES/Mowa11");
 
             CollectableLight = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/CollectableLight");
             BladeM = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/BladeM");
@@ -49,6 +59,9 @@ namespace UCA.Assets
             Spirit = null;
             BallSoft = null;
             Slash01 = null;
+            Butterfly = null;
+            Petal = null;
+            Tornado = null;
 
             CollectableLight = null;
             BladeM = null;

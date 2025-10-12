@@ -99,7 +99,7 @@ namespace UCA.Content.ItemOverride.Magic
                     }
                     float kb = player.GetWeaponKnockback(item);
                     int Damage = player.GetWeaponDamage(item);
-                    Projectile.NewProjectileDirect(player.GetSource_FromThis(), player.Center, Vector2.Zero, ModContent.ProjectileType<PlasmaRodSkillProj>(), Damage * 5, kb, player.whoAmI, PlasmaRodFilp);
+                    Projectile.NewProjectileDirect(player.GetSource_FromThis(), player.Center, Vector2.Zero, ModContent.ProjectileType<PlasmaRodSkillProj>(), Damage * 10, kb, player.whoAmI, PlasmaRodFilp);
                 }
             }
         }

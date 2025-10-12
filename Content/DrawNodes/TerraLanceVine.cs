@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CalamityMod.Graphics.Primitives;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,9 @@ namespace UCA.Content.DrawNodes
             Filp = filp;
             Height = height;
         }
+        public DynamicVertexBuffer VertexBuffer;
+        public short VerticesIndex;
+
         public List<Vector2> OldPos = [];
         public List<float> OldRot = [];
         public Vector2 oldDustPos;
@@ -38,7 +42,7 @@ namespace UCA.Content.DrawNodes
         public float Height;
         public bool BeginFadeOut = false;
 
-        public int TotalPoint = 35;
+        public int TotalPoint = 15;
         public int FadeIn = 0;
 
         public bool firstFrame = true;
@@ -49,42 +53,50 @@ namespace UCA.Content.DrawNodes
                 ExtraUpdate = 5;
                 firstFrame = false;
             }
+            if (Time % 2 == 0)
+            {
+                oldDustPos = DustPos;
+                // 设置弹幕旋转
+                Rotation = Velocity.ToRotation();
+                // 半径的缩放
+                float radiusScale = MathHelper.Lerp(0f, 1f, Utils.GetLerpValue(0f, 10f, Time, true));
+                // X向量，为了和外部速度联动这样写
+                float standVector2X = Velocity.Length();
+                // Y向量偏移
+                float standVector2Y = (float)(Math.Sin(Time / XScale) * Height * radiusScale * Filp);
+                // 应用第二个Sin偏移，来造成噪波的效果
+                standVector2Y = (float)(standVector2Y + Math.Cos(Time) * Height / 10);
+                // 最终应用偏移
+                Vector2 PreAddVector = new(standVector2X, standVector2Y);
+                // 根据弹幕旋转，将固定向右转换为向量的旋转
+                PreAddVector = PreAddVector.RotatedBy(Rotation);
+                // 最终粒子的点
+                DustPos = Position + PreAddVector;
+                // 转向上一个点
+                float rot = (oldDustPos - DustPos).ToRotation();
+                // 记录
+                OldPos.Add(DustPos);
+                OldRot.Add(rot);
 
-            oldDustPos = DustPos;
-            // 设置弹幕旋转
-            Rotation = Velocity.ToRotation();
-            // 半径的缩放
-            float radiusScale = MathHelper.Lerp(0f, 1f, Utils.GetLerpValue(0f, 10f, Time, true));
-            // X向量，为了和外部速度联动这样写
-            float standVector2X = Velocity.Length();
-            // Y向量偏移
-            float standVector2Y = (float)(Math.Sin(Time / XScale) * Height * radiusScale * Filp);
-            // 应用第二个Sin偏移，来造成噪波的效果
-            standVector2Y = (float)(standVector2Y + Math.Cos(Time) * Height / 10);
-            // 最终应用偏移
-            Vector2 PreAddVector = new(standVector2X, standVector2Y);
-            // 根据弹幕旋转，将固定向右转换为向量的旋转
-            PreAddVector = PreAddVector.RotatedBy(Rotation);
-            // 最终粒子的点
-            DustPos = Position + PreAddVector;
-            // 转向上一个点
-            float rot = (oldDustPos - DustPos).ToRotation();
-            // 记录
-            OldPos.Add(DustPos);
-            OldRot.Add(rot);
+                if (OldPos.Count > TotalPoint)
+                    OldPos.RemoveAt(0);
 
-            if (OldPos.Count > TotalPoint)
-                OldPos.RemoveAt(0);
-
-            if (OldRot.Count > TotalPoint)
-                OldRot.RemoveAt(0);
+                if (OldRot.Count > TotalPoint)
+                    OldRot.RemoveAt(0);
+            }
         }
         public override void Draw(SpriteBatch sb)
         {
+            if (firstFrame)
+                return;
+
+            Main.graphics.GraphicsDevice.Textures[0] = UCATextureRegister.Wood.Value;
+            Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
+
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
 
-            UCAShaderRegister.TerraRayVinesShader.Parameters["progress"].SetValue(Opacity);
+            UCAShaderRegister.TerraRayVinesShader.Parameters["progress"].SetValue(0.4f);
             UCAShaderRegister.TerraRayVinesShader.Parameters["InPutTextureSize"].SetValue(new Vector2(1024, 1024));
             UCAShaderRegister.TerraRayVinesShader.Parameters["EdgeColor"].SetValue(DrawColor.ToVector4());
             UCAShaderRegister.TerraRayVinesShader.Parameters["EdgeWidth"].SetValue(0.2f);
@@ -110,8 +122,9 @@ namespace UCA.Content.DrawNodes
                 Vertexlist.Add(new VertexPositionColorTexture2D(DrawPos - new Vector2(0, 3 * YScale).RotatedBy(OldRot[i]), DrawColor, new Vector3(progress, 0, 0)));
                 Vertexlist.Add(new VertexPositionColorTexture2D(DrawPos + new Vector2(0, 3 * YScale).RotatedBy(OldRot[i]), DrawColor, new Vector3(progress, 1, 0)));
             }
+            VertexPositionColorTexture2D[] VertexArray = Vertexlist.ToArray();
             Main.graphics.GraphicsDevice.Textures[0] = UCATextureRegister.Wood.Value;
-            Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, Vertexlist.ToArray(), 0, Vertexlist.Count - 2);
+            Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, VertexArray, 0, Vertexlist.Count - 2);
         }
     }
 }

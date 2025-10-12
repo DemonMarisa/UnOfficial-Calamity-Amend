@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Terraria;
+using UCA.Assets;
 using UCA.Core.ParticleSystem;
 using UCA.Core.Utilities;
 
@@ -53,6 +54,11 @@ namespace UCA.Content.Particiles
             {
                 Velocity = Velocity.RotatedBy(0.03f);
             }
+        }
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            Texture2D texture = UCATextureRegister.GlowBall.Value;
+            spriteBatch.Draw(texture, Position - Main.screenPosition, null, DrawColor * Opacity, Rotation, texture.Size() / 2, Scale, SpriteEffects.None, 0);
         }
     }
 }

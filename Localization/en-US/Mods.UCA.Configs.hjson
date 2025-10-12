@@ -7,7 +7,12 @@ UCAConfig: {
 	}
 
 	UCATurnoffCorner: {
-		Label: U C A Turnoff Corner
+		Label: Turn On Corner
+		Tooltip: All modified weapons will have a corner mark indicating the change.
+	}
+
+	ScreenShakeStrength: {
+		Label: Screen Shake Strength Percentage
 		Tooltip: ""
 	}
 }

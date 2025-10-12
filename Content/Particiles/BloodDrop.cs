@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.ModLoader;
+using UCA.Assets;
 using UCA.Core.ParticleSystem;
 
 namespace UCA.Content.Particiles
@@ -56,7 +57,7 @@ namespace UCA.Content.Particiles
         public override void Draw(SpriteBatch spriteBatch)
         {
             float brightness = (float)Math.Pow(Lighting.Brightness((int)(Position.X / 16f), (int)(Position.Y / 16f)), 0.15);
-            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+            Texture2D texture = UCATextureRegister.BloodDrop.Value;
 
             spriteBatch.Draw(texture, Position - Main.screenPosition, null, DrawColor * brightness, Rotation, texture.Size() / 2, Scale, 0, 0f);
         }

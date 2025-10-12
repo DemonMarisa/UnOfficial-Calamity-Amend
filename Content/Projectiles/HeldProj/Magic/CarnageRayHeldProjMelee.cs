@@ -19,6 +19,7 @@ using UCA.Content.Particiles;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
 using UCA.Core.BaseClass;
+using UCA.Core.SpecificEffectManagers;
 using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic

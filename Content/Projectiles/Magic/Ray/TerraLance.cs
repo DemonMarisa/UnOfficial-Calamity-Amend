@@ -31,9 +31,8 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             // 保存旧朝向与旧位置
             ProjectileID.Sets.TrailingMode[Type] = 2;
-            // 一共爆粗35个数据
-            ProjectileID.Sets.TrailCacheLength[Type] = 35;
-            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 4400;
+            // 一共保存25个数据
+            ProjectileID.Sets.TrailCacheLength[Type] = 25;
         }
         public override void SetDefaults()
         {
@@ -47,20 +46,6 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Projectile.penetrate = -1;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 10 * (Projectile.extraUpdates + 1);
-        }
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-        {
-            if (Opacity < 0.1f)
-                return false;
-
-            if (projHitbox.Intersects(targetHitbox))
-            {
-                return true;
-            }
-            float _ = float.NaN;
-            Vector2 beamEndPos = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.Zero) * -LaserLength * 0.1f;
-            bool c = Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center, beamEndPos, 24f, ref _);
-            return c;
         }
 
         public override void OnSpawn(IEntitySource source)
@@ -97,7 +82,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 Vine[i].Time++;
                 Vine[i].Position = Projectile.Center;
                 Vine[i].Velocity = Projectile.velocity;
-                Vine[i].Opacity = Opacity;
+
                 if (Vine[i].Time >= Vine[i].Lifetime)
                 {
                     Vine[i].OnKill();
@@ -109,18 +94,15 @@ namespace UCA.Content.Projectiles.Magic.Ray
         #region 记录所有点的长度
         public void CatchLength()
         {
+            if (UCAUtilities.OutOffScreen(Projectile.Center))
+                return;
             AvailableOldPos.Clear();
-            float TotalLength = 0;
             for (int i = 0; i < Projectile.oldPos.Length; i++)
             {
                 if (Projectile.oldPos[i] != Vector2.Zero)
                     AvailableOldPos.Add(Projectile.oldPos[i] + Projectile.HalfProjectile());
             }
-            for (int i = 0; i < AvailableOldPos.Count - 1; i++)
-            {
-                TotalLength = (AvailableOldPos[i + 1] - AvailableOldPos[i]).Length();
-            }
-            LaserLength = TotalLength * 100;
+            LaserLength = Projectile.velocity.Length() * 25;
         }
         #endregion
         #region 淡入淡出
@@ -128,13 +110,15 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             if (Projectile.timeLeft > MaxLife / 2)
             {
-                Opacity = MathHelper.Lerp(Opacity, 1f, 0.01f);
+                Opacity = MathHelper.Lerp(Opacity, 1f, 0.1f);
             }
             else
-                Opacity = MathHelper.Lerp(Opacity, 0f, 0.025f);
+                Opacity = MathHelper.Lerp(Opacity, 0f, 0.1f);
 
             if (Projectile.timeLeft == 60 && CanFadeOut)
             {
+                if (UCAUtilities.OutOffScreen(Projectile.Center))
+                    return;
                 for (int i = 0; i < 5; i++)
                 {
                     Color RandomColor = Color.Lerp(Color.LightGreen, Color.Green, Main.rand.NextFloat(0, 1));
@@ -145,11 +129,15 @@ namespace UCA.Content.Projectiles.Magic.Ray
         #endregion
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
+            if (!CanFadeOut)
+                Projectile.timeLeft = 120;
             CanFadeOut = true;
-            Projectile.timeLeft = 120;
         }
         public override void OnKill(int timeLeft)
         {
+            if (UCAUtilities.OutOffScreen(Projectile.Center))
+                return;
+
             if (Main.rand.NextBool(3))
             {
                 Color RandomColor2 = Color.Lerp(Color.Pink, Color.Green, Main.rand.NextFloat(0, 1));
@@ -158,6 +146,9 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override bool PreDraw(ref Color lightColor)
         {
+            if (UCAUtilities.OutOffScreen(Projectile.Center))
+                return false;
+
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
 
@@ -166,10 +157,10 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 Vine[i].Draw(Main.spriteBatch);
             }
            
-            DrawLaser(Color.DarkGreen, 1.2f);
-            DrawLaser(Color.LightGreen, 0.8f);
+            DrawLaser(Color.DarkGreen, 0.8f);
+            DrawLaser(Color.LightGreen, 0.4f);
             DrawLaser(Color.White, 0.2f);
-
+            
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
             

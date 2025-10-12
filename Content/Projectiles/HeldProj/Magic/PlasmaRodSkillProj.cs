@@ -15,6 +15,7 @@ using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
 using UCA.Core.AnimationHandle;
 using UCA.Core.Enums;
+using UCA.Core.SpecificEffectManagers;
 using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic
@@ -229,6 +230,10 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             target.AddBuff(BuffID.ShadowFlame, 300);
 
             SoundEngine.PlaySound(SoundsMenu.PlasmaRodSwingHit, Projectile.Center);
+
+
+            if (Projectile.UCA().OnceHitEffect)
+                ScreenShakeSystem.AddScreenShakes(Projectile.Center, 2, 5, Projectile.rotation + MathHelper.PiOver2, 0.2f, true, 1000);
         }
 
         public override void OnKill(int timeLeft)

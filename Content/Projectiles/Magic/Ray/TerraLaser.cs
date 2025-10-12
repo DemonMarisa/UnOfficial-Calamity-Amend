@@ -63,8 +63,6 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             LaserLength = (int)MathHelper.Lerp(LaserLength, 2000, 0.2f);
             Projectile.rotation = Projectile.velocity.ToRotation();
-            // 重置表单
-            OldPos.Clear();
             #region 透明度
             if (Projectile.timeLeft > MaxLife / 2)
                 Opacity = MathHelper.Lerp(Opacity, 1f, 0.2f);
@@ -72,12 +70,17 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 Opacity = MathHelper.Lerp(Opacity, 0f, 0.15f);
             #endregion
             #region 保存位置进度
-            // 这样写可以不是瞬间出现
+            // 重置表单
             if (AniProgress < 130)
-                AniProgress += 130 / 15;
-            for (int i = 0; i < AniProgress; i++)
             {
-                OldPos.Add(Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitX) * i * 13);
+                OldPos.Clear();
+                // 这样写可以不是瞬间出现
+                if (AniProgress < 130)
+                    AniProgress += 130 / 15;
+                for (int i = 0; i < AniProgress; i++)
+                {
+                    OldPos.Add(Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitX) * i * 13);
+                }
             }
             #endregion
             #region 当全部出现后发射的粒子
@@ -98,8 +101,10 @@ namespace UCA.Content.Projectiles.Magic.Ray
             #endregion
             #region 发射弹幕
             ShootLaser();
+
             if (Projectile.timeLeft == 45)
                 ShootLance();
+
             #endregion
         }
         #region 发射长矛
@@ -107,7 +112,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             for (int i = 0; i < FirePos.Count; i++)
             {
-                NPC npc = Projectile.FindClosestTarget(2000, true);
+                NPC npc = Projectile.FindClosestTarget(1500, true);
                 GenStar(FirePos[i], MathHelper.PiOver2 + Projectile.rotation, 1);
                 if (npc != null)
                 {
@@ -214,9 +219,6 @@ namespace UCA.Content.Projectiles.Magic.Ray
             }
         }
         #endregion
-        public override void OnKill(int timeLeft)
-        {
-        }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (HitCount > 3)
@@ -247,17 +249,20 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override bool PreDraw(ref Color lightColor)
         {
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+
             DrawLaser(Color.Green, 1.2f);
             DrawLaser(Color.LimeGreen, 1f);
             DrawLaser(Color.White, 0.2f);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
             return false;
         }
 
         public void DrawLaser(Color Color, float heightmult)
         {
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
-
             float TextureHeight = UCATextureRegister.TerrarRayFlow.Height();
 
             float laserLength = LaserLength;
@@ -272,6 +277,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Main.graphics.GraphicsDevice.Textures[0] = UCATextureRegister.TerrarRayFlow.Value;
             Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
+
             List<VertexPositionColorTexture2D> Vertexlist = new List<VertexPositionColorTexture2D>();
             for (int i = 0; i < OldPos.Count; i++)
             {
@@ -282,9 +288,6 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 Vertexlist.Add(new VertexPositionColorTexture2D(DrawPos + new Vector2(0, -36 * heightmult).RotatedBy(Projectile.rotation), Color.White, new Vector3(progress, 1, 0)));
             }
             Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, Vertexlist.ToArray(), 0, Vertexlist.Count - 2);
-
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
         }
     }
 }

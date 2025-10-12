@@ -17,6 +17,7 @@ using UCA.Content.Projectiles.Magic.Ray;
 using UCA.Content.UCACooldowns;
 using UCA.Core.AnimationHandle;
 using UCA.Core.Enums;
+using UCA.Core.SpecificEffectManagers;
 using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic
@@ -38,6 +39,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
         public int HitBoxLength = 0;
 
         public bool Canhit = false;
+        public int RotFilp = 1;
         public override void SetDefaults()
         {
             Projectile.width = 5;
@@ -161,7 +163,10 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
                 HandleBeginAni();
 
                 if (animationHelper.AniProgress[(int)AnimationState.Begin] == animationHelper.MaxAniProgress[(int)AnimationState.Begin])
+                {
+                    RotFilp = -1;
                     animationHelper.HasFinish[(int)AnimationState.Begin] = true;
+                }
             }
             else if (!animationHelper.HasFinish[(int)AnimationState.Middle])
             {
@@ -178,7 +183,9 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
 
                 // 提前几帧在速度未消失前进入下一个动画
                 if (animationHelper.AniProgress[(int)AnimationState.Middle] == animationHelper.MaxAniProgress[(int)AnimationState.Middle])
+                {
                     animationHelper.HasFinish[(int)AnimationState.Middle] = true;
+                }
             }
             else if (!animationHelper.HasFinish[(int)AnimationState.End])
             {
@@ -347,15 +354,15 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
 
             for (int i = 0; i < 10; i++)
             {
-                Vector2 SpawnVector = ToMouseVector.RotatedByRandom(MathHelper.PiOver4) * Main.rand.NextFloat(0f, 1.2f) * 24f;
+                Vector2 SpawnVector = ToMouseVector.RotatedByRandom(MathHelper.PiOver4) * Main.rand.NextFloat(0f, 1.2f) * 36f;
                 CarnageMetaBall.SpawnParticle(target.Center,
                     SpawnVector, 
-                    1f, SpawnVector.ToRotation());
+                    1.5f, SpawnVector.ToRotation());
 
             }
 
             if (Projectile.UCA().OnceHitEffect)
-                Owner.Calamity().GeneralScreenShakePower += 4;
+                ScreenShakeSystem.AddScreenShakes(Projectile.Center, 35 * RotFilp * - Owner.direction, 15, Projectile.rotation + MathHelper.PiOver2, 0.5f, true , 1000);
 
             SoundEngine.PlaySound(SoundsMenu.CarnageSkillMeleeHit, Projectile.Center);
 

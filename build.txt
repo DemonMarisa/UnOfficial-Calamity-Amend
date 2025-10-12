@@ -1,6 +1,6 @@
 displayName = UnOfficial Calamity Amend
 author = DemonMarisa
-version = 0.6
+version = 0.8
 hideCode = false
 hideResources = false
 modReferences = CalamityMod

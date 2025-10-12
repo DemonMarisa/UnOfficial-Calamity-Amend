@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Microsoft.CodeAnalysis.Differencing;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -103,6 +104,44 @@ namespace UCA.Core.Utilities
                 }
             }
             //返回这个NPC实例
+            return acceptableTarget;
+        }
+
+        public static NPC FindClosestNPCExceptSpecific(Vector2 center, float maxDistance, List<NPC> noUseTarget, bool ignoreTiles = true)
+        {
+            NPC acceptableTarget = null;
+            float shortestDistance = maxDistance;
+
+            // Main.npc 数组比 Main.ActiveNPCs 更安全，因为它不会在迭代时被修改，并且包含所有NPC实例。
+            // 我们需要检查 npc.active 来确保只处理活跃的NPC。
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                NPC npc = Main.npc[i];
+                // 基础筛选条件：必须是活跃的、非友好的、可以被追逐的NPC
+                if (npc == null || !npc.active || npc.friendly || !npc.CanBeChasedBy())
+                    continue;
+                // 使用 .Contains() 方法可以简洁高效地完成这个判断。
+                // 如果 noUseTarget 为 null 或为空，这个检查也会安全地跳过。
+                if (noUseTarget != null && noUseTarget.Contains(npc))
+                    continue;
+                // 距离筛选
+                float distanceToNPC = Vector2.Distance(center, npc.Center);
+                // 稍微放宽一点初始距离检查，以考虑到NPC的体积
+                float effectiveMaxDistance = maxDistance + (npc.width + npc.height) / 4f;
+                if (distanceToNPC > effectiveMaxDistance)
+                    continue;
+                // 最终筛选：必须比已找到的目标更近，并且满足视线条件
+                if (distanceToNPC < shortestDistance)
+                {
+                    // 检查视线（如果需要）
+                    if (ignoreTiles || Collision.CanHitLine(center, 1, 1, npc.Center, 1, 1))
+                    {
+                        shortestDistance = distanceToNPC;
+                        acceptableTarget = npc;
+                    }
+                }
+            }
+
             return acceptableTarget;
         }
         public static float PostModeBoostProjDamage(float damage)

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Terraria;
 using Terraria.ModLoader;
+using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Projectiles.HeldProj;
 
 namespace UCA.Core.GlobalInstance.Players
@@ -19,6 +20,12 @@ namespace UCA.Core.GlobalInstance.Players
         public static int NightShieldMaxHP = 400;
         public int NightShieldHP = 400;
         public bool NightShieldCanDefense = true;
+
+        public static int MaxTerraRayRestore = 3;
+        public int TerraRayRestore = 3;
+        public bool TerraRestore = false;
+        public static int TerraRayChargeCD = 2700;
+        public int TerraRayCharge = 0;
         public override void ResetEffects()
         {
             if (NightShieldHP > NightShieldMaxHP)
@@ -35,13 +42,31 @@ namespace UCA.Core.GlobalInstance.Players
             if (NightShieldHP <= 0)
                 NightShieldCanDefense = false;
 
+            if (TerraRayRestore > MaxTerraRayRestore)
+                TerraRayRestore = MaxTerraRayRestore;
+
+            if (TerraRayRestore < 0)
+                TerraRayRestore = 0;
+
+            if (TerraRayRestore < MaxTerraRayRestore && TerraRayCharge < TerraRayChargeCD)
+            {
+                TerraRayCharge++;
+            }
+            if (TerraRayCharge >= TerraRayChargeCD)
+            {
+                TerraRayCharge = 0;
+                TerraRayRestore++;
+            }
             ExternalDR = 0;
         }
-
+        public override void PostUpdateEquips()
+        {
+        }
         public override void PostUpdateMiscEffects()
         {
             AddNightBoost();
             AddCarnageBoost();
+            AddTerraBoost();
         }
 
         public override void PostUpdate()
@@ -49,6 +74,11 @@ namespace UCA.Core.GlobalInstance.Players
             // 在最后一帧重置，这样就可以延迟一帧取到效果
             HeldNightShield = false;
             WeakHeldNightShield = false;
+            if (TerraRestore)
+            {
+                Player.Heal(Player.statLifeMax2 / 4);
+                TerraRestore = false;
+            }
         }
     }
 }

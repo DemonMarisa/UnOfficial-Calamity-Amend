@@ -80,5 +80,20 @@ namespace UCA.Core.Utilities
             Main.instance.GraphicsDevice.RasterizerState = rasterizerState;
         }
 
+        public static bool OutOffScreen(Vector2 pos)
+        {
+            if (pos.X < Main.screenPosition.X - Main.screenWidth / 2)
+                return true;
+            
+            if (pos.Y < Main.screenPosition.Y - Main.screenHeight / 2)
+                return true;
+            
+            if (pos.X > Main.screenPosition.X + Main.screenWidth * 1.5f)
+                return true;
+            if (pos.Y > Main.screenPosition.Y + Main.screenHeight * 1.5f)
+                return true;
+            
+            return false;
+        }
     }
 }

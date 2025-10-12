@@ -2,9 +2,11 @@ NightEnergy.DisplayName: 暗影能量
 CarnageEnergy.DisplayName: 死亡能量
 CarnageBall.DisplayName: 沸腾之血
 PlasmaSpark.DisplayName: 等离子火花
-PlasmaPrimarySpark.DisplayName: 暗影炎爆弹
-PlasmaBlast.DisplayName: 暗影炎爆炸
-// TerraEnergy.DisplayName: Terra Energy
-// NightEnergySplit.DisplayName: Night Energy Split
-// TerraLaser.DisplayName: Terra Laser
-// TerraLance.DisplayName: Terra Lance
+PlasmaPrimarySpark.DisplayName: 影炎爆弹
+PlasmaBlast.DisplayName: 影炎爆炸
+TerraEnergy.DisplayName: 扶桑枝条
+NightEnergySplit.DisplayName: 永夜之影
+TerraLaser.DisplayName: 古树灵光
+TerraLance.DisplayName: 自然长枪
+TerrarTornado.DisplayName: 繁花龙卷
+TerraMatrix.DisplayName: 不死法阵

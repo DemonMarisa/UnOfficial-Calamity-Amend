@@ -4,6 +4,7 @@ using System;
 using System.Xml.Linq;
 using Terraria;
 using Terraria.ModLoader;
+using UCA.Assets;
 using UCA.Core.ParticleSystem;
 using UCA.Core.Utilities;
 
@@ -59,7 +60,7 @@ namespace UCA.Content.Particiles
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+            Texture2D texture = UCATextureRegister.Butterfly.Value;
             Rectangle frame = texture.Frame(8, 1, XFrame, 0);
             Vector2 origin = frame.Size() * 0.5f;
 

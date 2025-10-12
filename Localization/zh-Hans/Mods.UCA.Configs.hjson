@@ -2,12 +2,17 @@ UCAConfig: {
 	// DisplayName: UnOfficial Calamity Amend Config
 
 	ParticleLimit: {
-		Label: ��������
+		Label: 粒子上限
 		Tooltip: ""
 	}
 
 	UCATurnoffCorner: {
-		// Label: U C A Turnoff Corner
-		// Tooltip: ""
+		Label: 开启角标
+		Tooltip: 所有改动过的武器都会有一个角标标出
+	}
+
+	ScreenShakeStrength: {
+		Label: 屏幕震动幅度
+		Tooltip: 0为不会震动，10为10倍震动
 	}
 }

@@ -36,7 +36,7 @@ namespace UCA.Content.DrawNodes
         public float Height;
         public bool CanAdd = true;
         public int Father;
-        public int TotalPoint = 110;
+        public int TotalPoint = 90;
         public override void OnSpawn()
         {
             Lifetime = 480;
@@ -56,29 +56,31 @@ namespace UCA.Content.DrawNodes
 
             if (Time > TotalPoint)
                 CanAdd = false;
-
-            oldDustPos = DustPos;
-            // 设置弹幕旋转
-            Rotation = Velocity.ToRotation();
-            // 半径的缩放
-            float radiusScale = MathHelper.Lerp(0f, 1f, Utils.GetLerpValue(0f, 10f, Time, true));
-            // X向量，为了和外部速度联动这样写
-            float standVector2X = Velocity.Length();
-            // Y向量偏移
-            float standVector2Y = (float)(Math.Sin(Time / XScale) * Height * radiusScale * Filp);
-            // 应用第二个Sin偏移，来造成噪波的效果
-            standVector2Y = (float)(standVector2Y + Math.Cos(Time) * Height / 10);
-            // 最终应用偏移
-            Vector2 PreAddVector = new(standVector2X, standVector2Y);
-            // 根据弹幕旋转，将固定向右转换为向量的旋转
-            PreAddVector = PreAddVector.RotatedBy(Rotation);
-            // 最终粒子的点
-            DustPos = Position + PreAddVector;
-            // 转向上一个点
-            float rot = (oldDustPos - DustPos).ToRotation();
-            // 记录
-            OldPos.Add(DustPos);
-            OldRot.Add(rot);
+            if (Time % 2 == 0)
+            {
+                oldDustPos = DustPos;
+                // 设置弹幕旋转
+                Rotation = Velocity.ToRotation();
+                // 半径的缩放
+                float radiusScale = MathHelper.Lerp(0f, 1f, Utils.GetLerpValue(0f, 10f, Time, true));
+                // X向量，为了和外部速度联动这样写
+                float standVector2X = Velocity.Length();
+                // Y向量偏移
+                float standVector2Y = (float)(Math.Sin(Time / XScale) * Height * radiusScale * Filp);
+                // 应用第二个Sin偏移，来造成噪波的效果
+                standVector2Y = (float)(standVector2Y + Math.Cos(Time) * Height / 10);
+                // 最终应用偏移
+                Vector2 PreAddVector = new(standVector2X, standVector2Y);
+                // 根据弹幕旋转，将固定向右转换为向量的旋转
+                PreAddVector = PreAddVector.RotatedBy(Rotation);
+                // 最终粒子的点
+                DustPos = Position + PreAddVector;
+                // 转向上一个点
+                float rot = (oldDustPos - DustPos).ToRotation();
+                // 记录
+                OldPos.Add(DustPos);
+                OldRot.Add(rot);
+            }
         }
         public override void Draw(SpriteBatch sb)
         {
@@ -96,7 +98,7 @@ namespace UCA.Content.DrawNodes
 
             List<VertexPositionColorTexture2D> Vertexlist = new List<VertexPositionColorTexture2D>();
             float fadeOut = 0;
-            for (int i = 0; i < OldPos.Count; i++)
+            for (int i = 0; i < OldPos.Count; i ++)
             {
                 // 淡入
                 float YScale = i / 10f;

@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
 using UCA.Content.MetaBalls;
+using UCA.Content.Particiles;
 using UCA.Content.UCACooldowns;
 
 namespace UCA.Core.GlobalInstance.Players
@@ -48,12 +49,36 @@ namespace UCA.Core.GlobalInstance.Players
                         Vector2.UnitY * Main.rand.NextFloat(2, 6f) * -1f,
                         Main.rand.NextFloat(0.3f, 0.5f), MathHelper.PiOver2);
 
-                if (Player.miscCounter % 6 == 0)
+                if (Player.miscCounter % 9 == 0)
                 {
                     Player.Heal(1);
                 }
             }
         }
 
+        public void AddTerraBoost()
+        {
+            if (Player.HasCooldown(TerraBoost.ID))
+            {
+                Player.manaCost *= 0.8f;
+                ExternalDR += 0.1f;
+                Player.endurance += 0.15f;
+                Player.statDefense += 30;
+                if (Player.miscCounter % 5 == 0)
+                {
+                    Vector2 pos = Player.Center - new Vector2(Main.rand.Next(-50, 50), -Player.height / 2);
+                    Color RandomColor = Color.Lerp(Color.LightGreen, Color.ForestGreen, Main.rand.NextFloat(0, 1));
+                    new Butterfly(pos, Vector2.Zero, RandomColor, 120, 0, 1, 0.2f, Main.rand.NextFloat(0.2f, 1f)).Spawn();
+
+                    Color RandomColor2 = Color.Lerp(Color.Pink, Color.Green, Main.rand.NextFloat(0, 1));
+                    new Petal(pos, -Vector2.UnitY, RandomColor2, 360, 0, 1, 0.1f, Main.rand.NextFloat(0.5f, 0.7f)).Spawn();
+                }
+
+                if (Player.miscCounter % 6 == 0)
+                {
+                    Player.Heal(1);
+                }
+            }
+        }
     }
 }

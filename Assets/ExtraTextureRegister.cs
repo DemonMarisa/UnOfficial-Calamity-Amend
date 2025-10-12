@@ -16,6 +16,7 @@ namespace UCA.Assets
         public static Asset<Texture2D> CarnageStabs { get; private set; }
         public static Asset<Texture2D> TerrarRayFlow { get; private set; }
         public static Asset<Texture2D> Wood { get; private set; }
+        public static Asset<Texture2D> TerraMatrix { get; private set; }
         public static void LoadExtraTextures()
         {
             Noise = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/Noise");
@@ -27,6 +28,7 @@ namespace UCA.Assets
             CarnageStabs = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/CarnageStabs");
             TerrarRayFlow = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/TerraRayFlow");
             Wood = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/Wood");
+            TerraMatrix = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/TerraMatrix");
         }
         public static void UnLoadExtraTextures()
         {
@@ -39,6 +41,7 @@ namespace UCA.Assets
             CarnageStabs = null;
             TerrarRayFlow = null;
             Wood = null;
+            TerraMatrix = null;
         }
     }
 }

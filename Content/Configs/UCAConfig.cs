@@ -20,5 +20,10 @@ namespace UCA.Content.Configs
         [BackgroundColor(211, 211, 211, 192)]
         [DefaultValue(false)]
         public bool UCATurnoffCorner { get; set; }
+
+        [BackgroundColor(211, 211, 211, 192)]
+        [Range(0, 10f)]
+        [DefaultValue(1f)]
+        public float ScreenShakeStrength { get; set; }
     }
 }

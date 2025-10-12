@@ -20,6 +20,20 @@ namespace UCA.Core.Utilities
             return vector;
         }
 
+        public static Vector2 GetToMouseVector2(this Player player, Vector2 BeginPos)
+        {
+            Vector2 vector = player.LocalMouseWorld() - BeginPos;
+            vector = vector.SafeNormalize(Vector2.UnitX);
+            return vector;
+        }
+
+        public static Vector2 GetVector2(Vector2 BeginPos, Vector2 EndPos)
+        {
+            Vector2 vector = EndPos - BeginPos;
+            vector = vector.SafeNormalize(Vector2.UnitX);
+            return vector;
+        }
+
         public static Vector2 BetterRotatedBy(this Vector2 spinningpoint, double radians, Vector2 center = default, float Xmult = 1f, float Ymult = 1f)
         {
             float num = (float)Math.Cos(radians);

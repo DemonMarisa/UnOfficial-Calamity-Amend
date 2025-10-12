@@ -4,6 +4,7 @@ using System;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ModLoader;
+using UCA.Assets;
 using UCA.Core.ParticleSystem;
 
 namespace UCA.Content.Particiles
@@ -44,7 +45,7 @@ namespace UCA.Content.Particiles
         public override void Draw(SpriteBatch spriteBatch)
         {
             float brightness = (float)Math.Pow(Lighting.Brightness((int)(Position.X / 16f), (int)(Position.Y / 16f)), 0.15);
-            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+            Texture2D texture = UCATextureRegister.LilyLiquid.Value;
 
             Rectangle frame = texture.Frame(8, 8, rowCount, LineCount);
             Vector2 origin = frame.Size() * 0.5f;

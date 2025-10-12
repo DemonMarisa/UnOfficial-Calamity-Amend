@@ -53,7 +53,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
 
         public override bool StillInUse()
         {
-            return Active && !UCAUtilities.JustPressRightClick();
+            return !Owner.noItems && !UCAUtilities.JustPressRightClick() && !Owner.CCed && Main.mouseLeft;
         }
 
         public override void HoldoutAI()
@@ -75,7 +75,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             Vector2 firVec = Projectile.velocity * 3f;
             Vector2 ProjFireOffset = new Vector2(24, 0).RotatedBy(Projectile.rotation);
             Vector2 firPos = Projectile.Center + ProjFireOffset;
-            
             for (int i = 0; i < 2; i++)
             {
                 new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.DarkGreen, 0, DrawLayer.AfterDust, Main.rand.NextFloat(2, 5), -1, Main.rand.NextFloat(9, 18f)).Spawn();
@@ -83,8 +82,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
                 new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.LightGreen, 0, DrawLayer.AfterDust, Main.rand.NextFloat(2, 5), -1, Main.rand.NextFloat(9, 18f)).Spawn();
                 new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.SaddleBrown, 0, DrawLayer.AfterDust, Main.rand.NextFloat(3, 6), 1, Main.rand.NextFloat(11, 22)).Spawn();
             }
-            #endregion
-            
+            #endregion    
             for (int i = 0; i < 2; i++)
             {
                 Vector2 firePos = -Projectile.velocity.RotateRandom(MathHelper.PiOver4) * Main.rand.Next(250, 350);
@@ -92,7 +90,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + firePos, firvel * 9, ModContent.ProjectileType<TerraLance>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
                 GenStar(Projectile.Center + firePos, MathHelper.PiOver2 + Projectile.rotation);
             }
-            
             // 生成弹幕
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + ProjFireOffset, firVec * 0.0001f, ModContent.ProjectileType<TerraLaser>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
             // 后坐力

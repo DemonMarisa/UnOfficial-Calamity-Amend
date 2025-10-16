@@ -18,6 +18,7 @@ namespace UCA.Content.Particiles
         public int SeedOffset = 0;
 
         public float BeginScale = 1f;
+        public bool UseCountOffset = false;
         public MediumGlowBall(Vector2 position, Vector2 velocity, Color color, int lifetime, float Rot, float opacity, float scale, float speed)
         {
             Position = position;
@@ -30,9 +31,24 @@ namespace UCA.Content.Particiles
             BeginScale = scale;
             Speed = speed;
         }
+        public MediumGlowBall(Vector2 position, Color color, int lifetime, float scale, float speed, bool useCountOffset)
+        {
+            Position = position;
+            DrawColor = color;
+            Lifetime = lifetime;
+            Scale = scale;
+            BeginScale = scale;
+            Speed = speed;
+            UseCountOffset = useCountOffset;
+        }
 
         public override void OnSpawn()
         {
+            if (UseCountOffset)
+            {
+                SeedOffset = BaseParticleManager.ActiveParticles.Count;
+                return;
+            }
             SeedOffset = Main.rand.Next(0, 100000);
         }
 
@@ -54,6 +70,5 @@ namespace UCA.Content.Particiles
             Texture2D texture = UCATextureRegister.MediumGlowBall.Value;
             spriteBatch.Draw(texture, Position - Main.screenPosition, null, DrawColor * Opacity, Rotation, texture.Size() / 2, Scale, SpriteEffects.None, 0);
         }
-
     }
 }

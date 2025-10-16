@@ -25,6 +25,9 @@ namespace UCA.Core.Graphics.PixelRender
         {
             On_Main.CheckMonoliths += DrawToTargets;
 
+            if (Main.dedServ)
+                return;
+
             Main.QueueMainThreadAction(() =>
             {
                 PreparePixelationTarget_AfterDust = new RenderTarget2D(Main.instance.GraphicsDevice, Main.screenWidth, Main.screenHeight);
@@ -38,6 +41,9 @@ namespace UCA.Core.Graphics.PixelRender
         public override void Unload()
         {
             On_Main.CheckMonoliths -= DrawToTargets;
+
+            if (Main.dedServ)
+                return;
 
             Main.QueueMainThreadAction(() =>
             {

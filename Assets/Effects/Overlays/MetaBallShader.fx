@@ -73,6 +73,5 @@ technique Technique1
     pass UCAMetalBallPass
     {
         PixelShader = compile ps_2_0 MetaBallFunction();
-
     }
 }

@@ -21,10 +21,11 @@ namespace UCA.Content.Projectiles.Magic.Ray
         public int FrameX;
         public int FrameY;
         public int MaxTime = 128;
-        public AnimationHelper AnimationHelper;
+        public AnimationHelper AnimationHelper = new AnimationHelper(3);
         public SpriteEffects filp = SpriteEffects.None;
         public NPC Target;
-        public bool CanShootLance => Projectile.ai[1] == 0;
+        public bool CanShootLance => Projectile.ai[1] != 0;
+        public bool CanShootHealLance => Projectile.ai[2] != 0;
         public override void SetDefaults()
         {
             Projectile.width = 128;
@@ -42,50 +43,53 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override void OnSpawn(IEntitySource source)
         {
-            AnimationHelper = new AnimationHelper(3);
-            AnimationHelper.MaxAniProgress[AnimationState.Begin] = 16;
-            AnimationHelper.MaxAniProgress[AnimationState.End] = 32;
-            FrameX = Main.rand.Next(0, 7);
-            FrameY = Main.rand.Next(0, 7);
-            int filps = -1;
-            if (Main.rand.NextBool())
-            {
-                filps = 1;
-                filp = SpriteEffects.FlipHorizontally;
-            }
-
-            for (int i = 0; i < 1; i++)
-            {
-                Color RandomColor2 = Color.Lerp(Color.Pink, Color.Green, Main.rand.NextFloat(0, 1));
-                Vector2 pos = Projectile.position + new Vector2(Main.rand.Next(-32, Projectile.width + 32),0);
-                new Petal(pos, -Vector2.UnitY, RandomColor2, 360, 0, 1, 0.1f, Main.rand.NextFloat(0.5f, 0.7f)).Spawn();
-            }
-
-            for (int i = 0; i < 5; i++)
-            {
-                Color color = Color.Lerp(Color.LightGreen, Color.LawnGreen, Main.rand.NextFloat(0, 1f));
-                new TurbulenceGlowBall(Projectile.position + new Vector2(Main.rand.Next(0, Projectile.width), Projectile.height * 0.75f),
-                    Main.rand.NextFloat(4f, 6f), color, Main.rand.Next(90, 120), 0.2f, MathHelper.PiOver2).Spawn();
-            }
-            
-            for (int i = 0; i < 1; i++)
-            {
-                Color color = Color.Lerp(Color.DarkGreen, Color.LightGreen, Main.rand.NextFloat(0, 1f));
-                Vector2 pos = Projectile.position + new Vector2(Main.rand.Next(0, Projectile.width), Projectile.height);
-                new TerraTree(pos, -Vector2.UnitY.RotatedBy(MathHelper.PiOver4 * filps) * Main.rand.NextFloat(1, 2), color, 0, DrawLayer.AfterDust, Main.rand.NextFloat(12, 15), -1, Main.rand.NextFloat(9, 18f)).Spawn();
-                Vector2 pos2 = Projectile.position + new Vector2(Main.rand.Next(0, Projectile.width), Projectile.height);
-                new TerraTree(pos2, -Vector2.UnitY.RotatedBy(-MathHelper.PiOver4 * filps) * Main.rand.NextFloat(1, 2), Color.SaddleBrown, 0, DrawLayer.AfterDust, Main.rand.NextFloat(12, 17), 1, Main.rand.NextFloat(11, 22)).Spawn();
-            }
-            
-            for (int i = 0; i < 2; i++)
-            {
-                Vector2 pos = Projectile.position + new Vector2(Main.rand.Next(0, Projectile.width), Projectile.height);
-                Color RandomColor = Color.Lerp(Color.LightGreen, Color.ForestGreen, Main.rand.NextFloat(0, 1));
-                new Butterfly(pos, Vector2.Zero, RandomColor, 120, 0, 1, 0.2f, Main.rand.NextFloat(2f, 4f)).Spawn();
-            }
         }
         public override void AI()
         {
+            if (Projectile.UCA().FirstFrame)
+            {
+                AnimationHelper = new AnimationHelper(3);
+                AnimationHelper.MaxAniProgress[AnimationState.Begin] = 16;
+                AnimationHelper.MaxAniProgress[AnimationState.End] = 32;
+                FrameX = Main.rand.Next(0, 7);
+                FrameY = Main.rand.Next(0, 7);
+                int filps = -1;
+                if (Main.rand.NextBool())
+                {
+                    filps = 1;
+                    filp = SpriteEffects.FlipHorizontally;
+                }
+
+                for (int i = 0; i < 1; i++)
+                {
+                    Color RandomColor2 = Color.Lerp(Color.Pink, Color.Green, Main.rand.NextFloat(0, 1));
+                    Vector2 pos = Projectile.position + new Vector2(Main.rand.Next(-32, Projectile.width + 32), 0);
+                    new Petal(pos, -Vector2.UnitY, RandomColor2, 360, 0, 1, 0.1f, Main.rand.NextFloat(0.5f, 0.7f)).Spawn();
+                }
+
+                for (int i = 0; i < 5; i++)
+                {
+                    Color color = Color.Lerp(Color.LightGreen, Color.LawnGreen, Main.rand.NextFloat(0, 1f));
+                    new TurbulenceGlowBall(Projectile.position + new Vector2(Main.rand.Next(0, Projectile.width), Projectile.height * 0.75f),
+                        Main.rand.NextFloat(4f, 6f), color, Main.rand.Next(90, 120), 0.2f, MathHelper.PiOver2).Spawn();
+                }
+
+                for (int i = 0; i < 1; i++)
+                {
+                    Color color = Color.Lerp(Color.DarkGreen, Color.LightGreen, Main.rand.NextFloat(0, 1f));
+                    Vector2 pos = Projectile.position + new Vector2(Main.rand.Next(0, Projectile.width), Projectile.height);
+                    new TerraTree(pos, -Vector2.UnitY.RotatedBy(MathHelper.PiOver4 * filps) * Main.rand.NextFloat(1, 2), color, 0, DrawLayer.AfterDust, Main.rand.NextFloat(12, 15), -1, Main.rand.NextFloat(9, 18f)).Spawn();
+                    Vector2 pos2 = Projectile.position + new Vector2(Main.rand.Next(0, Projectile.width), Projectile.height);
+                    new TerraTree(pos2, -Vector2.UnitY.RotatedBy(-MathHelper.PiOver4 * filps) * Main.rand.NextFloat(1, 2), Color.SaddleBrown, 0, DrawLayer.AfterDust, Main.rand.NextFloat(12, 17), 1, Main.rand.NextFloat(11, 22)).Spawn();
+                }
+
+                for (int i = 0; i < 2; i++)
+                {
+                    Vector2 pos = Projectile.position + new Vector2(Main.rand.Next(0, Projectile.width), Projectile.height);
+                    Color RandomColor = Color.Lerp(Color.LightGreen, Color.ForestGreen, Main.rand.NextFloat(0, 1));
+                    new Butterfly(pos, Vector2.Zero, RandomColor, 120, 0, 1, 0.2f, Main.rand.NextFloat(2f, 4f)).Spawn();
+                }
+            }
             Target = Projectile.FindClosestTarget(1500);
             if (Target is not null)
             {
@@ -97,9 +101,22 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
+            if (Projectile.owner != Main.myPlayer)
+                return;
+
             Player player = Main.player[Projectile.owner];
-            if (CanShootLance)
+
+
+            if (player.UCA().TerraRayHealCD > 0)
+                return;
+
+            if (CanShootHealLance)
+            {
+                player.UCA().TerraRayHealCD = 5;
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, player.GetPlayerToMouseVector2().RotatedByRandom(MathHelper.TwoPi) * -6f, ModContent.ProjectileType<TerraHeal>(), 0, 0, Projectile.owner);
+            }
+            if (!Projectile.UCA().OnceHitEffect)
+                return;
             // 生成枝条
             Vector2 firPos = target.Center;
             for (int i = 0; i < 3; i++)

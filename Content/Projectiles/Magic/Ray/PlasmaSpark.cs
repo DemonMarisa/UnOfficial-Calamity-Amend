@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -32,6 +33,14 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Projectile.timeLeft = 240;
             Projectile.extraUpdates = 50;
         }
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(Projectile.extraUpdates);
+        }
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            Projectile.extraUpdates = reader.ReadInt32();
+        }
         public override void OnSpawn(IEntitySource source)
         {
             base.OnSpawn(source);
@@ -45,6 +54,10 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override void AI()
         {
+            if (Projectile.UCA().FirstFrame)
+            {
+                Projectile.netUpdate = true;
+            }
             if (!CanSplits)
             {
                 if (Projectile.timeLeft > 160)
@@ -107,6 +120,10 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
         public override void OnKill(int timeLeft)
         {
+            // 只会在本地玩家进行分裂，同步依靠newProj的效果
+            if (Projectile.owner != Main.myPlayer)
+                return;
+
             if (CanSplits)
             {
                 for (int i = 0; i < 15; i++)

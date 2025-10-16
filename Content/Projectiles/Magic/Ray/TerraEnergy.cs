@@ -2,7 +2,9 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -46,30 +48,41 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Projectile.penetrate = -1;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 10 * (Projectile.extraUpdates + 1);
+            Projectile.netImportant = true;
         }
-
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(inToFadeOut);
+        }
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            inToFadeOut = reader.ReadBoolean();
+        }
         public override void OnSpawn(IEntitySource source)
         {
-            #region 生成伴随主弹幕的树
-            for (int i = 0; i < 1; i++)
-            {
-                float XScale = Main.rand.NextFloat(4, 12);
-                float Height = Main.rand.NextFloat(1f, 3);
-
-                Vine.Add(new TerraEnergyTree(Projectile.Center, Projectile.velocity, Color.SaddleBrown, MaxTime, XScale, 1, Height));
-                Vine.Add(new TerraEnergyTree(Projectile.Center, Projectile.velocity, Color.LightGreen, MaxTime, XScale, -1, Height));
-
-                float XScale2 = Main.rand.NextFloat(5, 10);
-                float Height2 = Main.rand.NextFloat(3, 6);
-                Vine.Add(new TerraEnergyTree(Projectile.Center, Projectile.velocity, Color.DarkGreen, MaxTime, XScale2, 1, Height2));
-                Vine.Add(new TerraEnergyTree(Projectile.Center, Projectile.velocity, Color.ForestGreen, MaxTime, XScale2, -1, Height2));
-            }
-            #endregion
-            BeginPos = Projectile.Center;
         }
 
         public override void AI()
         {
+            if (Projectile.UCA().FirstFrame)
+            {
+                #region 生成伴随主弹幕的树
+                for (int i = 0; i < 1; i++)
+                {
+                    float XScale = Main.rand.NextFloat(4, 12);
+                    float Height = Main.rand.NextFloat(1f, 3);
+
+                    Vine.Add(new TerraEnergyTree(Projectile.Center, Projectile.velocity, Color.SaddleBrown, MaxTime, XScale, 1, Height));
+                    Vine.Add(new TerraEnergyTree(Projectile.Center, Projectile.velocity, Color.LightGreen, MaxTime, XScale, -1, Height));
+
+                    float XScale2 = Main.rand.NextFloat(5, 10);
+                    float Height2 = Main.rand.NextFloat(3, 6);
+                    Vine.Add(new TerraEnergyTree(Projectile.Center, Projectile.velocity, Color.DarkGreen, MaxTime, XScale2, 1, Height2));
+                    Vine.Add(new TerraEnergyTree(Projectile.Center, Projectile.velocity, Color.ForestGreen, MaxTime, XScale2, -1, Height2));
+                }
+                #endregion
+                BeginPos = Projectile.Center;
+            }
             Projectile.rotation = Projectile.velocity.ToRotation();
             LaserLength = (Projectile.Center - BeginPos).Length();
             UpdateVine();
@@ -155,7 +168,6 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Vector2 orig = new Vector2(0, TextureHeight / 2);
             float xScale = LaserLength / TextureWidth;
             Main.spriteBatch.Draw(UCATextureRegister.TerrarRayFlow.Value, BeginPos - Main.screenPosition,null, Color.White, Projectile.rotation, orig, new Vector2(xScale, height), SpriteEffects.None, 0);
-      
         }
         public override void OnKill(int timeLeft)
         {            
@@ -186,6 +198,8 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 Vector2 firVel = Vector2.UnitX.BetterRotatedBy(offset * i, default, 0.75f, 1f);
                 new MediumGlowBall(firPos, firVel * 1.5f, RandomColor, 60, 0, 1, 0.2f, Main.rand.NextFloat(2, 3)).Spawn();
             }
+            SoundEngine.PlaySound(SoundsMenu.TerraRayHit, Projectile.Center);
+            Projectile.netUpdate = true;
         }
     }
 }

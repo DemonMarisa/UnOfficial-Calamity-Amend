@@ -4,6 +4,7 @@ using CalamityMod.Items.Weapons.Magic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -18,14 +19,14 @@ using UCA.Core.AnimationHandle;
 using UCA.Core.Enums;
 using UCA.Core.Utilities;
 
-namespace UCA.Content.Projectiles.HeldProj.Magic
+namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
 {
     public class PlasmaRodHeldProjBlast : ModProjectile, ILocalizedModType
     {
         public override LocalizedText DisplayName => CalamityUtils.GetItemName<PlasmaRod>();
         public override string Texture => $"{ItemOverridePaths.MagicWeaponsPath}" + "PlasmaRodOverride";
 
-        public AnimationHelper animationHelper;
+        public AnimationHelper animationHelper = new AnimationHelper(3);
 
         public int OwnerDir = 0;
         public Player Owner => Main.player[Projectile.owner];
@@ -49,19 +50,29 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
         #region 注册数据
         public override void OnSpawn(IEntitySource source)
         {
-            animationHelper = new AnimationHelper(3);
-
             animationHelper.MaxAniProgress[AnimationState.Begin] = 30;
             animationHelper.MaxAniProgress[AnimationState.End] = 10;
-
-            OwnerDir = Owner.LocalMouseWorld().X > Owner.Center.X ? 1 : -1;
 
             BeginRot = Owner.GetPlayerToMouseVector2().ToRotation();
         }
         #endregion
-
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(animationHelper.MaxAniProgress[AnimationState.Begin]);
+            writer.Write(animationHelper.MaxAniProgress[AnimationState.End]);
+            writer.Write(BeginRot);
+        }
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            animationHelper.MaxAniProgress[AnimationState.Begin] = reader.ReadInt32();
+            animationHelper.MaxAniProgress[AnimationState.End] = reader.ReadInt32();
+            BeginRot = reader.ReadSingle();
+        }
         public override void AI()
         {
+            if (Projectile.UCA().FirstFrame)
+                OwnerDir = Owner.LocalMouseWorld().X > Owner.Center.X ? 1 : -1;
+
             Owner.itemTime = 2;
             Owner.itemAnimation = 2;
 
@@ -73,10 +84,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             Projectile.velocity = Projectile.rotation.ToRotationVector2();
             Projectile.timeLeft = 2;
 
-            if (Projectile.owner == Main.myPlayer)
-            {
-                AllAI();
-            }
+            AllAI();
 
             Projectile.netUpdate = true;
         }
@@ -116,7 +124,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
 
             if (CurAni == 8)
             {
-                FireProj();
+                if (Projectile.owner == Main.myPlayer)
+                    FireProj();
             }
 
             // 使用缓动函数让动画更自然

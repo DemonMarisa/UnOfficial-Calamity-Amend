@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -20,7 +21,7 @@ using UCA.Core.Enums;
 using UCA.Core.Graphics;
 using UCA.Core.Utilities;
 
-namespace UCA.Content.Projectiles.HeldProj.Magic
+namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
 {
     public class TerraRayHeldProj : BaseHeldProj
     {
@@ -33,7 +34,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
 
         public float Opacity = 1f;
 
-        public AnimationHelper animationHelper;
+        public AnimationHelper animationHelper = new AnimationHelper(3);
         public override void SetDefaults()
         {
             Projectile.width = 66;
@@ -43,24 +44,33 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
+            Projectile.netImportant = true;
         }
-
-        public override void OnSpawn(IEntitySource source)
+        public override void SendExtraAI(BinaryWriter writer)
         {
-            animationHelper = new AnimationHelper(3); 
-            animationHelper.MaxAniProgress[AnimationState.Begin] = 15;
+            writer.Write(Opacity);
+        }
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            Opacity = reader.ReadSingle();
         }
 
         public override bool StillInUse()
         {
-            return !Owner.noItems && !UCAUtilities.JustPressRightClick() && !Owner.CCed && Main.mouseLeft;
+            return !Owner.noItems && !UCAUtilities.JustPressRightClick() && !Owner.CCed && Owner.UCA().MouseLeft;
         }
 
         public override void HoldoutAI()
         {
+        }
+        public override void ExtraHoldoutAI()
+        {
+            if (Projectile.UCA().FirstFrame)
+            {
+                animationHelper.MaxAniProgress[AnimationState.Begin] = 15;
+            }
             if (UseDelay <= 0 && Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.HeldItem.mana * Owner.manaCost), true, false))
             {
-                SoundEngine.PlaySound(SoundsMenu.PlasmaRodAttack, Projectile.Center);
                 FirePorj();
                 UseDelay = Owner.HeldItem.useTime;
             }
@@ -68,34 +78,27 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
 
         public void FirePorj()
         {
-            SoundEngine.PlaySound(SoundID.Item91, Projectile.Center);
-            Vector2 FireOffset = new Vector2(54, 0).RotatedBy(Projectile.rotation);
-            GenStar(Projectile.Center + FireOffset, MathHelper.PiOver2 + Projectile.rotation);
-            #region 生成伴随主弹幕的树
             Vector2 firVec = Projectile.velocity * 3f;
             Vector2 ProjFireOffset = new Vector2(24, 0).RotatedBy(Projectile.rotation);
-            Vector2 firPos = Projectile.Center + ProjFireOffset;
-            for (int i = 0; i < 2; i++)
-            {
-                new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.DarkGreen, 0, DrawLayer.AfterDust, Main.rand.NextFloat(2, 5), -1, Main.rand.NextFloat(9, 18f)).Spawn();
-                new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.ForestGreen, 0, DrawLayer.AfterDust, Main.rand.NextFloat(3, 6), 1, Main.rand.NextFloat(11, 22)).Spawn();
-                new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.LightGreen, 0, DrawLayer.AfterDust, Main.rand.NextFloat(2, 5), -1, Main.rand.NextFloat(9, 18f)).Spawn();
-                new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.SaddleBrown, 0, DrawLayer.AfterDust, Main.rand.NextFloat(3, 6), 1, Main.rand.NextFloat(11, 22)).Spawn();
-            }
-            #endregion    
+            // 生成弹幕
+            Vector2 FireOffset = new Vector2(54, 0).RotatedBy(Projectile.rotation);
             for (int i = 0; i < 2; i++)
             {
                 Vector2 firePos = -Projectile.velocity.RotateRandom(MathHelper.PiOver4) * Main.rand.Next(250, 350);
-                Vector2 firvel = Owner.GetPlayerToMouseVector2();
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + firePos, firvel * 9, ModContent.ProjectileType<TerraLance>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
-                GenStar(Projectile.Center + firePos, MathHelper.PiOver2 + Projectile.rotation);
+                Vector2 firvel = Main.player[Projectile.owner].GetPlayerToMouseVector2();
+
+                if (Projectile.owner == Main.myPlayer)
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + firePos, firvel * 9, ModContent.ProjectileType<TerraLance>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 1);
             }
-            // 生成弹幕
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + ProjFireOffset, firVec * 0.0001f, ModContent.ProjectileType<TerraLaser>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+
+            if (Projectile.owner == Main.myPlayer)
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + ProjFireOffset, firVec * 0.0001f, ModContent.ProjectileType<TerraLaser>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+           
+            SoundEngine.PlaySound(SoundsMenu.TerraRayLeftFire, Projectile.Center);
             // 后坐力
             Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.1f;
         }
-        public void GenStar(Vector2 pos, float rotoffset, float Xmult = 0.8f)
+        public static void GenStar(Vector2 pos, float rotoffset, float Xmult = 0.8f)
         {
             // 控制属性分别是：多少个点，生成步进，生成位置
             int PointCount = 9;
@@ -154,7 +157,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
                 float offset = MathHelper.TwoPi / 30;
                 Color RandomColor = Color.Lerp(Color.LightGreen, Color.ForestGreen, Main.rand.NextFloat(0, 1));
                 Vector2 firVel = Vector2.UnitX.BetterRotatedBy(offset * i, default, 0.75f, 1f);
-                new MediumGlowBall(firPos, firVel.RotatedBy(Projectile.rotation) * 1.5f, RandomColor, 60, 0, 1, 0.2f, 0).Spawn();
+                new MediumGlowBall(firPos, firVel.RotatedBy(rotoffset) * 1.5f, RandomColor, 60, 0, 1, 0.2f, 0).Spawn();
             }
             #endregion
             #region 生成蝴蝶
@@ -174,6 +177,9 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             float directionVerticality = MathF.Abs(Projectile.velocity.X);
             Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, baseRotation + Owner.direction * directionVerticality * 1.5f);
             Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, baseRotation + Owner.direction * directionVerticality * 1.2f);
+
+            if (Projectile.owner != Main.myPlayer)
+                return;
 
             if ((Main.mouseLeft || Active) && !UCAUtilities.JustPressRightClick())
             {

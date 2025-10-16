@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis.Differencing;
+﻿using CalamityMod;
+using Microsoft.CodeAnalysis.Differencing;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;

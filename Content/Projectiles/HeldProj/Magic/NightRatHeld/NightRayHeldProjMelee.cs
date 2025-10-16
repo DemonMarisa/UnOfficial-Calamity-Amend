@@ -5,6 +5,7 @@ using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -20,14 +21,14 @@ using UCA.Core.BaseClass;
 using UCA.Core.GlobalInstance.Players;
 using UCA.Core.Utilities;
 
-namespace UCA.Content.Projectiles.HeldProj.Magic
+namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
 {
     public class NightRayHeldProjMelee : BaseHeldProj, IPixelatedPrimitiveRenderer
     {
         public PixelationPrimitiveLayer LayerToRenderTo => PixelationPrimitiveLayer.AfterPlayers;
 
         public override LocalizedText DisplayName => CalamityUtils.GetItemName<NightsRay>();
-        public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/NightRayHeldProj";
+        public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/NightRatHeld/NightRayHeldProj";
         public Vector2 RotVector => new Vector2(12 * Owner.direction, 7).BetterRotatedBy(Owner.GetPlayerToMouseVector2().ToRotation(), default, 0.5f, 1f);
 
         public override Vector2 RotPoint => TextureAssets.Projectile[Type].Size() / 2;
@@ -64,8 +65,20 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
+            Projectile.netImportant = true;
         }
-
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(ShaderOpacity);
+            writer.Write(Projectile.ai[0]);
+            writer.Write(Projectile.ai[1]);
+        }
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            ShaderOpacity = reader.ReadSingle();
+            Projectile.ai[0] = reader.ReadSingle();
+            Projectile.ai[1] = reader.ReadSingle();
+        }
         public override bool? CanHitNPC(NPC target)
         {
             return false;
@@ -94,25 +107,33 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
 
             // 护盾效果
             ProtectPlayer();
-
             UpdateChargeDust();
+
+        }
+
+        public override void ExtraHoldoutAI()
+        {
+            if (AniProgress < InToAni)
+                return;
+
             // 按住左键不会开火
-            if (Main.mouseLeft)
+            if (Owner.UCA().MouseLeft)
             {
-                DelTimer = Owner.HeldItem.useTime * 2;
+                DelTimer = Owner.HeldItem.useTime;
                 return;
             }
-
             if (UseDelay <= 0 && Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.HeldItem.mana * Owner.manaCost), true, false))
             {
                 Vector2 firePos = Projectile.Center + new Vector2(90, 0).RotatedBy(Projectile.rotation);
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    int a = Projectile.NewProjectile(Projectile.GetSource_FromThis(), firePos, Projectile.rotation.ToRotationVector2() * 1.8f, ModContent.ProjectileType<NightEnergy>(), Projectile.damage, Projectile.knockBack, Owner.whoAmI, 1);
+                    Main.projectile[a].timeLeft = 99;
+                }
 
+                NightsRayOverride.UseCount++;
                 SoundEngine.PlaySound(SoundsMenu.NightRayHeavyAttack, Projectile.Center);
-                int a = Projectile.NewProjectile(Projectile.GetSource_FromThis(), firePos, Projectile.rotation.ToRotationVector2() * 1.8f, ModContent.ProjectileType<NightEnergy>(), Projectile.damage, Projectile.knockBack, Owner.whoAmI, 1);
-                Main.projectile[a].timeLeft = 99;
 
-                Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.12f;
-                
                 NightRayHeldProj.GenUnDeathSign(firePos);
 
                 for (int i = 0; i < 30; i++)
@@ -121,7 +142,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
                     new Line(firePos, Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(3, 7), color, Main.rand.Next(60, 90), 0, 1, 0.2f, false, firePos).Spawn();
                 }
 
-                NightsRayOverride.UseCount++;
                 for (int j = 0; j < 2; j++)
                 {
                     Vector2 SpawnPos = Owner.Center + new Vector2(Main.rand.Next(100, 200), 0).RotatedByRandom(MathHelper.TwoPi);
@@ -139,17 +159,22 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
                         float DistanceToNPC = Vector2.Distance(SpawnPos, npc.Center);
                         float PredictMult = DistanceToNPC / 48;
                         Vector2 ToNPCVel = (npc.Center - SpawnPos + npc.velocity * PredictMult).SafeNormalize(Projectile.rotation.ToRotationVector2());
-                        NightRayHeldProj.GenUnDeathSign(SpawnPos, 0.4f);
-                        int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), SpawnPos, ToNPCVel * 4, ModContent.ProjectileType<NightEnergySplit>(), Projectile.damage, Projectile.knockBack, Owner.whoAmI);
-                        Main.projectile[p].penetrate = 1;
+                        if (Projectile.owner == Main.myPlayer)
+                        {
+                            int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), SpawnPos, ToNPCVel * 4, ModContent.ProjectileType<NightEnergySplit>(), Projectile.damage, Projectile.knockBack, Owner.whoAmI, 0.5f);
+                            Main.projectile[p].penetrate = 1;
+                        }
                     }
                     else
                     {
-                        NightRayHeldProj.GenUnDeathSign(SpawnPos, 0.4f);
-                        int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), SpawnPos, Projectile.rotation.ToRotationVector2() * 4, ModContent.ProjectileType<NightEnergySplit>(), Projectile.damage, Projectile.knockBack, Owner.whoAmI);
-                        Main.projectile[p].penetrate = 1;
+                        if (Projectile.owner == Main.myPlayer)
+                        {
+                            int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), SpawnPos, Projectile.rotation.ToRotationVector2() * 4, ModContent.ProjectileType<NightEnergySplit>(), Projectile.damage, Projectile.knockBack, Owner.whoAmI, 0.5f);
+                            Main.projectile[p].penetrate = 1;
+                        }
                     }
                 }
+                Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.12f;
                 UseDelay = Owner.HeldItem.useTime * 2;
             }
         }
@@ -159,7 +184,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             if (DelTimer > 0)
                 DelTimer--;
 
-            if (UseDelay <= 0 && DelTimer <= 0)
+            if (DelTimer <= 0)
                 Projectile.Kill();
         }
         #region 常驻AI
@@ -173,17 +198,15 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             if (AniProgress < InToAni)
                 AniProgress++;
 
-            if (Main.mouseRight)
+            if (Main.mouseRight || Active)
             {
-                // UseDelay = Owner.HeldItem.useTime * 2;
                 XScale = MathHelper.Lerp(XScale, 1f, 0.1f);
                 ShaderOpacity = MathHelper.Lerp(ShaderOpacity, 0f, 0.1f);
             }
-
-            if (!Main.mouseRight)
+            else
             {
-                XScale = MathHelper.Lerp(XScale, 0, 0.064f);
-                ShaderOpacity = MathHelper.Lerp(ShaderOpacity, 1f, 0.064f);
+                XScale = MathHelper.Lerp(XScale, 0, 0.02f);
+                ShaderOpacity = MathHelper.Lerp(ShaderOpacity, 1f, 0.02f);
             }
         }
         #endregion
@@ -267,6 +290,9 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
         #region 护盾碰撞
         public void ProtectPlayer()
         {
+            if (Projectile.owner != Main.myPlayer)
+                return;
+
             if (Owner.UCA().NightShieldHP <= 0 || !Owner.UCA().NightShieldCanDefense)
                 return;
 
@@ -342,9 +368,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
                     projectile.Calamity().DealsDefenseDamage = false;
 
                     projectile.UCA().HasThroughNightShield = true;
-
+                    projectile.netSpam = 0;
                     projectile.netUpdate = true;
-                    
                 }
             }
         }

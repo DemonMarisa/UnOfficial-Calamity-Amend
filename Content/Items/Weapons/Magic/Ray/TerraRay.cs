@@ -8,7 +8,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Common.Misc;
-using UCA.Content.Projectiles.HeldProj.Magic;
+using UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld;
 using UCA.Content.UCACooldowns;
 using UCA.Core.BaseClass;
 using UCA.Core.GlobalInstance.Players;
@@ -73,6 +73,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
             tooltips.IntegrateHotkey(UCAKeybind.WeaponSkillHotKey);
+            tooltips.IntegrateHotkey(UCAKeybind.WeaponSkillHotKey);
         }
         public override void WeaponSkill(Player player)
         {
@@ -83,7 +84,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
                     float kb = player.GetWeaponKnockback(Item);
                     int Damage = player.GetWeaponDamage(Item);
                     float Projectilai = 0;
-                    if (player.UCA().TerraRayRestore > 0)
+                    if (player.UCA().TerraRayRestore > 0 && player.controlUp)
                     {
                         Projectilai = 1f;
                         player.UCA().TerraRayRestore--;

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Content.MetaBalls;
 using UCA.Content.Projectiles.HeldProj.Magic;
+using UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld;
 using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
 
@@ -37,10 +39,23 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 10 * (Projectile.extraUpdates + 1);
         }
-
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(Projectile.extraUpdates);
+            writer.Write(Projectile.penetrate);
+        }
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            Projectile.extraUpdates = reader.ReadInt32();
+            Projectile.penetrate = reader.ReadInt32();
+        }
         public override void AI()
         {
-
+            if (Projectile.UCA().FirstFrame)
+            {
+                NightRayHeldProj.GenUnDeathSign(Projectile.Center, Projectile.ai[0]);
+                Projectile.netUpdate = true;
+            }
             for (int i = 0; i < DustCount; i++)
             {
                 ShadowMetaBall.SpawnParticle(Projectile.Center + Projectile.velocity / DustCount * i + new Vector2(Main.rand.Next(-2, 2), Main.rand.Next(-2, 2)),

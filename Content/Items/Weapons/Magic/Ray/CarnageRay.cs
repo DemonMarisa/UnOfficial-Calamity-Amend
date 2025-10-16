@@ -7,7 +7,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Common.Misc;
-using UCA.Content.Projectiles.HeldProj.Magic;
+using UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld;
 using UCA.Core.BaseClass;
 using UCA.Core.Keybinds;
 using UCA.Core.Utilities;
@@ -81,15 +81,21 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             if (player.whoAmI != Main.myPlayer)
                 return;
 
-            if (UCAKeybind.WeaponSkillHotKey.JustPressed && !Main.blockMouse && !Main.mouseText)
+            if (UCAKeybind.WeaponSkillHotKey.JustPressed && !Main.blockMouse)
             {
+                if (Main.playerInventory)
+                {
+                    if (Main.mouseText)
+                        return;
+                }
                 if (player.ownedProjectileCounts[ModContent.ProjectileType<CarnageRaySkillProj>()] < 1 && player.ownedProjectileCounts[ModContent.ProjectileType<CarnageRayHeldProjMelee>()] < 1 && player.ownedProjectileCounts[ModContent.ProjectileType<CarnageRayHeldProj>()] < 1)
                 {
                     if (player.CheckMana(player.ActiveItem(), (int)(200 * player.manaCost), true, false))
                     {
                         float kb = player.GetWeaponKnockback(Item);
                         int Damage = player.GetWeaponDamage(Item);
-                        Projectile.NewProjectileDirect(player.GetSource_ItemUse(Item), player.Center, Vector2.Zero, ModContent.ProjectileType<CarnageRaySkillProj>(), Damage, kb, player.whoAmI);
+                        int index = Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, Vector2.Zero, ModContent.ProjectileType<CarnageRaySkillProj>(), Damage, kb, player.whoAmI);
+                        NetMessage.SendData(MessageID.SyncProjectile, -1, -1, null, index);
                     }
                 }
             }

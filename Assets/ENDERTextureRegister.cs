@@ -29,6 +29,7 @@ namespace UCA.Assets
         public static Asset<Texture2D> Fire { get; private set; }
         public static Asset<Texture2D> Flower { get; private set; }
         public static Asset<Texture2D> LilyFlower { get; private set; }
+        public static Asset<Texture2D> PoisonSmoke { get; private set; }
         #endregion
         public static void LoadENDERTextures()
         {
@@ -50,6 +51,7 @@ namespace UCA.Assets
             Fire = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/Fire");
             Flower = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/Flower");
             LilyFlower = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/LilyFlower");
+            PoisonSmoke = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/PoisonSmoke");
         }
         public static void UnLoadENDERTextures()
         {
@@ -69,6 +71,7 @@ namespace UCA.Assets
             Fire = null;
             Flower = null;
             LilyFlower = null;
+            PoisonSmoke = null;
         }
     }
 }

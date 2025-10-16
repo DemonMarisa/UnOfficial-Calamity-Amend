@@ -43,6 +43,18 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override void AI()
         {
+            if (Projectile.UCA().FirstFrame)
+            {
+                for (int i = 0; i < 75; i++)
+                {
+                    new LilyLiquid(Projectile.Center, Projectile.velocity.SafeNormalize(Vector2.Zero).RotatedByRandom(MathHelper.PiOver4 * 0.6f) * Main.rand.NextFloat(0f, 1.2f) * 24f, Color.Red, 64, 0, 1, 1.5f).Spawn();
+                }
+                for (int i = 0; i < 35; i++)
+                {
+                    new LilyLiquid(Projectile.Center, Projectile.velocity.SafeNormalize(Vector2.Zero).RotatedByRandom(MathHelper.PiOver4 * 0.6f) * Main.rand.NextFloat(0f, 1.2f) * 24f, Color.Black, 64, 0, 1, 1.5f).Spawn();
+                }
+            }
+
             Projectile.velocity *= 1.03f;
             Projectile.rotation = Projectile.velocity.ToRotation();
 

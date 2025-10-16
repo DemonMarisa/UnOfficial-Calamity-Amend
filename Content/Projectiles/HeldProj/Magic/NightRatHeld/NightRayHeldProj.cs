@@ -1,8 +1,10 @@
 ﻿using CalamityMod;
+using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Items.Weapons.Magic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -14,10 +16,11 @@ using UCA.Content.ItemOverride.Magic;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.Magic.Ray;
+using UCA.Core.AnimationHandle;
 using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
 
-namespace UCA.Content.Projectiles.HeldProj.Magic
+namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
 {
     public class NightRayHeldProj : BaseHeldProj
     {
@@ -42,33 +45,47 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
+            Projectile.netImportant = true;
         }
         public override bool StillInUse()
         {
             return AniProgress >= InToAni && Main.mouseLeft;
         }
-
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(ShaderOpacity);
+            writer.Write(AniProgress);
+            writer.Write(Projectile.ai[2]);
+            writer.Write(Projectile.ai[1]);
+        }
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            ShaderOpacity = reader.ReadSingle();
+            AniProgress = reader.ReadInt32();
+            Projectile.ai[2] = reader.ReadSingle();
+            Projectile.ai[1] = reader.ReadSingle();
+        }
         public override void HoldoutAI()
         {
-            if (AniProgress < InToAni)
-                return;
-
-            if (Main.mouseRight)
-                return;
-
+        }
+        public override void ExtraHoldoutAI()
+        {
             if (UseDelay <= 0 && Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.HeldItem.mana * Owner.manaCost), true, false))
             {
+                Vector2 firePos = Projectile.Center + new Vector2(30, 0).RotatedBy(Projectile.rotation);
+                UseDelay = Owner.HeldItem.useTime;
                 // 常规开火
                 // 这里用发射的弹幕AI[0]是否为1来确定是否为主射线
                 // ai[0]为1时是主射线
-                Vector2 firePos = Projectile.Center + new Vector2(30, 0).RotatedBy(Projectile.rotation);
-
-                GenUnDeathSign(firePos, 0.8f);
-
-                SoundEngine.PlaySound(SoundsMenu.NightRayAttack, Projectile.Center);
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), firePos, Projectile.rotation.ToRotationVector2() * 3, ModContent.ProjectileType<NightEnergy>(), Projectile.damage, Projectile.knockBack, Owner.whoAmI, 1);
-                Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.06f;
-
+                if (Projectile.owner == Main.myPlayer)
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), firePos, Projectile.rotation.ToRotationVector2() * 3, ModContent.ProjectileType<NightEnergy>(), Projectile.damage, Projectile.knockBack, Owner.whoAmI, 0.8f);
+               
+                UseDelay = Owner.HeldItem.useTime;
+                Projectile.ai[1] = UseDelay;
+                Projectile.ai[2] = UseDelay;
+            }
+            if (Projectile.ai[2] != 0)
+            {              
                 // 在NPC周围发射一个十字的激光
                 NightsRayOverride.UseCount++;
                 if (NightsRayOverride.UseCount > 4)
@@ -76,28 +93,20 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
                     CrossFire();
                     NightsRayOverride.UseCount = 0;
                 }
-                UseDelay = Owner.HeldItem.useTime;
-
-                for (int i = 0; i < 10; i++)
-                {
-                    Color color = Color.Lerp(Color.DarkOrchid, Color.DarkViolet, Main.rand.NextFloat(0, 1f));
-                    new Line(firePos, Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(3, 7), color, Main.rand.Next(60, 90), 0, 1, 0.1f, false, firePos).Spawn();
-                }
+                Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.06f;
+                Projectile.ai[2] = 0;
             }
-            else
+            if (Projectile.ai[1] > Owner.HeldItem.useTime / 2)
             {
                 Vector2 firePos = Projectile.Center + new Vector2(30, 0).RotatedBy(Projectile.rotation);
-                if (UseDelay > Owner.HeldItem.useTime / 2)
-                {
-                    Vector2 SpawnPos = firePos + Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.Next(25, 75);
-                    Vector2 SpawnPosToMouseWorld = (firePos - SpawnPos).SafeNormalize(Vector2.UnitX);
-                    float rot = SpawnPosToMouseWorld.ToRotation() + 3;
-                    Color color = Color.Lerp(Color.DarkOrchid, Color.DarkViolet, Main.rand.NextFloat(0, 1f));
-                    new Line(SpawnPos, Vector2.Zero, color, Main.rand.Next(60, 90), rot, 1, 0.1f, true, firePos).Spawn();
-                }
+                Vector2 SpawnPos = firePos + Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.Next(25, 75);
+                Vector2 SpawnPosToMouseWorld = (firePos - SpawnPos).SafeNormalize(Vector2.UnitX);
+                float rot = SpawnPosToMouseWorld.ToRotation() + 3;
+                Color color = Color.Lerp(Color.DarkOrchid, Color.DarkViolet, Main.rand.NextFloat(0, 1f));
+                new Line(SpawnPos, Vector2.Zero, color, Main.rand.Next(60, 90), rot, 1, 0.1f, true, firePos).Spawn();
+                Projectile.ai[1]--;
             }
         }
-
         public override bool CanDel()
         {
             return AniProgress == 0 && !Main.mouseLeft;
@@ -110,25 +119,21 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             float directionVerticality = MathF.Abs(Projectile.velocity.X);
             Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, baseRotation + Owner.direction * directionVerticality * 1.5f);
             Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, baseRotation + Owner.direction * directionVerticality * 1.2f);
-
-            if (!Main.mouseLeft)
+            // 只在本地处理
+            if (Projectile.owner == Main.myPlayer)
             {
-                AniProgress--;
-                ShaderOpacity = MathHelper.Lerp(ShaderOpacity, 1f, 0.12f);
-                return;
-            }
+                if ((Main.mouseLeft || Active) && !UCAUtilities.JustPressRightClick())
+                {
+                    if (AniProgress < InToAni)
+                        AniProgress++;
+                }
+                else
+                {
+                    if (AniProgress > 0)
+                        AniProgress--;
+                }
 
-            if (AniProgress < InToAni)
-                AniProgress++;
-
-            if (AniProgress < InToAni)
-            {
-                ShaderOpacity = MathHelper.Lerp(1f, 0, EasingHelper.EaseInCubic(AniProgress / (float)InToAni));
-            }
-
-            if (AniProgress >= InToAni)
-            {
-                ShaderOpacity = 0;
+                ShaderOpacity = MathHelper.Lerp(0.8f, 0f, EasingHelper.EaseInCubic(AniProgress / (float)InToAni));
             }
         }
 
@@ -145,10 +150,12 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
                     float PredictMult = DistanceToNPC / 48;
                     Vector2 CrossfirePos = npc.Center + Vector2.UnitX.RotatedBy(MathHelper.PiOver2 * i).RotatedBy(RandomOffset) * 250;
                     Vector2 toNPCVector = (npc.Center + npc.velocity * PredictMult - CrossfirePos).SafeNormalize(Vector2.UnitX) * 1.5f;
-                    GenUnDeathSign(CrossfirePos, 0.4f);
-                    int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), CrossfirePos, toNPCVector, ModContent.ProjectileType<NightEnergySplit>(), Projectile.damage, Projectile.knockBack, Owner.whoAmI);
-                    Main.projectile[p].tileCollide = false;
-                    Main.projectile[p].penetrate = 1;
+                    if (Projectile.owner == Main.myPlayer)
+                    {
+                        int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), CrossfirePos, toNPCVector, ModContent.ProjectileType<NightEnergySplit>(), Projectile.damage, Projectile.knockBack, Owner.whoAmI, 0.4f);
+                        Main.projectile[p].tileCollide = false;
+                        Main.projectile[p].penetrate = 1;
+                    }
                 }
             }
             else
@@ -158,9 +165,12 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
                 {
                     Vector2 CrossRandomfirePos = RandomPos + Vector2.UnitX.RotatedBy(MathHelper.PiOver2 * i).RotatedBy(RandomOffset) * 250;
                     Vector2 toPosVector = (RandomPos - CrossRandomfirePos).SafeNormalize(Vector2.UnitX) * 1.5f;
-                    int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + CrossRandomfirePos, toPosVector, ModContent.ProjectileType<NightEnergySplit>(), Projectile.damage, Projectile.knockBack, Owner.whoAmI);
-                    Main.projectile[p].tileCollide = false;
-                    Main.projectile[p].penetrate = 1;
+                    if (Projectile.owner == Main.myPlayer)
+                    {
+                        int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + CrossRandomfirePos, toPosVector, ModContent.ProjectileType<NightEnergySplit>(), Projectile.damage, Projectile.knockBack, Owner.whoAmI, 0.4f);
+                        Main.projectile[p].tileCollide = false;
+                        Main.projectile[p].penetrate = 1;
+                    }
                 }
             }
         }

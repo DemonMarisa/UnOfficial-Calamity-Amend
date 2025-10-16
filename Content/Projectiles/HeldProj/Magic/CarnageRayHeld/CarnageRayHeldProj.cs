@@ -2,22 +2,21 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
-using Terraria.Graphics.Shaders;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
 using UCA.Content.Items.Weapons.Magic.Ray;
-using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.Magic.Ray;
 using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
 
-namespace UCA.Content.Projectiles.HeldProj.Magic
+namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
 {
     public class CarnageRayHeldProj : BaseHeldProj
     {
@@ -48,6 +47,15 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
+            Projectile.netImportant = true;
+        }
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(ShaderOpacity);
+        }
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            ShaderOpacity = reader.ReadSingle();
         }
 
         public override bool StillInUse()
@@ -76,15 +84,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
                 Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.06f;
 
                 UseDelay = Owner.HeldItem.useTime;
-
-                for (int i = 0; i < 75; i++)
-                {
-                    new LilyLiquid(Projectile.Center, Projectile.velocity.RotatedByRandom(MathHelper.PiOver4 * 0.6f) * Main.rand.NextFloat(0f, 1.2f) * 24f, Color.Red, 64, 0, 1, 1.5f).Spawn();
-                }
-                for (int i = 0; i < 35; i++)
-                {
-                    new LilyLiquid(Projectile.Center, Projectile.velocity.RotatedByRandom(MathHelper.PiOver4 * 0.6f) * Main.rand.NextFloat(0f, 1.2f) * 24f, Color.Black, 64, 0, 1, 1.5f).Spawn();
-                }
             }
         }
 
@@ -94,19 +93,21 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             float directionVerticality = MathF.Abs(Projectile.velocity.X);
             Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, baseRotation + Owner.direction * directionVerticality * 1.5f);
             Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, baseRotation + Owner.direction * directionVerticality * 1.2f);
-
-            if ((Main.mouseLeft || Active) && !UCAUtilities.JustPressRightClick())
+            if (Projectile.owner == Main.myPlayer)
             {
-                if (AniProgress < MaxAni)
-                    AniProgress++;
-            }
-            else
-            {
-                if (AniProgress > 0)
-                    AniProgress--;
-            }
+                if ((Main.mouseLeft || Active) && !UCAUtilities.JustPressRightClick())
+                {
+                    if (AniProgress < MaxAni)
+                        AniProgress++;
+                }
+                else
+                {
+                    if (AniProgress > 0)
+                        AniProgress--;
+                }
 
-            ShaderOpacity = MathHelper.Lerp(0.8f, 0f, EasingHelper.EaseInCubic(AniProgress / (float)MaxAni));
+                ShaderOpacity = MathHelper.Lerp(0.8f, 0f, EasingHelper.EaseInCubic(AniProgress / (float)MaxAni));
+            }
         }
 
         public override bool CanDel()

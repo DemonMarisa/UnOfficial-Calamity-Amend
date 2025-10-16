@@ -14,7 +14,7 @@ using UCA.Content.Projectiles.Magic.Ray;
 using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
 
-namespace UCA.Content.Projectiles.HeldProj.Magic
+namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
 {
     public class PlasmaRodHeldProj : BaseHeldProj
     {
@@ -75,7 +75,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
                 Color RandomColor = Color.Lerp(Color.DarkViolet, Color.LightPink, Main.rand.NextFloat(0, 1));
                 new MediumGlowBall(Projectile.Center + FireOffset, Projectile.velocity.RotatedBy(offset * i), RandomColor, 60, 0, 1, 0.2f, Main.rand.NextFloat(2f, 2.2f)).Spawn();
             }
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + FireOffset, Projectile.velocity * 2f, ModContent.ProjectileType<PlasmaSpark>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+            if (Projectile.owner == Main.myPlayer)
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + FireOffset, Projectile.velocity * 2f, ModContent.ProjectileType<PlasmaSpark>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
             Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.1f;
         }
 

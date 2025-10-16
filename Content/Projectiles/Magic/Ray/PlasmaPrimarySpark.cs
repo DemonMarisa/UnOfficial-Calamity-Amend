@@ -63,12 +63,15 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
         public override void OnSpawn(IEntitySource source)
         {
-            Projectile.rotation = Projectile.velocity.ToRotation();
-            VelocityLength = Projectile.velocity.Length();
         }
 
         public override void AI()
         {
+            if (Projectile.UCA().FirstFrame)
+            {
+                Projectile.rotation = Projectile.velocity.ToRotation();
+                VelocityLength = Projectile.velocity.Length();
+            }
             DrawRot += 0.06f;
             if (Projectile.timeLeft > 160)
             {

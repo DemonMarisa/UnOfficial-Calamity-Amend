@@ -41,9 +41,6 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
         public override void OnSpawn(IEntitySource source)
         {
-            Rot = Main.rand.NextFloat(0, MathHelper.TwoPi);
-            Rot2 = Main.rand.NextFloat(0, MathHelper.TwoPi);
-            Rot3 = Main.rand.NextFloat(0, MathHelper.TwoPi);
         }
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
@@ -52,6 +49,12 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
         public override void AI()
         {
+            if (Projectile.UCA().FirstFrame)
+            {
+                Rot = Main.rand.NextFloat(0, MathHelper.TwoPi);
+                Rot2 = Main.rand.NextFloat(0, MathHelper.TwoPi);
+                Rot3 = Main.rand.NextFloat(0, MathHelper.TwoPi);
+            }
             Scale = MathHelper.Lerp(0f, 1f, 1 - EasingHelper.EaseInCubic(Projectile.timeLeft / 30f));
 
             if (Projectile.timeLeft < 15)

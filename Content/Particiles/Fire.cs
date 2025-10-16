@@ -28,7 +28,6 @@ namespace UCA.Content.Particiles
         {
             Velocity *= 0.9f;
             Opacity = MathHelper.Lerp(Opacity, MathHelper.Lerp(Opacity, 0, 0.3f), 0.12f);
-            Scale = MathHelper.Lerp(Scale, MathHelper.Lerp(Scale, 0, 0.3f), 0.12f);
         }
         // 这里采样没有问题，他贴图就是这样
         public override void Draw(SpriteBatch spriteBatch)
@@ -38,7 +37,6 @@ namespace UCA.Content.Particiles
 
             Rectangle frame = UCATextureRegister.Fire.Frame(8, 8, (int)(LifetimeRatio * 64) % 8, (int)(LifetimeRatio * 8));
             Vector2 origin = frame.Size() * 0.5f;
-
             spriteBatch.Draw(texture, Position - Main.screenPosition, frame, DrawColor * brightness * Opacity, Rotation, origin, Scale, 0, 0f);
         }
     }

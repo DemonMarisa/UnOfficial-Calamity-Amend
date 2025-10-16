@@ -1,11 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Content.MetaBalls;
-using UCA.Content.Projectiles.HeldProj.Magic;
+using UCA.Content.Particiles;
+using UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld;
 using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
 
@@ -32,10 +34,29 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 10 * (Projectile.extraUpdates + 1);
         }
-
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(Projectile.extraUpdates);
+            writer.Write(Projectile.penetrate);
+        }
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            Projectile.extraUpdates = reader.ReadInt32();
+            Projectile.penetrate = reader.ReadInt32();
+        }
         public override void AI()
         {
-
+            if (Projectile.UCA().FirstFrame)
+            {
+                NightRayHeldProj.GenUnDeathSign(Projectile.Center, Projectile.ai[0]);
+                for (int i = 0; i < 10; i++)
+                {
+                    Color color = Color.Lerp(Color.DarkOrchid, Color.DarkViolet, Main.rand.NextFloat(0, 1f));
+                    new Line(Projectile.Center, Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(3, 7), color, Main.rand.Next(60, 90), 0, 1, 0.1f, false, Projectile.Center).Spawn();
+                }
+                SoundEngine.PlaySound(SoundsMenu.NightRayAttack, Projectile.Center);
+                Projectile.netUpdate = true;
+            }
             for (int i = 0; i < DustCount; i++)
             {
                 ShadowMetaBall.SpawnParticle(Projectile.Center + Projectile.velocity / DustCount * i + new Vector2(Main.rand.Next(-2, 2), Main.rand.Next(-2, 2)),
@@ -48,19 +69,18 @@ namespace UCA.Content.Projectiles.Magic.Ray
             if (Projectile.timeLeft % 20 == 0)
             {
                 NPC npc = Projectile.FindClosestTarget(1500, true);
-                NightRayHeldProj.GenUnDeathSign(Projectile.Center, 0.6f);
                 if (npc is not null)
                 {
                     float DistanceToNPC = Vector2.Distance(Projectile.Center, npc.Center);
                     float PredictMult = DistanceToNPC / 48;
                     Vector2 direction = (npc.Center + npc.velocity * PredictMult - Projectile.Center).SafeNormalize(Vector2.Zero) * 3;
-                    int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, direction, ModContent.ProjectileType<NightEnergySplit>(), Projectile.damage / 2, Projectile.knockBack, Projectile.owner, 0);
+                    int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, direction, ModContent.ProjectileType<NightEnergySplit>(), Projectile.damage / 2, Projectile.knockBack, Projectile.owner, 0.6f);
                     Main.projectile[p].penetrate = 1;
                 }
                 else
                 {
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2 * (Main.rand.NextBool() ? 1 : -1)),
-                        ModContent.ProjectileType<NightEnergySplit>(), Projectile.damage / 2, Projectile.knockBack, Projectile.owner, 0);
+                        ModContent.ProjectileType<NightEnergySplit>(), Projectile.damage / 2, Projectile.knockBack, Projectile.owner, 0.6f);
                 }
             }
         }

@@ -2,6 +2,7 @@
 using CalamityMod.Items.Weapons.Magic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
@@ -10,7 +11,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Common.Misc;
 using UCA.Content.Paths;
-using UCA.Content.Projectiles.HeldProj.Magic;
+using UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld;
 using UCA.Core.BaseClass;
 using UCA.Core.Keybinds;
 using UCA.Core.MiscDate;
@@ -99,7 +100,8 @@ namespace UCA.Content.ItemOverride.Magic
                     }
                     float kb = player.GetWeaponKnockback(item);
                     int Damage = player.GetWeaponDamage(item);
-                    Projectile.NewProjectileDirect(player.GetSource_FromThis(), player.Center, Vector2.Zero, ModContent.ProjectileType<PlasmaRodSkillProj>(), Damage * 10, kb, player.whoAmI, PlasmaRodFilp);
+                    int Index = Projectile.NewProjectile(player.GetSource_FromThis(), player.Center, Vector2.Zero, ModContent.ProjectileType<PlasmaRodSkillProj>(), Damage * 10, kb, player.whoAmI, PlasmaRodFilp);
+                    UCAUtilities.SendProjSync(Index);
                 }
             }
         }

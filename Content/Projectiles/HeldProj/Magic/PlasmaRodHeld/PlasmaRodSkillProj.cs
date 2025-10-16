@@ -3,6 +3,7 @@ using CalamityMod.Graphics.Primitives;
 using CalamityMod.Items.Weapons.Magic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -13,12 +14,13 @@ using UCA.Assets;
 using UCA.Content.Particiles;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
+using UCA.Content.Projectiles.Misc;
 using UCA.Core.AnimationHandle;
 using UCA.Core.Enums;
 using UCA.Core.SpecificEffectManagers;
 using UCA.Core.Utilities;
 
-namespace UCA.Content.Projectiles.HeldProj.Magic
+namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
 {
     public class PlasmaRodSkillProj : ModProjectile, ILocalizedModType, IPixelatedPrimitiveRenderer
     {
@@ -26,7 +28,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
         public override LocalizedText DisplayName => CalamityUtils.GetItemName<PlasmaRod>();
         public override string Texture => $"{ItemOverridePaths.MagicWeaponsPath}" + "PlasmaRodOverride";
 
-        public AnimationHelper animationHelper;
+        public AnimationHelper animationHelper = new AnimationHelper(3);
 
         public int OwnerDir = 0;
         public Player Owner => Main.player[Projectile.owner];
@@ -50,6 +52,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             Projectile.ignoreWater = true;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 45;
+            Projectile.netImportant = true;
         }
 
         public override bool? CanHitNPC(NPC target)
@@ -64,18 +67,24 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
         #region 注册数据
         public override void OnSpawn(IEntitySource source)
         {
-            // 初始化效果
-            animationHelper = new AnimationHelper(3);
-
-            animationHelper.MaxAniProgress[AnimationState.Begin] = 45;
-            animationHelper.MaxAniProgress[AnimationState.End] = 10;
-
-            OwnerDir = Owner.LocalMouseWorld().X > Owner.Center.X ? 1 : -1;
-
-            BeginRot = Owner.GetPlayerToMouseVector2().ToRotation();
         }
         #endregion
-
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(animationHelper.MaxAniProgress[AnimationState.Begin]);
+            writer.Write(animationHelper.MaxAniProgress[AnimationState.End]);
+            writer.Write(BeginRot);
+            writer.Write(CanHit);
+            writer.Write(SwordLength);
+        }
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            animationHelper.MaxAniProgress[AnimationState.Begin] = reader.ReadInt32();
+            animationHelper.MaxAniProgress[AnimationState.End] = reader.ReadInt32();
+            BeginRot = reader.ReadSingle();
+            CanHit = reader.ReadBoolean();
+            SwordLength = reader.ReadInt32();
+        }
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             // Otherwise, perform an AABB line collision check to check the whole beam.
@@ -86,6 +95,16 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
 
         public override void AI()
         {
+            Projectile.netUpdate = true;
+            if (Projectile.UCA().FirstFrame)
+            {
+                animationHelper.MaxAniProgress[AnimationState.Begin] = 45;
+                animationHelper.MaxAniProgress[AnimationState.End] = 10;
+
+                OwnerDir = Owner.LocalMouseWorld().X > Owner.Center.X ? 1 : -1;
+
+                BeginRot = Owner.GetPlayerToMouseVector2().ToRotation();
+            }
             Owner.itemTime = 2;
             Owner.itemAnimation = 2;
 
@@ -96,9 +115,9 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             // 基础信息
             Projectile.velocity = Projectile.rotation.ToRotationVector2();
             Projectile.timeLeft = 2;
-
+            
             AllAI();
-
+            Projectile.netSpam = 0;
             Projectile.netUpdate = true;
         }
         public void AllAI()
@@ -143,7 +162,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
                 SoundEngine.PlaySound(SoundsMenu.CarnageRightUse, Projectile.Center);
             if (CurAni > 10)
             {
-                BeginRot = Utils.AngleTowards(BeginRot, Owner.GetPlayerToMouseVector2().ToRotation(), 0.05f);
+                BeginRot = BeginRot.AngleTowards(Owner.GetPlayerToMouseVector2().ToRotation(), 0.05f);
                 CanHit = true;
             }
             // 使用缓动函数让动画更自然
@@ -170,8 +189,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             for (int i = 2; i < 6; i++)
             {
                 Vector2 BeginPos = Vector2.Lerp(Projectile.Center, Projectile.Center + Vector2.UnitX.RotatedBy(Projectile.rotation) * Main.rand.Next(60, 160) * Projectile.scale, i / 4f);
-                new Fire(BeginPos, Projectile.velocity.RotatedBy(MathHelper.PiOver2), Color.Violet, 64, Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.2f).Spawn();
-                new Fire(BeginPos, Projectile.velocity.RotatedBy(MathHelper.PiOver2), Color.DarkViolet, 64, Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.1f).Spawn();
+                new Fire(BeginPos, Projectile.velocity.RotatedBy(MathHelper.PiOver2), Color.Purple, 64, Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.2f).Spawn();
+                new Fire(BeginPos, Projectile.velocity.RotatedBy(MathHelper.PiOver2), Color.Violet, 64, Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.1f).Spawn();
             }
         }
 
@@ -221,16 +240,11 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            for (int i = 0; i < 35; i++)
-            {
-                float offset = MathHelper.TwoPi / 35;
-                Color RandomColor = Color.Lerp(Color.DarkViolet, Color.LightPink, Main.rand.NextFloat(0, 1));
-                new MediumGlowBall(target.Center, Projectile.velocity.RotatedBy(offset * i), RandomColor, 60, 0, 1, 0.2f, Main.rand.NextFloat(2f, 2.2f)).Spawn();
-            }
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<UseForOnHitNPCProj>(), 0, 0, Projectile.owner, Type);
+
             target.AddBuff(BuffID.ShadowFlame, 300);
 
             SoundEngine.PlaySound(SoundsMenu.PlasmaRodSwingHit, Projectile.Center);
-
 
             if (Projectile.UCA().OnceHitEffect)
                 ScreenShakeSystem.AddScreenShakes(Projectile.Center, 2, 5, Projectile.rotation + MathHelper.PiOver2, 0.2f, true, 1000);

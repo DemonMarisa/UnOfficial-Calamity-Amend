@@ -13,13 +13,7 @@ float uFadeoutLength;
 float uFadeinLength;
 
 float4 LaserFunction(float2 coords : TEXCOORD0) : COLOR0
-{ // 根据材质与坐标指定的基础颜色
-    float4 baseColor = tex2D(LaserTexture, coords);
-    
-    // 如果没有颜色，则不做处理
-    if (!any(baseColor))
-        discard;
-    
+{
     // 转化为目标的像素坐标
     float2 pixelPos = coords * targetSize;
     // 将对应像素坐标转换为激光材质的UV坐标

@@ -17,7 +17,7 @@ namespace UCA.Core.MetaBallsSystem
         // 这个元球对应的渲染目标
         public RenderTarget2D AlphaTexture;
         // 这个元球对应的背景
-        public virtual Texture2D BgTexture => UCATextureRegister.ShabowBackGround.Value;
+        public virtual Texture2D BgTexture => UCATextureRegister.ShadowNebulaBackGround.Value;
 
         /// <summary>
         /// 描边颜色

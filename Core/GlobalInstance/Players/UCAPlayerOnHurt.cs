@@ -13,9 +13,12 @@ namespace UCA.Core.GlobalInstance.Players
         {
             if (ExternalDR != 0)
             {
-                ExternalDR = ExternalDR / 1f + ExternalDR;
-
+                ExternalDR = ExternalDR / (1f + ExternalDR);
                 modifiers.SourceDamage *= 1 - ExternalDR;
+            }
+            if (TerraRayUseSkillCount > 0)
+            {
+                modifiers.SourceDamage *= 0.25f;
             }
         }
         /*

@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
+using UCA.Content.Particiles;
 
 namespace UCA.Core.Utilities
 {
@@ -94,6 +95,56 @@ namespace UCA.Core.Utilities
                 return true;
             
             return false;
+        }
+        #region shader
+        public static void ReSetToBeginShader()
+        {
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+        }
+        public static void ReSetToBeginShader(BlendState blendState)
+        {
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, blendState, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+        }
+        public static void ReSetToBeginShader(BlendState blendState, Matrix matrix)
+        {
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, blendState, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, matrix);
+        }
+        public static void ReSetToBeginShader(BlendState blendState, SamplerState samplerState)
+        {
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, blendState, samplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+        }
+        public static void ReSetToBeginShader(BlendState blendState, SamplerState samplerState, Matrix matrix)
+        {
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, blendState, samplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, matrix);
+        }
+        public static void ReSetToEndShader()
+        {
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+        }
+        #endregion
+        public static void UpDateFrame(int horizontalFrames, int verticalFrames, ref int FrameX, ref int FrameY)
+        {
+            if (FrameX < horizontalFrames - 1)
+                FrameX++;
+            else
+            {
+                FrameX = 0;
+                if (FrameY < verticalFrames - 1)
+                    FrameY++;
+                else
+                    FrameY = 0;
+            }
+        }
+
+        public static void DrawCube(Vector2 pos)
+        {
+            Main.spriteBatch.Draw(UCATextureRegister.WhiteCube.Value, pos - Main.screenPosition, null,Color.White, 0, UCATextureRegister.WhiteCube.Size() / 2, 1, SpriteEffects.None, default);
         }
     }
 }

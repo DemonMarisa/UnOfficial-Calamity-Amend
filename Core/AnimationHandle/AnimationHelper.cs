@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,6 +18,7 @@ namespace UCA.Core.AnimationHandle
         public bool[] HasFinish = [];
 
         public float[] RotVelocity = [];
+
         public AnimationHelper(int TotalAniUnit)
         {
             // 使用 new int[length] 来创建指定长度的数组

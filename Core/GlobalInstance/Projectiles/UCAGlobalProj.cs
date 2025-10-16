@@ -6,7 +6,7 @@ using UCA.Core.Utilities;
 
 namespace UCA.Core.GlobalInstance.Projectiles
 {
-    public class UCAGlobalProj : GlobalProjectile
+    public partial class UCAGlobalProj : GlobalProjectile
     {
         public override bool InstancePerEntity => true;
 
@@ -17,6 +17,14 @@ namespace UCA.Core.GlobalInstance.Projectiles
         public int DamageDefence = 0;
 
         public bool OnceHitEffect = true;
+        public bool FirstFrame = true;
+        public override void AI(Projectile projectile)
+        {
+            if (FirstFrame)
+            {
+                FirstFrame = false;
+            }
+        }
         public override void ModifyHitPlayer(Projectile projectile, Player target, ref Player.HurtModifiers modifiers)
         {
             if (HasThroughNightShield)

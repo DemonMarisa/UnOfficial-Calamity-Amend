@@ -8,6 +8,7 @@ using Terraria;
 using Terraria.ModLoader;
 using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Projectiles.HeldProj;
+using UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld;
 
 namespace UCA.Core.GlobalInstance.Players
 {
@@ -26,8 +27,14 @@ namespace UCA.Core.GlobalInstance.Players
         public bool TerraRestore = false;
         public static int TerraRayChargeCD = 2700;
         public int TerraRayCharge = 0;
+        public int TerraRayHealCD = 0;
+        public int TerraRayUseSkillCount = 0;
+
+        public int ElementalRayStates = ElementalRayState.Misc;
         public override void ResetEffects()
         {
+            ExternalDR = 0;
+
             if (NightShieldHP > NightShieldMaxHP)
                 NightShieldHP = NightShieldMaxHP;
 
@@ -42,12 +49,15 @@ namespace UCA.Core.GlobalInstance.Players
             if (NightShieldHP <= 0)
                 NightShieldCanDefense = false;
 
+            UpdateTerraRayCD();
+        }
+        public void UpdateTerraRayCD()
+        {
+            // 存储与更新回血次数限制
             if (TerraRayRestore > MaxTerraRayRestore)
                 TerraRayRestore = MaxTerraRayRestore;
-
             if (TerraRayRestore < 0)
                 TerraRayRestore = 0;
-
             if (TerraRayRestore < MaxTerraRayRestore && TerraRayCharge < TerraRayChargeCD)
             {
                 TerraRayCharge++;
@@ -57,7 +67,12 @@ namespace UCA.Core.GlobalInstance.Players
                 TerraRayCharge = 0;
                 TerraRayRestore++;
             }
-            ExternalDR = 0;
+            // 吸血CD
+            if (TerraRayHealCD > 0)
+                TerraRayHealCD--;
+            // 控制免伤
+            if (TerraRayUseSkillCount > 0)
+                TerraRayUseSkillCount--;
         }
         public override void PostUpdateEquips()
         {
@@ -79,6 +94,7 @@ namespace UCA.Core.GlobalInstance.Players
                 Player.Heal(Player.statLifeMax2 / 4);
                 TerraRestore = false;
             }
+            UpdateMouseWorld();
         }
     }
 }

@@ -18,7 +18,13 @@ namespace UCA.Content.UCACooldowns
     {
         public static Color ringColorLerpStart = Color.ForestGreen;
         public static Color ringColorLerpEnd = Color.LawnGreen;
-        public float AdjustedCompletion => instance.timeLeft / (float)UCAPlayer.TerraRayChargeCD;
+        public float AdjustedCompletion()
+        {
+            Player player = Main.LocalPlayer;
+            if (player.UCA().TerraRayRestore == 3)
+                return 1f;
+            return instance.timeLeft / (float)UCAPlayer.TerraRayChargeCD;
+        }
 
         public static new string ID => "UCATerraRestoreCount";
         public override bool CanTickDown => instance.player.HeldItem.type != ModContent.ItemType<TerraRay>() || instance.timeLeft <= 0;
@@ -36,7 +42,7 @@ namespace UCA.Content.UCACooldowns
         {
             // Use the adjusted completion
             GameShaders.Misc["CalamityMod:CircularBarShader"].UseOpacity(opacity);
-            GameShaders.Misc["CalamityMod:CircularBarShader"].UseSaturation(AdjustedCompletion);
+            GameShaders.Misc["CalamityMod:CircularBarShader"].UseSaturation(AdjustedCompletion());
             GameShaders.Misc["CalamityMod:CircularBarShader"].UseColor(CooldownStartColor);
             GameShaders.Misc["CalamityMod:CircularBarShader"].UseSecondaryColor(CooldownEndColor);
             GameShaders.Misc["CalamityMod:CircularBarShader"].Apply();
@@ -44,9 +50,8 @@ namespace UCA.Content.UCACooldowns
         public override void DrawExpanded(SpriteBatch spriteBatch, Vector2 position, float opacity, float scale)
         {
             base.DrawExpanded(spriteBatch, position, opacity, scale);
-            float Xoffset = instance.timeLeft > 9 ? -10f : -5;
             Player player = Main.LocalPlayer;
-            CalamityUtils.DrawBorderStringEightWay(spriteBatch, FontAssets.MouseText.Value, player.UCA().TerraRayRestore.ToString(), position + new Vector2(Xoffset, 4) * scale, Color.Lerp(ringColorLerpEnd, Color.Black, 1 - instance.Completion), Color.Black, scale);
+            CalamityUtils.DrawBorderStringEightWay(spriteBatch, FontAssets.MouseText.Value, player.UCA().TerraRayRestore.ToString(), position + new Vector2(-3, 4) * scale, Color.Lerp(ringColorLerpEnd, Color.LightGreen, 1 - instance.Completion), Color.Black, scale);
         }
         public override void DrawCompact(SpriteBatch spriteBatch, Vector2 position, float opacity, float scale)
         {
@@ -58,7 +63,7 @@ namespace UCA.Content.UCACooldowns
             // Draw the icon
             spriteBatch.Draw(sprite, position, null, Color.White * opacity, 0, sprite.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             // Draw the small overlay
-            int lostHeight = (int)Math.Ceiling(overlay.Height * AdjustedCompletion);
+            int lostHeight = (int)Math.Ceiling(overlay.Height * AdjustedCompletion());
             Rectangle crop = new Rectangle(0, lostHeight, overlay.Width, overlay.Height - lostHeight);
             spriteBatch.Draw(overlay, position + Vector2.UnitY * lostHeight * scale, crop, OutlineColor * opacity * 0.9f, 0, sprite.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             float Xoffset = instance.timeLeft > 9 ? -10f : -5;

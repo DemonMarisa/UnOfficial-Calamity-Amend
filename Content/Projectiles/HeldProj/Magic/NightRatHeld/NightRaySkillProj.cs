@@ -17,14 +17,14 @@ using UCA.Content.UCACooldowns;
 using UCA.Core.GlobalInstance.Players;
 using UCA.Core.Utilities;
 
-namespace UCA.Content.Projectiles.HeldProj.Magic
+namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
 {
     public class NightRaySkillProj : ModProjectile, ILocalizedModType
     {
         public override LocalizedText DisplayName => CalamityUtils.GetItemName<NightsRay>();
 
         public Player Owner => Main.player[Projectile.owner];
-        public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/NightRayHeldProj";
+        public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/NightRatHeld/NightRayHeldProj";
 
         public Vector2 BeginPos => Owner.Center + new Vector2(45 * Owner.direction, -10);
         public Vector2 MedPos => Owner.Center + new Vector2(45 * Owner.direction, -35);

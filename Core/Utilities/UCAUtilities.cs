@@ -9,11 +9,6 @@ namespace UCA.Core.Utilities
 {
     public static partial class UCAUtilities
     {
-        public static string GetNamePlacePath(Type type)
-        {
-            return (type.GetType().Namespace + ".").Replace('.', '/');
-        }
-
         public static UCAGlobalItem UCA(this Item item)
         {
             return item.GetGlobalItem<UCAGlobalItem>();
@@ -36,10 +31,23 @@ namespace UCA.Core.Utilities
         {
             return !Main.mouseLeft && Main.mouseRight;
         }
+        public static bool PressLeftAndRightClick(this Player player)
+        {
+            return player.UCA().MouseLeft && player.UCA().MouseRight;
+        }
+        public static bool JustPressLeftClick(this Player player)
+        {
+            return player.UCA().MouseLeft && !player.UCA().MouseRight;
+        }
+
+        public static bool JustPressRightClick(this Player player)
+        {
+            return !player.UCA().MouseLeft && player.UCA().MouseRight;
+        }
 
         public static Vector2 LocalMouseWorld(this Player player)
         {
-            return player.Calamity().mouseWorld;
+            return player.UCA().SyncedMouseWorld;
         }
     }
 }

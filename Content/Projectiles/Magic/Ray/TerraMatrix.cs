@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Map;
 using Terraria.ModLoader;
@@ -19,7 +20,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         public int StaffBeginAni = 75;
         public int MaxTime = 180;
         public float Height;
-        public bool BeginFade; 
+        public bool BeginFade = false;
         public SpriteEffects filp = SpriteEffects.None;
         public Player Owner => Main.player[Projectile.owner];
         public override void SetDefaults()
@@ -44,7 +45,6 @@ namespace UCA.Content.Projectiles.Magic.Ray
             {
                 filp = SpriteEffects.FlipHorizontally;
             }
-            BeginFade = false;
         }
         public override void AI()
         {
@@ -106,6 +106,8 @@ namespace UCA.Content.Projectiles.Magic.Ray
                     Vector2 pos2 = Projectile.position + new Vector2(Main.rand.Next(0, Projectile.width), Projectile.height / 2);
                     new TerraTree(pos2, -Vector2.UnitY.RotatedBy(MathHelper.PiOver4 * 0.5f * (Main.rand.NextBool() ? -1 : 1)) * Main.rand.NextFloat(0.6f, 1.4f), Color.SaddleBrown, 0, DrawLayer.AfterDust, Main.rand.NextFloat(12, 15), (Main.rand.NextBool() ? -1 : 1), Main.rand.NextFloat(9, 18f)).Spawn();
                 }
+                if (Projectile.timeLeft % 5 == 0)
+                    SoundEngine.PlaySound(SoundsMenu.TerraTreeBreak, Projectile.Center);
             }
             #endregion
         }
@@ -123,9 +125,16 @@ namespace UCA.Content.Projectiles.Magic.Ray
         #endregion
         public override bool PreDraw(ref Color lightColor)
         {
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+
             Texture2D texture = UCATextureRegister.TerraMatrix.Value;
             Vector2 origPoint = texture.Size() / 2;
-            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.LawnGreen * Projectile.Opacity, 0, origPoint, new Vector2(1, 0.15f) * Projectile.scale, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.LimeGreen * Projectile.Opacity, 0, origPoint, new Vector2(1, 0.15f) * Projectile.scale, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.LightGreen * Projectile.Opacity * 0.5f, 0, origPoint, new Vector2(1, 0.15f) * Projectile.scale, SpriteEffects.None, 0);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
             return false;
         }
     }

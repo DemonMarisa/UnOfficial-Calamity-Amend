@@ -16,11 +16,9 @@ namespace UCA.Core.BaseClass
         public virtual Vector2 Posffset => Vector2.Zero;
         public virtual float RotOffset => 0;
         public virtual float RotAmount => 1f;
-
         public Player Owner => Main.player[Projectile.owner];
 
         public Vector2 LocalMouseWorld => Owner.Calamity().mouseWorld;
-
         public bool Active => (Owner.channel || Owner.controlUseTile) && !Owner.noItems && !Owner.CCed;
         public override void SetStaticDefaults()
         {
@@ -36,6 +34,8 @@ namespace UCA.Core.BaseClass
 
         public override void AI()
         {
+            Projectile.netImportant = true;
+
             if (UseDelay > 0)
                 UseDelay--;
 
@@ -47,22 +47,25 @@ namespace UCA.Core.BaseClass
             Player player = Main.player[Projectile.owner];
             Vector2 rrp = player.RotatedRelativePoint(player.MountedCenter, true);
 
+            UpdateAim(Projectile.Center);
+
             // Update the Prism's position in the world and relevant variables of the player holding it.
             UpdatePlayerVisuals(player, rrp);
 
-            if (Projectile.owner == Main.myPlayer)
+            if (StillInUse())
             {
-                UpdateAim(Projectile.Center);
-
-                if (StillInUse())
-                {
+                if (Projectile.owner == Main.myPlayer)
                     HoldoutAI();
-                }
-                else if (CanDel())
-                {
-                    InDel();
-                }
+
+                ExtraHoldoutAI();
             }
+            else if (CanDel())
+            {
+                InDel();
+            }
+
+            Projectile.netSpam = 0;
+            Projectile.netUpdate = true;
             // 确保不会使用的时候消失
             Projectile.timeLeft = 2;
         }
@@ -73,7 +76,7 @@ namespace UCA.Core.BaseClass
 
         public virtual bool CanDel()
         {
-            return UseDelay <= 0;
+            return UseDelay <= 0 && Projectile.owner == Main.myPlayer;
         }
         #region 更新玩家视觉效果
         public virtual void UpdatePlayerVisuals(Player player, Vector2 playerHandPos)
@@ -81,10 +84,9 @@ namespace UCA.Core.BaseClass
             Projectile.rotation = Projectile.velocity.ToRotation();
 
             Projectile.Center = playerHandPos + Posffset;
-
             Projectile.spriteDirection = Projectile.direction;
 
-            player.ChangeDir(Owner.LocalMouseWorld().X > player.Center.X ? 1 : -1);
+            player.ChangeDir(Owner.LocalMouseWorld().X - player.Center.X > 0 ? 1 : -1);
             player.heldProj = Projectile.whoAmI;
             player.itemTime = 2;
             player.itemAnimation = 2;
@@ -104,10 +106,6 @@ namespace UCA.Core.BaseClass
 
             aim = Vector2.Normalize(Vector2.Lerp(Vector2.Normalize(Projectile.velocity), aim, RotAmount));
 
-            if (aim != Projectile.velocity)
-            {
-                Projectile.netUpdate = true;
-            }
             Projectile.velocity = aim;
         }
         #endregion
@@ -116,6 +114,14 @@ namespace UCA.Core.BaseClass
         /// 手持弹幕的AI逻辑<br/>
         /// </summary>
         public virtual void HoldoutAI()
+        {
+
+        }
+
+        /// <summary>
+        /// 手持弹幕的AI逻辑，但是没有只在本地玩家运行的限制<br/>
+        /// </summary>
+        public virtual void ExtraHoldoutAI()
         {
 
         }

@@ -1,11 +1,10 @@
 ﻿using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Graphics.Primitives;
-using CalamityMod.Items.Weapons.Magic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Diagnostics;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -19,18 +18,17 @@ using UCA.Content.Particiles;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
 using UCA.Core.BaseClass;
-using UCA.Core.SpecificEffectManagers;
 using UCA.Core.Utilities;
 
-namespace UCA.Content.Projectiles.HeldProj.Magic
+namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
 {
     public class CarnageRayHeldProjMelee : BaseHeldProj, IPixelatedPrimitiveRenderer
     {
         public PixelationPrimitiveLayer LayerToRenderTo => PixelationPrimitiveLayer.AfterPlayers;
         public int YOffset = 7;
         public override LocalizedText DisplayName => CalamityUtils.GetItemName<CarnageRay>();
-        public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/CarnageRayHeldProj";
-        public Vector2 RotVector => new Vector2((12 + XOffset) * Owner.direction, YOffset).BetterRotatedBy(Owner.GetPlayerToMouseVector2().ToRotation(), default);
+        public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/CarnageRayHeld/CarnageRayHeldProj";
+        public Vector2 RotVector => new Vector2((12 + XOffset) * Owner.direction, YOffset).BetterRotatedBy(Owner.GetPlayerToMouseVector2().ToRotation());
 
         public override Vector2 RotPoint => TextureAssets.Projectile[Type].Size() / 2;
 
@@ -65,8 +63,24 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             Projectile.ignoreWater = true;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 45;
+            Projectile.netImportant = true;
         }
-
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(ShaderOpacity);
+            writer.Write(XOffset);
+            writer.Write(StabsFrame);
+            writer.Write(CanHit);
+            writer.Write(Projectile.ai[0]);
+        }
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            ShaderOpacity = reader.ReadSingle();
+            XOffset = reader.ReadSingle();
+            StabsFrame = reader.ReadInt32();
+            CanHit = reader.ReadBoolean();
+            Projectile.ai[0] = reader.ReadSingle();
+        }
         public override bool? CanHitNPC(NPC target)
         {
             if (target.friendly)
@@ -77,7 +91,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            // Otherwise, perform an AABB line collision check to check the whole beam.
             float _ = float.NaN;
             bool c = Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center, Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.Zero) * 55, 33f, ref _);
             return c;
@@ -91,45 +104,19 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
         {
             if (AniProgress == IinToAni && Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.HeldItem.mana * Owner.manaCost), true, false))
             {
-                #region 处理常规发射
                 for (int i = 0; i < 4; i++)
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity.RotatedByRandom(MathHelper.PiOver4 * 0.7f) * 9 * Main.rand.NextFloat(0.3f, 1.1f), ModContent.ProjectileType<CarnageBall>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 1);
-
-                for (int i = 0; i < 35; i++)
-                {
-                    new LilyLiquid(Projectile.Center, Projectile.velocity.RotatedByRandom(MathHelper.PiOver4 * 0.6f) * Main.rand.NextFloat(0f, 1.2f) * -18f, Color.Red, 64, 0, 1, 1.5f).Spawn();
-                }
-                for (int i = 0; i < 25; i++)
-                {
-                    new LilyLiquid(Projectile.Center, Projectile.velocity.RotatedByRandom(MathHelper.PiOver4 * 0.6f) * Main.rand.NextFloat(0f, 1.2f) * -18f, Color.Black, 64, 0, 1, 1.5f).Spawn();
-                }
-                for (int i = 0; i < 25; i++)
-                {
-                    Vector2 shootVel = Projectile.velocity.RotatedByRandom(MathHelper.PiOver4 * 0.7f) * Main.rand.NextFloat(0.2f, 1.2f) * -18f;
-                    if (shootVel.ToRotation() > 0)
-                        shootVel.Y *= 0.15f;
-                    Color color = Main.rand.NextBool(3) ? Color.Black : Color.DarkRed;
-                    new BloodDrop(Projectile.Center,
-                        shootVel,
-                        color,
-                        Main.rand.Next(60, 90), 0, 1, 0.1f).Spawn();
-                }
-
-                for (int i = 0; i < 10; i++)
-                    CarnageMetaBall.SpawnParticle(Projectile.Center + Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.2f, 0.55f) * 24f,
-                        Projectile.rotation.ToRotationVector2(), 
-                        Main.rand.NextFloat(0.4f, 1f),
-                        Projectile.rotation);
-                #endregion
-
-                SoundEngine.PlaySound(SoundsMenu.CarnageBallSpawn, Projectile.Center);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity.RotatedByRandom(MathHelper.PiOver4 * 0.7f) * 9 * Main.rand.NextFloat(0.3f, 1.1f), ModContent.ProjectileType<CarnageBall>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 1);
                 #region 处理额外弹幕
-
                 Vector2 SpawnPos = Owner.Center + new Vector2(Main.rand.Next(100, 300), 0).RotatedByRandom(MathHelper.TwoPi);
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), SpawnPos, Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * 3f, ModContent.ProjectileType<CarnageBall>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 1);
-           
                 #endregion
+                Projectile.ai[0]++;
             }
+        }
+        public override void ExtraHoldoutAI()
+        {
+            if (AniProgress == IinToAni && Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.HeldItem.mana * Owner.manaCost), false, false))
+                SpawnDust();
         }
         #region AI
         
@@ -156,7 +143,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             {
                 SoundEngine.PlaySound(SoundsMenu.CarnageRightUse, Projectile.Center);
             }
-
             if (UseDelay <= 0)
             {
                 Projectile.UCA().OnceHitEffect = true;
@@ -165,7 +151,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
                 UseDelay = 45;
                 AniProgress = 0;
             }
-
             if (AniProgress < IinToAni)
             {
                 XOffset = MathHelper.Lerp(-8, 50, EasingHelper.EaseInBack(AniProgress / IinToAni));
@@ -180,7 +165,36 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             else
                 ShaderOpacity = MathHelper.Lerp(ShaderOpacity, 1, 0.08f);
         }
+        public void SpawnDust()
+        {
+            for (int i = 0; i < 35; i++)
+            {
+                new LilyLiquid(Projectile.Center, Projectile.velocity.RotatedByRandom(MathHelper.PiOver4 * 0.6f) * Main.rand.NextFloat(0f, 1.2f) * -18f, Color.Red, 64, 0, 1, 1.5f).Spawn();
+            }
+            for (int i = 0; i < 25; i++)
+            {
+                new LilyLiquid(Projectile.Center, Projectile.velocity.RotatedByRandom(MathHelper.PiOver4 * 0.6f) * Main.rand.NextFloat(0f, 1.2f) * -18f, Color.Black, 64, 0, 1, 1.5f).Spawn();
+            }
+            for (int i = 0; i < 25; i++)
+            {
+                Vector2 shootVel = Projectile.velocity.RotatedByRandom(MathHelper.PiOver4 * 0.7f) * Main.rand.NextFloat(0.2f, 1.2f) * -18f;
+                if (shootVel.ToRotation() > 0)
+                    shootVel.Y *= 0.15f;
+                Color color = Main.rand.NextBool(3) ? Color.Black : Color.DarkRed;
+                new BloodDrop(Projectile.Center,
+                    shootVel,
+                    color,
+                    Main.rand.Next(60, 90), 0, 1, 0.1f).Spawn();
+            }
 
+            for (int i = 0; i < 10; i++)
+                CarnageMetaBall.SpawnParticle(Projectile.Center + Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.2f, 0.55f) * 24f,
+                    Projectile.rotation.ToRotationVector2(),
+                    Main.rand.NextFloat(0.4f, 1f),
+                    Projectile.rotation);
+            SoundEngine.PlaySound(SoundsMenu.CarnageBallSpawn, Projectile.Center);
+        }
+        #endregion
         public override bool CanDel()
         {
             return AniProgress == 0 && !UCAUtilities.PressLeftAndRightClick();
@@ -190,7 +204,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
         {
             Projectile.Kill();
         }
-        #endregion
         void IPixelatedPrimitiveRenderer.RenderPixelatedPrimitives(SpriteBatch spriteBatch, PixelationPrimitiveLayer layer)
         {
             if (StabsFrame > 19)

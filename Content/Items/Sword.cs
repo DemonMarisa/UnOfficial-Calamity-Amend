@@ -11,6 +11,7 @@ using Terraria.ModLoader;
 using UCA.Content.DrawNodes;
 using UCA.Content.Particiles;
 using UCA.Content.Paths;
+using UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld;
 using UCA.Content.Projectiles.Magic.Ray;
 using UCA.Content.Projectiles.Misc.Test;
 using UCA.Content.UCACooldowns;
@@ -47,10 +48,7 @@ namespace UCA.Content.Items
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            float beginrot = Main.rand.NextFloat(0, MathHelper.TwoPi);
-            float rotSpeed = Main.rand.NextBool() ? 0.05f : -0.05f;
-            int length = Main.rand.Next(150, 200);
-            new AbsorbGlowBall(player.Center, Color.LawnGreen, 90, 0.05f, beginrot, rotSpeed, player.whoAmI, length).Spawn();
+            player.UCA().ElementalRayStates = ElementalRayState.Misc;
             return false;
         }
 

@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -61,6 +62,22 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override void AI()
         {
+            if (Projectile.UCA().FirstFrame)
+            {
+                Vector2 firVec = Projectile.velocity.SafeNormalize(Vector2.Zero) * 3f;
+                Vector2 ProjFireOffset = new Vector2(-24, 0).RotatedBy(Projectile.velocity.ToRotation());
+                #region 生成伴随主弹幕的树
+                Vector2 firPos = Projectile.Center + ProjFireOffset;
+                int Filp = Main.rand.NextBool() ? 1 : -1;
+                for (int i = 0; i < 2; i++)
+                {
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.DarkGreen, 0, DrawLayer.AfterDust, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.ForestGreen, 0, DrawLayer.AfterDust, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.LightGreen, 0, DrawLayer.AfterDust, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.SaddleBrown, 0, DrawLayer.AfterDust, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
+                }
+                #endregion
+            }
             LaserLength = (int)MathHelper.Lerp(LaserLength, 2000, 0.2f);
             Projectile.rotation = Projectile.velocity.ToRotation();
             #region 透明度
@@ -246,6 +263,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 Color RandomColor = Color.Lerp(Color.LightGreen, Color.ForestGreen, Main.rand.NextFloat(0, 1));
                 new MediumGlowBall(firPos, Vector2.Zero, RandomColor, 60, 0, 1, 0.2f, Main.rand.NextFloat(3f, 4f)).Spawn();
             }
+            SoundEngine.PlaySound(SoundsMenu.TerraRayHit, Projectile.Center);
         }
         public override bool PreDraw(ref Color lightColor)
         {

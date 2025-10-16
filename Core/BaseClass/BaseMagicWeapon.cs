@@ -18,9 +18,15 @@ namespace UCA.Core.BaseClass
             if (player.whoAmI != Main.myPlayer)
                 return;
 
-            if (UCAKeybind.WeaponSkillHotKey.JustPressed && !Main.blockMouse && !Main.mouseText)
+            if (UCAKeybind.WeaponSkillHotKey.JustPressed && !Main.blockMouse)
+            {
+                if (Main.playerInventory)
+                {
+                    if (Main.mouseText)
+                        return;
+                }
                 WeaponSkill(player);
-
+            }
             UpdateHoldItem(player);
         }
 

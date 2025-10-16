@@ -11,7 +11,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Common.Misc;
 using UCA.Content.Paths;
-using UCA.Content.Projectiles.HeldProj.Magic;
+using UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld;
 using UCA.Content.UCACooldowns;
 using UCA.Core.BaseClass;
 using UCA.Core.GlobalInstance.Players;

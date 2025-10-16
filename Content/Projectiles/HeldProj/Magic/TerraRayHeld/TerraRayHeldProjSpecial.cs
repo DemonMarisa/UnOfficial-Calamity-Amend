@@ -21,13 +21,13 @@ using UCA.Core.Enums;
 using UCA.Core.Graphics;
 using UCA.Core.Utilities;
 
-namespace UCA.Content.Projectiles.HeldProj.Magic
+namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
 {
     public class TerraRayHeldProjSpecial : ModProjectile, ILocalizedModType
     {
         public override LocalizedText DisplayName => CalamityUtils.GetItemName<TerraRay>();
-        public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/TerraRayHeldProj";
-        public AnimationHelper animationHelper;
+        public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/TerraRayHeld/TerraRayHeldProj";
+        public AnimationHelper animationHelper = new AnimationHelper(4);
         public int OwnerDir = 0;
         public float BeginRot = 0;
         public float Opacity = 1f;
@@ -55,15 +55,17 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
 
         public override void OnSpawn(IEntitySource source)
         {
-            // 初始化效果
-            animationHelper = new AnimationHelper(4);
-            animationHelper.MaxAniProgress[AnimationState.Begin] = 30;
-            animationHelper.MaxAniProgress[AnimationState.Middle] = 10;
-            animationHelper.MaxAniProgress[AnimationState.End] = 40;
         }
 
         public override void AI()
         {
+            if (Projectile.UCA().FirstFrame)
+            {
+                animationHelper.MaxAniProgress[AnimationState.Begin] = 30;
+                animationHelper.MaxAniProgress[AnimationState.Middle] = 10;
+                animationHelper.MaxAniProgress[AnimationState.End] = 40;
+                SoundEngine.PlaySound(SoundsMenu.TerraRightCharge, Projectile.Center);
+            }
             OwnerDir = Owner.LocalMouseWorld().X > Owner.Center.X ? 1 : -1;
             BeginRot = UCAUtilities.GetVector2(Owner.Center, Owner.LocalMouseWorld()).ToRotation() + MathHelper.ToRadians(-0 * OwnerDir);
             Owner.itemTime = 2;
@@ -95,10 +97,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
             // 处理动画
             if (!animationHelper.HasFinish[AnimationState.Begin])
             {
-                /*
-                if (animationHelper.AniProgress[AnimationState.Begin] == 1)
-                    SoundEngine.PlaySound(SoundsMenu.NightShieldCharge, Projectile.Center);
-                */
                 if (animationHelper.AniProgress[AnimationState.Begin] < animationHelper.MaxAniProgress[AnimationState.Begin])
                     animationHelper.AniProgress[AnimationState.Begin]++;
 
@@ -289,11 +287,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
         #region 生成弹幕
         public void GenLance()
         {
-            if (Projectile.owner != Main.myPlayer)
-                return;
-
-            SoundEngine.PlaySound(SoundsMenu.PlasmaRodAttack, Projectile.Center);
-            
             for (float i = 0; i < 2; i++)
             {
                 for (float j = 0; j < 3; j++)
@@ -302,7 +295,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
                     Vector2 firePos = ToMouseVector.ToRotationVector2() * (i == 0 ? -96 : 96);
                     firePos = firePos.RotatedBy(rotOffset * j - MathHelper.PiOver4 * 1);
                     GenStar(Owner.Center + firePos, ToMouseVector + MathHelper.PiOver2, 0.6f);
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Owner.Center + firePos, Owner.GetToMouseVector2(Owner.Center + firePos) * 15f, ModContent.ProjectileType<TerraLance>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                    if (Projectile.owner == Main.myPlayer)
+                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), Owner.Center + firePos, Owner.GetToMouseVector2(Owner.Center + firePos) * 15f, ModContent.ProjectileType<TerraLance>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
                 }
             }
         }
@@ -323,13 +317,13 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
                     for (int i = 0; i < 2; i++)
                     {
                         Vector2 offset = new Vector2(56 * i * (j == 0 ? 1 : -1), 32 * i);
-                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), genPos - offset, Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Damage, Projectile.knockBack, Projectile.owner, 40 * i, 1);
+                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), genPos - offset, Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Damage, Projectile.knockBack, Projectile.owner, 40 * i, 0, 1);
                         Vector2 offset2 = new Vector2(56 * i * (j == 0 ? 1 : -1), 48);
-                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), genPos - offset2, Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Damage, Projectile.knockBack, Projectile.owner, 20 * i, 1);
+                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), genPos - offset2, Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Damage, Projectile.knockBack, Projectile.owner, 20 * i, 0, 1);
                     }
                 }
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), genPos - new Vector2(48, -24), Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Damage, Projectile.knockBack, Projectile.owner, 10, 1);
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), genPos - new Vector2(-48, -24), Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Damage, Projectile.knockBack, Projectile.owner, 30, 1);
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), genPos - new Vector2(48, -24), Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Damage, Projectile.knockBack, Projectile.owner, 10, 0, 1);
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), genPos - new Vector2(-48, -24), Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Damage, Projectile.knockBack, Projectile.owner, 30, 0, 1);
                 return;
             }
             SoundEngine.PlaySound(SoundsMenu.NightRayHit,Projectile.Center);
@@ -338,13 +332,13 @@ namespace UCA.Content.Projectiles.HeldProj.Magic
                 for (int i = 0; i < 3; i++)
                 {
                     Vector2 offset = new Vector2(56 * i * (j == 0 ? 1 : -1), 32 * i);
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), genPos - offset, Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Damage, Projectile.knockBack, Projectile.owner, 40 * i);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), genPos - offset, Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Damage, Projectile.knockBack, Projectile.owner, 40 * i, 1, 1);
                     Vector2 offset2 = new Vector2(56 * i * (j == 0 ? 1 : -1), 48);
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), genPos - offset2, Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Damage, Projectile.knockBack, Projectile.owner, 20 * i);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), genPos - offset2, Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Damage, Projectile.knockBack, Projectile.owner, 20 * i, 1, 1);
                 }
             }
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), genPos - new Vector2(96, -24), Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Damage, Projectile.knockBack, Projectile.owner, 10);
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), genPos - new Vector2(-96, -24), Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Damage, Projectile.knockBack, Projectile.owner, 30);
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), genPos - new Vector2(96, -24), Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Damage, Projectile.knockBack, Projectile.owner, 10, 1, 1);
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), genPos - new Vector2(-96, -24), Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Damage, Projectile.knockBack, Projectile.owner, 30, 1, 1);
         }
         #endregion
         public override void OnKill(int timeLeft)

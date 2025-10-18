@@ -129,7 +129,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             for (int i = 0; i < FirePos.Count; i++)
             {
-                NPC npc = Projectile.FindClosestTarget(1500, true);
+                NPC npc = Projectile.FindClosestTarget(1500, false);
                 GenStar(FirePos[i], MathHelper.PiOver2 + Projectile.rotation, 1);
                 if (npc != null)
                 {

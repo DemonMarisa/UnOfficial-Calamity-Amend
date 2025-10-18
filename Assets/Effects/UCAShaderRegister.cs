@@ -16,7 +16,9 @@ namespace UCA.Assets.Effects
         public static Effect TerraRayVinesShader;
         public static Effect TerrarRayLaser;
         public static Effect SolarBladeShader;
+        public static Effect SolarBlastShader;
         public static Effect StandardLaserShader;
+
         public override void Load()
         {
             if (Main.dedServ)
@@ -44,6 +46,9 @@ namespace UCA.Assets.Effects
 
             StandardLaserShader = LoadShader("StandardLaserShader");
             RegisterMiscShader(StandardLaserShader, "UCAStandardLaserPass", "StandardLaserShader");
+
+            SolarBlastShader = LoadShader("SolarBlastShader");
+            RegisterMiscShader(SolarBlastShader, "UCASolarBlastPass", "SolarBlastShader");
         }
 
         public static void RegisterMiscShader(Effect shader, string passName, string registrationName)

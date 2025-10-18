@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets;
@@ -23,6 +23,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         public Vector2 BeginPos;
         public Vector2 EndPos;
         public int LaserTimeOffset;
+        public List<Vector2> FirePos = [];
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 4400;
@@ -63,6 +64,10 @@ namespace UCA.Content.Projectiles.Magic.Ray
             UpdateMisc();
             FirstFrame();
             UpdateLaserLength();
+            if (Projectile.timeLeft == 40)
+            {
+                ShootStarDust();
+            }
         }
         #region 初始化
         public void FirstFrame()
@@ -77,7 +82,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             for (int i = 0; i < 35; i++)
             {
                 Color RandomColor = Color.Lerp(Color.White, Color.AntiqueWhite, Main.rand.NextFloat(0, 1));
-                new MediumGlowBall(Projectile.Center + Posoffset, RandomColor, 120, 0.2f, Main.rand.NextFloat(2f, 3f), false).Spawn();
+                new MediumGlowBall(Projectile.Center + Posoffset, RandomColor, 120, 0.2f, Main.rand.NextFloat(2f, 3f)).Spawn();
             }
             #region 生成伴随主弹幕的树
             Vector2 firVec = Projectile.velocity.SafeNormalize(Vector2.Zero) * 3f;
@@ -99,6 +104,10 @@ namespace UCA.Content.Projectiles.Magic.Ray
             {
                 LaserLength = (EndPos - BeginPos).Length();
                 EndPos += new Vector2(128, 0).RotatedBy(Projectile.rotation);
+                if (Projectile.timeLeft % 3 == 0)
+                {
+                    FirePos.Add(EndPos);
+                }
             }
         }
         #endregion
@@ -112,13 +121,57 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 Opacity = MathHelper.Lerp(Opacity, 0f, 0.15f);
         }
         #endregion
+        #region 发射星辰碎块
+        public void ShootStarDust()
+        {
+            for (int i = 0; i < FirePos.Count; i++)
+            {
+                NPC npc = Projectile.FindClosestTarget(1500, false);
+                for (int j = 0; j < 20; j++)
+                {
+                    Color RandomColor = Color.Lerp(Color.DarkBlue, Color.SkyBlue, Main.rand.NextFloat(0, 1));
+                    new MediumGlowBall(FirePos[i], RandomColor, 60, 0.2f, Main.rand.NextFloat(1.6f, 2f)).Spawn();
+                }
+                if (npc != null)
+                {
+                    float DistanceToNPC = Vector2.Distance(FirePos[i], npc.Center);
+                    float PredictMult = DistanceToNPC / 45;
+                    Vector2 ToNPCVel = (npc.Center - FirePos[i] + npc.velocity * PredictMult).SafeNormalize(Projectile.rotation.ToRotationVector2());
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), FirePos[i], ToNPCVel * 24, ModContent.ProjectileType<StarDustFragment>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner);
+                }
+                else
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), FirePos[i], Vector2.Zero, ModContent.ProjectileType<StarDustFragment>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner);
+                }
+                new CrossGlow(FirePos[i], Vector2.Zero, Color.SkyBlue, 25, 1f, 0.3f).Spawn();
+            }
+        }
+        #endregion
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            base.OnHitNPC(target, hit, damageDone);
+            if (Projectile.UCA().OnceHitEffect)
+            {
+                for (int j = 0; j < 20; j++)
+                {
+                    Color RandomColor = Color.Lerp(Color.Orange, Color.Yellow, Main.rand.NextFloat(0, 1));
+                    new MediumGlowBall(target.Center, RandomColor, 60, 0.2f, Main.rand.NextFloat(1.6f, 2f)).Spawn();
+                }
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<SolarBlast>(), Projectile.damage * 10, Projectile.knockBack, Projectile.owner);
+                for (int i = 0; i < 6; i++)
+                {
+                    Vector2 randomOffset = Vector2.UnitX.RotateRandom(MathHelper.TwoPi) * (75 + target.width / 2) * Main.rand.NextFloat(0.6f, 1.2f);
+                    for (int j = 0; j < 10; j++)
+                    {
+                        Color RandomColor = Color.Lerp(Color.Violet, Color.Purple, Main.rand.NextFloat(0, 1));
+                        new MediumGlowBall(target.Center + randomOffset, RandomColor, 60, 0.2f, Main.rand.NextFloat(1.6f, 2f)).Spawn();
+                    }
+                    Vector2 ToNPCVel = UCAUtilities.GetVector2(target.Center, target.Center + randomOffset).SafeNormalize(Vector2.Zero) * 9 * Main.rand.NextFloat(0.9f, 1.2f);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center + randomOffset, ToNPCVel.RotatedByRandom(MathHelper.PiOver4), ModContent.ProjectileType<NebulaEnergy>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner);
+                }
+            }
         }
         public override void OnKill(int timeLeft)
         {
-            base.OnKill(timeLeft);
         }
         public override bool PreDraw(ref Color lightColor)
         {

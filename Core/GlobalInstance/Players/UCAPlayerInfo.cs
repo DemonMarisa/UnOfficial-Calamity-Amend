@@ -31,9 +31,9 @@ namespace UCA.Core.GlobalInstance.Players
                 packet.Write((byte)Player.whoAmI);
                 // 写入鼠标坐标
                 packet.WriteVector2(Main.MouseWorld);
-                // 写入鼠标坐标
+                // 写入鼠标左键状态
                 packet.Write(Main.mouseLeft);
-                // 写入鼠标坐标
+                // 写入鼠标右键状态
                 packet.Write(Main.mouseRight);
                 // 发送给服务器
                 packet.Send();

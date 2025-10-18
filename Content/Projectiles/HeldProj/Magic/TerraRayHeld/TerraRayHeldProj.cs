@@ -93,7 +93,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
 
             if (Projectile.owner == Main.myPlayer)
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + ProjFireOffset, firVec * 0.0001f, ModContent.ProjectileType<TerraLaser>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
-           
+
+            GenStar(Projectile.Center + FireOffset, Projectile.rotation + MathHelper.PiOver2);
             SoundEngine.PlaySound(SoundsMenu.TerraRayLeftFire, Projectile.Center);
             // 后坐力
             Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.1f;

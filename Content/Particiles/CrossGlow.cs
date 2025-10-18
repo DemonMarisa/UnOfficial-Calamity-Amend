@@ -13,6 +13,7 @@ namespace UCA.Content.Particiles
         public override BlendState BlendState => BlendState.Additive;
         public float BeginScale;
         public SpriteEffects se = SpriteEffects.None;
+        public bool UseFadeIn = true;
         public CrossGlow(Vector2 position, Vector2 velocity, Color color, int lifetime, float opacity, float scale)
         {
             Position = position;
@@ -23,22 +24,36 @@ namespace UCA.Content.Particiles
             Scale = scale;
             BeginScale = scale;
         }
-
+        public CrossGlow(Vector2 position, Vector2 velocity, Color color, int lifetime, float opacity, float scale, bool useFadeIn)
+        {
+            Position = position;
+            Velocity = velocity;
+            DrawColor = color;
+            Lifetime = lifetime;
+            Opacity = opacity;
+            Scale = scale;
+            BeginScale = scale;
+            UseFadeIn = useFadeIn;
+        }
         public override void OnSpawn()
         {
             if (Main.rand.NextBool())
                 se = SpriteEffects.FlipHorizontally;
+
+            if (UseFadeIn)
+                Scale = BeginScale;
         }
         public override void Update()
         {
             if (LifetimeRatio < 0.5f)
             {
-                Scale = MathHelper.Lerp(0f, BeginScale, EasingHelper.EaseOutCubic(LifetimeRatio * 2));
+                if (UseFadeIn)
+                    Scale = MathHelper.Lerp(0f, BeginScale, EasingHelper.EaseOutCubic(LifetimeRatio * 2));
             }
             else
             {
                 float progress = LifetimeRatio - 0.5f;
-                Scale = MathHelper.Lerp(BeginScale, 0f, EasingHelper.EaseInCubic(progress * 2));
+                Scale = MathHelper.Lerp(BeginScale, 0f, EasingHelper.EaseOutCubic(progress * 2));
             }
         }
         // 这里采样没有问题，他贴图就是这样

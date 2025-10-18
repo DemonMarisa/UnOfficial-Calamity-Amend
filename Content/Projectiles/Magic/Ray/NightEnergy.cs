@@ -33,6 +33,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Projectile.penetrate = -1;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 10 * (Projectile.extraUpdates + 1);
+            Projectile.netImportant = true;
         }
         public override void SendExtraAI(BinaryWriter writer)
         {
@@ -68,7 +69,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Projectile.rotation = Projectile.velocity.ToRotation();
             if (Projectile.timeLeft % 20 == 0)
             {
-                NPC npc = Projectile.FindClosestTarget(1500, true);
+                NPC npc = Projectile.FindClosestTarget(1500, false);
                 if (npc is not null)
                 {
                     float DistanceToNPC = Vector2.Distance(Projectile.Center, npc.Center);

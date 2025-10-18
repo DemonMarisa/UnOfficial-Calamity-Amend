@@ -30,6 +30,7 @@ namespace UCA.Content.ItemOverride.Magic
         {
             MethodInfo originalMethod = typeof(NightsRay).GetMethod(nameof(NightsRay.AddRecipes));
             MonoModHooks.Add(originalMethod, AddRecipes_Hook);
+
         }
 
         public override void SetStaticDefaults()

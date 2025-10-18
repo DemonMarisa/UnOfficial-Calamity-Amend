@@ -43,12 +43,20 @@ namespace UCA.Content.Items
 			Item.UseSound = SoundID.Item1;
 			Item.autoReuse = true;
 			Item.shoot = ProjectileID.WoodenArrowFriendly;
-			Item.shootSpeed = 3;
+			Item.shootSpeed = 12;
 		}
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            player.UCA().ElementalRayStates = ElementalRayState.Misc;
+            /*
+            for (int i = 0; i < 11; i++)
+            {
+                float rotAdd = MathHelper.ToRadians(3);
+                Projectile.NewProjectile(source, position, velocity.RotatedBy(MathHelper.ToRadians(-15) + rotAdd * i) * Main.rand.NextFloat(1f, 2f) * 0.5f, ModContent.ProjectileType<VortexMissle>(), damage, knockback, player.whoAmI);
+            }
+            */
+            Projectile.NewProjectile(source, player.LocalMouseWorld(), velocity, ModContent.ProjectileType<VortexMissle>(), damage, knockback, player.whoAmI);
+
             return false;
         }
 

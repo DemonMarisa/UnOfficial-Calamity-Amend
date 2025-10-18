@@ -6,7 +6,7 @@ using UCA.Assets;
 namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
 {
     public partial class ElementRaySpecialHeldProj
-    {       
+    {
         #region 绘制
         public void DrawBaseElementalRay()
         {

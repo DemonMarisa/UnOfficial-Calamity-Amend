@@ -42,6 +42,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         public Vector2 AuxFragmentOffset = new Vector2(0, 0);
         public Vector2 FilpAuxFragmentOffset = new Vector2(0, 0);
         public int WeaponStates => Owner.UCA().ElementalRayStates;
+        public ref float LightShootTime => ref Projectile.ai[0];
+        public ref float LightShootCount => ref Projectile.ai[1];
         public override void SetDefaults()
         {
             Projectile.width = 74;
@@ -56,16 +58,20 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         {
             if (UseDelay <= 0 && Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.HeldItem.mana * Owner.manaCost), true, false))
             {
-                // 后坐力
                 // 生成弹幕
                 SoundEngine.PlaySound(SoundsMenu.PlasmaRodAttack, Projectile.Center);
-                Vector2 FireOffset = new Vector2(54, 0).RotatedBy(Projectile.rotation);
+                Vector2 FireOffset = new Vector2(48, 0).RotatedBy(Projectile.rotation);
                 Vector2 FireVel = new Vector2(1, 0).RotatedBy(Projectile.rotation);
-
                 if (Projectile.owner == Main.myPlayer)
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + FireOffset, FireVel, ModContent.ProjectileType<ElementalLaser>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
-                
+
+                LightShootCount = 4;
+
+                // 后坐力
                 Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.15f;
+                MainFragmentOffset *= 1.2f;
+                AuxFragmentOffset *= 1.2f;
+                FilpAuxFragmentOffset *= 1.2f;
                 UseDelay = Owner.HeldItem.useTime;
             }
         }
@@ -77,6 +83,19 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             float directionVerticality = MathF.Abs(Projectile.velocity.X);
             Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, baseRotation + Owner.direction * directionVerticality * 1.5f);
             Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, baseRotation + Owner.direction * directionVerticality * 1.2f);
+            if (LightShootCount > 0 && LightShootTime <= 0)
+            {
+                Vector2 firePos = -Projectile.velocity.RotateRandom(MathHelper.PiOver4) * Main.rand.Next(350, 450);
+                Vector2 Spawn = Projectile.Center + firePos;
+                Vector2 firvel = UCAUtilities.GetVector2(Spawn, Owner.UCA().SyncedMouseWorld) * 12;
+
+                if (Projectile.owner == Main.myPlayer)
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Spawn, firvel, ModContent.ProjectileType<VortexMissle>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 1);
+                LightShootCount--;
+                LightShootTime = 4;
+            }
+            if (LightShootTime > 0)
+                LightShootTime--;
         }
         public void UpdateDrawOffset()
         {

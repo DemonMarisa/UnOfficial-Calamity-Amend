@@ -38,7 +38,6 @@ namespace UCA.Core.Graphics.Primitives.Trail
             }
 
             Main.graphics.GraphicsDevice.Textures[0] = drawSetting.texture;
-            Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
             Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, Vertexlist.ToArray(), 0, Vertexlist.Count - 2);
         }

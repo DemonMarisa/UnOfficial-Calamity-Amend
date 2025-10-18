@@ -153,7 +153,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
                             break;
                         }
                     }
-                    NPC npc = Projectile.FindClosestTarget(1500, true);
+                    NPC npc = Projectile.FindClosestTarget(1500, false);
                     if (npc != null)
                     {
                         float DistanceToNPC = Vector2.Distance(SpawnPos, npc.Center);

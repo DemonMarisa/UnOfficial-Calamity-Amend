@@ -139,7 +139,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
 
         public void CrossFire()
         {
-            NPC npc = Projectile.FindClosestTarget(1500, true);
+            NPC npc = Projectile.FindClosestTarget(1500, false);
             float RandomOffset = Main.rand.NextFloat(0, MathHelper.TwoPi);
 
             if (npc is not null)

@@ -38,9 +38,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
         }
-        public override void OnSpawn(IEntitySource source)
-        {
-        }
         public override void AI()
         {
             Initialize();

@@ -23,10 +23,20 @@ namespace UCA.Assets
         public static Asset<Texture2D> SolarBladeGlowMask { get; private set; }
         public static Asset<Texture2D> ElementalRayFlow { get; private set; }
         public static Asset<Texture2D> CrossGlow { get; private set; }
+        public static Asset<Texture2D> NebulaBG { get; private set; }
+        public static Asset<Texture2D> StarDustBG { get; private set; }
+        public static Asset<Texture2D> ShockWave { get; private set; }
+        public static Asset<Texture2D> FireStrike { get; private set; }
+        public static string ShockWavePath = "UCA/Assets/ExtraTextures/ShockWave";
+        public static Asset<Texture2D> BloomShockwave { get; private set; }
+        public static Asset<Texture2D> Lightning { get; private set; }
         public static void LoadExtraTextures()
         {
             Noise = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/Noise");
-            ShadowNebulaBackGround = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/ShadowNebula");
+            ShadowNebulaBackGround = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/MetaBall/ShadowNebula");
+            NebulaBG = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/MetaBall/NebulaBG");
+            StarDustBG = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/MetaBall/StarDustBG");
+
             NightRayShield = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/NightShield");
             SpreadLine = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/SpreadLine");
             CarnageBackGround = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/Carnage");
@@ -40,11 +50,18 @@ namespace UCA.Assets
             SolarBladeGlowMask = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/SolarBladeGlowMask");
             ElementalRayFlow = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/ElementalRayFlow");
             CrossGlow = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/CrossGlow");
+            ShockWave = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/ShockWave");
+            FireStrike = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/FireStrike");
+            BloomShockwave = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/BloomShockwave");
+            Lightning = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/Lightning");
         }
         public static void UnLoadExtraTextures()
         {
             Noise = null;
             ShadowNebulaBackGround = null;
+            NebulaBG = null;
+            StarDustBG = null;
+
             NightRayShield = null;
             SpreadLine = null;
             CarnageBackGround = null;
@@ -58,6 +75,9 @@ namespace UCA.Assets
             SolarBladeGlowMask = null;
             ElementalRayFlow = null;
             CrossGlow = null;
+            ShockWave = null;
+            FireStrike = null;
+            BloomShockwave = null;
         }
     }
 }

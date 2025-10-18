@@ -247,7 +247,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
             SoundEngine.PlaySound(SoundsMenu.PlasmaRodSwingHit, Projectile.Center);
 
             if (Projectile.UCA().OnceHitEffect)
-                ScreenShakeSystem.AddScreenShakes(Projectile.Center, 2, 5, Projectile.rotation + MathHelper.PiOver2, 0.2f, true, 1000);
+                ScreenShakeSystem.AddScreenShakes(Projectile.Center, 4, 5, Projectile.rotation + MathHelper.PiOver2, 0.2f, true, 1000);
         }
 
         public override void OnKill(int timeLeft)

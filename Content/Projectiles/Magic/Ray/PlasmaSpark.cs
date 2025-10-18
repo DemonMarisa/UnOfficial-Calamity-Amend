@@ -100,7 +100,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             if (Target is null)
             {
-                Target = Projectile.FindClosestTarget(600, true, true);
+                Target = Projectile.FindClosestTarget(600, false, false);
                 Projectile.velocity *= 0.97f;
             }
             else

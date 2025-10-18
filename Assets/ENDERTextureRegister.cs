@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria.ModLoader;
 using UCA.Content.Particiles;
+using static CalamityMod.Skies.ExoMechsSky;
 
 namespace UCA.Assets
 {
@@ -20,6 +21,12 @@ namespace UCA.Assets
         public static Asset<Texture2D> Petal { get; private set; }
         public static Asset<Texture2D> Tornado { get; private set; }
         public static Asset<Texture2D> Mowa11 { get; private set; }
+        public static Asset<Texture2D> Shine { get; private set; }
+        public static Asset<Texture2D> Thrust01 { get; private set; }
+        public static Asset<Texture2D> Thrust02 { get; private set; }
+        public static Asset<Texture2D> Lightning01 { get; private set; }
+        public static Asset<Texture2D> Lightning02 { get; private set; }
+        public static Asset<Texture2D> Lightning03 { get; private set; }
         #endregion
         #region 来自马格诺利亚的
         public static string CollectableLightPath = "UCA/Assets/MAGNOLIA/CollectableLight";
@@ -44,6 +51,9 @@ namespace UCA.Assets
             Petal = ModContent.Request<Texture2D>($"UCA/Assets/LILES/Petal");
             Tornado = ModContent.Request<Texture2D>($"UCA/Assets/LILES/Tornado");
             Mowa11 = ModContent.Request<Texture2D>($"UCA/Assets/LILES/Mowa11");
+            Shine = ModContent.Request<Texture2D>($"UCA/Assets/LILES/Shine");
+            Thrust01 = ModContent.Request<Texture2D>($"UCA/Assets/LILES/Thrust01");
+            Thrust02 = ModContent.Request<Texture2D>($"UCA/Assets/LILES/Thrust02");
 
             CollectableLight = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/CollectableLight");
             BladeM = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/BladeM");
@@ -52,6 +62,9 @@ namespace UCA.Assets
             Flower = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/Flower");
             LilyFlower = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/LilyFlower");
             PoisonSmoke = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/PoisonSmoke");
+            Lightning01 = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/Lightning01");
+            Lightning02 = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/Lightning02");
+            Lightning03 = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/Lightning03");
         }
         public static void UnLoadENDERTextures()
         {
@@ -64,6 +77,9 @@ namespace UCA.Assets
             Butterfly = null;
             Petal = null;
             Tornado = null;
+            Shine = null;
+            Thrust01 = null;
+            Thrust02 = null;
 
             CollectableLight = null;
             BladeM = null;
@@ -72,6 +88,9 @@ namespace UCA.Assets
             Flower = null;
             LilyFlower = null;
             PoisonSmoke = null;
+            Lightning01 = null;
+            Lightning02 = null;
+            Lightning03 = null;
         }
     }
 }

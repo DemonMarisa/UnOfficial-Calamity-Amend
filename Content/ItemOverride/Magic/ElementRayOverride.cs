@@ -32,8 +32,8 @@ namespace UCA.Content.ItemOverride.Magic
             item.mana = 10;
             item.width = 46;
             item.height = 46;
-            item.useTime = 25;
-            item.useAnimation = 25;
+            item.useTime = 35;
+            item.useAnimation = 35;
             item.useStyle = ItemUseStyleID.Shoot;
             item.noMelee = true;
             item.knockBack = 3.25f;

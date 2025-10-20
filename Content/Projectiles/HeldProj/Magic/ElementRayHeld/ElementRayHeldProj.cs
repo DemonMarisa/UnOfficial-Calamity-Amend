@@ -2,10 +2,10 @@
 using CalamityMod.Items.Weapons.Magic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Mono.Cecil;
 using System;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -13,6 +13,7 @@ using UCA.Assets;
 using UCA.Content.Projectiles.Magic.Ray;
 using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
 {
@@ -41,7 +42,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         public Vector2 MainFragmentOffset = new Vector2(0, 0);
         public Vector2 AuxFragmentOffset = new Vector2(0, 0);
         public Vector2 FilpAuxFragmentOffset = new Vector2(0, 0);
-        public int WeaponStates => Owner.UCA().ElementalRayStates;
+        public ref float WeaponStates => ref Projectile.ai[2];
         public ref float LightShootTime => ref Projectile.ai[0];
         public ref float LightShootCount => ref Projectile.ai[1];
         public override void SetDefaults()
@@ -62,8 +63,12 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 SoundEngine.PlaySound(SoundsMenu.PlasmaRodAttack, Projectile.Center);
                 Vector2 FireOffset = new Vector2(48, 0).RotatedBy(Projectile.rotation);
                 Vector2 FireVel = new Vector2(1, 0).RotatedBy(Projectile.rotation);
+
                 if (Projectile.owner == Main.myPlayer)
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + FireOffset, FireVel, ModContent.ProjectileType<ElementalLaser>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + FireOffset, FireVel, ModContent.ProjectileType<ElementalLaser>(), Projectile.damage, Projectile.knockBack, Projectile.owner, WeaponStates);
+
+                if (WeaponStates == ElementalRayState.Solar)
+                    ShootFireBall();
 
                 LightShootCount = 4;
 
@@ -75,6 +80,25 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 UseDelay = Owner.HeldItem.useTime;
             }
         }
+        public void ShootFireBall()
+        {
+            if (Projectile.owner == Main.myPlayer)
+            {
+                Vector2 FireOffset = new Vector2(48, 0).RotatedBy(Projectile.rotation);
+                Vector2 FireVel = new Vector2(12, 0).RotatedBy(Projectile.rotation);
+                for (int i = 0; i < 11; i++)
+                {
+                    float rotAdd = MathHelper.ToRadians(3);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + FireOffset, FireVel.RotatedBy(MathHelper.ToRadians(-15) + rotAdd * i) * Main.rand.NextFloat(0.6f, 1f), ModContent.ProjectileType<SolarFireBall>(), Projectile.damage, Projectile.knockBack, Projectile.owner, i);
+                }
+            }
+        }
+        public override void Initialize()
+        {
+            // 只在本地玩家设置状态，随后依靠收发包来同步状态，防止同步问题
+            if (Projectile.owner == Main.myPlayer)
+                WeaponStates = Owner.UCA().ElementalRayStates;
+        }
         public override void PostAI()
         {
             UpdateDrawOffset();
@@ -83,14 +107,24 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             float directionVerticality = MathF.Abs(Projectile.velocity.X);
             Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, baseRotation + Owner.direction * directionVerticality * 1.5f);
             Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, baseRotation + Owner.direction * directionVerticality * 1.2f);
+
+            ShootVortex();
+        }
+        public void ShootVortex()
+        {
             if (LightShootCount > 0 && LightShootTime <= 0)
             {
                 Vector2 firePos = -Projectile.velocity.RotateRandom(MathHelper.PiOver4) * Main.rand.Next(350, 450);
                 Vector2 Spawn = Projectile.Center + firePos;
                 Vector2 firvel = UCAUtilities.GetVector2(Spawn, Owner.UCA().SyncedMouseWorld) * 12;
 
+                int Type = ModContent.ProjectileType<VortexMissle>();
+
+                if (WeaponStates == ElementalRayState.Solar)
+                    Type = ModContent.ProjectileType<SolarFireBall>();
+
                 if (Projectile.owner == Main.myPlayer)
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Spawn, firvel, ModContent.ProjectileType<VortexMissle>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 1);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Spawn, firvel, Type, Projectile.damage, Projectile.knockBack, Projectile.owner);
                 LightShootCount--;
                 LightShootTime = 4;
             }
@@ -133,7 +167,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             Texture2D texture = UCATextureRegister.MainElementalFragments.Value;
             Vector2 drawPosition = Projectile.Center + MainFragmentOffset - Main.screenPosition ;
             float drawRotation = Projectile.rotation + (Projectile.spriteDirection == -1 ? MathHelper.PiOver2 + MathHelper.PiOver4 : MathHelper.PiOver4);
-            Rectangle frame = texture.Frame(5, 1, WeaponStates, 0);
+            Rectangle frame = texture.Frame(5, 1, (int)WeaponStates, 0);
             Vector2 origin = frame.Size() * 0.5f;
             SpriteEffects flipSprite = Projectile.spriteDirection * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             // spriteBatch会自动把textures0设置为当前使用的材质，所以需要你手动改一下
@@ -152,7 +186,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             }
             else
             {
-                frame = texture.Frame(4, 1, WeaponStates, 0);
+                frame = texture.Frame(4, 1, (int)WeaponStates, 0);
             }
             Vector2 origin = frame.Size() * 0.5f;
             SpriteEffects flipSprite = SpriteEffects.FlipVertically;
@@ -173,7 +207,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             }
             else
             {
-                frame = texture.Frame(4, 1, WeaponStates, 0);
+                frame = texture.Frame(4, 1, (int)WeaponStates, 0);
             }
             Vector2 origin = frame.Size() * 0.5f;
             SpriteEffects flipSprite = SpriteEffects.None;

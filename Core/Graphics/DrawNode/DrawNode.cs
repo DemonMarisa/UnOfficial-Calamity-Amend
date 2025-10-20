@@ -80,13 +80,17 @@ namespace UCA.Core.Graphics.DrawNode
         public virtual void Update() { }
         public virtual void OnKill() { }
         public virtual void Draw(SpriteBatch sb) { }
-
+        public virtual bool UpDatePos() { return true; }
         protected sealed override void Register()
         {
             if (!NodeManager.NodeCollection.Contains(this))
                 NodeManager.NodeCollection.Add(this);
 
             Type = NodeManager.NodeCollection.Count;
+        }
+        public void Kill()
+        {
+            Time = Lifetime;
         }
     }
 }

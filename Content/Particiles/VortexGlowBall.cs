@@ -1,15 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Terraria;
 using UCA.Assets;
 using UCA.Core.ParticleSystem;
 using UCA.Core.Utilities;
-using static tModPorter.ProgressUpdate;
 
 namespace UCA.Content.Particiles
 {

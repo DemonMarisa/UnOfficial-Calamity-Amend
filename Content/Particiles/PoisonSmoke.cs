@@ -4,6 +4,7 @@ using System;
 using Terraria;
 using UCA.Assets;
 using UCA.Core.ParticleSystem;
+using UCA.Core.Utilities;
 
 namespace UCA.Content.Particiles
 {
@@ -27,19 +28,16 @@ namespace UCA.Content.Particiles
         public override void Update()
         {
             Velocity *= 0.9f;
-            Opacity = MathHelper.Lerp(Opacity, MathHelper.Lerp(Opacity, 0, 0.3f), 0.12f);
-            // Scale = MathHelper.Lerp(Scale, MathHelper.Lerp(Scale, 0, 0.3f), 0.12f);
+            Opacity = MathHelper.Lerp(1f, 0, EasingHelper.EaseInCubic(LifetimeRatio));
         }
         // 这里采样没有问题，他贴图就是这样
         public override void Draw(SpriteBatch spriteBatch)
         {
-            float brightness = (float)Math.Pow(Lighting.Brightness((int)(Position.X / 16f), (int)(Position.Y / 16f)), 0.15);
             Texture2D texture = UCATextureRegister.PoisonSmoke.Value;
 
             Rectangle frame = UCATextureRegister.PoisonSmoke.Frame(8, 8, (int)(LifetimeRatio * 64) % 8, (int)(LifetimeRatio * 8));
             Vector2 origin = frame.Size() * 0.5f;
-
-            spriteBatch.Draw(texture, Position - Main.screenPosition, frame, DrawColor * brightness * Opacity, Rotation, origin, Scale, 0, 0f);
+            spriteBatch.Draw(texture, Position - Main.screenPosition, frame, DrawColor * Opacity, Rotation, origin, Scale, 0, 0f);
         }
     }
 }

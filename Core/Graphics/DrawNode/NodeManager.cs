@@ -35,7 +35,8 @@ namespace UCA.Core.Graphics.DrawNode
             for (int i = 0; i < ActivePixelNode.Count; i++)
             {
                 ActivePixelNode[i].Update();
-                ActivePixelNode[i].Position += ActivePixelNode[i].Velocity;
+                if (ActivePixelNode[i].UpDatePos())
+                    ActivePixelNode[i].Position += ActivePixelNode[i].Velocity;
                 ActivePixelNode[i].Time++;
 
                 if (ActivePixelNode[i].ExtraUpdate != 0)
@@ -43,7 +44,8 @@ namespace UCA.Core.Graphics.DrawNode
                     for (int j = 0; j < ActivePixelNode[i].ExtraUpdate; j++)
                     {
                         ActivePixelNode[i].Update();
-                        ActivePixelNode[i].Position += ActivePixelNode[i].Velocity;
+                        if (ActivePixelNode[i].UpDatePos())
+                            ActivePixelNode[i].Position += ActivePixelNode[i].Velocity;
                         ActivePixelNode[i].Time++;
                     }
                 }

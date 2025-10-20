@@ -1,0 +1,54 @@
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
+using Terraria;
+using UCA.Assets;
+using UCA.Core.ParticleSystem;
+using UCA.Core.Utilities;
+
+namespace UCA.Content.Particiles
+{
+    public class TrailGlowBall : BaseParticle
+    {
+        public override BlendState BlendState => BlendState.Additive;
+        public float BeginScale;
+        public List<Vector2> OldPos = [];
+        public TrailGlowBall(Vector2 position, Vector2 velocity, Color color, int lifetime, float scale)
+        {
+            Position = position;
+            Velocity = velocity;
+            DrawColor = color;
+            Lifetime = lifetime;
+            Scale = scale;
+            BeginScale = scale;
+        }
+        public override void OnSpawn()
+        {
+        }
+
+        public override void Update()
+        {
+            Scale = MathHelper.Lerp(BeginScale, 0f, EasingHelper.EaseOutCubic(LifetimeRatio));
+
+            OldPos.Add(Position);
+            if (OldPos.Count > 8)
+                OldPos.RemoveAt(0);
+
+            Position = Position + Velocity;
+            OldPos.Add(Position);
+            if (OldPos.Count > 8)
+                OldPos.RemoveAt(0);
+
+            Velocity *= 1.03f;
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            for (int i = 0; i< OldPos.Count; i++)
+            {
+                Texture2D texture = UCATextureRegister.SmallGlowBall.Value;
+                spriteBatch.Draw(texture, OldPos[i] - Main.screenPosition, null, DrawColor * Opacity, Rotation, texture.Size() / 2, Scale, SpriteEffects.None, 0);
+            }
+        }
+    }
+}

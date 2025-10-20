@@ -17,8 +17,9 @@ namespace UCA.Assets.Effects
         public static Effect TerrarRayLaser;
         public static Effect SolarBladeShader;
         public static Effect SolarBlastShader;
-        public static Effect StandardLaserShader;
-
+        public static Effect StandardFlowShader; 
+        public static Effect FlowWithAShader;
+        public static Effect PolarDistortShader;
         public override void Load()
         {
             if (Main.dedServ)
@@ -44,11 +45,18 @@ namespace UCA.Assets.Effects
             SolarBladeShader = LoadShader("SolarBladeShader");
             RegisterMiscShader(SolarBladeShader, "UCASolarBladePass", "SolarBladeShader");
 
-            StandardLaserShader = LoadShader("StandardLaserShader");
-            RegisterMiscShader(StandardLaserShader, "UCAStandardLaserPass", "StandardLaserShader");
+            StandardFlowShader = LoadShader("StandardFlowShader");
+            RegisterMiscShader(StandardFlowShader, "UCAStandardFlowPass", "StandardFlowShader");
 
             SolarBlastShader = LoadShader("SolarBlastShader");
             RegisterMiscShader(SolarBlastShader, "UCASolarBlastPass", "SolarBlastShader");
+            
+            FlowWithAShader = LoadShader("FlowWithAShader");
+            RegisterMiscShader(StandardFlowShader, "UCAFlowWithAPass", "FlowWithAShader");
+
+            PolarDistortShader = LoadShader("PolarDistortShader");
+            RegisterMiscShader(PolarDistortShader, "UCAPolarDistortPass", "PolarDistortShader");
+
         }
 
         public static void RegisterMiscShader(Effect shader, string passName, string registrationName)

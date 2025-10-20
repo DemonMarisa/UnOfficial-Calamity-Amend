@@ -72,21 +72,18 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 Projectile.rotation = Projectile.velocity.ToRotation();
                 VelocityLength = Projectile.velocity.Length();
             }
-            DrawRot += 0.06f;
             if (Projectile.timeLeft > 160)
             {
                 Projectile.velocity *= 1.02f;
                 if (VelocityLength < 9)
                 VelocityLength *= 1.02f;
             }
-
             for (int i = 0; i < 2; i++)
             {
                 Color RandomColor = Color.Lerp(Color.Violet, Color.Purple, Main.rand.NextFloat(0, 1));
                 new MediumGlowBall(Projectile.Center + Main.rand.NextVector2Circular(18, 18) + Projectile.velocity / 2 * i,
                     -Projectile.velocity, RandomColor, 120, 0, 1, 0.12f, Main.rand.NextFloat(0.5f, 1f)).Spawn();
             }
-
             TrackTarget();
         }
         public void TrackTarget()
@@ -107,7 +104,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             List<TrailDrawDate> trailDrawDate = [];
             List<TrailDrawDate> SecondtrailDrawDate = [];
             List<TrailDrawDate> ThirdtrailDrawDate = [];
-            DrawSetting drawSetting = new(UCATextureRegister.Slash01.Value, false, true);
+            DrawSetting drawSetting = new(UCATextureRegister.HoodTrail.Value, false, true);
 
             for (int i = 0; i < Projectile.oldPos.Length; i++)
             {
@@ -134,7 +131,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Texture2D texture = UCATextureRegister.GlowBall.Value;
             spriteBatch.Draw(texture, DrawTexPos / 2, null, new Color(0, 0, 0, 255), 0, texture.Size() / 2, Projectile.scale * 0.3f, SpriteEffects.None, 0);
             spriteBatch.Draw(UCATextureRegister.BallSoft.Value, DrawTexPos / 2, null, new Color(148, 0, 255, 0), 0, UCATextureRegister.BallSoft.Size() / 2, Projectile.scale * 0.4f, SpriteEffects.None, 0);
-            spriteBatch.Draw(UCATextureRegister.Spirit.Value, DrawTexPos / 2, null, new Color(255, 255, 255, 0), DrawRot, UCATextureRegister.Spirit.Size() / 2, Projectile.scale * 0.2f, SpriteEffects.None, 0);
+            spriteBatch.Draw(UCATextureRegister.Spirit.Value, DrawTexPos / 2, null, new Color(255, 255, 255, 0), Main.GlobalTimeWrappedHourly * 2, UCATextureRegister.Spirit.Size() / 2, Projectile.scale * 0.2f, SpriteEffects.None, 0);
         }
 
         public override bool PreDraw(ref Color lightColor)

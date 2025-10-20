@@ -1,5 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Terraria;
 using UCA.Assets;
 using UCA.Core.ParticleSystem;
@@ -7,10 +12,10 @@ using UCA.Core.Utilities;
 
 namespace UCA.Content.Particiles
 {
-    public class AbsorbGlowBall : BaseParticle
+    public class ProjAbsorbGlowBall : BaseParticle
     {
         public override BlendState BlendState => BlendState.Additive;
-        public AbsorbGlowBall(Vector2 position, Color color, int lifetime, float scale,float rot, float rotSpeed, int Owner, int Length)
+        public ProjAbsorbGlowBall(Vector2 position, Color color, int lifetime, float scale, float rot, float rotSpeed, int Owner, int Length, Vector2 offset)
         {
             Position = position;
             DrawColor = color;
@@ -20,16 +25,18 @@ namespace UCA.Content.Particiles
             RotSpeed = rotSpeed;
             OwnerID = Owner;
             DrawLength = Length;
+            Offset = offset;
         }
         public int OwnerID;
         public float RotSpeed;
         public float DrawLengthOffset;
         public float DrawLength;
-        public Player Owner => Main.player[OwnerID];
+        public Vector2 Offset;
+        public Projectile Owner => Main.projectile[OwnerID];
         public override void Update()
         {
             Velocity = Vector2.Zero;
-            Position = Owner.Center;
+            Position = Owner.Center + Offset.RotatedBy(Owner.rotation);
             Rotation += RotSpeed;
             DrawLengthOffset = MathHelper.Lerp(DrawLength, 0, EasingHelper.EaseOutCubic(LifetimeRatio));
             if (LifetimeRatio < 0.5f)

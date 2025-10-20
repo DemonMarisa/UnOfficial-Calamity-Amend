@@ -15,7 +15,7 @@ namespace UCA.Assets
         public static Asset<Texture2D> Flame { get; private set; }
         public static Asset<Texture2D> Spirit { get; private set; }
         public static Asset<Texture2D> BallSoft { get; private set; }
-        public static Asset<Texture2D> Slash01 { get; private set; }
+        public static Asset<Texture2D> HoodTrail { get; private set; }
         public static Asset<Texture2D> Ring04 { get; private set; }
         public static Asset<Texture2D> Butterfly { get; private set; }
         public static Asset<Texture2D> Petal { get; private set; }
@@ -37,6 +37,12 @@ namespace UCA.Assets
         public static Asset<Texture2D> Flower { get; private set; }
         public static Asset<Texture2D> LilyFlower { get; private set; }
         public static Asset<Texture2D> PoisonSmoke { get; private set; }
+        public static Asset<Texture2D> Slash { get; private set; }
+        public static Asset<Texture2D> Slash_Wrap { get; private set; }
+        public static Asset<Texture2D> Slash_Wrap2 { get; private set; }
+        public static Asset<Texture2D> Tornade_Fire { get; private set; }
+        public static Asset<Texture2D> MiscNoise01 { get; private set; }
+        public static Asset<Texture2D> MiscNoise02 { get; private set; }
         #endregion
         public static void LoadENDERTextures()
         {
@@ -45,7 +51,7 @@ namespace UCA.Assets
             Flame = ModContent.Request<Texture2D>($"UCA/Assets/LILES/Flame");
             Spirit = ModContent.Request<Texture2D>($"UCA/Assets/LILES/Spirit");
             BallSoft = ModContent.Request<Texture2D>($"UCA/Assets/LILES/BallSoft");
-            Slash01 = ModContent.Request<Texture2D>($"UCA/Assets/LILES/Slash01");
+            HoodTrail = ModContent.Request<Texture2D>($"UCA/Assets/LILES/HoodTrail");
             Ring04 = ModContent.Request<Texture2D>($"UCA/Assets/LILES/Ring04");
             Butterfly = ModContent.Request<Texture2D>($"UCA/Assets/LILES/Butterfly");
             Petal = ModContent.Request<Texture2D>($"UCA/Assets/LILES/Petal");
@@ -65,6 +71,12 @@ namespace UCA.Assets
             Lightning01 = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/Lightning01");
             Lightning02 = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/Lightning02");
             Lightning03 = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/Lightning03");
+            Slash = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/Slash");
+            Slash_Wrap = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/Slash_Wrap");
+            Slash_Wrap2 = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/Slash_Wrap2");
+            Tornade_Fire = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/Tornade_Fire");
+            MiscNoise01 = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/MiscNoise01");
+            MiscNoise02 = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/MiscNoise02");
         }
         public static void UnLoadENDERTextures()
         {
@@ -73,7 +85,7 @@ namespace UCA.Assets
             Flame = null;
             Spirit = null;
             BallSoft = null;
-            Slash01 = null;
+            HoodTrail = null;
             Butterfly = null;
             Petal = null;
             Tornado = null;
@@ -91,6 +103,12 @@ namespace UCA.Assets
             Lightning01 = null;
             Lightning02 = null;
             Lightning03 = null;
+            Slash = null;
+            Slash_Wrap = null;
+            Slash_Wrap2 = null;
+            Tornade_Fire = null;
+            MiscNoise01 = null;
+            MiscNoise02 = null;
         }
     }
 }

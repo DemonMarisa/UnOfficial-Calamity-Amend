@@ -8,6 +8,7 @@ using UCA.Assets;
 using UCA.Assets.Effects;
 using UCA.Content.DrawNodes;
 using UCA.Content.Particiles;
+using UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld;
 using UCA.Core.BaseClass;
 using UCA.Core.Graphics;
 using UCA.Core.Utilities;
@@ -24,6 +25,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         public Vector2 EndPos;
         public int LaserTimeOffset;
         public List<Vector2> FirePos = [];
+        public ref float WeaponStates => ref Projectile.ai[0];
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 4400;
@@ -78,10 +80,22 @@ namespace UCA.Content.Projectiles.Magic.Ray
             BeginPos = Projectile.Center;
             EndPos = Projectile.Center;
             Vector2 Posoffset = new Vector2(10, 0).RotatedBy(Projectile.rotation);
-            new CrossGlow(Projectile.Center + Posoffset, Vector2.Zero, Color.White, 60, 1f, 0.4f).Spawn();
+            if (WeaponStates == ElementalRayState.Solar)
+            {
+                new CrossGlow(Projectile.Center + Posoffset, Vector2.Zero, Color.OrangeRed, 60, 1f, 0.4f).Spawn();
+                new CrossGlow(Projectile.Center + Posoffset, Vector2.Zero, Color.Orange, 60, 1f, 0.4f).Spawn();
+            }
+            else
+                new CrossGlow(Projectile.Center + Posoffset, Vector2.Zero, Color.White, 60, 1f, 0.4f).Spawn();
             for (int i = 0; i < 35; i++)
             {
-                Color RandomColor = Color.Lerp(Color.White, Color.AntiqueWhite, Main.rand.NextFloat(0, 1));
+                Color RandomColor;
+
+                if (WeaponStates == ElementalRayState.Solar)
+                    RandomColor = Color.Lerp(Color.Orange, Color.OrangeRed, Main.rand.NextFloat(0, 1));
+                else
+                    RandomColor = Color.Lerp(Color.White, Color.AntiqueWhite, Main.rand.NextFloat(0, 1));
+
                 new MediumGlowBall(Projectile.Center + Posoffset, RandomColor, 120, 0.2f, Main.rand.NextFloat(2f, 3f)).Spawn();
             }
             #region 生成伴随主弹幕的树
@@ -91,8 +105,16 @@ namespace UCA.Content.Projectiles.Magic.Ray
             int Filp = Main.rand.NextBool() ? 1 : -1;
             for (int i = 0; i < 2; i++)
             {
-                new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.White, 0, DrawLayer.AfterDust, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
-                new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.GhostWhite, 0, DrawLayer.AfterDust, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
+                if (WeaponStates == ElementalRayState.Solar)
+                {
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.OrangeRed, 0, DrawLayer.AfterDust, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.Orange, 0, DrawLayer.AfterDust, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
+                }
+                else
+                {
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.White, 0, DrawLayer.AfterDust, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.GhostWhite, 0, DrawLayer.AfterDust, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
+                }
             }
             #endregion
         }
@@ -100,14 +122,15 @@ namespace UCA.Content.Projectiles.Magic.Ray
         #region 更新激光长度
         public void UpdateLaserLength()
         {
+
             if (Projectile.timeLeft > MaxLife - 15)
             {
                 LaserLength = (EndPos - BeginPos).Length();
                 EndPos += new Vector2(128, 0).RotatedBy(Projectile.rotation);
+                if (WeaponStates == ElementalRayState.Solar)
+                    return;
                 if (Projectile.timeLeft % 3 == 0)
-                {
                     FirePos.Add(EndPos);
-                }
             }
         }
         #endregion
@@ -124,6 +147,9 @@ namespace UCA.Content.Projectiles.Magic.Ray
         #region 发射星辰碎块
         public void ShootStarDust()
         {
+            if (FirePos.Count == 0)
+                return;
+
             for (int i = 0; i < FirePos.Count; i++)
             {
                 NPC npc = Projectile.FindClosestTarget(1500, false);
@@ -151,22 +177,25 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             if (Projectile.UCA().OnceHitEffect)
             {
-                for (int j = 0; j < 20; j++)
-                {
-                    Color RandomColor = Color.Lerp(Color.Orange, Color.Yellow, Main.rand.NextFloat(0, 1));
-                    new MediumGlowBall(target.Center, RandomColor, 60, 0.2f, Main.rand.NextFloat(1.6f, 2f)).Spawn();
-                }
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<SolarBlast>(), Projectile.damage * 10, Projectile.knockBack, Projectile.owner);
-                for (int i = 0; i < 6; i++)
+                int NebulaEnergyCount = 6;
+                if (WeaponStates == ElementalRayState.Solar)
+                    NebulaEnergyCount = 4;
+
+                if (WeaponStates == ElementalRayState.Solar)
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<SolarBlast>(), Projectile.damage * 10, Projectile.knockBack, Projectile.owner, 10, 0.2f, 1);
+                else
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<SolarBlast>(), Projectile.damage * 10, Projectile.knockBack, Projectile.owner);
+
+
+                int Type = ModContent.ProjectileType<NebulaEnergy>();
+                if (WeaponStates == ElementalRayState.Solar)
+                    Type = ModContent.ProjectileType<SolarFireBall>();
+
+                for (int i = 0; i < NebulaEnergyCount; i++)
                 {
                     Vector2 randomOffset = Vector2.UnitX.RotateRandom(MathHelper.TwoPi) * (75 + target.width / 2) * Main.rand.NextFloat(0.6f, 1.2f);
-                    for (int j = 0; j < 10; j++)
-                    {
-                        Color RandomColor = Color.Lerp(Color.Violet, Color.Purple, Main.rand.NextFloat(0, 1));
-                        new MediumGlowBall(target.Center + randomOffset, RandomColor, 60, 0.2f, Main.rand.NextFloat(1.6f, 2f)).Spawn();
-                    }
                     Vector2 ToNPCVel = UCAUtilities.GetVector2(target.Center, target.Center + randomOffset).SafeNormalize(Vector2.Zero) * 9 * Main.rand.NextFloat(0.9f, 1.2f);
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center + randomOffset, ToNPCVel.RotatedByRandom(MathHelper.PiOver4), ModContent.ProjectileType<NebulaEnergy>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center + randomOffset, ToNPCVel.RotatedByRandom(MathHelper.PiOver4), Type, Projectile.damage * 2, Projectile.knockBack, Projectile.owner);
                 }
             }
         }
@@ -176,7 +205,12 @@ namespace UCA.Content.Projectiles.Magic.Ray
         public override bool PreDraw(ref Color lightColor)
         {
             UCAUtilities.ReSetToBeginShader(BlendState.Additive);
-            DrawLaser(Color.Gray, 0.25f, 0.1f, -100);
+
+            if (WeaponStates == ElementalRayState.Solar)
+                DrawLaser(Color.OrangeRed, 0.25f, 0.1f, -100);
+            else
+                DrawLaser(Color.Gray, 0.25f, 0.1f, -100);
+
             UCAUtilities.ReSetToBeginShader();
             DrawLaser(Color.White, 0.15f, 0.1f, -50);
             DrawLaser(Color.White, 0.07f, 0.02f , -100);
@@ -188,13 +222,13 @@ namespace UCA.Content.Projectiles.Magic.Ray
             float TextureHeight = UCATextureRegister.ElementalRayFlow.Height();
             float TextureWidth = UCATextureRegister.ElementalRayFlow.Width();
 
-            UCAShaderRegister.StandardLaserShader.Parameters["LaserTextureSize"].SetValue(UCATextureRegister.ElementalRayFlow.Size());
-            UCAShaderRegister.StandardLaserShader.Parameters["targetSize"].SetValue(new Vector2(LaserLength, TextureHeight));
-            UCAShaderRegister.StandardLaserShader.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly * Speed + LaserTimeOffset);
-            UCAShaderRegister.StandardLaserShader.Parameters["uColor"].SetValue(colro.ToVector4() * Opacity);
-            UCAShaderRegister.StandardLaserShader.Parameters["uFadeoutLength"].SetValue(op);
-            UCAShaderRegister.StandardLaserShader.Parameters["uFadeinLength"].SetValue(op);
-            UCAShaderRegister.StandardLaserShader.CurrentTechnique.Passes[0].Apply();
+            UCAShaderRegister.StandardFlowShader.Parameters["LaserTextureSize"].SetValue(UCATextureRegister.ElementalRayFlow.Size());
+            UCAShaderRegister.StandardFlowShader.Parameters["targetSize"].SetValue(new Vector2(LaserLength, TextureHeight));
+            UCAShaderRegister.StandardFlowShader.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly * Speed + LaserTimeOffset);
+            UCAShaderRegister.StandardFlowShader.Parameters["uColor"].SetValue(colro.ToVector4() * Opacity);
+            UCAShaderRegister.StandardFlowShader.Parameters["uFadeoutLength"].SetValue(op);
+            UCAShaderRegister.StandardFlowShader.Parameters["uFadeinLength"].SetValue(op);
+            UCAShaderRegister.StandardFlowShader.CurrentTechnique.Passes[0].Apply();
 
             Vector2 orig = new(0, TextureHeight / 2);
             float xScale = LaserLength / TextureWidth;

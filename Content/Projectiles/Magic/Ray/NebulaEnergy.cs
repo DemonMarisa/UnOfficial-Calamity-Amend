@@ -47,6 +47,11 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             if (Projectile.UCA().FirstFrame)
             {
+                for (int j = 0; j < 10; j++)
+                {
+                    Color RandomColor = Color.Lerp(Color.Violet, Color.Purple, Main.rand.NextFloat(0, 1));
+                    new MediumGlowBall(Projectile.Center, RandomColor, 60, 0.2f, Main.rand.NextFloat(1.6f, 2f)).Spawn();
+                }
                 for (int i = 0; i < 10; i++)
                 {
                     Vector2 spawnVec = Vector2.UnitX.RotateRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.2f, 0.3f) * 12;

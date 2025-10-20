@@ -10,6 +10,7 @@ using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
 using UCA.Content.Particiles;
+using UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld;
 using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
 
@@ -22,6 +23,9 @@ namespace UCA.Content.Projectiles.Magic.Ray
         public float Opacity = 1f;
         public float Rot = 0;
         public float Rot2 = 0;
+        public ref float GlowBallCount => ref Projectile.ai[0];
+        public ref float AllScale => ref Projectile.ai[1];
+        public ref float StrikeCount => ref Projectile.ai[2];
         public override void SetDefaults()
         {
             Projectile.width = 200;
@@ -40,29 +44,34 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            return CalamityUtils.CircularHitboxCollision(Projectile.Center, 150, targetHitbox);
+            float scale = 1 + AllScale;
+            return CalamityUtils.CircularHitboxCollision(Projectile.Center, 150 * scale, targetHitbox);
         }
 
         public override void AI()
         {
+            float scale = 1 + AllScale;
             if (Projectile.UCA().FirstFrame)
             {
-                SoundEngine.PlaySound(SoundID.DD2_GoblinBomb);
+                SoundEngine.PlaySound(SoundsMenu.RiseBlast, Projectile.Center);
                 Rot = Main.rand.NextFloat(0, MathHelper.TwoPi);
                 Rot2 = Main.rand.NextFloat(0, MathHelper.TwoPi);
-                for (int j = 0; j < 45; j++)
+                int glowBallCount = 45 + (int)GlowBallCount;
+                for (int j = 0; j < glowBallCount; j++)
                 {
                     Color RandomColor = Color.Lerp(Color.Orange, Color.OrangeRed, Main.rand.NextFloat(0, 1));
                     new MediumGlowBall(Projectile.Center, RandomColor, 180, 0.2f, Main.rand.NextFloat(3f, 4f)).Spawn();
                 }
-                for (int j = 0; j < 9; j++)
+                int strikeCount = 9 + (int)StrikeCount;
+                for (int j = 0; j < strikeCount; j++)
                 {
-                    float rot = MathHelper.TwoPi / 9;
-                    new FireStrike(Projectile.Center, Vector2.Zero, Color.White, 30, 1f, rot * j + Main.rand.NextFloat(-0.2f, 0.2f), Main.rand.NextFloat(0.3f, 0.35f)).SpawnToPriority();
+                    float rot = MathHelper.TwoPi / strikeCount;
+                    new FireStrike(Projectile.Center, Vector2.Zero, Color.White, 30, 1f, rot * j + Main.rand.NextFloat(-0.3f, 0.3f), Main.rand.NextFloat(0.3f, 0.35f) * scale).SpawnToPriority();
                 }
                 new CrossGlow(Projectile.Center, Vector2.Zero, Color.Orange, 60, 1f, 0.4f).Spawn();
             }
-            Scale = MathHelper.Lerp(0f, 1f, 1 - EasingHelper.EaseInCubic(Projectile.timeLeft / 30f));
+
+            Scale = MathHelper.Lerp(0f, 1f, 1 - EasingHelper.EaseInCubic(Projectile.timeLeft / 30f)) * scale;
 
             if (Projectile.timeLeft < 15)
                 Opacity = MathHelper.Lerp(1f, 0f, 1 - EasingHelper.EaseInCubic(Projectile.timeLeft / 15f));

@@ -62,16 +62,17 @@ namespace UCA.Content.ItemOverride.Magic
         {
             if (player.altFunctionUse == 2)
             {
-                if (player.ownedProjectileCounts[ModContent.ProjectileType<ElementRaySpecialHeldProj>()] < 1)
-                {
-                    Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<ElementRaySpecialHeldProj>(), damage, knockback, player.whoAmI);
-                }
+                if (player.UCA().ElementalRayStates == ElementalRayState.Solar)
+                    Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<ElementRaySpecialHeldProj>(), damage, knockback, player.whoAmI, ElementalRayState.Solar);
             }
             else
             {
                 if (player.ownedProjectileCounts[ModContent.ProjectileType<ElementRayHeldProj>()] < 1)
                 {
-                    Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<ElementRayHeldProj>(), damage, knockback, player.whoAmI);
+                    if (player.UCA().ElementalRayStates == ElementalRayState.Solar)
+                        Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<ElementRayHeldProj>(), damage, knockback, player.whoAmI, 0, 0, ElementalRayState.Solar);
+                    else
+                        Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<ElementRayHeldProj>(), damage, knockback, player.whoAmI, 0, 0);
                 }
             }
 

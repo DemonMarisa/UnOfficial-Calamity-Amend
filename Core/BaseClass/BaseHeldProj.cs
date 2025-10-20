@@ -1,6 +1,7 @@
 ﻿using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoMod.Core.Utils;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -34,6 +35,9 @@ namespace UCA.Core.BaseClass
 
         public override void AI()
         {
+            if (Projectile.UCA().FirstFrame)
+                Initialize();
+
             Projectile.netImportant = true;
 
             if (UseDelay > 0)
@@ -73,7 +77,7 @@ namespace UCA.Core.BaseClass
         {
             return Active;
         }
-
+        public virtual void Initialize() { }
         public virtual bool CanDel()
         {
             return UseDelay <= 0 && Projectile.owner == Main.myPlayer;

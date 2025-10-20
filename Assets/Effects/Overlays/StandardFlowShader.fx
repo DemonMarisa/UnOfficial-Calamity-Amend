@@ -1,6 +1,6 @@
 ﻿// 传入的背景材质
-sampler LaserTexture : register(s0);
-float2 LaserTextureSize;
+sampler FlowTexture : register(s0);
+float2 FlowTextureSize;
 // 长度
 float2 targetSize;
 // 偏移
@@ -12,19 +12,19 @@ float uFadeoutLength;
 // 头部淡入的长度比例, 例如 0.1 代表最前 10% 的长度会淡入
 float uFadeinLength;
 
-float4 StandarLaserFunction(float2 coords : TEXCOORD0) : COLOR0
+float4 StandarFlowFunction(float2 coords : TEXCOORD0) : COLOR0
 { 
     // 根据材质与坐标指定的基础颜色
     // 转化为目标的像素坐标
     float2 pixelPos = coords * targetSize;
     // 将对应像素坐标转换为激光材质的UV坐标
-    float2 bgUV = pixelPos / LaserTextureSize;
+    float2 bgUV = pixelPos / FlowTextureSize;
     // 流动
     bgUV = float2(bgUV.x + uTime * 0.01, bgUV.y);
     // 模一个1限制到0-1之间
     bgUV = frac(bgUV);
    // 采样流动的激光颜色
-    float4 finalColor = tex2D(LaserTexture, bgUV);
+    float4 finalColor = tex2D(FlowTexture, bgUV);
 
     // 1. 应用染色
     // 将采样出的颜色与我们传入的 uColor 相乘
@@ -43,8 +43,8 @@ float4 StandarLaserFunction(float2 coords : TEXCOORD0) : COLOR0
 // 最终通道
 technique Technique1
 {
-    pass UCAStandardLaserPass
+    pass UCAStandardFlowPass
     {
-        PixelShader = compile ps_2_0 StandarLaserFunction();
+        PixelShader = compile ps_2_0 StandarFlowFunction();
     }
 }

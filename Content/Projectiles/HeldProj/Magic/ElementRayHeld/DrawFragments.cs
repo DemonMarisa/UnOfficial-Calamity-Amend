@@ -7,6 +7,13 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
 {
     public partial class ElementRaySpecialHeldProj
     {
+        public Vector2 MainFragmentOffset = new Vector2(0, 0);
+        public Vector2 AuxFragmentOffset = new Vector2(0, 0);
+        public Vector2 FilpAuxFragmentOffset = new Vector2(0, 0);
+
+        public float MainFragmentRot;
+        public float AuxFragmentRot;
+        public float FilpAuxFragmentRot;
         #region 绘制
         public void DrawBaseElementalRay()
         {
@@ -23,18 +30,16 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         {
             Texture2D texture = UCATextureRegister.MainElementalFragments.Value;
             Vector2 drawPosition = Projectile.Center + MainFragmentOffset - Main.screenPosition;
-            float drawRotation = Projectile.rotation + (Projectile.spriteDirection == -1 ? MathHelper.PiOver2 + MathHelper.PiOver4 : MathHelper.PiOver4);
-            Rectangle frame = texture.Frame(5, 1, WeaponStates, 0);
+            Rectangle frame = texture.Frame(5, 1, (int)WeaponStates, 0);
             Vector2 origin = frame.Size() * 0.5f;
             SpriteEffects flipSprite = Projectile.spriteDirection * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             // spriteBatch会自动把textures0设置为当前使用的材质，所以需要你手动改一下
-            Main.spriteBatch.Draw(texture, drawPosition, frame, Color.White, drawRotation, origin, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, frame, Color.White, MainFragmentRot, origin, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
         }
-        public void DrawAuxFragments(int Filp)
+        public void DrawAuxFragments()
         {
             Texture2D texture = UCATextureRegister.AuxElementalFragments.Value;
             Vector2 drawPosition = Projectile.Center + AuxFragmentOffset - Main.screenPosition;
-            float drawRotation = Projectile.rotation - MathHelper.PiOver4;
             Rectangle frame;
             if (WeaponStates == ElementalRayState.Misc)
             {
@@ -43,19 +48,18 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             }
             else
             {
-                frame = texture.Frame(4, 1, WeaponStates, 0);
+                frame = texture.Frame(4, 1, (int)WeaponStates, 0);
             }
             Vector2 origin = frame.Size() * 0.5f;
             SpriteEffects flipSprite = SpriteEffects.FlipVertically;
             // spriteBatch会自动把textures0设置为当前使用的材质，所以需要你手动改一下
-            Main.spriteBatch.Draw(texture, drawPosition, frame, Color.White, drawRotation, origin, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, frame, Color.White, AuxFragmentRot, origin, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
         }
 
-        public void FilpDrawAuxFragments(int Filp)
+        public void FilpDrawAuxFragments()
         {
             Texture2D texture = UCATextureRegister.AuxElementalFragments.Value;
             Vector2 drawPosition = Projectile.Center + FilpAuxFragmentOffset - Main.screenPosition;
-            float drawRotation = Projectile.rotation + MathHelper.PiOver4;
             Rectangle frame;
             if (WeaponStates == ElementalRayState.Misc)
             {
@@ -64,13 +68,13 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             }
             else
             {
-                frame = texture.Frame(4, 1, WeaponStates, 0);
+                frame = texture.Frame(4, 1, (int)WeaponStates, 0);
             }
             Vector2 origin = frame.Size() * 0.5f;
             SpriteEffects flipSprite = SpriteEffects.None;
             // spriteBatch会自动把textures0设置为当前使用的材质，所以需要你手动改一下
-            Main.spriteBatch.Draw(texture, drawPosition, frame, Color.White, drawRotation, origin, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, frame, Color.White, FilpAuxFragmentRot, origin, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
         }
-#endregion
+        #endregion
     }
 }

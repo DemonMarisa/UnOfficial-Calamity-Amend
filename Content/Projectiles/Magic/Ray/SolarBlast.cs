@@ -9,6 +9,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
+using UCA.Assets.Sounds;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld;
 using UCA.Core.BaseClass;
@@ -53,7 +54,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             float scale = 1 + AllScale;
             if (Projectile.UCA().FirstFrame)
             {
-                SoundEngine.PlaySound(SoundsMenu.RiseBlast, Projectile.Center);
+                SoundEngine.PlaySound(SoundsMenu.FireBallBlast, Projectile.Center);
                 Rot = Main.rand.NextFloat(0, MathHelper.TwoPi);
                 Rot2 = Main.rand.NextFloat(0, MathHelper.TwoPi);
                 int glowBallCount = 45 + (int)GlowBallCount;
@@ -69,6 +70,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                     new FireStrike(Projectile.Center, Vector2.Zero, Color.White, 30, 1f, rot * j + Main.rand.NextFloat(-0.3f, 0.3f), Main.rand.NextFloat(0.3f, 0.35f) * scale).SpawnToPriority();
                 }
                 new CrossGlow(Projectile.Center, Vector2.Zero, Color.Orange, 60, 1f, 0.4f).Spawn();
+                Projectile.netUpdate = true;
             }
 
             Scale = MathHelper.Lerp(0f, 1f, 1 - EasingHelper.EaseInCubic(Projectile.timeLeft / 30f)) * scale;

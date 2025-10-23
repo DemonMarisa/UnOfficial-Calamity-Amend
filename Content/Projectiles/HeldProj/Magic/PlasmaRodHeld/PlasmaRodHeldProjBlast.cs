@@ -10,7 +10,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using UCA.Assets;
+using UCA.Assets.Sounds;
 using UCA.Content.Particiles;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
@@ -24,7 +24,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
     public class PlasmaRodHeldProjBlast : ModProjectile, ILocalizedModType
     {
         public override LocalizedText DisplayName => CalamityUtils.GetItemName<PlasmaRod>();
-        public override string Texture => $"{ItemOverridePaths.MagicWeaponsPath}" + "PlasmaRodOverride";
+        public override string Texture => $"{ItemPath.MagicRayWeaponsPath}" + "PlasmaRodAlt";
 
         public AnimationHelper animationHelper = new AnimationHelper(3);
 

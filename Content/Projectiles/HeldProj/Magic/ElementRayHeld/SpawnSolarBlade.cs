@@ -7,6 +7,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using UCA.Assets;
 using UCA.Assets.Effects;
+using UCA.Assets.Sounds;
 using UCA.Content.DrawNodes;
 using UCA.Content.Particiles;
 using UCA.Core.Enums;
@@ -19,44 +20,34 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
     {
         public float SolarBladeXScale = 0;
         public int SolarBladeXOffset = 128;
-        public bool CanDraw = true;
-        public float BeginRot = 0;
-        public bool candamage = false;
         public void InitializeSolarBlade()
         {
             MainFragmentOffset = new Vector2(0, 0);
             AuxFragmentOffset = new Vector2(0, -0);
             FilpAuxFragmentOffset = new Vector2(0, 0);
             SolarBladeXOffset = 128;
+            Projectile.damage *= 10;
 
             RelativeOwnerPos = new Vector2(10, 0);
             animationHelper.MaxAniProgress[AnimationState.Begin] = 30;
             animationHelper.MaxAniProgress[AnimationState.Middle] = 25;
             animationHelper.MaxAniProgress[AnimationState.End] = 100;
             SoundEngine.PlaySound(SoundsMenu.MAGNOLIASPRelease, Projectile.Center);
+            SoundEngine.PlaySound(SoundsMenu.MagicStaffCharge, Projectile.Center);
         }
         public void UpdateSolarBlade()
         {
             if (!animationHelper.HasFinish[AnimationState.Begin])
             {
-                if (animationHelper.AniProgress[AnimationState.Begin] < animationHelper.MaxAniProgress[AnimationState.Begin])
-                    animationHelper.AniProgress[AnimationState.Begin]++;
-
-                HandleBeginAni();
-
-                if (animationHelper.AniProgress[AnimationState.Begin] >= animationHelper.MaxAniProgress[AnimationState.Begin])
-                {
-                    animationHelper.Auxfloat[AnimationState.Begin]++;
-                    if (animationHelper.Auxfloat[AnimationState.Begin] >= 35)
-                        animationHelper.HasFinish[AnimationState.Begin] = true;
-                }
+                animationHelper.UpDateAni(AnimationState.Begin, 35);
+                HandleSolorBeginAni();
             }
             else if (!animationHelper.HasFinish[AnimationState.Middle])
             {
                 if (animationHelper.AniProgress[AnimationState.Middle] < animationHelper.MaxAniProgress[AnimationState.Middle])
                     animationHelper.AniProgress[AnimationState.Middle]++;
 
-                HandleMiddleAni();
+                HandleSolorMiddleAni();
 
                 if (animationHelper.AniProgress[AnimationState.Middle] >= animationHelper.MaxAniProgress[AnimationState.Middle] && !Owner.UCA().MouseRight)
                 {
@@ -67,14 +58,14 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                     SoundStyle sound = SoundsMenu.NightRayHit;
                     sound.Pitch = 2f;
                     SoundEngine.PlaySound(sound, Projectile.Center);
-                    SoundEngine.PlaySound(SoundsMenu.NightRayHeavyAttack, Projectile.Center);
+                    SoundEngine.PlaySound(SoundsMenu.SoulGreatSwordSwimg, Projectile.Center);
                 }
             }
             else if (!animationHelper.HasFinish[AnimationState.End])
             {
                 animationHelper.AniProgress[AnimationState.End]++;
                 Projectile.extraUpdates = 10;
-                HandleEndAni();
+                HandleSolorEndAni();
                 if (animationHelper.AniProgress[AnimationState.End] >= animationHelper.MaxAniProgress[AnimationState.End])
                 {
                     SpawnDust();
@@ -103,7 +94,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             }
         }
         #region 处理开始动画
-        public void HandleBeginAni()
+        public void HandleSolorBeginAni()
         {
             int MaxAni = animationHelper.MaxAniProgress[AnimationState.Begin];
             int CurAni = animationHelper.AniProgress[AnimationState.Begin];
@@ -141,7 +132,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         }
         #endregion
         #region 处理中间的动画
-        public void HandleMiddleAni()
+        public void HandleSolorMiddleAni()
         {
             int MaxAni = animationHelper.MaxAniProgress[AnimationState.Middle];
             int CurAni = animationHelper.AniProgress[AnimationState.Middle];
@@ -151,7 +142,10 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             SolarBladeXScale = easedProgress;
             if (CurAni == 1)
             {
-                SoundEngine.PlaySound(SoundsMenu.FireBlast, Projectile.Center);
+                SoundStyle sound = SoundsMenu.FireBlast;
+                sound.Volume = 1f;
+                sound.Pitch = 1f;
+                SoundEngine.PlaySound(sound, Projectile.Center);
                 SpawnDust();
                 int LifeTime = 60;
                 Vector2 offset = new Vector2(96, 0);
@@ -166,7 +160,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         }
         #endregion
         #region 处理结束的动画
-        public void HandleEndAni()
+        public void HandleSolorEndAni()
         {
             int MaxAni = animationHelper.MaxAniProgress[AnimationState.End];
             int CurAni = animationHelper.AniProgress[AnimationState.End];
@@ -215,44 +209,52 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         {
             if (!animationHelper.HasFinish[AnimationState.Begin])
             {
-                int MaxAni = animationHelper.MaxAniProgress[AnimationState.Begin];
-                int CurAni = animationHelper.AniProgress[AnimationState.Begin];
-                float Progress = CurAni / (float)MaxAni;
-                // 更新主碎片
-                Vector2 MainFragTarget = Vector2.Lerp(new Vector2(260, 0), new Vector2(48, 0), EasingHelper.EaseOutCubic(Progress)).RotatedBy(Projectile.rotation);
-                MainFragmentOffset = Vector2.Lerp(MainFragmentOffset, MainFragTarget, 0.2f);
-                MainFragmentRot = Projectile.rotation + (Projectile.spriteDirection == -1 ? MathHelper.PiOver2 + MathHelper.PiOver4 : MathHelper.PiOver4);
-                // 通过这个限制高度乘数，营造出螺旋的效果
-                float HeightCap = (float)Math.Sin(Progress * MathHelper.Pi);
-                float SinProgress = (float)Math.Sin(Progress * MathHelper.TwoPi * 1.5f) * 2 * HeightCap;
-                // 更新左侧碎片
-                Vector2 AuxFragTarget = Vector2.Lerp(new Vector2(220, 0), new Vector2(48, SinProgress * -36), Progress).RotatedBy(Projectile.rotation);
-                AuxFragmentOffset = Vector2.Lerp(AuxFragmentOffset, AuxFragTarget, 0.3f);
-                Vector2 AuxFragWorldPos = Projectile.Center + AuxFragmentOffset;
-                AuxFragmentRot = UCAUtilities.GetVector2(AuxFragWorldPos, Projectile.Center).ToRotation() - MathHelper.PiOver4;
-                // 更新右侧碎片
-                Vector2 FilpAuxFragTarget = Vector2.Lerp(new Vector2(220, 0), new Vector2(48, SinProgress * 36), Progress).RotatedBy(Projectile.rotation);
-                FilpAuxFragmentOffset = Vector2.Lerp(FilpAuxFragmentOffset, FilpAuxFragTarget, 0.3f);
-                Vector2 FilpAuxFragWorldPos = Projectile.Center + FilpAuxFragmentOffset;
-                FilpAuxFragmentRot = UCAUtilities.GetVector2(FilpAuxFragWorldPos, Projectile.Center).ToRotation() + MathHelper.PiOver4;
+                UpdateFragContractile();
             }
             else
             {
-                // 更新主碎片
-                Vector2 MainFragTarget = new Vector2(96, 0).RotatedBy(Projectile.rotation);
-                MainFragmentOffset = Vector2.Lerp(MainFragmentOffset, MainFragTarget, 0.2f);
-                MainFragmentRot = Projectile.rotation + (Projectile.spriteDirection == -1 ? MathHelper.PiOver2 + MathHelper.PiOver4 : MathHelper.PiOver4);
-                // 更新左侧碎片
-                Vector2 AuxFragTarget = new Vector2(68, -36).RotatedBy(Projectile.rotation);
-                AuxFragmentOffset = Vector2.Lerp(AuxFragmentOffset, AuxFragTarget, 0.2f);
-                Vector2 AuxFragWorldPos = Projectile.Center + AuxFragmentOffset;
-                AuxFragmentRot = UCAUtilities.GetVector2(AuxFragWorldPos, Projectile.Center).ToRotation() - MathHelper.PiOver4;
-                // 更新右侧碎片
-                Vector2 FilpAuxFragTarget = new Vector2(68, 36).RotatedBy(Projectile.rotation);
-                FilpAuxFragmentOffset = Vector2.Lerp(FilpAuxFragmentOffset, FilpAuxFragTarget, 0.2f);
-                Vector2 FilpAuxFragWorldPos = Projectile.Center + FilpAuxFragmentOffset;
-                FilpAuxFragmentRot = UCAUtilities.GetVector2(FilpAuxFragWorldPos, Projectile.Center).ToRotation() + MathHelper.PiOver4;
+                UpDateFragRelease();
             }
+        }
+        public void UpdateFragContractile()
+        {
+            int MaxAni = animationHelper.MaxAniProgress[AnimationState.Begin];
+            int CurAni = animationHelper.AniProgress[AnimationState.Begin];
+            float Progress = CurAni / (float)MaxAni;
+            // 更新主碎片
+            Vector2 MainFragTarget = Vector2.Lerp(new Vector2(260, 0), new Vector2(48, 0), EasingHelper.EaseOutCubic(Progress)).RotatedBy(Projectile.rotation);
+            MainFragmentOffset = Vector2.Lerp(MainFragmentOffset, MainFragTarget, 0.2f);
+            MainFragmentRot = Projectile.rotation + (Projectile.spriteDirection == -1 ? MathHelper.PiOver2 + MathHelper.PiOver4 : MathHelper.PiOver4);
+            // 通过这个限制高度乘数，营造出螺旋的效果
+            float HeightCap = (float)Math.Sin(Progress * MathHelper.Pi);
+            float SinProgress = (float)Math.Sin(Progress * MathHelper.TwoPi * 1.5f) * 2 * HeightCap;
+            // 更新左侧碎片
+            Vector2 AuxFragTarget = Vector2.Lerp(new Vector2(220, 0), new Vector2(48, SinProgress * -36), Progress).RotatedBy(Projectile.rotation);
+            AuxFragmentOffset = Vector2.Lerp(AuxFragmentOffset, AuxFragTarget, 0.3f);
+            Vector2 AuxFragWorldPos = Projectile.Center + AuxFragmentOffset;
+            AuxFragmentRot = UCAUtilities.GetVector2(AuxFragWorldPos, Projectile.Center).ToRotation() - MathHelper.PiOver4;
+            // 更新右侧碎片
+            Vector2 FilpAuxFragTarget = Vector2.Lerp(new Vector2(220, 0), new Vector2(48, SinProgress * 36), Progress).RotatedBy(Projectile.rotation);
+            FilpAuxFragmentOffset = Vector2.Lerp(FilpAuxFragmentOffset, FilpAuxFragTarget, 0.3f);
+            Vector2 FilpAuxFragWorldPos = Projectile.Center + FilpAuxFragmentOffset;
+            FilpAuxFragmentRot = UCAUtilities.GetVector2(FilpAuxFragWorldPos, Projectile.Center).ToRotation() + MathHelper.PiOver4;
+        }
+        public void UpDateFragRelease()
+        {
+            // 更新主碎片
+            Vector2 MainFragTarget = new Vector2(96, 0).RotatedBy(Projectile.rotation);
+            MainFragmentOffset = Vector2.Lerp(MainFragmentOffset, MainFragTarget, 0.2f);
+            MainFragmentRot = Projectile.rotation + (Projectile.spriteDirection == -1 ? MathHelper.PiOver2 + MathHelper.PiOver4 : MathHelper.PiOver4);
+            // 更新左侧碎片
+            Vector2 AuxFragTarget = new Vector2(68, -36).RotatedBy(Projectile.rotation);
+            AuxFragmentOffset = Vector2.Lerp(AuxFragmentOffset, AuxFragTarget, 0.2f);
+            Vector2 AuxFragWorldPos = Projectile.Center + AuxFragmentOffset;
+            AuxFragmentRot = UCAUtilities.GetVector2(AuxFragWorldPos, Projectile.Center).ToRotation() - MathHelper.PiOver4;
+            // 更新右侧碎片
+            Vector2 FilpAuxFragTarget = new Vector2(68, 36).RotatedBy(Projectile.rotation);
+            FilpAuxFragmentOffset = Vector2.Lerp(FilpAuxFragmentOffset, FilpAuxFragTarget, 0.2f);
+            Vector2 FilpAuxFragWorldPos = Projectile.Center + FilpAuxFragmentOffset;
+            FilpAuxFragmentRot = UCAUtilities.GetVector2(FilpAuxFragWorldPos, Projectile.Center).ToRotation() + MathHelper.PiOver4;
         }
         #endregion
         #region 绘制耀斑大剑

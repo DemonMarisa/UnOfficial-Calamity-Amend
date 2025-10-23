@@ -11,6 +11,10 @@ namespace UCA.Core.BaseClass
         public virtual int OverrideType { get; set; }
         // 用于与大修的适配，防止同时发射两个弹幕
         public bool CalOverHaulCanShoot = true;
+        public override bool IsLoadingEnabled(Mod mod)
+        {
+            return base.IsLoadingEnabled(mod);
+        }
         public override bool AppliesToEntity(Item item, bool lateInstatiation)
         {
             return item.type == OverrideType;

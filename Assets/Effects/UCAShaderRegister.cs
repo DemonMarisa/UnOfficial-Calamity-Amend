@@ -20,6 +20,7 @@ namespace UCA.Assets.Effects
         public static Effect StandardFlowShader; 
         public static Effect FlowWithAShader;
         public static Effect PolarDistortShader;
+        public static Effect PolarDistortShaderWithR;
         public override void Load()
         {
             if (Main.dedServ)
@@ -57,6 +58,8 @@ namespace UCA.Assets.Effects
             PolarDistortShader = LoadShader("PolarDistortShader");
             RegisterMiscShader(PolarDistortShader, "UCAPolarDistortPass", "PolarDistortShader");
 
+            PolarDistortShaderWithR = LoadShader("PolarDistortShaderWithR");
+            RegisterMiscShader(PolarDistortShaderWithR, "UCAPolarDistortPass", "PolarDistortShaderWithR");
         }
 
         public static void RegisterMiscShader(Effect shader, string passName, string registrationName)

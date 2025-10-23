@@ -79,11 +79,38 @@ namespace UCA.Content.Projectiles.Magic.Ray
             LaserTimeOffset = Main.rand.Next(0, 100);
             BeginPos = Projectile.Center;
             EndPos = Projectile.Center;
+            if (WeaponStates == ElementalRayState.StarDust)
+            {
+                FirePos.Add(Projectile.Center);
+                NPC npc = Projectile.FindClosestTarget(1500, false);
+                if (npc != null)
+                {
+                    Vector2 ToNPCVel = (npc.Center - EndPos).SafeNormalize(Projectile.rotation.ToRotationVector2());
+                    if (Projectile.owner == Main.myPlayer)
+                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), EndPos, ToNPCVel * 12, ModContent.ProjectileType<StarDustLaser>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner, 1);
+                }
+            }
+            #region 生成辉光
             Vector2 Posoffset = new Vector2(10, 0).RotatedBy(Projectile.rotation);
             if (WeaponStates == ElementalRayState.Solar)
             {
                 new CrossGlow(Projectile.Center + Posoffset, Vector2.Zero, Color.OrangeRed, 60, 1f, 0.4f).Spawn();
                 new CrossGlow(Projectile.Center + Posoffset, Vector2.Zero, Color.Orange, 60, 1f, 0.4f).Spawn();
+            }
+            else if (WeaponStates == ElementalRayState.Nebula)
+            {
+                new CrossGlow(Projectile.Center + Posoffset, Vector2.Zero, Color.Violet, 60, 1f, 0.4f).Spawn();
+                new CrossGlow(Projectile.Center + Posoffset, Vector2.Zero, Color.BlueViolet, 60, 1f, 0.4f).Spawn();
+            }
+            else if (WeaponStates == ElementalRayState.Vortex)
+            {
+                new CrossGlow(Projectile.Center + Posoffset, Vector2.Zero, Color.Turquoise, 60, 1f, 0.4f).Spawn();
+                new CrossGlow(Projectile.Center + Posoffset, Vector2.Zero, Color.DarkTurquoise, 60, 1f, 0.4f).Spawn();
+            }
+            else if (WeaponStates == ElementalRayState.StarDust)
+            {
+                new CrossGlow(Projectile.Center + Posoffset, Vector2.Zero, Color.SkyBlue, 60, 1f, 0.4f).Spawn();
+                new CrossGlow(Projectile.Center + Posoffset, Vector2.Zero, Color.DeepSkyBlue, 60, 1f, 0.4f).Spawn();
             }
             else
                 new CrossGlow(Projectile.Center + Posoffset, Vector2.Zero, Color.White, 60, 1f, 0.4f).Spawn();
@@ -93,11 +120,18 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
                 if (WeaponStates == ElementalRayState.Solar)
                     RandomColor = Color.Lerp(Color.Orange, Color.OrangeRed, Main.rand.NextFloat(0, 1));
+                else if (WeaponStates == ElementalRayState.Nebula)
+                    RandomColor = Color.Lerp(Color.BlueViolet, Color.Violet, Main.rand.NextFloat(0, 1));
+                else if (WeaponStates == ElementalRayState.Vortex)
+                    RandomColor = Color.Lerp(Color.DarkTurquoise, Color.Turquoise, Main.rand.NextFloat(0, 1));
+                else if (WeaponStates == ElementalRayState.StarDust)
+                    RandomColor = Color.Lerp(Color.DeepSkyBlue, Color.SkyBlue, Main.rand.NextFloat(0, 1));
                 else
                     RandomColor = Color.Lerp(Color.White, Color.AntiqueWhite, Main.rand.NextFloat(0, 1));
 
                 new MediumGlowBall(Projectile.Center + Posoffset, RandomColor, 120, 0.2f, Main.rand.NextFloat(2f, 3f)).Spawn();
             }
+            #endregion
             #region 生成伴随主弹幕的树
             Vector2 firVec = Projectile.velocity.SafeNormalize(Vector2.Zero) * 3f;
             Vector2 ProjFireOffset = new Vector2(-24, 0).RotatedBy(Projectile.velocity.ToRotation());
@@ -109,6 +143,21 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 {
                     new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.OrangeRed, 0, DrawLayer.AfterDust, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
                     new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.Orange, 0, DrawLayer.AfterDust, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
+                }
+                else if (WeaponStates == ElementalRayState.Nebula)
+                {
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.Violet, 0, DrawLayer.AfterDust, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.BlueViolet, 0, DrawLayer.AfterDust, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
+                }
+                else if (WeaponStates == ElementalRayState.Vortex)
+                {
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.Turquoise, 0, DrawLayer.AfterDust, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.DarkTurquoise, 0, DrawLayer.AfterDust, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
+                }
+                else if (WeaponStates == ElementalRayState.StarDust)
+                {
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.SkyBlue, 0, DrawLayer.AfterDust, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.DeepSkyBlue, 0, DrawLayer.AfterDust, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
                 }
                 else
                 {
@@ -122,15 +171,31 @@ namespace UCA.Content.Projectiles.Magic.Ray
         #region 更新激光长度
         public void UpdateLaserLength()
         {
-
             if (Projectile.timeLeft > MaxLife - 15)
             {
                 LaserLength = (EndPos - BeginPos).Length();
                 EndPos += new Vector2(128, 0).RotatedBy(Projectile.rotation);
-                if (WeaponStates == ElementalRayState.Solar)
+                if (WeaponStates == ElementalRayState.Solar || WeaponStates == ElementalRayState.Nebula)
                     return;
-                if (Projectile.timeLeft % 3 == 0)
+                if (Projectile.timeLeft % 2 == 0)
+                {
+                    if (WeaponStates == ElementalRayState.StarDust)
+                    {
+                        NPC npc = Projectile.FindClosestTarget(1500, false);
+                        if (npc != null)
+                        {
+                            Vector2 ToNPCVel = (npc.Center - EndPos).SafeNormalize(Projectile.rotation.ToRotationVector2());
+                            if (Projectile.owner == Main.myPlayer)
+                                Projectile.NewProjectile(Projectile.GetSource_FromThis(), EndPos, ToNPCVel * 12, ModContent.ProjectileType<StarDustLaser>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner);
+                        }
+                        else
+                        {
+                            if (Projectile.owner == Main.myPlayer)
+                                Projectile.NewProjectile(Projectile.GetSource_FromThis(), EndPos, Vector2.Zero, ModContent.ProjectileType<StarDustLaser>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner);
+                        }
+                    }
                     FirePos.Add(EndPos);
+                }
             }
         }
         #endregion
@@ -155,48 +220,68 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 NPC npc = Projectile.FindClosestTarget(1500, false);
                 for (int j = 0; j < 20; j++)
                 {
-                    Color RandomColor = Color.Lerp(Color.DarkBlue, Color.SkyBlue, Main.rand.NextFloat(0, 1));
+                    Color RandomColor;
+                    RandomColor = Color.Lerp(Color.DarkBlue, Color.SkyBlue, Main.rand.NextFloat(0, 1));
                     new MediumGlowBall(FirePos[i], RandomColor, 60, 0.2f, Main.rand.NextFloat(1.6f, 2f)).Spawn();
                 }
+                int type = ModContent.ProjectileType<StarDustFragment>();
+                if (WeaponStates == ElementalRayState.Vortex)
+                    type = ModContent.ProjectileType<VortexLightning>();
+
                 if (npc != null)
                 {
                     float DistanceToNPC = Vector2.Distance(FirePos[i], npc.Center);
                     float PredictMult = DistanceToNPC / 45;
                     Vector2 ToNPCVel = (npc.Center - FirePos[i] + npc.velocity * PredictMult).SafeNormalize(Projectile.rotation.ToRotationVector2());
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), FirePos[i], ToNPCVel * 24, ModContent.ProjectileType<StarDustFragment>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner);
+                    if (WeaponStates == ElementalRayState.Vortex)
+                        ToNPCVel = (npc.Center - FirePos[i]).SafeNormalize(Projectile.rotation.ToRotationVector2());
+                 
+                    if (Projectile.owner == Main.myPlayer)
+                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), FirePos[i], ToNPCVel * 24, type, Projectile.damage, Projectile.knockBack, Projectile.owner);
                 }
                 else
                 {
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), FirePos[i], Vector2.Zero, ModContent.ProjectileType<StarDustFragment>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner);
+                    if (Projectile.owner == Main.myPlayer)
+                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), FirePos[i], Vector2.Zero, type, Projectile.damage, Projectile.knockBack, Projectile.owner);
                 }
-                new CrossGlow(FirePos[i], Vector2.Zero, Color.SkyBlue, 25, 1f, 0.3f).Spawn();
+                Color SpawnColor = Color.SkyBlue;
+                new CrossGlow(FirePos[i], Vector2.Zero, SpawnColor, 25, 1f, 0.3f).Spawn();
             }
         }
         #endregion
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
+            if (WeaponStates == ElementalRayState.StarDust)
+                return;
             if (Projectile.UCA().OnceHitEffect)
             {
                 int NebulaEnergyCount = 6;
                 if (WeaponStates == ElementalRayState.Solar)
                     NebulaEnergyCount = 4;
-
-                if (WeaponStates == ElementalRayState.Solar)
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<SolarBlast>(), Projectile.damage * 10, Projectile.knockBack, Projectile.owner, 10, 0.2f, 1);
-                else
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<SolarBlast>(), Projectile.damage * 10, Projectile.knockBack, Projectile.owner);
-
-
+                if (WeaponStates == ElementalRayState.Nebula)
+                    NebulaEnergyCount = 10;
+                if (WeaponStates == ElementalRayState.Vortex)
+                    NebulaEnergyCount = 3;
+                 
                 int Type = ModContent.ProjectileType<NebulaEnergy>();
                 if (WeaponStates == ElementalRayState.Solar)
                     Type = ModContent.ProjectileType<SolarFireBall>();
+                if (WeaponStates == ElementalRayState.Vortex)
+                    Type = ModContent.ProjectileType<VortexMissle>();
 
                 for (int i = 0; i < NebulaEnergyCount; i++)
                 {
                     Vector2 randomOffset = Vector2.UnitX.RotateRandom(MathHelper.TwoPi) * (75 + target.width / 2) * Main.rand.NextFloat(0.6f, 1.2f);
                     Vector2 ToNPCVel = UCAUtilities.GetVector2(target.Center, target.Center + randomOffset).SafeNormalize(Vector2.Zero) * 9 * Main.rand.NextFloat(0.9f, 1.2f);
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center + randomOffset, ToNPCVel.RotatedByRandom(MathHelper.PiOver4), Type, Projectile.damage * 2, Projectile.knockBack, Projectile.owner);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center + randomOffset, ToNPCVel.RotatedByRandom(MathHelper.PiOver4), Type, Projectile.damage, Projectile.knockBack, Projectile.owner);
                 }
+
+                if (WeaponStates == ElementalRayState.Nebula || WeaponStates == ElementalRayState.Vortex)
+                    return;
+                if (WeaponStates == ElementalRayState.Solar)
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<SolarBlast>(), Projectile.damage * 5, Projectile.knockBack, Projectile.owner, 10, 0.2f, 1);
+                else
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<SolarBlast>(), Projectile.damage * 5, Projectile.knockBack, Projectile.owner);
             }
         }
         public override void OnKill(int timeLeft)

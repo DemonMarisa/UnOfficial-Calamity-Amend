@@ -31,10 +31,12 @@ namespace UCA.Core.GlobalInstance.Players
         public int TerraRayUseSkillCount = 0;
 
         public int ElementalRayStates = ElementalRayState.Misc;
+
+        public float DamageMult = 1;
         public override void ResetEffects()
         {
             ExternalDR = 0;
-
+            DamageMult = 1;
             if (NightShieldHP > NightShieldMaxHP)
                 NightShieldHP = NightShieldMaxHP;
 
@@ -82,6 +84,9 @@ namespace UCA.Core.GlobalInstance.Players
             AddNightBoost();
             AddCarnageBoost();
             AddTerraBoost();
+            AddElementalBoost();
+
+            Player.GetDamage<GenericDamageClass>() *= DamageMult;
         }
 
         public override void PostUpdate()
@@ -95,6 +100,7 @@ namespace UCA.Core.GlobalInstance.Players
                 TerraRestore = false;
             }
             UpdateMouseWorld();
+
         }
     }
 }

@@ -11,6 +11,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets;
+using UCA.Assets.Sounds;
 using UCA.Content.DrawNodes;
 using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Particiles;
@@ -157,7 +158,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
             {
                 float offset = MathHelper.TwoPi / 30;
                 Color RandomColor = Color.Lerp(Color.LightGreen, Color.ForestGreen, Main.rand.NextFloat(0, 1));
-                Vector2 firVel = Vector2.UnitX.BetterRotatedBy(offset * i, default, 0.75f, 1f);
+                Vector2 firVel = Vector2.UnitX.BetterRotatedBy(offset * i, default, 1f, 1f);
                 new MediumGlowBall(firPos, firVel.RotatedBy(rotoffset) * 1.5f, RandomColor, 60, 0, 1, 0.2f, 0).Spawn();
             }
             #endregion

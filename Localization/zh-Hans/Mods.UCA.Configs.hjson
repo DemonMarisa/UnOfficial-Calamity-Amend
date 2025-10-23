@@ -3,7 +3,7 @@ UCAConfig: {
 
 	ParticleLimit: {
 		Label: 粒子上限
-		Tooltip: ""
+		Tooltip: 推荐至少设置为1万
 	}
 
 	UCATurnoffCorner: {

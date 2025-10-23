@@ -13,6 +13,7 @@ namespace UCA.Content.Particiles
         public override BlendState BlendState => BlendState.Additive;
         public float BeginScale;
         public List<Vector2> OldPos = [];
+        public bool UseSlowDown = false;    
         public TrailGlowBall(Vector2 position, Vector2 velocity, Color color, int lifetime, float scale)
         {
             Position = position;
@@ -21,6 +22,16 @@ namespace UCA.Content.Particiles
             Lifetime = lifetime;
             Scale = scale;
             BeginScale = scale;
+        }
+        public TrailGlowBall(Vector2 position, Vector2 velocity, Color color, int lifetime, float scale, bool useSlowDown)
+        {
+            Position = position;
+            Velocity = velocity;
+            DrawColor = color;
+            Lifetime = lifetime;
+            Scale = scale;
+            BeginScale = scale;
+            UseSlowDown = useSlowDown;
         }
         public override void OnSpawn()
         {
@@ -38,8 +49,10 @@ namespace UCA.Content.Particiles
             OldPos.Add(Position);
             if (OldPos.Count > 8)
                 OldPos.RemoveAt(0);
-
-            Velocity *= 1.03f;
+            if (UseSlowDown)
+                Velocity *= 0.9f;
+            else
+                Velocity *= 1.03f;
         }
 
         public override void Draw(SpriteBatch spriteBatch)

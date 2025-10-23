@@ -10,6 +10,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
 using UCA.Assets;
+using UCA.Assets.Sounds;
 using UCA.Content.DrawNodes;
 using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Paths;
@@ -112,7 +113,14 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
                     }
                     if (Projectile.ai[0] != 0)
                     {
-                        Owner.UCA().TerraRestore = true;
+                        foreach (Player player in Main.ActivePlayers)
+                        {
+                            if (player.active && player.Center.Distance(Owner.Center) < 650)
+                            {
+                                Owner.UCA().TerraRestore = true;
+                                player.UCA().TerraRestore = true;
+                            }
+                        }
                         Owner.AddCooldown(TerraBoost.ID, CalamityUtils.SecondsToFrames(30));
                     }
                     animationHelper.HasFinish[AnimationState.Middle] = true;

@@ -13,7 +13,8 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
-using UCA.Content.ItemOverride.Magic;
+using UCA.Assets.Sounds;
+using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Particiles;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
@@ -131,7 +132,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
                     Main.projectile[a].timeLeft = 99;
                 }
 
-                NightsRayOverride.UseCount++;
+                NightsRayAlt.UseCount++;
                 SoundEngine.PlaySound(SoundsMenu.NightRayHeavyAttack, Projectile.Center);
 
                 NightRayHeldProj.GenUnDeathSign(firePos);

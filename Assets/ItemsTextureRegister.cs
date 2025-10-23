@@ -15,17 +15,35 @@ namespace UCA.Assets
         public static Asset<Texture2D> MainElementalFragments { get; private set; }
         public static Asset<Texture2D> AuxElementalFragments { get; private set; }
         public static Asset<Texture2D> ElementalRayBase { get; private set; }
+        public static Asset<Texture2D> ElementalRayNebula { get; private set; }
+        public static Asset<Texture2D> ElementalRayMisc { get; private set; }
+        public static Asset<Texture2D> ElementalRaySolor { get; private set; }
+        public static Asset<Texture2D> ElementalRayStarDust { get; private set; }
+        public static Asset<Texture2D> ElementalRayVortex { get; private set; }
+        public static Asset<Texture2D> ElementalRayOutLine { get; private set; }
         public void LoadWeaponsTexture()
         {
             MainElementalFragments = ModContent.Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/MainElementalFragments");
             AuxElementalFragments = ModContent.Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/AuxElementalFragments");
             ElementalRayBase = ModContent.Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/ElementalRayBase");
+            ElementalRayNebula = ModContent.Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/ElementalRayNebula");
+            ElementalRayMisc = ModContent.Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/ElementalRayMisc");
+            ElementalRaySolor = ModContent.Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/ElementalRaySolor");
+            ElementalRayStarDust = ModContent.Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/ElementalRayStarDust");
+            ElementalRayVortex = ModContent.Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/ElementalRayVortex");
+            ElementalRayOutLine = ModContent.Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/ElementalRayOutLine");
         }
         public void UnLoadWeaponsTexture()
         {
             MainElementalFragments = null;
             AuxElementalFragments = null;
             ElementalRayBase = null;
+            ElementalRayNebula = null;
+            ElementalRayMisc = null;
+            ElementalRaySolor = null;
+            ElementalRayStarDust = null;
+            ElementalRayVortex = null;
+            ElementalRayOutLine = null;
         }
     }
 }

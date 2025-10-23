@@ -1,22 +1,19 @@
 ﻿using CalamityMod;
-using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Items.Weapons.Magic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
 using Terraria;
-using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
-using UCA.Content.ItemOverride.Magic;
+using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.Magic.Ray;
-using UCA.Core.AnimationHandle;
 using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
 
@@ -87,11 +84,11 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
             if (Projectile.ai[2] != 0)
             {              
                 // 在NPC周围发射一个十字的激光
-                NightsRayOverride.UseCount++;
-                if (NightsRayOverride.UseCount > 4)
+                NightsRayAlt.UseCount++;
+                if (NightsRayAlt.UseCount > 4)
                 {
                     CrossFire();
-                    NightsRayOverride.UseCount = 0;
+                    NightsRayAlt.UseCount = 0;
                 }
                 Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.06f;
                 Projectile.ai[2] = 0;

@@ -1,18 +1,16 @@
 ﻿using CalamityMod;
 using CalamityMod.Items.Weapons.Magic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using MonoMod.Core.Utils;
 using System;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using UCA.Assets;
+using UCA.Assets.Sounds;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
+using UCA.Content.UCACooldowns;
 using UCA.Core.AnimationHandle;
 using UCA.Core.SpecificEffectManagers;
 using UCA.Core.Utilities;
@@ -33,6 +31,10 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         public bool CanChangeDir = true;
         public int Time = 0;
         public int HitCooldown = 0;
+        public bool candamage = false;
+        public bool CanDraw = true;
+        public float BeginRot = 0;
+        public bool UseSlowRot = false;
         public override void SetDefaults()
         {
             Projectile.width = 74;
@@ -76,7 +78,10 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         public override void AI()
         {
             Initialize();
-            ToMouseVector = Utils.AngleLerp(ToMouseVector, Owner.GetPlayerToMouseVector2().ToRotation(), 0.2f);
+            if (UseSlowRot)
+                ToMouseVector = Utils.AngleLerp(ToMouseVector, Owner.GetPlayerToMouseVector2().ToRotation(), 0.08f);
+            else
+                ToMouseVector = Utils.AngleLerp(ToMouseVector, Owner.GetPlayerToMouseVector2().ToRotation(), 0.2f);
             if (HitCooldown > 0)
                 HitCooldown--;
             Time ++;
@@ -90,6 +95,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 // 设置玩家手持效果
                 float baseRotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
                 float directionVerticality = MathF.Abs(Projectile.velocity.X);
+                if (WeaponStates == ElementalRayState.StarDust)
+                    baseRotation += MathHelper.PiOver2 * Owner.direction;
                 Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, baseRotation);
                 Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, baseRotation);
             }
@@ -101,14 +108,23 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             }
             else if (WeaponStates == ElementalRayState.Vortex)
             {
+                UpdateVortexMissle();
+                UpdateSolarFragmentOffset();
             }
             else if (WeaponStates == ElementalRayState.Nebula)
             {
-
+                UpdateNebulaDust();
+                UpdateSolarFragmentOffset();
             }
             else if (WeaponStates == ElementalRayState.StarDust)
             {
-
+                UpdateStarDustStream();
+                UpdateSolarFragmentOffset();
+            }
+            else
+            {
+                UpdateMisc();
+                UpdateSolarFragmentOffset();
             }
         }
         public void Initialize()
@@ -123,6 +139,22 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 if (WeaponStates == ElementalRayState.Solar)
                 {
                     InitializeSolarBlade();
+                }
+                else if (WeaponStates == ElementalRayState.Nebula)
+                {
+                    InitializeNebulaDust();
+                }
+                else if (WeaponStates == ElementalRayState.Vortex)
+                {
+                    InitializeVortexMissle();
+                }
+                else if (WeaponStates == ElementalRayState.StarDust)
+                {
+                    InitializeStarDustStream();
+                }
+                else
+                {
+                    InitializeMisc();
                 }
             }
         }
@@ -146,14 +178,30 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
 
             if (Projectile.UCA().OnceHitEffect)
                 ScreenShakeSystem.AddScreenShakes(Projectile.Center, -250 * -Owner.direction, 40, Projectile.rotation + MathHelper.PiOver2, 0.5f, true, 1000);
-
+            Owner.AddCooldown(SolorShield.ID, 600);
+            SoundEngine.PlaySound(SoundsMenu.RiseBlast, Projectile.Center);
             SoundEngine.PlaySound(SoundsMenu.CarnageSkillMeleeHit, Projectile.Center);
         }
         public override bool PreDraw(ref Color lightColor)
         {
-            DrawSolar();
-            if (!CanDraw)
+            if (WeaponStates == ElementalRayState.StarDust && CanDraw)
+            {
+                DrawChargeBall();
+                DrawBaseElementalRay();
+                FilpDrawAuxFragments();
+                DrawMainFragments();
+                DrawAuxFragments();
                 return false;
+            }
+            if (WeaponStates == ElementalRayState.Solar && CanDraw)
+            {
+                DrawSolar();
+                DrawBaseElementalRay();
+                FilpDrawAuxFragments();
+                DrawMainFragments();
+                DrawAuxFragments();
+                return false;
+            }
             DrawBaseElementalRay();
             FilpDrawAuxFragments();
             DrawMainFragments();

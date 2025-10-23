@@ -4,11 +4,14 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets;
+using UCA.Assets.Sounds;
 using UCA.Content.Particiles;
 using UCA.Content.Particiles.Lightnings;
+using UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld;
 using UCA.Core.BaseClass;
 using UCA.Core.Graphics.Primitives.Trail;
 using UCA.Core.Utilities;
@@ -19,8 +22,9 @@ namespace UCA.Content.Projectiles.Magic.Ray
     {
         public override string Texture => UCATextureRegister.InvisibleTexturePath;
         public bool CanHit = true;
-        public int MaxLife = 540;
+        public int MaxLife = 270;
         public Vector2 TargetVelocity;
+        public bool CanPlayerInto => Projectile.ai[0] == 0;
         public override void SetStaticDefaults()
         {
             // 保存旧朝向与旧位置
@@ -50,6 +54,9 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Projectile.rotation = Projectile.velocity.ToRotation();
             if (Projectile.UCA().FirstFrame)
             {
+                if (UCAUtilities.OutOffScreen(Projectile.Center) || !CanPlayerInto)
+                    return;
+
                 for (int i = 0; i < 15; i++)
                 {
                     Vector2 velocity = Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.5f, 1.5f) * 6;
@@ -72,12 +79,17 @@ namespace UCA.Content.Projectiles.Magic.Ray
                     new TurbulenceCube(Projectile.Center, velocity, Main.rand.NextBool() ? Color.White : Color.Turquoise, Main.rand.Next(25, 35), 0f, 1f, Main.rand.NextFloat(0.3f, 0.6f)).Spawn();
                 }
             }
-            for (int i = 0; i < 5; i++)
+
+            if (!UCAUtilities.OutOffScreen(Projectile.Center))
             {
-                Vector2 vel = -Projectile.velocity / 5;
-                new VortexGlowBall(Projectile.Center + vel * i, Vector2.Zero, Color.Turquoise, 25, 0.1f).Spawn();
+                for (int i = 0; i < 5; i++)
+                {
+                    Vector2 vel = -Projectile.velocity / 5;
+                    new VortexGlowBall(Projectile.Center + vel * i, Vector2.Zero, Color.Turquoise, 20, 0.1f).Spawn();
+                }
+                new Lightning01(Projectile.Center, Vector2.Zero, Main.rand.NextBool() ? Color.PaleTurquoise : Color.Turquoise, Main.rand.Next(25, 30), Projectile.rotation + MathHelper.PiOver2, Main.rand.NextFloat(0.2f, 0.4f)).Spawn();
             }
-            new Lightning01(Projectile.Center, Vector2.Zero, Main.rand.NextBool() ? Color.PaleTurquoise : Color.Turquoise, Main.rand.Next(25, 45), Projectile.rotation + MathHelper.PiOver2, Main.rand.NextFloat(0.2f, 0.4f)).Spawn();
+
             NPC target = Projectile.FindClosestTarget(1500);
             if (target is not null)
             {
@@ -91,19 +103,35 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             Projectile.ExpandHitboxBy((float)7);
             Projectile.Damage();
-            for (int i = 0; i < 15; i++)
+            if (!UCAUtilities.OutOffScreen(Projectile.Center))
             {
-                Vector2 velocity = Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.5f, 1.5f) * 6;
-                new TurbulenceCube(Projectile.Center, velocity, Main.rand.NextBool() ? Color.White : Color.Turquoise, Main.rand.Next(25, 35), 0f, 1f, Main.rand.NextFloat(0.3f, 0.6f)).Spawn();
-            }
-            
-            new CrossGlow(Projectile.Center, Vector2.Zero, Color.PaleTurquoise, 25, 1f, 0.45f).Spawn();
-            new BloomShockwave(Projectile.Center, Vector2.Zero, Color.PaleTurquoise, 25, 1f, 0.2f).Spawn();
-            new BloomShockwave(Projectile.Center, Vector2.Zero, Color.Turquoise, 35, 1f, 0.3f).Spawn();
+                SoundEngine.PlaySound(SoundsMenu.LightingHit, Projectile.Center);
+                if (!CanPlayerInto)
+                {
+                    for (int i = 0; i < 5; i++)
+                    {
+                        Vector2 velocity = Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.5f, 1.5f) * 6;
+                        new TurbulenceCube(Projectile.Center, velocity, Main.rand.NextBool() ? Color.White : Color.Turquoise, Main.rand.Next(25, 35), 0f, 1f, Main.rand.NextFloat(0.3f, 0.6f)).Spawn();
+                    }
+                    new CrossGlow(Projectile.Center, Vector2.Zero, Color.PaleTurquoise, 25, 1f, 0.45f).Spawn();
+                    new BloomShockwave(Projectile.Center, Vector2.Zero, Color.PaleTurquoise, 25, 1f, 0.2f).Spawn();
+                }
+                else
+                {
+                    for (int i = 0; i < 15; i++)
+                    {
+                        Vector2 velocity = Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.5f, 1.5f) * 6;
+                        new TurbulenceCube(Projectile.Center, velocity, Main.rand.NextBool() ? Color.White : Color.Turquoise, Main.rand.Next(25, 35), 0f, 1f, Main.rand.NextFloat(0.3f, 0.6f)).Spawn();
+                    }
 
+                    new CrossGlow(Projectile.Center, Vector2.Zero, Color.PaleTurquoise, 25, 1f, 0.45f).Spawn();
+                    new BloomShockwave(Projectile.Center, Vector2.Zero, Color.PaleTurquoise, 25, 1f, 0.2f).Spawn();
+                    new BloomShockwave(Projectile.Center, Vector2.Zero, Color.Turquoise, 35, 1f, 0.3f).Spawn();
+                }
+            }
             Vector2 SpawnOffset = Projectile.Center + new Vector2(Main.rand.Next(-300, 300), Main.rand.Next(-800, -600));
             Vector2 FireVel = UCAUtilities.GetVector2(SpawnOffset, Projectile.Center) * 12;
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), SpawnOffset, FireVel, ModContent.ProjectileType<VortexLightning>(), Projectile.damage * 5, Projectile.knockBack, Projectile.owner);
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), SpawnOffset, FireVel, ModContent.ProjectileType<VortexLightning>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
         }
         public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
         {

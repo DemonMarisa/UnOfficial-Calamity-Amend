@@ -80,5 +80,68 @@ namespace UCA.Core.GlobalInstance.Players
                 }
             }
         }
+
+        public void AddElementalBoost()
+        {
+            if (Player.HasCooldown(MiscBoost.ID))
+            {
+                if (Player.miscCounter % 20 == 0)
+                {
+                    Player.Heal(5);
+                }
+                if (Player.miscCounter % 4 == 0)
+                {
+                    Vector2 pos = Player.Center - new Vector2(Main.rand.Next(-50, 50), -Player.height / 2);
+                    Color RandomColor = Color.Lerp(Color.White, Color.WhiteSmoke, Main.rand.NextFloat(0, 1));
+                    new MediumGlowBall(pos, Vector2.Zero, RandomColor, 120, 0, 1, 0.2f, Main.rand.NextFloat(1f, 2f)).Spawn();
+                }
+            }
+            if (Player.HasCooldown(SolorShield.ID))
+            {
+                ExternalDR += 0.15f;
+                Player.statDefense += 30;
+                if (Player.miscCounter % 12 == 0)
+                {
+                    Vector2 pos = Player.Center - new Vector2(Main.rand.Next(-50, 50), -Player.height / 2);
+                    Color RandomColor = Color.Lerp(Color.Orange, Color.OrangeRed, Main.rand.NextFloat(0, 1));
+                    new MediumGlowBall(pos, Vector2.Zero, RandomColor, 120, 0, 1, 0.2f, Main.rand.NextFloat(1f, 2f)).Spawn();
+                }
+            }
+            if (Player.HasCooldown(StarDustBoost.ID))
+            {
+                Player.manaCost *= 0.5f;
+                if (Player.miscCounter % 12 == 0)
+                {
+                    Vector2 pos = Player.Center - new Vector2(Main.rand.Next(-50, 50), -Player.height / 2);
+                    Color RandomColor = Color.Lerp(Color.SkyBlue, Color.DeepSkyBlue, Main.rand.NextFloat(0, 1));
+                    new MediumGlowBall(pos, Vector2.Zero, RandomColor, 120, 0, 1, 0.2f, Main.rand.NextFloat(1f, 2f)).Spawn();
+                }
+            }
+            if (Player.HasCooldown(VortexBoost.ID))
+            {
+                DamageMult += 0.1f;
+                if (Player.miscCounter % 12 == 0)
+                {
+                    Vector2 pos = Player.Center - new Vector2(Main.rand.Next(-50, 50), -Player.height / 2);
+                    Color RandomColor = Color.Lerp(Color.Turquoise, Color.DarkTurquoise, Main.rand.NextFloat(0, 1));
+                    new MediumGlowBall(pos, Vector2.Zero, RandomColor, 120, 0, 1, 0.2f, Main.rand.NextFloat(1f, 2f)).Spawn();
+                }
+            }
+            if (Player.HasCooldown(NebulaBoost.ID))
+            {
+                if (Player.miscCounter % 20 == 0)
+                {
+                    Player.Heal(5);
+                }
+                Player.GetDamage<MagicDamageClass>() += 0.15f;
+                Player.GetCritChance<MagicDamageClass>() += 10;
+                if (Player.miscCounter % 12 == 0)
+                {
+                    Vector2 pos = Player.Center - new Vector2(Main.rand.Next(-50, 50), -Player.height / 2);
+                    Color RandomColor = Color.Lerp(Color.Violet, Color.DarkViolet, Main.rand.NextFloat(0, 1));
+                    new MediumGlowBall(pos, Vector2.Zero, RandomColor, 120, 0, 1, 0.2f, Main.rand.NextFloat(1f, 2f)).Spawn();
+                }
+            }
+        }
     }
 }

@@ -9,6 +9,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
+using UCA.Assets.Sounds;
 using UCA.Content.DrawNodes;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld;
@@ -86,6 +87,15 @@ namespace UCA.Content.Projectiles.Magic.Ray
             }
             else
                 CalamityUtils.HomeInOnNPC(Projectile, true, 1500, 12, 35);
+
+            if (Projectile.ai[1] != 0)
+            {
+                CanFadeOut = true;
+                Projectile.timeLeft = 120;
+                Projectile.netUpdate = true;
+                Projectile.ai[1] = 0;
+                SoundEngine.PlaySound(SoundsMenu.TerraRayHit, Projectile.Center);
+            }
         }
         #region 更新藤蔓
         public void UpdateVine()
@@ -145,9 +155,9 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             if (!CanFadeOut)
                 Projectile.timeLeft = 120;
+            Projectile.ai[1]++;
             Projectile.netUpdate = true;
             CanFadeOut = true;
-            SoundEngine.PlaySound(SoundsMenu.TerraRayHit, Projectile.Center);
         }
         public override void OnKill(int timeLeft)
         {

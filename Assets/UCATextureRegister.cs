@@ -22,6 +22,8 @@ namespace UCA.Assets
             LoadParticileTextures();
             LoadENDERTextures();
             LoadWeaponsTexture();
+            LoadProjectilesTexture();
+            LoadUITexture();
         }
 
         public override void Unload()
@@ -34,6 +36,8 @@ namespace UCA.Assets
             UnLoadParticileTextures();
             UnLoadENDERTextures();
             UnLoadWeaponsTexture();
+            UnLoadProjectilesTexture();
+            UnLoadUITexture();
         }
     }
 }

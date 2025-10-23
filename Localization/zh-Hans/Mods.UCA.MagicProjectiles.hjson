@@ -10,10 +10,13 @@ TerraLaser.DisplayName: 古树灵光
 TerraLance.DisplayName: 自然长枪
 TerrarTornado.DisplayName: 繁花龙卷
 TerraMatrix.DisplayName: 不死法阵
-// ElementalLaser.DisplayName: Elemental Laser
-// StarDustFragment.DisplayName: Star Dust Fragment
-// SolarBlast.DisplayName: Solar Blast
-// NebulaEnergy.DisplayName: Nebula Energy
-// VortexMissle.DisplayName: Vortex Missle
-// VortexLightning.DisplayName: Vortex Lightning
-// SolarFireBall.DisplayName: Solar Fire Ball
+ElementalLaser.DisplayName: 元素精华
+StarDustFragment.DisplayName: 星尘碎块
+SolarBlast.DisplayName: 耀斑爆炸
+NebulaEnergy.DisplayName: 星云能量
+VortexMissle.DisplayName: 星璇导弹
+VortexLightning.DisplayName: 扭曲雷电
+SolarFireBall.DisplayName: 耀斑碎片
+StarDustLaser.DisplayName: 星尘射线
+SoulStream.DisplayName: 灵魂激流
+NebulaCrystal.DisplayName: 寰宇冰晶

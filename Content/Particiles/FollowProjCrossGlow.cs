@@ -15,6 +15,7 @@ namespace UCA.Content.Particiles
         public int OwnerID;
         public Vector2 Offset;
         public Projectile Owner => Main.projectile[OwnerID];
+        public bool HasUnActive = false;
         public FollowProjCrossGlow(Vector2 position, Color color, int lifetime, float scale, int owner, Vector2 offset)
         {
             Position = position;
@@ -33,7 +34,13 @@ namespace UCA.Content.Particiles
         public override void Update()
         {
             Velocity = Vector2.Zero;
-            Position = Owner.Center + Offset.RotatedBy(Owner.rotation);
+
+            if (!Owner.active)
+                HasUnActive = true;
+
+            if (!HasUnActive)
+                Position = Owner.Center + Offset.RotatedBy(Owner.rotation);
+
             if (LifetimeRatio < 0.5f)
             {
                 Scale = MathHelper.Lerp(0f, BeginScale, EasingHelper.EaseOutCubic(LifetimeRatio * 2));

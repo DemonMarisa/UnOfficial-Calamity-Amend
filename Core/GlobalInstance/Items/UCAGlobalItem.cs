@@ -14,7 +14,7 @@ namespace UCA.Core.GlobalInstance.Items
 
         public override void PostDrawInInventory(Item item, SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
-            if (!UCAConfig.Instance.UCATurnoffCorner)
+            if (UCAConfig.Instance.UCATurnoffCorner)
             {
                 if (DrawSmallIcon)
                 {

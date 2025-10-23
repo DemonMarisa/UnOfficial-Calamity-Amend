@@ -2,10 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Core.ParticleSystem;
-using UCA.Core.Utilities;
 
 namespace UCA.Content.Particiles
 {

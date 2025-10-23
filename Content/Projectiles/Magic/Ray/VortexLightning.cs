@@ -59,13 +59,16 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 new Lightning03(Projectile.Center, Vector2.Zero, Main.rand.NextBool() ? Color.PaleTurquoise : Color.Turquoise, Main.rand.Next(25, 45), Projectile.rotation, Main.rand.NextFloat(0.2f, 0.4f)).Spawn();
                 new Lightning03(Projectile.Center, Vector2.Zero, Main.rand.NextBool() ? Color.PaleTurquoise : Color.Turquoise, Main.rand.Next(25, 45), Projectile.rotation, Main.rand.NextFloat(0.2f, 0.4f)).Spawn();
             }
-            for (int i = 0; i < 5; i++)
+            if(Projectile.velocity != Vector2.Zero)
             {
-                Vector2 vel = -Projectile.velocity / 5;
-                new VortexGlowBall(Projectile.Center + vel * i, Vector2.Zero, Color.Turquoise, 25, 0.1f).Spawn();
-            }
+                for (int i = 0; i < 5; i++)
+                {
+                    Vector2 vel = -Projectile.velocity / 5;
+                    new VortexGlowBall(Projectile.Center + vel * i, Vector2.Zero, Color.Turquoise, 25, 0.1f).Spawn();
+                }
 
-            new Lightning01(Projectile.Center, Vector2.Zero, Main.rand.NextBool() ? Color.PaleTurquoise : Color.Turquoise, Main.rand.Next(25, 45), Projectile.rotation + MathHelper.PiOver2, Main.rand.NextFloat(0.2f, 0.4f)).Spawn();
+                new Lightning01(Projectile.Center, Vector2.Zero, Main.rand.NextBool() ? Color.PaleTurquoise : Color.Turquoise, Main.rand.Next(25, 45), Projectile.rotation + MathHelper.PiOver2, Main.rand.NextFloat(0.2f, 0.4f)).Spawn();
+            }
         }
         public override void OnKill(int timeLeft)
         {

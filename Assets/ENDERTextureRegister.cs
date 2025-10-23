@@ -27,6 +27,8 @@ namespace UCA.Assets
         public static Asset<Texture2D> Lightning01 { get; private set; }
         public static Asset<Texture2D> Lightning02 { get; private set; }
         public static Asset<Texture2D> Lightning03 { get; private set; }
+        public static Asset<Texture2D> Hahen01 { get; private set; }
+        public static Asset<Texture2D> Hahen02 { get; private set; }
         #endregion
         #region 来自马格诺利亚的
         public static string CollectableLightPath = "UCA/Assets/MAGNOLIA/CollectableLight";
@@ -43,6 +45,9 @@ namespace UCA.Assets
         public static Asset<Texture2D> Tornade_Fire { get; private set; }
         public static Asset<Texture2D> MiscNoise01 { get; private set; }
         public static Asset<Texture2D> MiscNoise02 { get; private set; }
+        public static Asset<Texture2D> Aura_01 { get; private set; }
+        public static Asset<Texture2D> Aura_02 { get; private set; }
+        public static Asset<Texture2D> Flash_01 { get; private set; }
         #endregion
         public static void LoadENDERTextures()
         {
@@ -60,6 +65,8 @@ namespace UCA.Assets
             Shine = ModContent.Request<Texture2D>($"UCA/Assets/LILES/Shine");
             Thrust01 = ModContent.Request<Texture2D>($"UCA/Assets/LILES/Thrust01");
             Thrust02 = ModContent.Request<Texture2D>($"UCA/Assets/LILES/Thrust02");
+            Hahen01 = ModContent.Request<Texture2D>($"UCA/Assets/LILES/Hahen01");
+            Hahen02 = ModContent.Request<Texture2D>($"UCA/Assets/LILES/Hahen02");
 
             CollectableLight = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/CollectableLight");
             BladeM = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/BladeM");
@@ -77,6 +84,9 @@ namespace UCA.Assets
             Tornade_Fire = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/Tornade_Fire");
             MiscNoise01 = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/MiscNoise01");
             MiscNoise02 = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/MiscNoise02");
+            Aura_01 = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/Aura_01");
+            Aura_02 = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/Aura_02");
+            Flash_01 = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/flash_01");
         }
         public static void UnLoadENDERTextures()
         {
@@ -92,6 +102,8 @@ namespace UCA.Assets
             Shine = null;
             Thrust01 = null;
             Thrust02 = null;
+            Hahen01 = null;
+            Hahen02 = null;
 
             CollectableLight = null;
             BladeM = null;
@@ -109,6 +121,9 @@ namespace UCA.Assets
             Tornade_Fire = null;
             MiscNoise01 = null;
             MiscNoise02 = null;
+            Aura_01 = null;
+            Aura_02 = null;
+            Flash_01 = null;
         }
     }
 }

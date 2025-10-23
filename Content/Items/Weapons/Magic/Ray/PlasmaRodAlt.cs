@@ -4,6 +4,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
@@ -17,56 +20,51 @@ using UCA.Core.Keybinds;
 using UCA.Core.MiscDate;
 using UCA.Core.Utilities;
 
-namespace UCA.Content.ItemOverride.Magic
+namespace UCA.Content.Items.Weapons.Magic.Ray
 {
-    public class PlasmaRodOverride : BaseWeaponOverride
+    public class PlasmaRodAlt : BaseMagicWeapon
     {
         public static int PlasmaRodFilp = 1;
-        public override bool InstancePerEntity => true;
-        public override int OverrideType { get => ModContent.ItemType<PlasmaRod>(); set => ModContent.ItemType<PlasmaRod>(); }
         public override void SetStaticDefaults()
         {
-            TextureAssets.Item[ModContent.ItemType<PlasmaRod>()] = ModContent.Request<Texture2D>($"{ItemOverridePaths.MagicWeaponsPath}" + "PlasmaRodOverride");
-            Item.staff[ModContent.ItemType<PlasmaRod>()] = true;
+            Item.staff[Type] = true;
         }
 
-        public override void SetDefaults(Item item)
+        public override void SetDefaults()
         {
-            item.damage = 8;
-            item.DamageType = DamageClass.Magic;
-            item.mana = 10;
-            item.width = 44;
-            item.height = 44;
-            item.useTime = 20;
-            item.useAnimation = 20;
-            item.useStyle = ItemUseStyleID.Shoot;
-            item.noMelee = true;
-            item.knockBack = 3.25f;
-            item.value = UCAShopValue.RarityBlueBuyPrice;
-            item.rare = ItemRarityID.Blue;
-            item.UseSound = null;
-            item.autoReuse = true;
-            item.shoot = ModContent.ProjectileType<PlasmaRodHeldProj>();
-            item.shootSpeed = 6f;
+            Item.damage = 8;
+            Item.DamageType = DamageClass.Magic;
+            Item.mana = 10;
+            Item.width = 44;
+            Item.height = 44;
+            Item.useTime = 20;
+            Item.useAnimation = 20;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.noMelee = true;
+            Item.knockBack = 3.25f;
+            Item.value = UCAShopValue.RarityBlueBuyPrice;
+            Item.rare = ItemRarityID.Blue;
+            Item.UseSound = null;
+            Item.autoReuse = true;
+            Item.shoot = ModContent.ProjectileType<PlasmaRodHeldProj>();
+            Item.shootSpeed = 6f;
 
-            item.noUseGraphic = true;
-            item.channel = true;
+            Item.noUseGraphic = true;
+            Item.channel = true;
 
-            item.UCA().UseWeaponSkill = true;
-            item.UCA().DrawSmallIcon = true;
+            Item.UCA().UseWeaponSkill = true;
+            Item.UCA().DrawSmallIcon = true;
         }
-
-        public override bool AltFunctionUse(Item item, Player player)
+        public override bool AltFunctionUse(Player player)
         {
             return true;
         }
-
-        public override bool CanUseItem(Item item, Player player)
+        public override bool CanUseItem(Player player)
         {
             return !player.HasProj<PlasmaRodHeldProj>() && !player.HasProj<PlasmaRodHeldProjBlast>() && !player.HasProj<PlasmaRodSkillProj>();
         }
 
-        public override void CustomShoot(Item item, Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             if (player.altFunctionUse == 2)
             {
@@ -82,9 +80,10 @@ namespace UCA.Content.ItemOverride.Magic
             }
             else
                 Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI);
+            return false;
         }
 
-        public override void WeaponSkill(Item item, Player player)
+        public override void WeaponSkill(Player player)
         {
             if (!player.HasProj<PlasmaRodHeldProj>() && !player.HasProj<PlasmaRodHeldProjBlast>() && !player.HasProj<PlasmaRodSkillProj>())
             {
@@ -98,33 +97,27 @@ namespace UCA.Content.ItemOverride.Magic
                     {
                         PlasmaRodFilp = 1;
                     }
-                    float kb = player.GetWeaponKnockback(item);
-                    int Damage = player.GetWeaponDamage(item);
+                    float kb = player.GetWeaponKnockback(Item);
+                    int Damage = player.GetWeaponDamage(Item);
                     int Index = Projectile.NewProjectile(player.GetSource_FromThis(), player.Center, Vector2.Zero, ModContent.ProjectileType<PlasmaRodSkillProj>(), Damage * 10, kb, player.whoAmI, PlasmaRodFilp);
                     UCAUtilities.SendProjSync(Index);
                 }
             }
         }
 
-        public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            string newKey = UCAKeybind.WeaponSkillHotKey.TooltipHotkeyString();
-            string totalStatBuffs = UCA.Instance.GetLocalization("CalMagicWeaponsChange.PlasmaRod").Format(newKey);
-
-            TooltipLine line = new(Mod, "UCAWeaponsChange", totalStatBuffs);
-
-            tooltips.Add(line);
+            tooltips.IntegrateHotkey(UCAKeybind.WeaponSkillHotKey);
         }
 
         public override void AddRecipes()
         {
-            Recipe.Create(ModContent.ItemType<PlasmaRod>()).
+            CreateRecipe().
                 AddIngredient(ItemID.Amethyst).
-                AddIngredient(ItemID.Glass,  2).
+                AddIngredient(ItemID.Glass, 2).
                 AddRecipeGroup(VanillaRecipeGroups.Wood, 12).
                 AddTile(TileID.WorkBenches).
                 Register();
         }
-
     }
 }

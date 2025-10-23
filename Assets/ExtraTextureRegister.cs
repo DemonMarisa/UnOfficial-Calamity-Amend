@@ -30,6 +30,10 @@ namespace UCA.Assets
         public static string ShockWavePath = "UCA/Assets/ExtraTextures/ShockWave";
         public static Asset<Texture2D> BloomShockwave { get; private set; }
         public static Asset<Texture2D> Lightning { get; private set; }
+        public static Asset<Texture2D> FusableBall { get; private set; }
+        public static Asset<Texture2D> BloomRing { get; private set; }
+        public static Asset<Texture2D> SoftEdgeCircle { get; private set; }
+        public static Asset<Texture2D> BloomLine { get; private set; }
         public static void LoadExtraTextures()
         {
             Noise = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/Noise");
@@ -53,7 +57,10 @@ namespace UCA.Assets
             ShockWave = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/ShockWave");
             FireStrike = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/FireStrike");
             BloomShockwave = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/BloomShockwave");
-            Lightning = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/Lightning");
+            FusableBall = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/FusableBall");
+            BloomRing = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/BloomRing");
+            SoftEdgeCircle = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/SoftEdgeCircle");
+            BloomLine = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/BloomLine");
         }
         public static void UnLoadExtraTextures()
         {
@@ -78,6 +85,10 @@ namespace UCA.Assets
             ShockWave = null;
             FireStrike = null;
             BloomShockwave = null;
+            FusableBall = null;
+            BloomRing = null;
+            SoftEdgeCircle = null;
+            BloomLine = null;
         }
     }
 }

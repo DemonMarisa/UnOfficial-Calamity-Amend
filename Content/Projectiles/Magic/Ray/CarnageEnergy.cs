@@ -11,6 +11,7 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets;
+using UCA.Assets.Sounds;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.HeldProj.Magic;
@@ -119,7 +120,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             if (distanecToNPC < mindistance)
                 mult = 0.75f;
             else
-                mult = MathHelper.Clamp(2f - (distanecToNPC - mindistance) / 600f, 2f, 0.75f);
+                mult = MathHelper.Clamp(2f - (distanecToNPC - mindistance) / 600f, 0.75f, 1.5f);
 
             modifiers.FinalDamage *= mult;
         }

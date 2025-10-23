@@ -11,6 +11,7 @@ using Terraria.DataStructures;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets;
+using UCA.Assets.Sounds;
 using UCA.Content.DrawNodes;
 using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Particiles;
@@ -29,6 +30,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
         public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/TerraRayHeld/TerraRayHeldProj";
         public AnimationHelper animationHelper = new AnimationHelper(4);
         public int OwnerDir = 0;
+        // 动画的旋转标准
         public float BeginRot = 0;
         public float Opacity = 1f;
         public Vector2 DrawOffset;
@@ -99,7 +101,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
             {
                 if (animationHelper.AniProgress[AnimationState.Begin] < animationHelper.MaxAniProgress[AnimationState.Begin])
                     animationHelper.AniProgress[AnimationState.Begin]++;
-
 
                 HandleBeginAni();
 
@@ -270,7 +271,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
                 float offset = MathHelper.TwoPi / 30;
                 Color RandomColor = Color.Lerp(Color.LightGreen, Color.ForestGreen, Main.rand.NextFloat(0, 1));
                 Vector2 firVel = Vector2.UnitX.BetterRotatedBy(offset * i, default, 0.75f, 1f);
-                new MediumGlowBall(firPos, firVel.RotatedBy(Projectile.rotation) * 1.5f, RandomColor, 60, 0, 1, 0.2f, 0).Spawn();
+                new MediumGlowBall(firPos, firVel.RotatedBy(RotOffset + MathHelper.PiOver2) * 1.5f, RandomColor, 60, 0, 1, 0.2f, 0).Spawn();
             }
             #endregion
             #region 生成蝴蝶

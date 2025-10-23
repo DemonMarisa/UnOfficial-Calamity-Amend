@@ -2,15 +2,105 @@ CarnageRay: {
 	DisplayName: Carnage Ray
 	Tooltip:
 		'''
-		The farther along the ray hit enemies are, the more damage they take(75% - 150%)
-		Light click Will release carnage balls around the ray
-		Right click will stab forward and consume mana to shoot homein blood orb.
-		Weapon Skill:
-		Press the [KEY] Key, consume 200 mana to Slash forward and releasing homein blood orb.
+		Damage increases the farther the ray travels (75% - 150%)
+		Fires homing blood orbs around the ray.
+		Right Click: Stabs forward, consuming mana to launch homing blood orbs.
+		Weapon Skill: Blood Great Sword
+		[KEY]: Consumes 200 mana to slash forward, releasing numerous homing blood orbs.
 		'''
 }
 
 TerraRay: {
 	DisplayName: Terra Ray
-	Tooltip: ""
+	Tooltip:
+		'''
+		Fires a beam of ancient tree essence that splits into ancient branches towards nearby enemies.  
+		Spawns homing natural spears when the beam disappears.  
+		Right Click: Swings the staff, summoning natural spears and floral tornadoes around you and at the cursor.
+		Tornadoes fire healing projectiles towards the player and split into more spears upon hitting enemies.  
+		Weapon Skill: Fusang Blessing  
+		Has 3 uses, recovering one use every 45 seconds.  
+		[KEY]: Reduces movement speed and grants 75% defense damage reduction. Summons tornadoes at your position and up to 4 nearby enemies after charging.  
+		[KEY] + Up: If uses remain, restores 30% max health after charging and grants a 30-second buff:
+		+10 HP/s life regen, 10% defense damage reduction, 15% damage reduction, +30 defense.
+		'''
 }
+
+PlasmaRodAlt: {
+	DisplayName: Plasma Rod
+	Tooltip:
+		'''
+		Fires a plasma beam that splits into 8 homing beams on impact.
+		Right Click: Launches an exploding shadow fireball.
+		Weapon Skill : Magic Sword
+		[KEY]: Consumes 50 mana to slash forward.
+		'''
+}
+
+NightsRayAlt: {
+	DisplayName: Nights Ray
+	Tooltip:
+		'''
+		Damage increases the closer the ray is to the enemy (200% - 75%)
+		Fires dark beams that split and attack nearby enemies.
+		Right Click: Expands a shield that consumes mana, deflects projectiles, and absorbs up to 400 damage.
+		Provides damage reduction and defense. (Effectiveness decreases when mana is zero)
+		Weapon Skill : Nights Blessing
+		[KEY]: Consumes 200 mana. Grants a 30-second comprehensive attack and defense buff, and fully restores the shield.
+		'''
+}
+
+ElementRayAlt: {
+	DisplayName: Elemental Ray
+	Tooltip:
+		'''
+		Fires a pure elemental beam.
+		Right Click: Uses the special ability of the current mode.
+		Weapon Skill: Transform Elements
+		[KEY]: Opens the UI to switch between weapon modes.
+		Different modes grant different attack styles and special abilities.
+		[NeedTooltip]
+		'''
+}
+
+ElementRayMisc:
+	'''
+	Triggers a Solar explosion and blasts Nebula energy on enemy hit.  
+	Leaves Stardust fragments to attack enemies when the beam disappears.  
+	Launches Vortex Missiles from behind to track enemies.  
+	Current Skill: Resplendent Life  
+	Consumes 100 mana to Raises staff; after a short delay, restores 5% max health and grants 15 HP/s regeneration for 10 seconds.
+	'''
+ElementRaySolor:
+	'''
+	[c/FFA500:Triggers a larger Flare explosion on enemy hit.]
+	[c/FFA500:Simultaneously launches a large number of Flare fireballs.]
+	[c/FFA500:Current combat skill: Solor Greatsword.]
+	[c/FFA500:Consumes 200 mana to charge. Release Right Click to slash forward.]
+	[c/FFA500:Grants +30 defense and 15% defense damage reduction for a short time upon hitting an enemy.]
+	'''
+ElementRayVortex:
+	'''
+	[c/66CDAA:Explodes with Vortex Missiles on enemy hit.]
+	[c/66CDAA:Launches Vortex Missiles from behind to track enemies.]
+	[c/66CDAA:Fires lightning at the nearest enemy when the beam disappears.]
+	[c/66CDAA:Current battle skill: Lighting Storm]
+	[c/66CDAA:Consumes 200 mana to charge. Randomly launches numerous Vortex Missiles around you after charging.]
+	[c/66CDAA:Grants 1.1x damage for a short period after use.]
+	'''
+ElementRayNebula:
+	'''
+	[c/FF00FF:Explodes with more Nebula energy on enemy hit.  ]
+	[c/FF00FF:Emits Nebula energy from around you to track enemies.  ]
+	[c/FF00FF:Current Skill: Nebula Crystal Rain ]
+	[c/FF00FF:Consumes 200 mana to charge. Launches numerous cosmic crystals forward after a short delay.  ]
+	[c/FF00FF:Hitting an enemy with a crystal grants you a Nebula Boost buff and Spawn healing Projectile.]
+	'''
+ElementRayStarDust:
+	'''
+	[c/4169E1:Explodes with more Stardust Laser on enemy hit. ]
+	[c/4169E1:Leaves Stardust fragments to attack enemies when the beam disappears.  ]
+	[c/4169E1:Current skill: Soul Stream]
+	[c/4169E1:Consumes 350 mana to charge. Launches a powerful Soul Stream forward after a short delay.]
+	[c/4169E1:Halves your mana consumption (x0.5) for a short period after use.]
+	'''

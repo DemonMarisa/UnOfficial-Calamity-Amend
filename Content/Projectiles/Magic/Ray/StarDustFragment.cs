@@ -1,8 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
 using UCA.Assets;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
@@ -36,6 +38,18 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 return false;
             else
                 return CanHit;
+        }
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(CanHit);
+            writer.Write(Projectile.timeLeft);
+        }
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            CanHit = reader.ReadBoolean();
+            Projectile.timeLeft = reader.ReadInt32();
         }
         public override void AI()
         {

@@ -97,7 +97,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             if (distanecToNPC < mindistance)
                 mult = 0.75f;
             else
-                mult = MathHelper.Clamp(2f - (distanecToNPC - mindistance) / 600f, 1.5f, 0.75f);
+                mult = MathHelper.Clamp(2f - (distanecToNPC - mindistance) / 900f, 0.75f, 1.5f);
 
             modifiers.FinalDamage *= mult;
         }

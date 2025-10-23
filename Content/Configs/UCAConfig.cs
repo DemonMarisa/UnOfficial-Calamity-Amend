@@ -12,13 +12,13 @@ namespace UCA.Content.Configs
         public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref NetworkText message) => true;
 
         [BackgroundColor(211, 211, 211, 192)]
-        [Range(500, 10000)]
+        [Range(5000, 50000)]
         [Increment(1)]
-        [DefaultValue(2000)]
+        [DefaultValue(15000)]
         public int ParticleLimit { get; set; }
 
         [BackgroundColor(211, 211, 211, 192)]
-        [DefaultValue(false)]
+        [DefaultValue(true)]
         public bool UCATurnoffCorner { get; set; }
 
         [BackgroundColor(211, 211, 211, 192)]

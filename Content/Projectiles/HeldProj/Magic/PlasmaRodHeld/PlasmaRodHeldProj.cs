@@ -7,7 +7,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using UCA.Assets;
+using UCA.Assets.Sounds;
 using UCA.Content.Particiles;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
@@ -18,7 +18,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
 {
     public class PlasmaRodHeldProj : BaseHeldProj
     {
-        public override string Texture => $"{ItemOverridePaths.MagicWeaponsPath}" + "PlasmaRodOverride";
+        public override string Texture => $"{ItemPath.MagicRayWeaponsPath}" + "PlasmaRodAlt";
         public override LocalizedText DisplayName => CalamityUtils.GetItemName<PlasmaRod>();
 
         public override Vector2 RotPoint => Owner.direction == -1 ? new Vector2(TextureAssets.Projectile[Type].Size().X, TextureAssets.Projectile[Type].Size().Y) : new Vector2(0, TextureAssets.Projectile[Type].Size().Y);

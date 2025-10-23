@@ -6,6 +6,7 @@ using Terraria.DataStructures;
 using Terraria.Map;
 using Terraria.ModLoader;
 using UCA.Assets;
+using UCA.Assets.Sounds;
 using UCA.Content.DrawNodes;
 using UCA.Content.Particiles;
 using UCA.Core.BaseClass;

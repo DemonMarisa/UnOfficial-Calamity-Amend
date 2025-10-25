@@ -23,6 +23,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/ElementRayHeld/ElementRayHeldProj";
         public Player Owner => Main.player[Projectile.owner];
         public ref float WeaponStates => ref Projectile.ai[0];
+        public bool IsMAGBOLIABlue => Projectile.ai[1] != 0;
         public AnimationHelper animationHelper = new AnimationHelper(10);
         public float ToMouseVector;
         public Vector2 RelativeOwnerPos;

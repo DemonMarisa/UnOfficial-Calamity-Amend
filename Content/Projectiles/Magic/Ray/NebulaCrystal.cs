@@ -70,20 +70,19 @@ namespace UCA.Content.Projectiles.Magic.Ray
             }
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
             Time++;
-            if (!UCAUtilities.OutOffScreen(Projectile.Center))
+            if (!UCAUtilities.OutOffScreen(Projectile.Center, 0.2f))
             {
                 for (int i = 0; i < DustCount; i++)
                 {
                     NebulaMetaBall.SpawnParticle(Projectile.Center + Projectile.velocity / DustCount * i, Vector2.Zero, 0.1f, 45);
                 }
-                Vector2 offset = new Vector2(0, -2) + Main.rand.NextVector2Circular(6, 6);
+                Vector2 offset = Main.rand.NextVector2Circular(6, 6);
                 new Fire(Projectile.Center + offset, Projectile.velocity * 0.3f, Color.Violet, 30, Main.rand.NextFloat(MathHelper.TwoPi), 1, 0.2f).Spawn();
-
             }
 
-            if (Projectile.timeLeft % 20 == 0)
+            if (Projectile.timeLeft % 15 == 0)
             {
-                if (UCAUtilities.OutOffScreen(Projectile.Center))
+                if (UCAUtilities.OutOffScreen(Projectile.Center, 0.2f))
                     return;
 
                 if (Projectile.velocity.Length() > 1)
@@ -94,7 +93,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                     new CrossGlow(Projectile.Center + GenPosOffset, Vector2.Zero, color, 60, 1f, 0.1f, false).Spawn();
 
                     if (OldStarPos != Vector2.Zero)
-                        UCAUtilities.GenStarLine(OldStarPos, Projectile.Center + GenPosOffset, 100, Color.Violet);
+                        UCAUtilities.GenStarLine(OldStarPos, Projectile.Center + GenPosOffset, 50, Color.Violet);
 
                     OldStarPos = Projectile.Center + GenPosOffset;
                 }
@@ -105,7 +104,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 for (int i = 0; i < 15; i++)
                 {
                     Vector2 spawnVec = Projectile.velocity.RotateRandom(MathHelper.PiOver4 * 0.5f) * Main.rand.NextFloat(0.2f, 1f);
-                    NebulaMetaBall.SpawnParticle(Projectile.Center, spawnVec, 0.2f, 45);
+                    NebulaMetaBall.SpawnParticle(Projectile.Center, spawnVec, 0.2f, 65);
                 }
                 SoundEngine.PlaySound(SoundsMenu.MetalHit, Projectile.Center);
                 Projectile.ai[1] = 0;
@@ -119,7 +118,6 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 Projectile.netUpdate = true;
 
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * 3f, ModContent.ProjectileType<NebulaHeal>(), 0, 0, Projectile.owner, 1);
-
                 return;
             }
         }
@@ -136,7 +134,8 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 Vector2 spawnVec = Vector2.UnitX.RotateRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.6f, 1f) * 12;
                 Color color = UCAUtilities.LerpColor(Color.Violet, Color.LightPink);
                 new BrokenGlass(Projectile.Center, spawnVec, color, Main.rand.Next(45, 60), Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.2f, false).Spawn();
-            }  }
+            }
+        }
         public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
         {
             overWiresUI.Add(index);

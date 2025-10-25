@@ -1,15 +1,10 @@
-﻿using CalamityMod;
-using CalamityMod.Buffs.DamageOverTime;
-using CalamityMod.Items.Weapons.Magic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Physics;
 using UCA.Assets;
-using UCA.Assets.Effects;
 using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld;
@@ -96,11 +91,13 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Projectile.timeLeft = 2;
             Projectile.scale = MathHelper.Lerp(Projectile.scale, 1.2f, 0.08f);
             #region 生成组成主光束的粒子
+
             for (int i = 0; i < LaserLength; i += 40)
             {
                 Vector2 Spawn = Projectile.Center + Projectile.velocity * i + Main.rand.NextVector2Circular(36, 36);
                 if (UCAUtilities.OutOffScreen(Spawn, CutMult))
                     continue;
+
                 Color color = UCAUtilities.LerpColor(Color.DeepSkyBlue, Color.SkyBlue);
                 new TrailGlowBall(Spawn, Projectile.velocity * 6, color, Main.rand.Next(45, 65), 0.08f, true).Spawn();
             }
@@ -109,6 +106,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 Vector2 Spawn = Projectile.Center + Projectile.velocity * i + new Vector2(0, -36).RotatedBy(Projectile.rotation) + Main.rand.NextVector2Circular(9, 9);
                 if (UCAUtilities.OutOffScreen(Spawn, CutMult))
                     continue;
+
                 Color color = UCAUtilities.LerpColor(Color.White, Color.White);
                 new FusableBall(Spawn, Projectile.velocity * 3, color, 5, 1f, new Vector2(1f, 0.08f)).Spawn();
             }
@@ -163,9 +161,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                         continue;
                     new CrossGlow(SpawnPos, Vector2.Zero, Color.SkyBlue, 60, 1f, 0.2f).Spawn();
                     if (i != 0)
-                    {
                         GenStarLine(OldPos, SpawnPos, 60);
-                    }
                     OldPos = SpawnPos;
                 }
                 Time = 0;

@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CalamityMod;
+using CalamityMod.Particles;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
@@ -10,7 +12,7 @@ namespace UCA.Core.ParticleSystem
     public abstract class BaseParticle
     {
         #region 基础属性
-
+        public bool Important = false;
         /// <summary>
         /// 使用材质
         /// </summary>
@@ -62,16 +64,26 @@ namespace UCA.Core.ParticleSystem
         {
             if (Main.netMode == NetmodeID.Server)
                 return this;
-
             // 初始化时间
             Time = 0;
-            // 如果粒子数量过多，则清除第一个粒子并添加
-            if (BaseParticleManager.ActiveParticles.Count > UCAConfig.Instance.ParticleLimit)
-                BaseParticleManager.ActiveParticles.RemoveAt(0);
-
-            // 用于控制总数的列表
-            BaseParticleManager.ActiveParticles.Add(this);
-
+            if (BlendState == BlendState.AlphaBlend)
+            {
+                if (!Important && BaseParticleManager.ActiveParticlesAlpha.Count > UCAConfig.Instance.ParticleLimit)
+                    BaseParticleManager.ActiveParticlesAlpha.RemoveAt(0);
+                BaseParticleManager.ActiveParticlesAlpha.Add(this);
+            }
+            else if(BlendState == BlendState.Additive)
+            {
+                if (!Important && BaseParticleManager.ActiveParticlesAdditive.Count > UCAConfig.Instance.ParticleLimit)
+                    BaseParticleManager.ActiveParticlesAdditive.RemoveAt(0);
+                BaseParticleManager.ActiveParticlesAdditive.Add(this);
+            }
+            else
+            {
+                if (!Important && BaseParticleManager.ActiveParticlesNonPremultiplied.Count > UCAConfig.Instance.ParticleLimit)
+                    BaseParticleManager.ActiveParticlesNonPremultiplied.RemoveAt(0);
+                BaseParticleManager.ActiveParticlesNonPremultiplied.Add(this);
+            }
             OnSpawn();
             return this;
         }       
@@ -83,13 +95,26 @@ namespace UCA.Core.ParticleSystem
         {
             if (Main.netMode == NetmodeID.Server)
                 return this;
-
             // 初始化时间
             Time = 0;
-
-            // 用于控制总数的列表
-            BaseParticleManager.PriorityActiveParticles.Add(this);
-
+            if (BlendState == BlendState.AlphaBlend)
+            {
+                if (!Important && BaseParticleManager.PriorityActiveParticlesAlpha.Count > UCAConfig.Instance.ParticleLimit)
+                    BaseParticleManager.PriorityActiveParticlesAlpha.RemoveAt(0);
+                BaseParticleManager.PriorityActiveParticlesAlpha.Add(this);
+            }
+            else if (BlendState == BlendState.Additive)
+            {
+                if (!Important && BaseParticleManager.PriorityActiveParticlesAdditive.Count > UCAConfig.Instance.ParticleLimit)
+                    BaseParticleManager.PriorityActiveParticlesAdditive.RemoveAt(0);
+                BaseParticleManager.PriorityActiveParticlesAdditive.Add(this);
+            }
+            else
+            {
+                if (!Important && BaseParticleManager.PriorityActiveParticlesNonPremultiplied.Count > UCAConfig.Instance.ParticleLimit)
+                    BaseParticleManager.PriorityActiveParticlesNonPremultiplied.RemoveAt(0);
+                BaseParticleManager.PriorityActiveParticlesNonPremultiplied.Add(this);
+            }
             OnSpawn();
             return this;
         }

@@ -34,6 +34,7 @@ namespace UCA.Assets
         public static Asset<Texture2D> BloomRing { get; private set; }
         public static Asset<Texture2D> SoftEdgeCircle { get; private set; }
         public static Asset<Texture2D> BloomLine { get; private set; }
+        public static Asset<Texture2D> SolarBladeGlowMask_Blue { get; private set; }
         public static void LoadExtraTextures()
         {
             Noise = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/Noise");
@@ -61,6 +62,7 @@ namespace UCA.Assets
             BloomRing = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/BloomRing");
             SoftEdgeCircle = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/SoftEdgeCircle");
             BloomLine = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/BloomLine");
+            SolarBladeGlowMask_Blue = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/SolarBladeGlowMask_Blue");
         }
         public static void UnLoadExtraTextures()
         {
@@ -89,6 +91,7 @@ namespace UCA.Assets
             BloomRing = null;
             SoftEdgeCircle = null;
             BloomLine = null;
+            SolarBladeGlowMask_Blue = null;
         }
     }
 }

@@ -72,7 +72,12 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
                 if (player.ownedProjectileCounts[ModContent.ProjectileType<ElementRaySpecialHeldProj>()] < 1)
                 {
                     if (CheckAllMana(player))
-                        Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<ElementRaySpecialHeldProj>(), damage, knockback, player.whoAmI, player.UCA().ElementalRayStates);
+                    {
+                        if (player.UCA().NameIsMAGNOLIA)
+                            Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<ElementRaySpecialHeldProj>(), damage, knockback, player.whoAmI, player.UCA().ElementalRayStates, 1);
+                        else
+                            Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<ElementRaySpecialHeldProj>(), damage, knockback, player.whoAmI, player.UCA().ElementalRayStates);
+                    }
                 }
             }
             else

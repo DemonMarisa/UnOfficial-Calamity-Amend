@@ -5,12 +5,16 @@ using Terraria.ModLoader;
 
 namespace UCA.Core.ParticleSystem
 {
-    public class BaseParticleManager : ModSystem
+    public partial class BaseParticleManager : ModSystem
     {
         // 别在外部可以修改了，至少别人都加了readonly（
-        public static readonly List<BaseParticle> ActiveParticles = [];
+        public static readonly List<BaseParticle> ActiveParticlesAlpha = [];
+        public static readonly List<BaseParticle> ActiveParticlesNonPremultiplied = [];
+        public static readonly List<BaseParticle> ActiveParticlesAdditive = [];
         // 先绘制先更新的粒子
-        public static readonly List<BaseParticle> PriorityActiveParticles = [];
+        public static readonly List<BaseParticle> PriorityActiveParticlesAlpha = [];
+        public static readonly List<BaseParticle> PriorityActiveParticlesNonPremultiplied = [];
+        public static readonly List<BaseParticle> PriorityActiveParticlesAdditive = [];
         #region 加载卸载
         // 扔给统一的管理了
         //public override void Load()
@@ -28,142 +32,82 @@ namespace UCA.Core.ParticleSystem
         /// </summary>
         public override void ClearWorld()
         {
-            ActiveParticles.Clear();
+            ActiveParticlesAlpha.Clear();
+            ActiveParticlesNonPremultiplied.Clear();
+            ActiveParticlesAdditive.Clear();
+            PriorityActiveParticlesAlpha.Clear();
+            PriorityActiveParticlesNonPremultiplied.Clear();
+            PriorityActiveParticlesAdditive.Clear();
         }
 
         // 粒子更新
         public override void PostUpdateDusts()
         {
             UpdatePriorityParticles();
+            UpdateParticles();
 
-            if (ActiveParticles.Count == 0)
-                return;
-
-            for (int i = 0; i < ActiveParticles.Count; i++)
-            {
-                ActiveParticles[i].Update();
-                ActiveParticles[i].Position += ActiveParticles[i].Velocity;
-                ActiveParticles[i].Time++;
-            }
-
-            // 移除生命周期已结束的粒子
-            ActiveParticles.RemoveAll(particle =>
-            {
-                if (particle.Time >= particle.Lifetime)
-                {
-                    particle.OnKill();
-                    return true;
-                }
-                return false;
-            });
-        }
-        public static void UpdatePriorityParticles()
-        {
-            if (PriorityActiveParticles.Count == 0)
-                return;
-
-            for (int i = 0; i < PriorityActiveParticles.Count; i++)
-            {
-                PriorityActiveParticles[i].Update();
-                PriorityActiveParticles[i].Position += PriorityActiveParticles[i].Velocity;
-                PriorityActiveParticles[i].Time++;
-            }
-            // 移除生命周期已结束的粒子
-            PriorityActiveParticles.RemoveAll(particle =>
-            {
-                if (particle.Time >= particle.Lifetime)
-                {
-                    particle.OnKill();
-                    return true;
-                }
-                return false;
-            });
         }
         // 绘制粒子
         public static void DrawParticles(On_Main.orig_DrawDust orig, Main self)
         {
             // 调用源
             orig(self);
-
             #region 渲染粒子
             #region 渲染优先粒子
-            if (PriorityActiveParticles.Count != 0)
+            if (PriorityActiveParticlesAlpha.Count != 0)
             {
                 Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
-
-                for (int i = 0; i < PriorityActiveParticles.Count; i++)
+                for (int i = 0; i < PriorityActiveParticlesAlpha.Count; i++)
                 {
-                    if (PriorityActiveParticles[i].BlendState != BlendState.AlphaBlend)
-                        continue;
-
-                    PriorityActiveParticles[i].Draw(Main.spriteBatch);
+                    PriorityActiveParticlesAlpha[i].Draw(Main.spriteBatch);
                 }
-
                 Main.spriteBatch.End();
-
-                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
-
-                for (int i = 0; i < PriorityActiveParticles.Count; i++)
-                {
-                    if (PriorityActiveParticles[i].BlendState != BlendState.NonPremultiplied)
-                        continue;
-
-                    PriorityActiveParticles[i].Draw(Main.spriteBatch);
-                }
-
-                Main.spriteBatch.End();
-
+            }
+            if (PriorityActiveParticlesAdditive.Count != 0)
+            {
                 Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
-
-                for (int i = 0; i < PriorityActiveParticles.Count; i++)
+                for (int i = 0; i < PriorityActiveParticlesAdditive.Count; i++)
                 {
-                    if (PriorityActiveParticles[i].BlendState != BlendState.Additive)
-                        continue;
-
-                    PriorityActiveParticles[i].Draw(Main.spriteBatch);
+                    PriorityActiveParticlesAdditive[i].Draw(Main.spriteBatch);
                 }
-
+                Main.spriteBatch.End();
+            }
+            if (PriorityActiveParticlesNonPremultiplied.Count != 0)
+            {
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+                for (int i = 0; i < PriorityActiveParticlesNonPremultiplied.Count; i++)
+                {
+                    PriorityActiveParticlesNonPremultiplied[i].Draw(Main.spriteBatch);
+                }
                 Main.spriteBatch.End();
             }
             #endregion
             #region 渲染常规粒子
-
-            if (ActiveParticles.Count != 0)
+            if (ActiveParticlesAlpha.Count != 0)
+            {
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+                for (int i = 0; i < ActiveParticlesAlpha.Count; i++)
+                {
+                    ActiveParticlesAlpha[i].Draw(Main.spriteBatch);
+                }
+                Main.spriteBatch.End();
+            }
+            if (ActiveParticlesAdditive.Count != 0)
             {
                 Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
-
-                for (int i = 0; i < ActiveParticles.Count; i++)
+                for (int i = 0; i < ActiveParticlesAdditive.Count; i++)
                 {
-                    if (ActiveParticles[i].BlendState != BlendState.Additive)
-                        continue;
-
-                    ActiveParticles[i].Draw(Main.spriteBatch);
+                    ActiveParticlesAdditive[i].Draw(Main.spriteBatch);
                 }
-
                 Main.spriteBatch.End();
-
-                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
-
-                for (int i = 0; i < ActiveParticles.Count; i++)
-                {
-                    if (ActiveParticles[i].BlendState != BlendState.AlphaBlend)
-                        continue;
-
-                    ActiveParticles[i].Draw(Main.spriteBatch);
-                }
-
-                Main.spriteBatch.End();
-
+            }
+            if (ActiveParticlesNonPremultiplied.Count != 0)
+            {
                 Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
-
-                for (int i = 0; i < ActiveParticles.Count; i++)
+                for (int i = 0; i < ActiveParticlesNonPremultiplied.Count; i++)
                 {
-                    if (ActiveParticles[i].BlendState != BlendState.NonPremultiplied)
-                        continue;
-
-                    ActiveParticles[i].Draw(Main.spriteBatch);
+                    ActiveParticlesNonPremultiplied[i].Draw(Main.spriteBatch);
                 }
-
                 Main.spriteBatch.End();
             }
             #endregion

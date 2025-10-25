@@ -57,7 +57,7 @@ namespace UCA.Content.Projectiles.HealPRoj
                 Color color = UCAUtilities.LerpColor(Color.Violet, Color.LightPink);
                 new BrokenGlass(Projectile.Center, spawnVec, color, Main.rand.Next(45, 60), Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.1f, false).Spawn();
             }
-            Healer.AddCooldown(NebulaBoost.ID, 600);
+            Healer.AddCooldown(NebulaBoost.ID, 1800);
         }
     }
 }

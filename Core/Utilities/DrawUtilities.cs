@@ -386,5 +386,11 @@ namespace UCA.Core.Utilities
             }
         }
         #endregion
+
+        public static Color SetAlphaToZero(this Color set)
+        {
+            set.A = 0;
+            return set;
+        }
     }
 }

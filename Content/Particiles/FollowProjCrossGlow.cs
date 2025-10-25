@@ -25,6 +25,7 @@ namespace UCA.Content.Particiles
             BeginScale = scale;
             OwnerID = owner;
             Offset = offset;
+            Important = true;
         }
         public override void OnSpawn()
         {

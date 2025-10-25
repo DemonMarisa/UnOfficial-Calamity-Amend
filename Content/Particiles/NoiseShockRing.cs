@@ -33,6 +33,7 @@ namespace UCA.Content.Particiles
             BeginScale = scale;
             Index = father;
             Offset = offset;
+            Important = true;
         }
         public NoiseShockRing(Vector2 position, Vector2 velocity, Color color, int lifetime, float opacity, float scale, int father, Vector2 offset, bool follow)
         {
@@ -46,6 +47,7 @@ namespace UCA.Content.Particiles
             Index = father;
             Offset = offset;
             Follow = follow;
+            Important = true;
         }
         public override void OnSpawn()
         {

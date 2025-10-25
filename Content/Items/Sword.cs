@@ -1,30 +1,13 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.Items.Weapons.Magic;
+using CalamityMod.Particles;
+using CalamityMod.Projectiles.Melee;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Runtime.InteropServices;
 using Terraria;
 using Terraria.DataStructures;
-using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using UCA.Assets;
-using UCA.Content.DrawNodes;
-using UCA.Content.GUI;
-using UCA.Content.Particiles;
-using UCA.Content.Paths;
-using UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld;
-using UCA.Content.Projectiles.Magic;
-using UCA.Content.Projectiles.Magic.Ray;
-using UCA.Content.Projectiles.Misc.Test;
-using UCA.Content.UCACooldowns;
-using UCA.Core.Graphics;
-using UCA.Core.Graphics.DrawNode;
-using UCA.Core.MetaBallsSystem;
-using UCA.Core.Utilities;
-
 namespace UCA.Content.Items
 { 
 	// This is a basic item template.

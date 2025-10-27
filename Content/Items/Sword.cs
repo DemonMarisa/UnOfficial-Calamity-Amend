@@ -1,13 +1,9 @@
-using CalamityMod;
-using CalamityMod.CalPlayer;
-using CalamityMod.Items.Weapons.Magic;
-using CalamityMod.Particles;
-using CalamityMod.Projectiles.Melee;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using UCA.Content.Projectiles.Magic.Ray;
 namespace UCA.Content.Items
 { 
 	// This is a basic item template.
@@ -47,7 +43,7 @@ namespace UCA.Content.Items
                 Projectile.NewProjectile(source, position, velocity.RotatedBy(MathHelper.ToRadians(-15) + rotAdd * i) * Main.rand.NextFloat(1f, 2f) * 0.5f, ModContent.ProjectileType<NebulaEnegry>(), damage, knockback, player.whoAmI);
             }
             */
-            // Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<NebulaCrystal>(), damage, knockback, player.whoAmI);
+            Projectile.NewProjectile(source, position, velocity * 0.25f, ModContent.ProjectileType<CarnageBall>(), damage, knockback, player.whoAmI);
             return false;
         }
         public override bool? UseItem(Player player)

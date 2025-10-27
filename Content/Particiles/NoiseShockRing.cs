@@ -9,14 +9,15 @@ using Terraria;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
-using UCA.Core.ParticleSystem;
+using LAP.Core.ParticleSystem;
 using UCA.Core.Utilities;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Particiles
 {
     public class NoiseShockRing : BaseParticle
     {
-        public override BlendState BlendState => BlendState.Additive;
+        public override int UseBlendStateID => BlendStateID.Additive;
         public float BeginScale;
         public int Index;
         public Projectile Father => Main.projectile[Index];
@@ -72,7 +73,7 @@ namespace UCA.Content.Particiles
         // 这里采样没有问题，他贴图就是这样
         public override void Draw(SpriteBatch spriteBatch)
         {
-            UCAUtilities.ReSetToBeginShader();
+            LAPUtilities.ReSetToBeginShader();
 
             UCAShaderRegister.PolarDistortShaderWithR.Parameters["uWidthMult"].SetValue(1f);
             UCAShaderRegister.PolarDistortShaderWithR.Parameters["uRingMult"].SetValue(4f);
@@ -85,7 +86,7 @@ namespace UCA.Content.Particiles
             Vector2 orig = texture.Size() / 2;
             Main.spriteBatch.Draw(texture, Position - Main.screenPosition, null, DrawColor * Opacity, Rotation, orig, Scale, SpriteEffects.None, 0);
             Main.spriteBatch.Draw(texture, Position - Main.screenPosition, null, DrawColor * Opacity, Rotation, orig, Scale, SpriteEffects.None, 0);
-            UCAUtilities.ReSetToEndShader(BlendState.Additive);
+            LAPUtilities.ReSetToEndShader(BlendState.Additive);
         }
     }
 }

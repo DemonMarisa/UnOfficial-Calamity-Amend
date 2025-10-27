@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
 using UCA.Content.MetaBalls;
-using UCA.Core.BaseClass;
+using LAP.Core.BaseClass;
 
 namespace UCA.Content.Projectiles.HealPRoj
 {

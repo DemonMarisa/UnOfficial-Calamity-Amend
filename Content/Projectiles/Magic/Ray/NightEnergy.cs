@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LAP.Core.Utilities;
+using Microsoft.Xna.Framework;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
@@ -48,7 +49,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override void AI()
         {
-            if (Projectile.UCA().FirstFrame)
+            if (Projectile.LAP().FirstFrame)
             {
                 NightRayHeldProj.GenUnDeathSign(Projectile.Center, Projectile.ai[0]);
                 for (int i = 0; i < 10; i++)
@@ -102,12 +103,12 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             Player player = Main.player[Projectile.owner];
             float distanecToNPC = Vector2.Distance(player.Center, target.Center);
-            float mult = 1f;
-            int mindistance = 300;
+            float mult;
+            int mindistance = 150;
             if (distanecToNPC < mindistance)
                 mult = 2f;
             else
-                mult = MathHelper.Clamp(2f - (distanecToNPC - mindistance) / 600f, 0.75f, 2f);
+                mult = MathHelper.Clamp(2f - (distanecToNPC - mindistance) / 450f, 0.75f, 2f);
 
             modifiers.FinalDamage *= mult;
         }
@@ -116,7 +117,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             target.AddBuff(BuffID.ShadowFlame, 180);
 
-            if (!Projectile.UCA().OnceHitEffect)
+            if (!Projectile.LAP().OnceHitEffect)
                 return;
 
             for (int i = 0; i < 10; i++)

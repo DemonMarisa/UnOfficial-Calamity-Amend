@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Items.Weapons.Magic;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
@@ -72,7 +73,7 @@ namespace UCA.Content.GUI
             ResetScales();
 
             Vector2 mousePosition = Main.MouseWorld - Main.screenPosition;
-            Vector2 vectorToMouse = UCAUtilities.ScreenCenter() - mousePosition;
+            Vector2 vectorToMouse = LAPUtilities.ScreenCenter() - mousePosition;
 
             // Atan2 的结果范围是 (-π, π]
             // 我们将其规范化到 [0, 2π) 以方便比较
@@ -97,7 +98,7 @@ namespace UCA.Content.GUI
                     elementCenterAngle -= MathHelper.TwoPi;
                 }
                 // 检查角度是否在当前扇形区域内
-                if (UCAUtilities.IsAngleInSector(mousetoCenterAngle, elementCenterAngle, HalfAngleAdd))
+                if (LAPUtilities.IsAngleInSector(mousetoCenterAngle, elementCenterAngle, HalfAngleAdd))
                 {
                     IsHover = true;
                     // 根据 i 值设置对应的 Scale
@@ -169,15 +170,15 @@ namespace UCA.Content.GUI
         {
             Texture2D texture = UCATextureRegister.BloomBlackCircle.Value;
             Vector2 origin = new Vector2(texture.Width / 2, texture.Height / 2);
-            Main.spriteBatch.Draw(texture, UCAUtilities.ScreenCenter(), null, Color.White * 0.6f * Opacity, 0, origin, 1.5f * Scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture, LAPUtilities.ScreenCenter(), null, Color.White * 0.6f * Opacity, 0, origin, 1.5f * Scale, SpriteEffects.None, 0f);
         }
         public static void DrawRing()
         {
             Texture2D texture = UCATextureRegister.Ring.Value;
             Vector2 origin = new Vector2(texture.Width / 2, texture.Height / 2);
-            Main.spriteBatch.Draw(texture, UCAUtilities.ScreenCenter(), null, Color.White * Opacity, -Main.GlobalTimeWrappedHourly, origin, 0.2f * Scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture, LAPUtilities.ScreenCenter(), null, Color.White * Opacity, -Main.GlobalTimeWrappedHourly, origin, 0.2f * Scale, SpriteEffects.None, 0f);
 
-            Main.spriteBatch.Draw(texture, UCAUtilities.ScreenCenter(), null, Color.White * Opacity, Main.GlobalTimeWrappedHourly, origin, 0.62f * Scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture, LAPUtilities.ScreenCenter(), null, Color.White * Opacity, Main.GlobalTimeWrappedHourly, origin, 0.62f * Scale, SpriteEffects.None, 0f);
         }
         public static void DrawLine()
         {
@@ -187,7 +188,7 @@ namespace UCA.Content.GUI
             for (int i = 0; i < 5; i++)
             {
                 float DrawRot = BaseRot + i * MathHelper.ToRadians(72.2f);
-                Main.spriteBatch.Draw(texture, UCAUtilities.ScreenCenter(), null, Color.White * Opacity, DrawRot, origin, 0.17f * Scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, LAPUtilities.ScreenCenter(), null, Color.White * Opacity, DrawRot, origin, 0.17f * Scale, SpriteEffects.None, 0f);
             }
         }
         public static void DrawElementalRay()
@@ -205,8 +206,8 @@ namespace UCA.Content.GUI
 
             int DrawCount = 0;
             float Offset = -150 * Progress;
-            Vector2 DrawPos = UCAUtilities.ScreenCenter() + new Vector2(0, Offset).RotatedBy(DrawCount * MathHelper.ToRadians(72.2f));
-            float DrawRot = (DrawPos - UCAUtilities.ScreenCenter()).ToRotation();
+            Vector2 DrawPos = LAPUtilities.ScreenCenter() + new Vector2(0, Offset).RotatedBy(DrawCount * MathHelper.ToRadians(72.2f));
+            float DrawRot = (DrawPos - LAPUtilities.ScreenCenter()).ToRotation();
             Main.spriteBatch.Draw(Misc, DrawPos, null, Color.White * Opacity, DrawRot - MathHelper.PiOver4 * 3, origin, 1f * Scale * MiscScale, SpriteEffects.None, 0f);
             if (HoverID == ElementalRayState.Misc)
             {
@@ -222,8 +223,8 @@ namespace UCA.Content.GUI
             }
             DrawCount++;
 
-            DrawPos = UCAUtilities.ScreenCenter() + new Vector2(0, Offset).RotatedBy(DrawCount * MathHelper.ToRadians(72.2f));
-            DrawRot = (DrawPos - UCAUtilities.ScreenCenter()).ToRotation();
+            DrawPos = LAPUtilities.ScreenCenter() + new Vector2(0, Offset).RotatedBy(DrawCount * MathHelper.ToRadians(72.2f));
+            DrawRot = (DrawPos - LAPUtilities.ScreenCenter()).ToRotation();
             Main.spriteBatch.Draw(Solor, DrawPos, null, Color.White * Opacity, DrawRot - MathHelper.PiOver4 * 3, origin, 1f * Scale * SolorScale, SpriteEffects.None, 0f);
             if (HoverID == ElementalRayState.Solar)
             {
@@ -239,8 +240,8 @@ namespace UCA.Content.GUI
             }
             DrawCount++;
 
-            DrawPos = UCAUtilities.ScreenCenter() + new Vector2(0, Offset).RotatedBy(DrawCount * MathHelper.ToRadians(72.2f));
-            DrawRot = (DrawPos - UCAUtilities.ScreenCenter()).ToRotation();
+            DrawPos = LAPUtilities.ScreenCenter() + new Vector2(0, Offset).RotatedBy(DrawCount * MathHelper.ToRadians(72.2f));
+            DrawRot = (DrawPos - LAPUtilities.ScreenCenter()).ToRotation();
             Main.spriteBatch.Draw(Nebula, DrawPos, null, Color.White * Opacity, DrawRot - MathHelper.PiOver4 * 3, origin, 1f * Scale * NebulaScale, SpriteEffects.None, 0f);
             if (HoverID == ElementalRayState.Nebula)
             {
@@ -256,8 +257,8 @@ namespace UCA.Content.GUI
             }
             DrawCount++;
 
-            DrawPos = UCAUtilities.ScreenCenter() + new Vector2(0, Offset).RotatedBy(DrawCount * MathHelper.ToRadians(72.2f));
-            DrawRot = (DrawPos - UCAUtilities.ScreenCenter()).ToRotation();
+            DrawPos = LAPUtilities.ScreenCenter() + new Vector2(0, Offset).RotatedBy(DrawCount * MathHelper.ToRadians(72.2f));
+            DrawRot = (DrawPos - LAPUtilities.ScreenCenter()).ToRotation();
             Main.spriteBatch.Draw(StarDust, DrawPos, null, Color.White * Opacity, DrawRot - MathHelper.PiOver4 * 3, origin, 1f * Scale * StarDustScale, SpriteEffects.None, 0f);
             if (HoverID == ElementalRayState.StarDust)
             {
@@ -273,8 +274,8 @@ namespace UCA.Content.GUI
             }
             DrawCount++;
 
-            DrawPos = UCAUtilities.ScreenCenter() + new Vector2(0, Offset).RotatedBy(DrawCount * MathHelper.ToRadians(72.2f));
-            DrawRot = (DrawPos - UCAUtilities.ScreenCenter()).ToRotation();
+            DrawPos = LAPUtilities.ScreenCenter() + new Vector2(0, Offset).RotatedBy(DrawCount * MathHelper.ToRadians(72.2f));
+            DrawRot = (DrawPos - LAPUtilities.ScreenCenter()).ToRotation();
             Main.spriteBatch.Draw(Vortex, DrawPos, null, Color.White * Opacity, DrawRot - MathHelper.PiOver4 * 3, origin, 1f * Scale * VortexScale, SpriteEffects.None, 0f);
             if (HoverID == ElementalRayState.Vortex)
             {

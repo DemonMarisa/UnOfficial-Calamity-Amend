@@ -15,9 +15,10 @@ using UCA.Content.Particiles;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
 using UCA.Content.UCACooldowns;
-using UCA.Core.AnimationHandle;
+using LAP.Core.AnimationHandle;
 using UCA.Core.Enums;
 using UCA.Core.Utilities;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
 {
@@ -70,7 +71,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
         }
         public override void AI()
         {
-            if (Projectile.UCA().FirstFrame)
+            if (Projectile.LAP().FirstFrame)
                 OwnerDir = Owner.LocalMouseWorld().X > Owner.Center.X ? 1 : -1;
 
             Owner.itemTime = 2;

@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
@@ -90,7 +91,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 new FollowProjCrossGlow(Owner.Center, Color.White, LifeTime, 0.8f, Projectile.whoAmI, offset).Spawn();
                 for (int i = 0; i < 8; i++)
                 {
-                    Color color = UCAUtilities.LerpColor(Color.White, Color.WhiteSmoke);
+                    Color color = LAPUtilities.LerpColor(Color.White, Color.WhiteSmoke);
                     new NoiseShockRing(Projectile.Center, Vector2.Zero, color, LifeTime, 1f, 1 + i * 0.1f, Projectile.whoAmI, offset).Spawn();
                 }
             }
@@ -110,7 +111,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 Vector2 offset = new Vector2(64, 0).RotatedBy(Projectile.rotation);
                 for (int i = 0; i < 100; i++)
                 {
-                    Color RandomColor = UCAUtilities.LerpColor(Color.White, Color.WhiteSmoke);
+                    Color RandomColor = LAPUtilities.LerpColor(Color.White, Color.WhiteSmoke);
                     new MediumGlowBall(Projectile.Center + offset, RandomColor, 120, 0.4f, Main.rand.NextFloat(4f, 12f)).Spawn();
                 }
             }

@@ -8,8 +8,9 @@ using UCA.Assets;
 using UCA.Content.Particiles;
 using UCA.Content.Particiles.Lightnings;
 using UCA.Core.BaseClass;
-using UCA.Core.Graphics.Primitives.Trail;
+using LAP.Core.Graphics.Primitives.Trail;
 using UCA.Core.Utilities;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
@@ -42,7 +43,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         public override void AI()
         {
             Projectile.rotation = Projectile.velocity.ToRotation();
-            if (Projectile.UCA().FirstFrame)
+            if (Projectile.LAP().FirstFrame)
             {
                 for (int i = 0; i < 15; i++)
                 {

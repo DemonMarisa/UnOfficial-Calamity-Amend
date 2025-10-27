@@ -2,6 +2,8 @@
 using CalamityMod.Graphics.Primitives;
 using CalamityMod.Items.Weapons.Magic;
 using CalamityMod.Particles;
+using LAP.Core.BaseClass;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -18,7 +20,6 @@ using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Particiles;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
-using UCA.Core.BaseClass;
 using UCA.Core.GlobalInstance.Players;
 using UCA.Core.Utilities;
 
@@ -118,7 +119,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
                 return;
 
             // 按住左键不会开火
-            if (Owner.UCA().MouseLeft)
+            if (Owner.LAP().MouseLeft)
             {
                 DelTimer = Owner.HeldItem.useTime;
                 return;
@@ -342,7 +343,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
                     // 这一块的逻辑是
                     // 弹幕击中后，在这里处理伤害吸收和反弹
                     // 在对应全局射弹中处理反弹后的伤害变化
-                    int realDamage = (int)UCAUtilities.PostModeBoostProjDamage(projectile.damage);
+                    int realDamage = (int)LAPUtilities.PostModeBoostProjDamage(projectile.damage);
 
                     if ((int)Owner.ApplyPlayerDefAndDR(realDamage, false) < Owner.UCA().NightShieldHP)
                     {

@@ -1,5 +1,6 @@
 ﻿using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Buffs.StatBuffs;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -44,7 +45,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override void AI()
         {
-            if (Projectile.UCA().FirstFrame)
+            if (Projectile.LAP().FirstFrame)
             {
                 for (int i = 0; i < 75; i++)
                 {
@@ -115,12 +116,14 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             Player player = Main.player[Projectile.owner];
             float distanecToNPC = Vector2.Distance(player.Center, target.Center);
-            float mult = 1f;
-            int mindistance = 300;
+
+            float mult;
+            int mindistance = 250;
             if (distanecToNPC < mindistance)
                 mult = 0.75f;
             else
-                mult = MathHelper.Clamp(2f - (distanecToNPC - mindistance) / 600f, 0.75f, 1.5f);
+                mult = MathHelper.Lerp(0.75f, 1.5f, (distanecToNPC - mindistance) / 450f);
+            mult = MathHelper.Clamp(mult, 0.75f, 1.5f);
 
             modifiers.FinalDamage *= mult;
         }

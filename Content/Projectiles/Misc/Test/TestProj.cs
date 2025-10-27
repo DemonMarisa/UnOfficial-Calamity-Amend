@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Graphics.Primitives;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -61,7 +62,7 @@ namespace UCA.Content.Projectiles.Misc.Test
 
         public override bool PreDraw(ref Color lightColor)
         {
-            UCAUtilities.ReSetToBeginShader(BlendState.Additive);
+            LAPUtilities.ReSetToBeginShader(BlendState.Additive);
 
             UCAShaderRegister.PolarDistortShader.Parameters["uWidthMult"].SetValue(2f);
             UCAShaderRegister.PolarDistortShader.Parameters["uRingMult"].SetValue(1f);
@@ -78,7 +79,7 @@ namespace UCA.Content.Projectiles.Misc.Test
             Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.OrangeRed, 2, orig, 1f, SpriteEffects.None, 0);
             Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.Red, 2, orig, 1f, SpriteEffects.None, 0);
 
-            UCAUtilities.ReSetToEndShader();
+            LAPUtilities.ReSetToEndShader();
             return false;
         }
     }

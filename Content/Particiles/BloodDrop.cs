@@ -4,7 +4,7 @@ using System;
 using Terraria;
 using Terraria.ModLoader;
 using UCA.Assets;
-using UCA.Core.ParticleSystem;
+using LAP.Core.ParticleSystem;
 
 namespace UCA.Content.Particiles
 {
@@ -21,7 +21,7 @@ namespace UCA.Content.Particiles
             Scale = scale;
         }
 
-        public override BlendState BlendState => base.BlendState;
+        public override int UseBlendStateID => BlendStateID.Alpha;
         public bool flag = false;
         public override string Texture => "UCA/Assets/ParticilesTextures/BloodDrop";
 

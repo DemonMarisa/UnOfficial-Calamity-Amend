@@ -1,16 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
 using Terraria;
 using UCA.Assets;
-using UCA.Core.ParticleSystem;
+using LAP.Core.ParticleSystem;
 
 namespace UCA.Content.Particiles
 {
     public class Fire : BaseParticle
     {
-        public override BlendState BlendState => BlendState.Additive;
+        public override int UseBlendStateID => BlendStateID.Additive;
         public Fire(Vector2 position, Vector2 velocity, Color color, int lifetime, float Rot, float opacity, float scale)
         {
             Position = position;

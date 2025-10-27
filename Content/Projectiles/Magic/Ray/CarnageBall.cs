@@ -1,4 +1,5 @@
 ﻿using CalamityMod.Buffs.DamageOverTime;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
@@ -93,11 +94,12 @@ namespace UCA.Content.Projectiles.Magic.Ray
             float distanecToNPC = Vector2.Distance(player.Center, target.Center);
 
             float mult;
-            int mindistance = 300;
+            int mindistance = 250;
             if (distanecToNPC < mindistance)
                 mult = 0.75f;
             else
-                mult = MathHelper.Clamp(2f - (distanecToNPC - mindistance) / 900f, 0.75f, 1.5f);
+                mult = MathHelper.Lerp(0.75f, 1.5f, (distanecToNPC - mindistance) / 450f);
+            mult = MathHelper.Clamp(mult, 0.75f, 1.5f);
 
             modifiers.FinalDamage *= mult;
         }

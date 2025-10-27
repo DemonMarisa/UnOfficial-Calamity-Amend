@@ -11,8 +11,9 @@ using UCA.Assets.Sounds;
 using UCA.Content.DrawNodes;
 using UCA.Content.Particiles;
 using UCA.Core.Enums;
-using UCA.Core.Graphics.Primitives.Trail;
+using LAP.Core.Graphics.Primitives.Trail;
 using UCA.Core.Utilities;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
 {
@@ -26,7 +27,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             AuxFragmentOffset = new Vector2(0, -0);
             FilpAuxFragmentOffset = new Vector2(0, 0);
             SolarBladeXOffset = 128;
-            Projectile.damage *= 10;
 
             RelativeOwnerPos = new Vector2(10, 0);
             animationHelper.MaxAniProgress[AnimationState.Begin] = 30;
@@ -49,7 +49,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
 
                 HandleSolorMiddleAni();
 
-                if (animationHelper.AniProgress[AnimationState.Middle] >= animationHelper.MaxAniProgress[AnimationState.Middle] && !Owner.UCA().MouseRight)
+                if (animationHelper.AniProgress[AnimationState.Middle] >= animationHelper.MaxAniProgress[AnimationState.Middle] && !Owner.LAP().MouseRight)
                 {
                     animationHelper.HasFinish[AnimationState.Middle] = true;
                     BeginRot = ToMouseVector;
@@ -267,12 +267,12 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             Vector2 AuxFragTarget = Vector2.Lerp(new Vector2(220, 0), new Vector2(48, SinProgress * -36), Progress).RotatedBy(Projectile.rotation);
             AuxFragmentOffset = Vector2.Lerp(AuxFragmentOffset, AuxFragTarget, 0.3f);
             Vector2 AuxFragWorldPos = Projectile.Center + AuxFragmentOffset;
-            AuxFragmentRot = UCAUtilities.GetVector2(AuxFragWorldPos, Projectile.Center).ToRotation() - MathHelper.PiOver4;
+            AuxFragmentRot = LAPUtilities.GetVector2(AuxFragWorldPos, Projectile.Center).ToRotation() - MathHelper.PiOver4;
             // 更新右侧碎片
             Vector2 FilpAuxFragTarget = Vector2.Lerp(new Vector2(220, 0), new Vector2(48, SinProgress * 36), Progress).RotatedBy(Projectile.rotation);
             FilpAuxFragmentOffset = Vector2.Lerp(FilpAuxFragmentOffset, FilpAuxFragTarget, 0.3f);
             Vector2 FilpAuxFragWorldPos = Projectile.Center + FilpAuxFragmentOffset;
-            FilpAuxFragmentRot = UCAUtilities.GetVector2(FilpAuxFragWorldPos, Projectile.Center).ToRotation() + MathHelper.PiOver4;
+            FilpAuxFragmentRot = LAPUtilities.GetVector2(FilpAuxFragWorldPos, Projectile.Center).ToRotation() + MathHelper.PiOver4;
         }
         public void UpDateFragRelease()
         {
@@ -284,19 +284,19 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             Vector2 AuxFragTarget = new Vector2(68, -36).RotatedBy(Projectile.rotation);
             AuxFragmentOffset = Vector2.Lerp(AuxFragmentOffset, AuxFragTarget, 0.2f);
             Vector2 AuxFragWorldPos = Projectile.Center + AuxFragmentOffset;
-            AuxFragmentRot = UCAUtilities.GetVector2(AuxFragWorldPos, Projectile.Center).ToRotation() - MathHelper.PiOver4;
+            AuxFragmentRot = LAPUtilities.GetVector2(AuxFragWorldPos, Projectile.Center).ToRotation() - MathHelper.PiOver4;
             // 更新右侧碎片
             Vector2 FilpAuxFragTarget = new Vector2(68, 36).RotatedBy(Projectile.rotation);
             FilpAuxFragmentOffset = Vector2.Lerp(FilpAuxFragmentOffset, FilpAuxFragTarget, 0.2f);
             Vector2 FilpAuxFragWorldPos = Projectile.Center + FilpAuxFragmentOffset;
-            FilpAuxFragmentRot = UCAUtilities.GetVector2(FilpAuxFragWorldPos, Projectile.Center).ToRotation() + MathHelper.PiOver4;
+            FilpAuxFragmentRot = LAPUtilities.GetVector2(FilpAuxFragWorldPos, Projectile.Center).ToRotation() + MathHelper.PiOver4;
         }
         #endregion
         #region 绘制耀斑大剑
         public void DrawSolarBlade(Vector2 DrawPos, Vector2 offset, float DrawRot, Vector2 scale)
         {
             
-            UCAUtilities.ReSetToBeginShader(BlendState.Additive);
+            LAPUtilities.ReSetToBeginShader(BlendState.Additive);
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.FireNoise.Value;
             if (IsMAGBOLIABlue)
                 PrepareShader(Color.SkyBlue, Color.DeepSkyBlue, 0.08f, false);
@@ -305,9 +305,9 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
 
             Vector2 GlowScale = new Vector2(1f * SolarBladeXScale, 1f) * scale;
             DrawBladeGlowSource(DrawPos + offset.RotatedBy(DrawRot), DrawRot, GlowScale);
-            UCAUtilities.ReSetToEndShader();
+            LAPUtilities.ReSetToEndShader();
             
-            UCAUtilities.ReSetToBeginShader(BlendState.Additive);
+            LAPUtilities.ReSetToBeginShader(BlendState.Additive);
             offset.Y = offset.Y + 56;
             if (IsMAGBOLIABlue)
                 PrepareShader(Color.DeepSkyBlue, Color.SkyBlue, 0.15f, true);
@@ -316,9 +316,9 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.FireNoise.Value;
             Vector2 MiddleBladeScale = new Vector2(0.5f * SolarBladeXScale, 1f) * scale;
             DrawMainBladeSource(DrawPos + offset.RotatedBy(DrawRot), DrawRot, MiddleBladeScale);
-            UCAUtilities.ReSetToEndShader();
+            LAPUtilities.ReSetToEndShader();
 
-            UCAUtilities.ReSetToBeginShader(BlendState.Additive);
+            LAPUtilities.ReSetToBeginShader(BlendState.Additive);
             // 准备shader
             if (IsMAGBOLIABlue)
                 PrepareShader(Color.Blue, Color.DeepSkyBlue, 0.15f, true);
@@ -334,7 +334,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             Vector2 InSideBladeScale = new Vector2(0.4f * SolarBladeXScale, 0.79f) * scale;
             offset.Y = offset.Y - 64;
             DrawAuxBladeSource(DrawPos + offset.RotatedBy(DrawRot), DrawRot, InSideBladeScale);
-            UCAUtilities.ReSetToEndShader();
+            LAPUtilities.ReSetToEndShader();
             
         }
         public void PrepareShader(Color beginColor, Color endColor, float uIntensity = 0.15f, bool useColor = true)

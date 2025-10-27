@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using Terraria;
 using UCA.Assets;
 using UCA.Assets.Effects;
-using UCA.Core.Graphics.DrawNode;
-using UCA.Core.Graphics.Primitives.Trail;
+using LAP.Core.Graphics.DrawNode;
+using LAP.Core.Graphics.Primitives.Trail;
 
 namespace UCA.Content.DrawNodes
 {

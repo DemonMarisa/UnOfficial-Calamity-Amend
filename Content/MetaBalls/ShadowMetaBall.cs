@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Terraria;
 using UCA.Assets;
 using UCA.Assets.Effects;
-using UCA.Core.MetaBallsSystem;
+using LAP.Core.MetaBallsSystem;
 
 namespace UCA.Content.MetaBalls
 {

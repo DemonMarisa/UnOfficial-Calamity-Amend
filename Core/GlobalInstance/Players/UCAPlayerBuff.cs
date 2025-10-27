@@ -1,6 +1,7 @@
 ﻿using CalamityMod;
 using CalamityMod.Items.Weapons.Magic;
 using Humanizer;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
@@ -19,7 +20,7 @@ namespace UCA.Core.GlobalInstance.Players
                 Player.GetDamage<GenericDamageClass>() += 0.15f;
 
                 Player.manaCost *= 0.95f;
-                ExternalDR += 0.05f;
+                Player.LAP().ExternalDR += 0.05f;
                 Player.statDefense += 10;
                 if (Player.miscCounter % 2 == 0)
                     ShadowMetaBall.SpawnParticle(Player.Center - new Vector2(Main.rand.Next(-25, 25), -Player.height / 2), Vector2.UnitY * Main.rand.NextFloat(2, 6f) * -1f, Main.rand.NextFloat(0.1f, 0.15f));
@@ -27,11 +28,11 @@ namespace UCA.Core.GlobalInstance.Players
 
             if (HeldNightShield)
             {
-                ExternalDR += 0.1f;
+                Player.LAP().ExternalDR += 0.1f;
                 Player.statDefense += 30;
                 if (WeakHeldNightShield)
                 {
-                    ExternalDR -= 0.05f;
+                    Player.LAP().ExternalDR -= 0.05f;
                     Player.statDefense -= 15;
                 }
             }
@@ -61,7 +62,7 @@ namespace UCA.Core.GlobalInstance.Players
             if (Player.HasCooldown(TerraBoost.ID))
             {
                 Player.manaCost *= 0.8f;
-                ExternalDR += 0.1f;
+                Player.LAP().ExternalDR += 0.1f;
                 Player.endurance += 0.15f;
                 Player.statDefense += 30;
                 if (Player.miscCounter % 5 == 0)
@@ -98,7 +99,7 @@ namespace UCA.Core.GlobalInstance.Players
             }
             if (Player.HasCooldown(SolorShield.ID))
             {
-                ExternalDR += 0.15f;
+                Player.LAP().ExternalDR += 0.15f;
                 Player.statDefense += 30;
                 if (Player.miscCounter % 12 == 0)
                 {
@@ -119,7 +120,7 @@ namespace UCA.Core.GlobalInstance.Players
             }
             if (Player.HasCooldown(VortexBoost.ID))
             {
-                DamageMult += 0.1f;
+                Player.LAP().DamageMult += 0.1f;
                 if (Player.miscCounter % 12 == 0)
                 {
                     Vector2 pos = Player.Center - new Vector2(Main.rand.Next(-50, 50), -Player.height / 2);

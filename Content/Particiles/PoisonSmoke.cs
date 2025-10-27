@@ -3,14 +3,15 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using UCA.Assets;
-using UCA.Core.ParticleSystem;
+using LAP.Core.ParticleSystem;
 using UCA.Core.Utilities;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Particiles
 {
     public class PoisonSmoke : BaseParticle
     {
-        public override BlendState BlendState => BlendState.Additive;
+        public override int UseBlendStateID => BlendStateID.Additive;
         public PoisonSmoke(Vector2 position, Vector2 velocity, Color color, int lifetime, float Rot, float opacity, float scale)
         {
             Position = position;

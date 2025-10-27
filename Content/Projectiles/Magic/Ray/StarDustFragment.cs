@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LAP.Core.Utilities;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.IO;
@@ -53,7 +54,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override void AI()
         {
-            if (Projectile.UCA().FirstFrame)
+            if (Projectile.LAP().FirstFrame)
             {
                 Projectile.scale = 0;
             }
@@ -93,11 +94,11 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override bool PreDraw(ref Color lightColor)
         {
-            UCAUtilities.ReSetToBeginShader();
+            LAPUtilities.ReSetToBeginShader();
             Texture2D texture = UCATextureRegister.CrossGlow.Value;
             Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.DarkBlue, 0, texture.Size() / 2, Projectile.scale * 0.2f * new Vector2(1.25f, 1f), SpriteEffects.FlipHorizontally, 0f);
             Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.SkyBlue, 0, texture.Size() / 2, Projectile.scale * 0.15f * new Vector2(1.25f, 1f), SpriteEffects.None, 0f);
-            UCAUtilities.ReSetToEndShader();
+            LAPUtilities.ReSetToEndShader();
             return false;
         }
         public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)

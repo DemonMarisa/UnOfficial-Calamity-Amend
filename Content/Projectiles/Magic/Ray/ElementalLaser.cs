@@ -10,8 +10,9 @@ using UCA.Content.DrawNodes;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld;
 using UCA.Core.BaseClass;
-using UCA.Core.Graphics;
+using LAP.Core.Graphics;
 using UCA.Core.Utilities;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
@@ -74,7 +75,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         #region 初始化
         public void FirstFrame()
         {
-            if (!Projectile.UCA().FirstFrame)
+            if (!Projectile.LAP().FirstFrame)
                 return;
             LaserTimeOffset = Main.rand.Next(0, 100);
             BeginPos = Projectile.Center;
@@ -253,7 +254,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             if (WeaponStates == ElementalRayState.StarDust)
                 return;
-            if (Projectile.UCA().OnceHitEffect)
+            if (Projectile.LAP().OnceHitEffect)
             {
                 int NebulaEnergyCount = 6;
                 if (WeaponStates == ElementalRayState.Solar)
@@ -272,7 +273,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 for (int i = 0; i < NebulaEnergyCount; i++)
                 {
                     Vector2 randomOffset = Vector2.UnitX.RotateRandom(MathHelper.TwoPi) * (75 + target.width / 2) * Main.rand.NextFloat(0.6f, 1.2f);
-                    Vector2 ToNPCVel = UCAUtilities.GetVector2(target.Center, target.Center + randomOffset).SafeNormalize(Vector2.Zero) * 9 * Main.rand.NextFloat(0.9f, 1.2f);
+                    Vector2 ToNPCVel = LAPUtilities.GetVector2(target.Center, target.Center + randomOffset).SafeNormalize(Vector2.Zero) * 9 * Main.rand.NextFloat(0.9f, 1.2f);
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center + randomOffset, ToNPCVel.RotatedByRandom(MathHelper.PiOver4), Type, Projectile.damage, Projectile.knockBack, Projectile.owner);
                 }
 
@@ -289,17 +290,17 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override bool PreDraw(ref Color lightColor)
         {
-            UCAUtilities.ReSetToBeginShader(BlendState.Additive);
+            LAPUtilities.ReSetToBeginShader(BlendState.Additive);
 
             if (WeaponStates == ElementalRayState.Solar)
                 DrawLaser(Color.OrangeRed, 0.25f, 0.1f, -100);
             else
                 DrawLaser(Color.Gray, 0.25f, 0.1f, -100);
 
-            UCAUtilities.ReSetToBeginShader();
+            LAPUtilities.ReSetToBeginShader();
             DrawLaser(Color.White, 0.15f, 0.1f, -50);
             DrawLaser(Color.White, 0.07f, 0.02f , -100);
-            UCAUtilities.ReSetToEndShader();
+            LAPUtilities.ReSetToEndShader();
             return false;
         }
         public void DrawLaser(Color colro, float height = 0.2f, float op = 0.1f, int Speed = -50)

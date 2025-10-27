@@ -14,9 +14,10 @@ using UCA.Content.DrawNodes;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld;
 using UCA.Core.BaseClass;
-using UCA.Core.Graphics;
-using UCA.Core.Graphics.Primitives.Trail;
+using LAP.Core.Graphics;
+using LAP.Core.Graphics.Primitives.Trail;
 using UCA.Core.Utilities;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
@@ -68,7 +69,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
         public override void AI()
         {
-            if (Projectile.UCA().FirstFrame)
+            if (Projectile.LAP().FirstFrame)
             {
                 SoundEngine.PlaySound(SoundsMenu.TerraLanceShoot, Projectile.Center);
                 float XScale = Main.rand.NextFloat(6, 12);
@@ -125,7 +126,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         #region 记录所有点的长度
         public void CatchLength()
         {
-            if (UCAUtilities.OutOffScreen(Projectile.Center))
+            if (LAPUtilities.OutOffScreen(Projectile.Center))
                 return;
             AvailableOldPos.Clear();
             for (int i = 0; i < Projectile.oldPos.Length; i++)
@@ -148,7 +149,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
             if (Projectile.timeLeft == 60 && CanFadeOut)
             {
-                if (UCAUtilities.OutOffScreen(Projectile.Center))
+                if (LAPUtilities.OutOffScreen(Projectile.Center))
                     return;
                 for (int i = 0; i < 5; i++)
                 {
@@ -160,7 +161,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         #endregion
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (!CanFadeOut && Projectile.UCA().OnceHitEffect)
+            if (!CanFadeOut && Projectile.LAP().OnceHitEffect)
                 Projectile.timeLeft = 120;
             Projectile.ai[1]++;
             Projectile.netUpdate = true;
@@ -168,7 +169,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override void OnKill(int timeLeft)
         {
-            if (UCAUtilities.OutOffScreen(Projectile.Center))
+            if (LAPUtilities.OutOffScreen(Projectile.Center))
                 return;
 
             if (Main.rand.NextBool(3))
@@ -179,7 +180,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override bool PreDraw(ref Color lightColor)
         {
-            if (UCAUtilities.OutOffScreen(Projectile.Center))
+            if (LAPUtilities.OutOffScreen(Projectile.Center))
                 return false;
 
             Main.spriteBatch.End();

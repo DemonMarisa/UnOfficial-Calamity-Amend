@@ -1,22 +1,16 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Terraria;
 using UCA.Assets;
-using UCA.Assets.Effects;
-using UCA.Core.ParticleSystem;
+using LAP.Core.ParticleSystem;
 using UCA.Core.Utilities;
-using static tModPorter.ProgressUpdate;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Particiles
 {
     public class FireStrike : BaseParticle
     {
-        public override BlendState BlendState => BlendState.Additive;
+        public override int UseBlendStateID => BlendStateID.Additive;
         public float BeginScale;
         public SpriteEffects se = SpriteEffects.None;
         public bool UseFadeIn = true;

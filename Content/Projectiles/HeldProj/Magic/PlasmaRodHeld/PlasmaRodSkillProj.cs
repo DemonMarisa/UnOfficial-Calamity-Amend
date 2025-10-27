@@ -16,10 +16,11 @@ using UCA.Content.Particiles;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
 using UCA.Content.Projectiles.Misc;
-using UCA.Core.AnimationHandle;
+using LAP.Core.AnimationHandle;
 using UCA.Core.Enums;
-using UCA.Core.SpecificEffectManagers;
+using LAP.Core.SpecificEffectManagers;
 using UCA.Core.Utilities;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
 {
@@ -97,7 +98,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
         public override void AI()
         {
             Projectile.netUpdate = true;
-            if (Projectile.UCA().FirstFrame)
+            if (Projectile.LAP().FirstFrame)
             {
                 animationHelper.MaxAniProgress[AnimationState.Begin] = 45;
                 animationHelper.MaxAniProgress[AnimationState.End] = 10;
@@ -214,7 +215,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
 
-            UCAUtilities.FastApplyEdgeMeltsShader(Opacity, ModContent.Request<Texture2D>(Texture).Size(), Color.Violet, 0.01f, 0);
+            LAPUtilities.FastApplyEdgeMeltsShader(Opacity, ModContent.Request<Texture2D>(Texture).Size(), Color.Violet, 0.01f, 0);
 
             Main.spriteBatch.Draw(UCATextureRegister.BladeAura.Value, drawPosition / 2, null, Color.Violet, drawRotation + MathHelper.PiOver2 * Owner.direction,
                new Vector2(texture.Size().X / 2, texture.Size().Y + 200), Projectile.scale * Main.player[Projectile.owner].gravDir * 0.07f, flipSprite, default);
@@ -247,7 +248,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
 
             SoundEngine.PlaySound(SoundsMenu.PlasmaRodSwingHit, Projectile.Center);
 
-            if (Projectile.UCA().OnceHitEffect)
+            if (Projectile.LAP().OnceHitEffect)
                 ScreenShakeSystem.AddScreenShakes(Projectile.Center, 4, 5, Projectile.rotation + MathHelper.PiOver2, 0.2f, true, 1000);
         }
 

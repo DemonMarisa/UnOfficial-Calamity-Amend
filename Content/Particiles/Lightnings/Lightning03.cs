@@ -3,15 +3,16 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using UCA.Assets;
-using UCA.Core.ParticleSystem;
+using LAP.Core.ParticleSystem;
 using UCA.Core.Utilities;
 using static tModPorter.ProgressUpdate;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Particiles.Lightnings
 {
     public class Lightning03 : BaseParticle
     {
-        public override BlendState BlendState => BlendState.Additive;
+        public override int UseBlendStateID => BlendStateID.Additive;
         public int XFrame;
         public int YFrame;
         public Lightning03(Vector2 position, Vector2 velocity, Color color, int lifetime, float Rot, float scale)

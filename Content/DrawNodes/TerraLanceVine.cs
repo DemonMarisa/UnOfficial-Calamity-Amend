@@ -7,9 +7,9 @@ using Terraria;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
-using UCA.Core.Graphics;
-using UCA.Core.Graphics.DrawNode;
-using UCA.Core.Graphics.Primitives.Trail;
+using LAP.Core.Graphics;
+using LAP.Core.Graphics.DrawNode;
+using LAP.Core.Graphics.Primitives.Trail;
 using UCA.Core.Utilities;
 
 namespace UCA.Content.DrawNodes

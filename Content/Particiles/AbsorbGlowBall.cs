@@ -2,14 +2,14 @@
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using UCA.Assets;
-using UCA.Core.ParticleSystem;
-using UCA.Core.Utilities;
+using LAP.Core.ParticleSystem;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Particiles
 {
     public class AbsorbGlowBall : BaseParticle
     {
-        public override BlendState BlendState => BlendState.Additive;
+        public override int UseBlendStateID => BlendStateID.Additive;
         public AbsorbGlowBall(Vector2 position, Color color, int lifetime, float scale,float rot, float rotSpeed, int Owner, int Length)
         {
             Position = position;

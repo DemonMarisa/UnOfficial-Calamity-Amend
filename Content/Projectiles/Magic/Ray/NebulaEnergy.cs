@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
@@ -49,7 +50,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override void AI()
         {
-            if (Projectile.UCA().FirstFrame)
+            if (Projectile.LAP().FirstFrame)
             {
                 if (!CanHomeIn)
                     Projectile.penetrate = -1;
@@ -69,7 +70,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 Vel = Projectile.velocity.Length();
             }
             Time++;
-            if (!UCAUtilities.OutOffScreen(Projectile.Center))
+            if (!LAPUtilities.OutOffScreen(Projectile.Center))
             {
                 for (int i = 0; i < DustCount; i++)
                 {
@@ -95,7 +96,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
             if (Projectile.timeLeft % 20 == 0)
             {
-                if (UCAUtilities.OutOffScreen(Projectile.Center))
+                if (LAPUtilities.OutOffScreen(Projectile.Center))
                     return;
                 if (Projectile.velocity.Length() > 1)
                 {             
@@ -127,7 +128,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (Projectile.UCA().OnceHitEffect && !CanHomeIn)
+            if (Projectile.LAP().OnceHitEffect && !CanHomeIn)
             {
                 Projectile.ai[1]++;
                 Projectile.netUpdate = true;
@@ -149,11 +150,11 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override bool PreDraw(ref Color lightColor)
         {
-            UCAUtilities.ReSetToBeginShader();
+            LAPUtilities.ReSetToBeginShader();
             Texture2D texture = UCATextureRegister.CrossGlow.Value;
             Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.Violet, 0, texture.Size() / 2, Projectile.scale * 0.2f * new Vector2(1.25f, 1f), SpriteEffects.FlipHorizontally, 0f);
             Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.DarkViolet, 0, texture.Size() / 2, Projectile.scale * 0.15f * new Vector2(1.25f, 1f), SpriteEffects.None, 0f);
-            UCAUtilities.ReSetToEndShader();
+            LAPUtilities.ReSetToEndShader();
             return false;
         }
     }

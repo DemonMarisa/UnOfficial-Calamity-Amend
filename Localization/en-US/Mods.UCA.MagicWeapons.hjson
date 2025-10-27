@@ -76,7 +76,8 @@ ElementRaySolor:
 	[c/FFA500:Triggers a larger Flare explosion on enemy hit.]
 	[c/FFA500:Simultaneously launches a large number of Flare fireballs.]
 	[c/FFA500:Current combat skill: Solor Greatsword.]
-	[c/FFA500:Consumes 200 mana to charge. Release Right Click to slash forward.]
+	[c/FFA500:Consumes 200 mana to charge. Release Right Click to slash forward. 100 times damage]
+	[c/FFA500:Damage will decrease based on the number of enemies hit, with a minimum of 10 times damage]
 	[c/FFA500:Grants +30 defense and 15% defense damage reduction for a short time upon hitting an enemy.]
 	'''
 ElementRayVortex:
@@ -104,3 +105,8 @@ ElementRayStarDust:
 	[c/4169E1:Consumes 350 mana to charge. Launches a powerful Soul Stream forward after a short delay.]
 	[c/4169E1:Halves your mana consumption (x0.5) for a short period after use.]
 	'''
+
+ShadowBoltStaffAlt: {
+	DisplayName: Shadow Bolt Staff Alt
+	Tooltip: ""
+}

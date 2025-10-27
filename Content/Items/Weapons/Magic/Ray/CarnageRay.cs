@@ -11,6 +11,7 @@ using UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld;
 using UCA.Core.BaseClass;
 using UCA.Core.Keybinds;
 using UCA.Core.Utilities;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Items.Weapons.Magic.Ray
 {

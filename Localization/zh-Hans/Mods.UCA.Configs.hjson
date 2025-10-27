@@ -16,3 +16,17 @@ UCAConfig: {
 		Tooltip: 0为不会震动，10为10倍震动
 	}
 }
+
+LAPConfig: {
+	// DisplayName: Lilac Arcane Pack Config
+
+	ParticleLimit: {
+		// Label: Particle Limit
+		// Tooltip: ""
+	}
+
+	ScreenShakeStrength: {
+		// Label: Screen Shake Strength Percentage
+		// Tooltip: ""
+	}
+}

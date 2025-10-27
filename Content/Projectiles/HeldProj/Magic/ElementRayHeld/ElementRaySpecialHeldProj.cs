@@ -11,9 +11,10 @@ using UCA.Assets.Sounds;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
 using UCA.Content.UCACooldowns;
-using UCA.Core.AnimationHandle;
-using UCA.Core.SpecificEffectManagers;
+using LAP.Core.AnimationHandle;
+using LAP.Core.SpecificEffectManagers;
 using UCA.Core.Utilities;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
 {
@@ -36,6 +37,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         public bool CanDraw = true;
         public float BeginRot = 0;
         public bool UseSlowRot = false;
+        public int HitCount = 0;
         public override void SetDefaults()
         {
             Projectile.width = 74;
@@ -130,7 +132,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         }
         public void Initialize()
         {
-            if (Projectile.UCA().FirstFrame)
+            if (Projectile.LAP().FirstFrame)
             {
                 ToMouseVector = Owner.GetPlayerToMouseVector2().ToRotation();
 
@@ -169,19 +171,25 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
 
             Owner.heldProj = Projectile.whoAmI;
         }
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            modifiers.SourceDamage *= MathHelper.Lerp(100f, 10f, HitCount / 10f);
+        }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
+            float DamageMult = MathHelper.Lerp(50f, 5f, HitCount / 10f);
             if (HitCooldown == 0)
             {
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<SolarBlast>(), Projectile.damage * 10, Projectile.knockBack, Projectile.owner, 15, 0.3f, 1); ;
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<SolarBlast>(), (int)(Projectile.damage * DamageMult), Projectile.knockBack, Projectile.owner, 15, 0.3f, 1); ;
                 HitCooldown = 3;
             }
 
-            if (Projectile.UCA().OnceHitEffect)
+            if (Projectile.LAP().OnceHitEffect)
                 ScreenShakeSystem.AddScreenShakes(Projectile.Center, -250 * -Owner.direction, 40, Projectile.rotation + MathHelper.PiOver2, 0.5f, true, 1000);
             Owner.AddCooldown(SolorShield.ID, 600);
             SoundEngine.PlaySound(SoundsMenu.RiseBlast, Projectile.Center);
             SoundEngine.PlaySound(SoundsMenu.CarnageSkillMeleeHit, Projectile.Center);
+            HitCount++;
         }
         public override bool PreDraw(ref Color lightColor)
         {

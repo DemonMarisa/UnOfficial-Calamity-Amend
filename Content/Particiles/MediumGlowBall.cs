@@ -2,16 +2,15 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.ModLoader;
 using UCA.Assets;
-using UCA.Core.ParticleSystem;
-using UCA.Core.Utilities;
+using LAP.Core.ParticleSystem;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Particiles
 {
     public class MediumGlowBall : BaseParticle
     {
-        public override BlendState BlendState => BlendState.Additive;
+        public override int UseBlendStateID => BlendStateID.Additive;
 
         public float Speed = 5f;
 

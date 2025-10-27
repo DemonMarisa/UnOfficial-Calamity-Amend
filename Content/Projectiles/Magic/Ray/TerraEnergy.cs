@@ -15,9 +15,10 @@ using UCA.Assets.Sounds;
 using UCA.Content.DrawNodes;
 using UCA.Content.Particiles;
 using UCA.Core.BaseClass;
-using UCA.Core.Graphics;
-using UCA.Core.Graphics.Primitives.Trail;
+using LAP.Core.Graphics;
+using LAP.Core.Graphics.Primitives.Trail;
 using UCA.Core.Utilities;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
@@ -67,7 +68,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
         public override void AI()
         {
-            if (Projectile.UCA().FirstFrame)
+            if (Projectile.LAP().FirstFrame)
             {
                 #region 生成伴随主弹幕的树
                 for (int i = 0; i < 1; i++)

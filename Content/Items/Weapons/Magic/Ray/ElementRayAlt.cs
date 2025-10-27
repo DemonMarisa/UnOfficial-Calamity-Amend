@@ -1,6 +1,7 @@
 ﻿using CalamityMod;
 using CalamityMod.Items.Materials;
 using CalamityMod.Items.Weapons.Magic;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Mono.Cecil;
 using System;
@@ -73,7 +74,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
                 {
                     if (CheckAllMana(player))
                     {
-                        if (player.UCA().NameIsMAGNOLIA)
+                        if (player.LAP().NameIsMAGNOLIA)
                             Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<ElementRaySpecialHeldProj>(), damage, knockback, player.whoAmI, player.UCA().ElementalRayStates, 1);
                         else
                             Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<ElementRaySpecialHeldProj>(), damage, knockback, player.whoAmI, player.UCA().ElementalRayStates);

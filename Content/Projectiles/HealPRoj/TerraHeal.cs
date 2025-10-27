@@ -5,11 +5,11 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using UCA.Content.DrawNodes;
-using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
-using UCA.Core.BaseClass;
-using UCA.Core.Graphics;
+using LAP.Core.BaseClass;
+using LAP.Core.Graphics;
 using UCA.Core.Utilities;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HealPRoj
 {
@@ -70,7 +70,7 @@ namespace UCA.Content.Projectiles.HealPRoj
         #endregion
         public override bool PreDraw(ref Color lightColor)
         {
-            if (UCAUtilities.OutOffScreen(Projectile.Center))
+            if (LAPUtilities.OutOffScreen(Projectile.Center))
                 return false;
 
             Main.spriteBatch.End();

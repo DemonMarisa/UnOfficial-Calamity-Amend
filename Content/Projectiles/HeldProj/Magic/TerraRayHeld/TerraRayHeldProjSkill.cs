@@ -16,11 +16,12 @@ using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
 using UCA.Content.UCACooldowns;
-using UCA.Core.AnimationHandle;
+using LAP.Core.AnimationHandle;
 using UCA.Core.Enums;
-using UCA.Core.Graphics;
+using LAP.Core.Graphics;
 using UCA.Core.Utilities;
 using static System.Net.Mime.MediaTypeNames;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
 {
@@ -51,7 +52,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
         }
         public override void AI()
         {
-            if (Projectile.UCA().FirstFrame)
+            if (Projectile.LAP().FirstFrame)
             {
                 SoundEngine.PlaySound(SoundsMenu.TerraRestore, Projectile.Center);
                 // 初始化效果
@@ -100,7 +101,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
                     List<NPC> noUseNPC = [];
                     for (int i = 0; i < 4; i++)
                     {
-                        NPC target = UCAUtilities.FindClosestNPCExceptSpecific(Owner.Center, 650, noUseNPC, true);
+                        NPC target = LAPUtilities.FindClosestNPCExceptSpecific(Owner.Center, 650, noUseNPC, true);
                         noUseNPC.Add(target);
                     }
                     if (noUseNPC.Count != 0)
@@ -261,7 +262,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
-            UCAUtilities.FastApplyEdgeMeltsShader(Opacity, texture.Size(), Color.LimeGreen, 0.01f, 0);
+            LAPUtilities.FastApplyEdgeMeltsShader(Opacity, texture.Size(), Color.LimeGreen, 0.01f, 0);
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             float drawRotation = Projectile.rotation + (Projectile.spriteDirection == -1 ? MathHelper.PiOver2 + MathHelper.PiOver4 : MathHelper.PiOver4);
             Vector2 rotationPoint = texture.Size() / 2f;

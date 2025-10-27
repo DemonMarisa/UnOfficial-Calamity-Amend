@@ -13,8 +13,9 @@ using UCA.Content.Particiles;
 using UCA.Content.Particiles.Lightnings;
 using UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld;
 using UCA.Core.BaseClass;
-using UCA.Core.Graphics.Primitives.Trail;
+using LAP.Core.Graphics.Primitives.Trail;
 using UCA.Core.Utilities;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
@@ -52,9 +53,9 @@ namespace UCA.Content.Projectiles.Magic.Ray
         public override void AI()
         {
             Projectile.rotation = Projectile.velocity.ToRotation();
-            if (Projectile.UCA().FirstFrame)
+            if (Projectile.LAP().FirstFrame)
             {
-                if (UCAUtilities.OutOffScreen(Projectile.Center) || !CanPlayerInto)
+                if (LAPUtilities.OutOffScreen(Projectile.Center) || !CanPlayerInto)
                     return;
 
                 for (int i = 0; i < 15; i++)
@@ -80,7 +81,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 }
             }
 
-            if (!UCAUtilities.OutOffScreen(Projectile.Center))
+            if (!LAPUtilities.OutOffScreen(Projectile.Center))
             {
                 for (int i = 0; i < 5; i++)
                 {
@@ -103,7 +104,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             Projectile.ExpandHitboxBy((float)7);
             Projectile.Damage();
-            if (!UCAUtilities.OutOffScreen(Projectile.Center))
+            if (!LAPUtilities.OutOffScreen(Projectile.Center))
             {
                 SoundEngine.PlaySound(SoundsMenu.LightingHit, Projectile.Center);
                 if (!CanPlayerInto)
@@ -130,7 +131,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 }
             }
             Vector2 SpawnOffset = Projectile.Center + new Vector2(Main.rand.Next(-300, 300), Main.rand.Next(-800, -600));
-            Vector2 FireVel = UCAUtilities.GetVector2(SpawnOffset, Projectile.Center) * 12;
+            Vector2 FireVel = LAPUtilities.GetVector2(SpawnOffset, Projectile.Center) * 12;
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), SpawnOffset, FireVel, ModContent.ProjectileType<VortexLightning>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
         }
         public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
@@ -139,10 +140,10 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override bool PreDraw(ref Color lightColor)
         {
-            UCAUtilities.ReSetToBeginShader();
+            LAPUtilities.ReSetToBeginShader();
             DrawTrail(48);
             DrawTrail();
-            UCAUtilities.ReSetToEndShader();
+            LAPUtilities.ReSetToEndShader();
             return false;
         }
         public void DrawTrail(int height = 36)

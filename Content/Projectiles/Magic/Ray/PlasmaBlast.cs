@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Graphics.Primitives;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -49,7 +50,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
         public override void AI()
         {
-            if (Projectile.UCA().FirstFrame)
+            if (Projectile.LAP().FirstFrame)
             {
                 Rot = Main.rand.NextFloat(0, MathHelper.TwoPi);
                 Rot2 = Main.rand.NextFloat(0, MathHelper.TwoPi);

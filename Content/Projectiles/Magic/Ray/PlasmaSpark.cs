@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LAP.Core.Utilities;
+using Microsoft.Xna.Framework;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
@@ -42,10 +43,6 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             Projectile.extraUpdates = reader.ReadInt32();
         }
-        public override void OnSpawn(IEntitySource source)
-        {
-            base.OnSpawn(source);
-        }
         public override bool? CanHitNPC(NPC target)
         {
             if (target.friendly)
@@ -55,7 +52,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override void AI()
         {
-            if (Projectile.UCA().FirstFrame)
+            if (Projectile.LAP().FirstFrame)
             {
                 Projectile.netUpdate = true;
             }
@@ -72,7 +69,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 Projectile.velocity *= 1.002f;
             }
             else
-            Projectile.velocity *= 1.006f;
+                Projectile.velocity *= 1.006f;
 
             if (Projectile.velocity.Length() > 0.5f)
             {
@@ -93,7 +90,6 @@ namespace UCA.Content.Projectiles.Magic.Ray
                     }
                 }
             }
-
             Lighting.AddLight(Projectile.Center, Color.Violet.ToVector3() * 0.5f);
         }
 

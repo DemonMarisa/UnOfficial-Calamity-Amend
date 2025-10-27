@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LAP.Core.Utilities;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ModLoader;
@@ -118,7 +119,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 }
                 for (int i = 0; i < 45; i++)
                 {
-                    Color RandomColor = UCAUtilities.LerpColor(Color.Violet, Color.BlueViolet);
+                    Color RandomColor = LAPUtilities.LerpColor(Color.Violet, Color.BlueViolet);
                     new MediumGlowBall(Projectile.Center + firoffset + Owner.velocity * 6, RandomColor, 120, 0.2f, Main.rand.NextFloat(4f, 6f)).Spawn();
                 }
                 FirePorj();

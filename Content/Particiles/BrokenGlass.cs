@@ -3,8 +3,9 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using UCA.Assets;
-using UCA.Core.ParticleSystem;
+using LAP.Core.ParticleSystem;
 using UCA.Core.Utilities;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Particiles
 {
@@ -22,7 +23,7 @@ namespace UCA.Content.Particiles
             Scale = scale;
             UseGravity = useGravity;
         }
-        public override BlendState BlendState => BlendState.Additive;
+        public override int UseBlendStateID => BlendStateID.Additive;
         public bool UseGravity = false;
         public bool UseAltTexture = false;
         public float BeginOpacity;

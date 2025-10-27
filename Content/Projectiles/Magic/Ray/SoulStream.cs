@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LAP.Core.Utilities;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
@@ -69,7 +70,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 Projectile.Kill();
 
             Vector2 Posoffset = new Vector2(64, 0).RotatedBy(Father.rotation);
-            if (Projectile.UCA().FirstFrame)
+            if (Projectile.LAP().FirstFrame)
             {
                 Projectile.scale = 0f;
                 Projectile.velocity = Father.velocity;
@@ -80,7 +81,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 Projectile.scale = MathHelper.Lerp(Projectile.scale, 1f, 0.08f);
                 for (int i = 0; i < 8; i++)
                 {
-                    Color color = UCAUtilities.LerpColor(Color.SkyBlue, Color.DeepSkyBlue);
+                    Color color = LAPUtilities.LerpColor(Color.SkyBlue, Color.DeepSkyBlue);
                     new NoiseShockRing(Projectile.Center, Vector2.Zero, color, 120, 1f, 1.8f + i * 0.2f, Projectile.whoAmI, Vector2.Zero).Spawn();
                 }
                 return;
@@ -95,43 +96,43 @@ namespace UCA.Content.Projectiles.Magic.Ray
             for (int i = 0; i < LaserLength; i += 40)
             {
                 Vector2 Spawn = Projectile.Center + Projectile.velocity * i + Main.rand.NextVector2Circular(36, 36);
-                if (UCAUtilities.OutOffScreen(Spawn, CutMult))
+                if (LAPUtilities.OutOffScreen(Spawn, CutMult))
                     continue;
 
-                Color color = UCAUtilities.LerpColor(Color.DeepSkyBlue, Color.SkyBlue);
+                Color color = LAPUtilities.LerpColor(Color.DeepSkyBlue, Color.SkyBlue);
                 new TrailGlowBall(Spawn, Projectile.velocity * 6, color, Main.rand.Next(45, 65), 0.08f, true).Spawn();
             }
             for (int i = 0; i < LaserLength; i += 20)
             {
                 Vector2 Spawn = Projectile.Center + Projectile.velocity * i + new Vector2(0, -36).RotatedBy(Projectile.rotation) + Main.rand.NextVector2Circular(9, 9);
-                if (UCAUtilities.OutOffScreen(Spawn, CutMult))
+                if (LAPUtilities.OutOffScreen(Spawn, CutMult))
                     continue;
 
-                Color color = UCAUtilities.LerpColor(Color.White, Color.White);
+                Color color = LAPUtilities.LerpColor(Color.White, Color.White);
                 new FusableBall(Spawn, Projectile.velocity * 3, color, 5, 1f, new Vector2(1f, 0.08f)).Spawn();
             }
             for (int i = 0; i < LaserLength; i += 20)
             {
                 Vector2 Spawn = Projectile.Center + Projectile.velocity * i + new Vector2(0, 36).RotatedBy(Projectile.rotation) + Main.rand.NextVector2Circular(9, 9);
-                if (UCAUtilities.OutOffScreen(Spawn, CutMult))
+                if (LAPUtilities.OutOffScreen(Spawn, CutMult))
                     continue;
-                Color color = UCAUtilities.LerpColor(Color.White, Color.White);
+                Color color = LAPUtilities.LerpColor(Color.White, Color.White);
                 new FusableBall(Spawn, Projectile.velocity * 3, color, 5, 1f, new Vector2(1f, 0.08f)).Spawn();
             }
             for (int i = 0; i < LaserLength; i += 20)
             {
                 Vector2 Spawn = Projectile.Center + Projectile.velocity * i + Main.rand.NextVector2Circular(36, 36);
-                if (UCAUtilities.OutOffScreen(Spawn, CutMult))
+                if (LAPUtilities.OutOffScreen(Spawn, CutMult))
                     continue;
-                Color color = UCAUtilities.LerpColor(Color.Black, Color.DarkBlue);
+                Color color = LAPUtilities.LerpColor(Color.Black, Color.DarkBlue);
                 new FusableBall(Spawn, Projectile.velocity * 3, color, 5, 1f, new Vector2(1f, 0.3f)).SpawnToPriority();
             }
             for (int i = 0; i < LaserLength; i += 40)
             {
                 Vector2 Spawn = Projectile.Center + Projectile.velocity * i + Main.rand.NextVector2Circular(64, 64);
-                if (UCAUtilities.OutOffScreen(Spawn, CutMult))
+                if (LAPUtilities.OutOffScreen(Spawn, CutMult))
                     continue;
-                Color color = UCAUtilities.LerpColor(Color.SkyBlue, Color.DarkBlue);
+                Color color = LAPUtilities.LerpColor(Color.SkyBlue, Color.DarkBlue);
                 new Fire(Spawn, Projectile.velocity * 3, color, 45, Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.5f).SpawnToPriority();
             }
             #endregion
@@ -139,17 +140,17 @@ namespace UCA.Content.Projectiles.Magic.Ray
             for (int i = 0; i < LaserLength; i += 600)
             {
                 Vector2 Spawn = Projectile.Center + Projectile.velocity * i - Projectile.velocity * 200 + Main.rand.NextVector2Circular(256, 32).RotatedBy(Projectile.rotation) + new Vector2(0, 36);
-                if (UCAUtilities.OutOffScreen(Spawn, CutMult))
+                if (LAPUtilities.OutOffScreen(Spawn, CutMult))
                     continue;
-                Color color = UCAUtilities.LerpColor(Color.White, Color.SkyBlue);
+                Color color = LAPUtilities.LerpColor(Color.White, Color.SkyBlue);
                 new FusableBall(Spawn, Projectile.velocity * 12, color, Main.rand.Next(60, 90), 1f, new Vector2(1f, 0.1f)).Spawn();
             }
             for (int i = 0; i < LaserLength; i += 600)
             {
                 Vector2 Spawn = Projectile.Center + Projectile.velocity * i - Projectile.velocity * 200 + Main.rand.NextVector2Circular(256, 32).RotatedBy(Projectile.rotation) + new Vector2(0, -36);
-                if (UCAUtilities.OutOffScreen(Spawn, CutMult))
+                if (LAPUtilities.OutOffScreen(Spawn, CutMult))
                     continue;
-                Color color = UCAUtilities.LerpColor(Color.White, Color.SkyBlue);
+                Color color = LAPUtilities.LerpColor(Color.White, Color.SkyBlue);
                 new FusableBall(Spawn, Projectile.velocity * 12, color, Main.rand.Next(60, 90), 1f, new Vector2(1f, 0.1f)).Spawn();
             }
             if (Time > 5)
@@ -157,7 +158,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 for (int i = 0; i < LaserLength + 200; i += 200)
                 {
                     Vector2 SpawnPos = Projectile.Center + Projectile.velocity * i + Main.rand.NextVector2Circular(128, 128).RotatedBy(Projectile.rotation) - Projectile.velocity * 200;
-                    if (UCAUtilities.OutOffScreen(SpawnPos, CutMult))
+                    if (LAPUtilities.OutOffScreen(SpawnPos, CutMult))
                         continue;
                     new CrossGlow(SpawnPos, Vector2.Zero, Color.SkyBlue, 60, 1f, 0.2f).Spawn();
                     if (i != 0)
@@ -188,11 +189,11 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override bool PreDraw(ref Color lightColor)
         {
-            UCAUtilities.ReSetToBeginShader();
+            LAPUtilities.ReSetToBeginShader();
             DrawGlow();
             DrawFlash();
             DrawOutLine();
-            UCAUtilities.ReSetToEndShader();
+            LAPUtilities.ReSetToEndShader();
             return false;
         }
         public void DrawGlow()

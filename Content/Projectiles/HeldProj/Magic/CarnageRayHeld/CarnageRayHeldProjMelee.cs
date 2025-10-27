@@ -18,8 +18,9 @@ using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
-using UCA.Core.BaseClass;
+using LAP.Core.BaseClass;
 using UCA.Core.Utilities;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
 {
@@ -99,7 +100,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
 
         public override bool StillInUse()
         {
-            return Active && UCAUtilities.JustPressRightClick();
+            return Active && LAPUtilities.JustPressRightClick();
         }
         public override void HoldoutAI()
         {
@@ -146,7 +147,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
             }
             if (UseDelay <= 0)
             {
-                Projectile.UCA().OnceHitEffect = true;
+                Projectile.LAP().OnceHitEffect = true;
                 CanHit = true;
                 StabsFrame = 0;
                 UseDelay = 45;
@@ -198,7 +199,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
         #endregion
         public override bool CanDel()
         {
-            return AniProgress == 0 && !UCAUtilities.PressLeftAndRightClick();
+            return AniProgress == 0 && !LAPUtilities.PressLeftAndRightClick();
         }
 
         public override void InDel()
@@ -306,7 +307,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (Projectile.UCA().OnceHitEffect)
+            if (Projectile.LAP().OnceHitEffect)
             {
                 CanHit = false;
                 if (Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.HeldItem.mana * Owner.manaCost), true, false))

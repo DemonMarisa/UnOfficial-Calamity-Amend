@@ -5,8 +5,9 @@ using System;
 using Terraria;
 using Terraria.ModLoader;
 using UCA.Assets;
-using UCA.Core.ParticleSystem;
+using LAP.Core.ParticleSystem;
 using UCA.Core.Utilities;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Particiles
 {

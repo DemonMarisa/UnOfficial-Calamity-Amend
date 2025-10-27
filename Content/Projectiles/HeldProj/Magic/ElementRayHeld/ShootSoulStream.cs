@@ -12,9 +12,10 @@ using UCA.Content.Particiles;
 using UCA.Content.Projectiles.Magic.Ray;
 using UCA.Content.UCACooldowns;
 using UCA.Core.Enums;
-using UCA.Core.SpecificEffectManagers;
+using LAP.Core.SpecificEffectManagers;
 using UCA.Core.Utilities;
 using static System.Net.Mime.MediaTypeNames;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
 {
@@ -111,7 +112,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 Vector2 offset = new Vector2(64, 0).RotatedBy(Projectile.rotation);
                 for (int i = 0; i < 100; i++)
                 {
-                    Color RandomColor = UCAUtilities.LerpColor(Color.SkyBlue, Color.DeepSkyBlue);
+                    Color RandomColor = LAPUtilities.LerpColor(Color.SkyBlue, Color.DeepSkyBlue);
                     new MediumGlowBall(Projectile.Center + offset + Owner.velocity * 6, RandomColor, 120, 0.4f, Main.rand.NextFloat(4f, 12f)).Spawn();
                 }
                 ScreenShakeSystem.AddScreenShakes(Projectile.Center, 250, 180, Projectile.rotation, 0.1f, true, 1000);
@@ -135,11 +136,11 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         #endregion
         public void DrawChargeBall()
         {
-            UCAUtilities.ReSetToBeginShader();
+            LAPUtilities.ReSetToBeginShader();
             DrawFlash();
             DrawGlow();
             DrawBallOutLine();
-            UCAUtilities.ReSetToEndShader();
+            LAPUtilities.ReSetToEndShader();
         }
         public void DrawGlow()
         {
@@ -155,7 +156,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         }
         public void DrawBallOutLine()
         {
-            UCAUtilities.ReSetToBeginShader(BlendState.Additive);
+            LAPUtilities.ReSetToBeginShader(BlendState.Additive);
             UCAShaderRegister.PolarDistortShader.Parameters["uWidthMult"].SetValue(3f);
             UCAShaderRegister.PolarDistortShader.Parameters["uRingMult"].SetValue(1f);
             UCAShaderRegister.PolarDistortShader.Parameters["uYTime"].SetValue(-Main.GlobalTimeWrappedHourly);
@@ -167,7 +168,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition + PostRotBalloffset, null, Color.SkyBlue, 0, orig, Scale, SpriteEffects.None, 0);
             Scale *= 0.5f;
             Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition + PostRotBalloffset, null, Color.DeepSkyBlue, MathHelper.PiOver2, orig, Scale, SpriteEffects.None, 0);
-            UCAUtilities.ReSetToEndShader();
+            LAPUtilities.ReSetToEndShader();
         }
     }
 }

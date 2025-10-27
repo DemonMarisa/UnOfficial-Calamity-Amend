@@ -5,14 +5,15 @@ using System.Xml.Linq;
 using Terraria;
 using Terraria.ModLoader;
 using UCA.Assets;
-using UCA.Core.ParticleSystem;
+using LAP.Core.ParticleSystem;
 using UCA.Core.Utilities;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Particiles
 {
     public class Butterfly : BaseParticle
     {
-        public override BlendState BlendState => BlendState.Additive;
+        public override int UseBlendStateID => BlendStateID.Additive;
 
         public float Speed = 5f;
 

@@ -1,7 +1,4 @@
 ﻿using CalamityMod;
-using CalamityMod.Buffs.DamageOverTime;
-using CalamityMod.Graphics.Primitives;
-using CalamityMod.Items.Weapons.Magic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -17,10 +14,11 @@ using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Particiles;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
-using UCA.Core.AnimationHandle;
+using LAP.Core.AnimationHandle;
 using UCA.Core.Enums;
-using UCA.Core.Graphics;
+using LAP.Core.Graphics;
 using UCA.Core.Utilities;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
 {
@@ -61,7 +59,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
 
         public override void AI()
         {
-            if (Projectile.UCA().FirstFrame)
+            if (Projectile.LAP().FirstFrame)
             {
                 animationHelper.MaxAniProgress[AnimationState.Begin] = 30;
                 animationHelper.MaxAniProgress[AnimationState.Middle] = 10;
@@ -69,7 +67,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
                 SoundEngine.PlaySound(SoundsMenu.TerraRightCharge, Projectile.Center);
             }
             OwnerDir = Owner.LocalMouseWorld().X > Owner.Center.X ? 1 : -1;
-            BeginRot = UCAUtilities.GetVector2(Owner.Center, Owner.LocalMouseWorld()).ToRotation() + MathHelper.ToRadians(-0 * OwnerDir);
+            BeginRot = LAPUtilities.GetVector2(Owner.Center, Owner.LocalMouseWorld()).ToRotation() + MathHelper.ToRadians(-0 * OwnerDir);
             Owner.itemTime = 2;
             Owner.itemAnimation = 2;
             Owner.ChangeDir(OwnerDir);
@@ -362,7 +360,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
 
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
 
-            UCAUtilities.FastApplyEdgeMeltsShader(Opacity, texture.Size(), Color.LimeGreen, 0.01f, 0);
+            LAPUtilities.FastApplyEdgeMeltsShader(Opacity, texture.Size(), Color.LimeGreen, 0.01f, 0);
 
             Vector2 drawPosition = Projectile.Center - Main.screenPosition + DrawOffset;
             float drawRotation = Projectile.rotation + (Projectile.spriteDirection == -1 ? MathHelper.PiOver2 + MathHelper.PiOver4 : MathHelper.PiOver4);

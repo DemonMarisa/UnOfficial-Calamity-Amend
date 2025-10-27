@@ -21,11 +21,12 @@ using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
 using UCA.Content.Projectiles.Misc;
 using UCA.Content.UCACooldowns;
-using UCA.Core.AnimationHandle;
+using LAP.Core.AnimationHandle;
 using UCA.Core.Enums;
 using UCA.Core.GlobalInstance.NPCs;
-using UCA.Core.SpecificEffectManagers;
+using LAP.Core.SpecificEffectManagers;
 using UCA.Core.Utilities;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
 {
@@ -189,7 +190,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
             {
                 if (animationHelper.AniProgress[AnimationState.Middle] == 1)
                 {
-                    Projectile.UCA().OnceHitEffect = true;
+                    Projectile.LAP().OnceHitEffect = true;
                     SoundEngine.PlaySound(SoundsMenu.CarnageSwingBeign, Projectile.Center);
                 }
 
@@ -330,7 +331,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
 
-            UCAUtilities.FastApplyEdgeMeltsShader(Opacity, ModContent.Request<Texture2D>(Texture).Size(), Color.Red, 0.01f, 0);
+            LAPUtilities.FastApplyEdgeMeltsShader(Opacity, ModContent.Request<Texture2D>(Texture).Size(), Color.Red, 0.01f, 0);
             // 绘制位置，在这里进行偏移，碰撞箱使用自定义碰撞箱
             Vector2 drawPosition = Projectile.Center - Main.screenPosition + Vector2.UnitX.RotatedBy(Projectile.rotation) * LengthOffset;
 
@@ -358,7 +359,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
         {
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<UseForOnHitNPCProj>(), 0, 0, Projectile.owner, Type);
 
-            if (Projectile.UCA().OnceHitEffect)
+            if (Projectile.LAP().OnceHitEffect)
                 ScreenShakeSystem.AddScreenShakes(Projectile.Center, 35 * RotFilp * - Owner.direction, 15, Projectile.rotation + MathHelper.PiOver2, 0.5f, true , 1000);
 
             SoundEngine.PlaySound(SoundsMenu.CarnageSkillMeleeHit, Projectile.Center);

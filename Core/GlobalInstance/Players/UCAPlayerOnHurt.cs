@@ -11,11 +11,6 @@ namespace UCA.Core.GlobalInstance.Players
     {
         public override void ModifyHurt(ref Player.HurtModifiers modifiers)
         {
-            if (ExternalDR != 0)
-            {
-                ExternalDR = ExternalDR / (1f + ExternalDR);
-                modifiers.SourceDamage *= 1 - ExternalDR;
-            }
             if (TerraRayUseSkillCount > 0)
             {
                 modifiers.SourceDamage *= 0.25f;

@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Graphics.Primitives;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -52,7 +53,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         public override void AI()
         {
             float scale = 1 + AllScale;
-            if (Projectile.UCA().FirstFrame)
+            if (Projectile.LAP().FirstFrame)
             {
                 SoundEngine.PlaySound(SoundsMenu.FireBallBlast, Projectile.Center);
                 Rot = Main.rand.NextFloat(0, MathHelper.TwoPi);
@@ -86,7 +87,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
         public override bool PreDraw(ref Color lightColor)
         {
-            UCAUtilities.ReSetToBeginShader(BlendState.Additive);
+            LAPUtilities.ReSetToBeginShader(BlendState.Additive);
             UCAShaderRegister.SolarBlastShader.Parameters["uTime"].SetValue(-Main.GlobalTimeWrappedHourly);
             UCAShaderRegister.SolarBlastShader.Parameters["uIntensity"].SetValue(0.2f);
             UCAShaderRegister.SolarBlastShader.Parameters["ubeginColor"].SetValue(Color.Orange.ToVector4() * Opacity);
@@ -108,7 +109,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.FireNoise.Value;
             Main.spriteBatch.Draw(UCATextureRegister.ShockWave.Value, DrawPos, null, Color.Orange, 0, orig, Scale * 0.6f, SpriteEffects.None, 0);
             Main.spriteBatch.Draw(UCATextureRegister.ShockWave.Value, DrawPos, null, Color.Orange, 0, orig, Scale * 0.6f, SpriteEffects.None, 0);
-            UCAUtilities.ReSetToEndShader();
+            LAPUtilities.ReSetToEndShader();
             return false;
         }
     }

@@ -2,15 +2,16 @@
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using UCA.Assets;
-using UCA.Core.ParticleSystem;
+using LAP.Core.ParticleSystem;
 using UCA.Core.Utilities;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Particiles
 {
     public class FusableBall : BaseParticle
     {
         public bool UsePreMult = false;
-        public override BlendState BlendState => BlendState.NonPremultiplied;
+        public override int UseBlendStateID => BlendStateID.NonPremult;
         public Vector2 Scale2;
         public FusableBall(Vector2 position, Vector2 velocity, Color color, int lifetime, float opacity, Vector2 scale)
         {

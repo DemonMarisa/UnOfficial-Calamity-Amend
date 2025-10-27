@@ -7,11 +7,12 @@ using UCA.Assets;
 using UCA.Content.DrawNodes;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.HealPRoj;
-using UCA.Core.AnimationHandle;
+using LAP.Core.AnimationHandle;
 using UCA.Core.BaseClass;
 using UCA.Core.Enums;
-using UCA.Core.Graphics;
+using LAP.Core.Graphics;
 using UCA.Core.Utilities;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
@@ -46,7 +47,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override void AI()
         {
-            if (Projectile.UCA().FirstFrame)
+            if (Projectile.LAP().FirstFrame)
             {
                 AnimationHelper = new AnimationHelper(3);
                 AnimationHelper.MaxAniProgress[AnimationState.Begin] = 16;
@@ -115,7 +116,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 player.UCA().TerraRayHealCD = 5;
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, player.GetPlayerToMouseVector2().RotatedByRandom(MathHelper.TwoPi) * -6f, ModContent.ProjectileType<TerraHeal>(), 0, 0, Projectile.owner);
             }
-            if (!Projectile.UCA().OnceHitEffect)
+            if (!Projectile.LAP().OnceHitEffect)
                 return;
             // 生成枝条
             Vector2 firPos = target.Center;
@@ -193,7 +194,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Projectile.ai[0]--;
             if (Projectile.ai[0] == 0 && Projectile.timeLeft > AnimationHelper.MaxAniProgress[AnimationState.End])
             {
-                Vector2 shootVel = UCAUtilities.GetVector2(Projectile.Center, Target.Center).SafeNormalize(Vector2.UnitX).RotatedByRandom(MathHelper.PiOver4);
+                Vector2 shootVel = LAPUtilities.GetVector2(Projectile.Center, Target.Center).SafeNormalize(Vector2.UnitX).RotatedByRandom(MathHelper.PiOver4);
                 Projectile.ai[0] = 64;
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + Main.rand.NextVector2Circular(64, 32), shootVel * 6, ModContent.ProjectileType<TerraLance>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
             }

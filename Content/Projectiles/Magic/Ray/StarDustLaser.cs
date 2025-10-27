@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LAP.Core.Utilities;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using Terraria;
@@ -63,7 +64,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override void AI()
         {
-            if (Projectile.UCA().FirstFrame)
+            if (Projectile.LAP().FirstFrame)
             {
                 SoundEngine.PlaySound(SoundsMenu.TerraRayLeftFire, Projectile.Center);
                 if (UseFadeIn)
@@ -88,7 +89,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Projectile.rotation = (EndPos - BeginPos).ToRotation();
             if (!BeginFadeOut)
             {
-                Color color = UCAUtilities.LerpColor(Color.DeepSkyBlue, Color.SkyBlue);
+                Color color = LAPUtilities.LerpColor(Color.DeepSkyBlue, Color.SkyBlue);
                 new TrailGlowBall(Projectile.Center + Main.rand.NextVector2Circular(9, 9), Projectile.velocity * 0.25f, color, Main.rand.Next(45, 65), 0.08f, true).Spawn();
             }
             if (Projectile.timeLeft < MaxLife / 2)
@@ -133,11 +134,11 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override bool PreDraw(ref Color lightColor)
         {
-            UCAUtilities.ReSetToBeginShader(BlendState.Additive);
+            LAPUtilities.ReSetToBeginShader(BlendState.Additive);
             DrawLaser(Color.DeepSkyBlue, 0.13f);
             DrawLaser(Color.SkyBlue, 0.06f);
             DrawLaser(Color.White, 0.03f);
-            UCAUtilities.ReSetToEndShader();
+            LAPUtilities.ReSetToEndShader();
             return false;
         }
         public void DrawLaser(Color colro, float height = 0.2f, float op = 0.1f, int Speed = -50)

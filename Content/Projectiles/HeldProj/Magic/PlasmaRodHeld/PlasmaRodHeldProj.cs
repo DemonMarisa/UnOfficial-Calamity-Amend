@@ -11,8 +11,9 @@ using UCA.Assets.Sounds;
 using UCA.Content.Particiles;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
-using UCA.Core.BaseClass;
+using LAP.Core.BaseClass;
 using UCA.Core.Utilities;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
 {
@@ -47,7 +48,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
 
         public override bool StillInUse()
         {
-            return Active && !UCAUtilities.JustPressRightClick();
+            return Active && !LAPUtilities.JustPressRightClick();
         }
 
         public override void HoldoutAI()

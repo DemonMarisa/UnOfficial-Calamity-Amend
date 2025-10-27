@@ -2,16 +2,16 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.ModLoader;
 using UCA.Assets;
-using UCA.Core.ParticleSystem;
+using LAP.Core.ParticleSystem;
 using UCA.Core.Utilities;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Particiles
 {
     public class Line : BaseParticle
     {
-        public override BlendState BlendState => BlendState.AlphaBlend;
+        public override int UseBlendStateID => BlendStateID.Alpha;
         public Vector2 TargetPos;
         public float Mult = 1;
         public bool IsIn;

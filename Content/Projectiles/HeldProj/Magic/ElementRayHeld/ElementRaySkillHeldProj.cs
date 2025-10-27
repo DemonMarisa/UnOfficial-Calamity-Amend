@@ -12,9 +12,10 @@ using UCA.Assets.Sounds;
 using UCA.Content.GUI;
 using UCA.Content.Particiles;
 using UCA.Content.Paths;
-using UCA.Core.AnimationHandle;
+using LAP.Core.AnimationHandle;
 using UCA.Core.Enums;
 using UCA.Core.Utilities;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
 {
@@ -70,7 +71,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         }
         public void Initialize()
         {
-            if (Projectile.UCA().FirstFrame)
+            if (Projectile.LAP().FirstFrame)
             {
                 animationHelper.MaxAniProgress[AnimationState.Begin] = 15;
                 animationHelper.MaxAniProgress[AnimationState.End] = 15;
@@ -138,12 +139,12 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 new CrossGlow(Owner.Center, Vector2.Zero ,Color.White, 90, 1f, 1f).Spawn();
                 for (int i = 0; i < 4; i++)
                 {
-                    Color color = UCAUtilities.LerpColor(Color.White, Color.WhiteSmoke);
+                    Color color = LAPUtilities.LerpColor(Color.White, Color.WhiteSmoke);
                     new NoiseShockRing(Projectile.Center, Vector2.Zero, color, 45, 1f, 2f + i * 0.2f, Projectile.whoAmI, Vector2.Zero, false).Spawn();
                 }
                 for (int i = 0; i < 50; i++)
                 {
-                    Color RandomColor = UCAUtilities.LerpColor(Color.White, Color.WhiteSmoke);
+                    Color RandomColor = LAPUtilities.LerpColor(Color.White, Color.WhiteSmoke);
                     new MediumGlowBall(Projectile.Center, RandomColor, 120, 0.4f, Main.rand.NextFloat(6f, 12)).Spawn();
                 }
 

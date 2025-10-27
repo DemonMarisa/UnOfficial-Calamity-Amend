@@ -9,8 +9,9 @@ using UCA.Assets;
 using UCA.Assets.Effects;
 using UCA.Content.Particiles;
 using UCA.Core.BaseClass;
-using UCA.Core.Graphics.Primitives.Trail;
+using LAP.Core.Graphics.Primitives.Trail;
 using UCA.Core.Utilities;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
@@ -48,7 +49,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override void AI()
         {
-            if (Projectile.UCA().FirstFrame)
+            if (Projectile.LAP().FirstFrame)
             {
                 if (!UseSpawnEffect)
                     return;
@@ -75,7 +76,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (!Projectile.UCA().OnceHitEffect)
+            if (!Projectile.LAP().OnceHitEffect)
                 return;
         }
         public override void OnKill(int timeLeft)
@@ -88,7 +89,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override bool PreDraw(ref Color lightColor)
         {
-            UCAUtilities.ReSetToBeginShader();
+            LAPUtilities.ReSetToBeginShader();
             Texture2D texture = UCATextureRegister.CrossGlow.Value;
             Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.Orange, 0, texture.Size() / 2, Projectile.scale * 0.2f * new Vector2(1.25f, 1f), SpriteEffects.FlipHorizontally, 0f);
             Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.OrangeRed, 0, texture.Size() / 2, Projectile.scale * 0.15f * new Vector2(1.25f, 1f), SpriteEffects.None, 0f);
@@ -98,7 +99,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             
             DrawBall(Color.Red);
             DrawBallOutLine();
-            UCAUtilities.ReSetToEndShader();
+            LAPUtilities.ReSetToEndShader();
             return false;
         }
         public void DrawTrail(int height, Color drawColor)
@@ -136,7 +137,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
         public void DrawBallOutLine()
         {
-            UCAUtilities.ReSetToBeginShader(BlendState.Additive);
+            LAPUtilities.ReSetToBeginShader(BlendState.Additive);
 
             UCAShaderRegister.PolarDistortShader.Parameters["uWidthMult"].SetValue(2f);
             UCAShaderRegister.PolarDistortShader.Parameters["uRingMult"].SetValue(1f);
@@ -153,7 +154,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.OrangeRed, 2, orig, Scale, SpriteEffects.None, 0);
             Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.Red, 2, orig, Scale, SpriteEffects.None, 0);
 
-            UCAUtilities.ReSetToEndShader();
+            LAPUtilities.ReSetToEndShader();
         }
     }
 }

@@ -14,8 +14,9 @@ using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.Magic.Ray;
-using UCA.Core.BaseClass;
+using LAP.Core.BaseClass;
 using UCA.Core.Utilities;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
 {
@@ -119,7 +120,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
             // 只在本地处理
             if (Projectile.owner == Main.myPlayer)
             {
-                if ((Main.mouseLeft || Active) && !UCAUtilities.JustPressRightClick())
+                if ((Main.mouseLeft || Active) && !LAPUtilities.JustPressRightClick())
                 {
                     if (AniProgress < InToAni)
                         AniProgress++;

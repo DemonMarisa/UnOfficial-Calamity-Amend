@@ -5,13 +5,13 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ModLoader;
 using UCA.Assets;
-using UCA.Core.ParticleSystem;
+using LAP.Core.ParticleSystem;
 
 namespace UCA.Content.Particiles
 {
     public class LilyLiquid : BaseParticle
     {
-        public override BlendState BlendState => BlendState.NonPremultiplied;
+        public override int UseBlendStateID => BlendStateID.NonPremult;
         public LilyLiquid(Vector2 position, Vector2 velocity, Color color, int lifetime, float Rot, float opacity, float scale)
         {
             Position = position;

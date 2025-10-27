@@ -14,8 +14,9 @@ using UCA.Assets.Sounds;
 using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.Magic.Ray;
-using UCA.Core.BaseClass;
+using LAP.Core.BaseClass;
 using UCA.Core.Utilities;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
 {
@@ -96,7 +97,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
             Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, baseRotation + Owner.direction * directionVerticality * 1.2f);
             if (Projectile.owner == Main.myPlayer)
             {
-                if ((Main.mouseLeft || Active) && !UCAUtilities.JustPressRightClick())
+                if ((Main.mouseLeft || Active) && !LAPUtilities.JustPressRightClick())
                 {
                     if (AniProgress < MaxAni)
                         AniProgress++;

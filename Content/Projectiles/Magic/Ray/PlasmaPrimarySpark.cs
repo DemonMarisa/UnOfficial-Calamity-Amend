@@ -1,12 +1,7 @@
-﻿using CalamityMod;
-using CalamityMod.Graphics.Primitives;
+﻿using CalamityMod.Graphics.Primitives;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -14,12 +9,10 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Sounds;
-using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Core.BaseClass;
-using UCA.Core.Graphics.Primitives.Trail;
-using UCA.Core.Utilities;
-using static System.Net.Mime.MediaTypeNames;
+using LAP.Core.Graphics.Primitives.Trail;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
@@ -68,7 +61,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
         public override void AI()
         {
-            if (Projectile.UCA().FirstFrame)
+            if (Projectile.LAP().FirstFrame)
             {
                 Projectile.rotation = Projectile.velocity.ToRotation();
                 VelocityLength = Projectile.velocity.Length();

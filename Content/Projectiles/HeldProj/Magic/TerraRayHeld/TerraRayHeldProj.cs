@@ -1,13 +1,15 @@
 ﻿using CalamityMod;
+using LAP.Core.AnimationHandle;
+using LAP.Core.BaseClass;
+using LAP.Core.Graphics;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.GameContent;
-using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets;
@@ -16,10 +18,7 @@ using UCA.Content.DrawNodes;
 using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.Magic.Ray;
-using UCA.Core.AnimationHandle;
-using UCA.Core.BaseClass;
 using UCA.Core.Enums;
-using UCA.Core.Graphics;
 using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
@@ -58,7 +57,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
 
         public override bool StillInUse()
         {
-            return !Owner.noItems && !UCAUtilities.JustPressRightClick() && !Owner.CCed && Owner.UCA().MouseLeft;
+            return !Owner.noItems && !LAPUtilities.JustPressRightClick() && !Owner.CCed && Owner.LAP().MouseLeft;
         }
 
         public override void HoldoutAI()
@@ -66,7 +65,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
         }
         public override void ExtraHoldoutAI()
         {
-            if (Projectile.UCA().FirstFrame)
+            if (Projectile.LAP().FirstFrame)
             {
                 animationHelper.MaxAniProgress[AnimationState.Begin] = 15;
             }
@@ -183,7 +182,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
             if (Projectile.owner != Main.myPlayer)
                 return;
 
-            if ((Main.mouseLeft || Active) && !UCAUtilities.JustPressRightClick())
+            if ((Main.mouseLeft || Active) && !LAPUtilities.JustPressRightClick())
             {
                 if (animationHelper.AniProgress[AnimationState.Begin] < animationHelper.MaxAniProgress[AnimationState.Begin])
                     animationHelper.AniProgress[AnimationState.Begin]++;
@@ -202,7 +201,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
 
         public override bool CanDel()
         {
-            return UseDelay <= 0 && !UCAUtilities.JustPressLeftClick();
+            return UseDelay <= 0 && !LAPUtilities.JustPressLeftClick();
         }
         public override void OnKill(int timeLeft)
         {
@@ -219,7 +218,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
 
-            UCAUtilities.FastApplyEdgeMeltsShader(Opacity, ModContent.Request<Texture2D>(Texture).Size(), Color.LimeGreen, 0.01f, 0);
+            LAPUtilities.FastApplyEdgeMeltsShader(Opacity, ModContent.Request<Texture2D>(Texture).Size(), Color.LimeGreen, 0.01f, 0);
 
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             float drawRotation = Projectile.rotation + (Projectile.spriteDirection == -1 ? MathHelper.Pi : 0f + MathHelper.PiOver4 * (Projectile.spriteDirection + 1));

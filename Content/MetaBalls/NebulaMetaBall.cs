@@ -4,9 +4,10 @@ using System.Collections.Generic;
 using Terraria;
 using UCA.Assets;
 using UCA.Assets.Effects;
-using UCA.Core.MetaBallsSystem;
+using LAP.Core.MetaBallsSystem;
 using UCA.Core.Utilities;
 using static UCA.Content.MetaBalls.StarDustMetaBall;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.MetaBalls
 {

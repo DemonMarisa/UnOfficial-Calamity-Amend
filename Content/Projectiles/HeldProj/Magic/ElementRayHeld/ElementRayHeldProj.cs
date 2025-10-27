@@ -13,9 +13,10 @@ using UCA.Assets;
 using UCA.Assets.Sounds;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.Magic.Ray;
-using UCA.Core.BaseClass;
+using LAP.Core.BaseClass;
 using UCA.Core.Utilities;
 using static System.Net.Mime.MediaTypeNames;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
 {
@@ -63,7 +64,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         }
         public override bool StillInUse()
         {
-            return !Owner.noItems && !UCAUtilities.JustPressRightClick() && !Owner.CCed && Owner.UCA().MouseLeft;
+            return !Owner.noItems && !LAPUtilities.JustPressRightClick() && !Owner.CCed && Owner.LAP().MouseLeft;
         }
 
         public override void ExtraHoldoutAI()
@@ -118,7 +119,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
 
         public override bool CanDel()
         {
-            return UseDelay <= 0 && !UCAUtilities.JustPressLeftClick();
+            return UseDelay <= 0 && !LAPUtilities.JustPressLeftClick();
         }
         public override void OnKill(int timeLeft)
         {
@@ -153,7 +154,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             {
                 Vector2 firePos = -Projectile.velocity.RotateRandom(MathHelper.PiOver4) * Main.rand.Next(350, 500);
                 Vector2 Spawn = Projectile.Center + firePos;
-                Vector2 firvel = UCAUtilities.GetVector2(Spawn, Owner.UCA().SyncedMouseWorld) * 12;
+                Vector2 firvel = LAPUtilities.GetVector2(Spawn, Owner.LAP().SyncedMouseWorld) * 12;
                 int damage = Projectile.damage;
 
                 int Type = ModContent.ProjectileType<VortexMissle>();
@@ -168,7 +169,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 {
                     Type = ModContent.ProjectileType<NebulaEnergy>();
                     Spawn = Projectile.Center + -Projectile.velocity.RotateRandom(MathHelper.TwoPi) * Main.rand.Next(100, 300);
-                    firvel = UCAUtilities.GetVector2(Owner.Center, Spawn) * 6;
+                    firvel = LAPUtilities.GetVector2(Owner.Center, Spawn) * 6;
                     damage *= 2;
                     SoundEngine.PlaySound(SoundsMenu.NightRayHit, Spawn);
                 }

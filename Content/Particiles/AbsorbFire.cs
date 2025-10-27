@@ -8,14 +8,15 @@ using System.Text;
 using System.Threading.Tasks;
 using Terraria;
 using UCA.Assets;
-using UCA.Core.ParticleSystem;
+using LAP.Core.ParticleSystem;
 using UCA.Core.Utilities;
+using LAP.Core.Utilities;
 
 namespace UCA.Content.Particiles
 {
     public class AbsorbFire : BaseParticle
     {
-        public override BlendState BlendState => BlendState.Additive;
+        public override int UseBlendStateID => BlendStateID.Additive;
         public float BeginRot = 0;
         public Vector2 Offset;
         public AbsorbFire(Vector2 position, Color color, int lifetime, float scale, float rot, float rotSpeed, int Owner, int Length, Vector2 offset)

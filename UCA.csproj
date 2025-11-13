@@ -8,6 +8,12 @@
 	  <TargetFramework>net8.0</TargetFramework>
 	</PropertyGroup>
 	<ItemGroup>
+	  <AdditionalFiles Remove="Assets\ExtraTextures\SolarBladeGlowMask\**" />
+	  <Compile Remove="Assets\ExtraTextures\SolarBladeGlowMask\**" />
+	  <EmbeddedResource Remove="Assets\ExtraTextures\SolarBladeGlowMask\**" />
+	  <None Remove="Assets\ExtraTextures\SolarBladeGlowMask\**" />
+	</ItemGroup>
+	<ItemGroup>
 	  <AdditionalFiles Remove="Assets\Effects\Overlays\EdgeMeltsShader.fx" />
 	  <AdditionalFiles Remove="Assets\Effects\Overlays\TerraRayVinesShader.fx" />
 	</ItemGroup>
@@ -16,7 +22,7 @@
 	    <HintPath>..\..\ModReader\CalamityMod\CalamityMod.dll</HintPath>
 	  </Reference>
 	  <Reference Include="LAP">
-	    <HintPath>..\..\ModReader\LAP\LAP.dll</HintPath>
+	    <HintPath>..\LAP\bin\Release\net8.0\LAP.dll</HintPath>
 	  </Reference>
 	</ItemGroup>
 	<ItemGroup>

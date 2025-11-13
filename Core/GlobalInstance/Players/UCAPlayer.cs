@@ -30,6 +30,11 @@ namespace UCA.Core.GlobalInstance.Players
         public int TerraRayUseSkillCount = 0;
 
         public int ElementalRayStates = ElementalRayState.Misc;
+
+        public int SoulPiercerSGSUse = 0;
+
+        public static int MaxShadowPlayer = 12;
+        public static bool CanShadowDoge = false;
         public override void ResetEffects()
         {
             if (NightShieldHP > NightShieldMaxHP)
@@ -70,6 +75,9 @@ namespace UCA.Core.GlobalInstance.Players
             // 控制免伤
             if (TerraRayUseSkillCount > 0)
                 TerraRayUseSkillCount--;
+            // 控制灵魂巨剑的免伤
+            if (SoulPiercerSGSUse > 0)
+                SoulPiercerSGSUse--;
         }
         public override void PostUpdateEquips()
         {
@@ -80,6 +88,7 @@ namespace UCA.Core.GlobalInstance.Players
             AddCarnageBoost();
             AddTerraBoost();
             AddElementalBoost();
+            AddShadowBoltStaffBoost();
         }
 
         public override void PostUpdate()

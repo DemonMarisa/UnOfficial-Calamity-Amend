@@ -12,7 +12,6 @@ using UCA.Content.Particiles;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
 using LAP.Core.BaseClass;
-using UCA.Core.Utilities;
 using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld

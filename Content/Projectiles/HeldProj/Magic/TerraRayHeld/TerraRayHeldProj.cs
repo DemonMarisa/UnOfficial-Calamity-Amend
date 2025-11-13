@@ -84,11 +84,11 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
             Vector2 FireOffset = new Vector2(54, 0).RotatedBy(Projectile.rotation);
             for (int i = 0; i < 2; i++)
             {
-                Vector2 firePos = -Projectile.velocity.RotateRandom(MathHelper.PiOver4) * Main.rand.Next(250, 350);
-                Vector2 firvel = Main.player[Projectile.owner].GetPlayerToMouseVector2();
+                Vector2 firePos = Projectile.Center + -Projectile.velocity.RotateRandom(MathHelper.PiOver4) * Main.rand.Next(250, 350);
+                Vector2 firvel = LAPUtilities.GetVector2(firePos, Owner.LocalMouseWorld());
 
                 if (Projectile.owner == Main.myPlayer)
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + firePos, firvel * 9, ModContent.ProjectileType<TerraLance>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 1);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), firePos, firvel * 18, ModContent.ProjectileType<TerraLance>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 1);
             }
 
             if (Projectile.owner == Main.myPlayer)
@@ -157,8 +157,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
             {
                 float offset = MathHelper.TwoPi / 30;
                 Color RandomColor = Color.Lerp(Color.LightGreen, Color.ForestGreen, Main.rand.NextFloat(0, 1));
-                Vector2 firVel = Vector2.UnitX.BetterRotatedBy(offset * i, default, 1f, 1f);
-                new MediumGlowBall(firPos, firVel.RotatedBy(rotoffset) * 1.5f, RandomColor, 60, 0, 1, 0.2f, 0).Spawn();
+                Vector2 firVel = Vector2.UnitX.BetterRotatedBy(offset * i, default, 0.75f, 1f);
+                new MediumGlowBall(firPos, firVel.RotatedBy(RotOffset + MathHelper.PiOver2) * 1.5f, RandomColor, 60, 0, 1, 0.2f, 0).Spawn();
             }
             #endregion
             #region 生成蝴蝶

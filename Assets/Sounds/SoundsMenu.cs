@@ -13,7 +13,7 @@ namespace UCA.Assets.Sounds
         #region 永夜射线
         public static SoundStyle NightRayCharge => new($"{WeaponsSoundRoute}/Magic/NightRay/MagicCharge") { Volume = 1f, Pitch = Main.rand.NextFloat(0.9f, 1.1f) };
         public static SoundStyle NightRayAttack => new($"{WeaponsSoundRoute}/Magic/NightRay/NightRayAttack") { Volume = 1f, Pitch = Main.rand.NextFloat(0.4f, 0.8f) };
-        public static SoundStyle NightRayHeavyAttack => new($"{WeaponsSoundRoute}/Magic/NightRay/NightRayHeavyAttack") { Volume = 1f, Pitch = Main.rand.NextFloat(0.3f, 1.1f) };
+        public static SoundStyle NightRayHeavyAttack => new($"{WeaponsSoundRoute}/Magic/NightRay/NightRayHeavyAttack") { Volume = 1f, Pitch = Main.rand.NextFloat(0.3f, 1.1f), MaxInstances = 0};
         public static SoundStyle NightRayHit => new($"{WeaponsSoundRoute}/Magic/NightRay/NightRayHit") { Volume = 1f, Pitch = Main.rand.NextFloat(0.4f, 0.9f), MaxInstances = 3 };
         public static SoundStyle NightRayShieldBreak => new($"{WeaponsSoundRoute}/Magic/NightRay/NightShieldBreak") { Volume = 1f, Pitch = Main.rand.NextFloat(0.4f, 0.9f) };
         public static SoundStyle NightShieldCharge => new($"{WeaponsSoundRoute}/Magic/NightRay/NightShieldCharge") { Volume = 1f, Pitch = Main.rand.NextFloat(0.4f, 0.9f) };
@@ -42,18 +42,6 @@ namespace UCA.Assets.Sounds
         public static SoundStyle TerraRayHit => new($"{WeaponsSoundRoute}/Magic/TerraRay/TerraRayHit") { Volume = 1f, Pitch = Main.rand.NextFloat(0.8f, 1.2f) };
         public static SoundStyle TerraRayLeftFire => new($"{WeaponsSoundRoute}/Magic/TerraRay/TerraRayLeftFire") { Volume = 1f, Pitch = Main.rand.NextFloat(0.2f, 0.3f) };
         public static SoundStyle TerraTreeBreak => new($"{WeaponsSoundRoute}/Magic/TerraRay/TerraTreeBreak") { Volume = 0.3f, Pitch = Main.rand.NextFloat(0.3f, 1.1f) };
-        #endregion
-        #region 杂项
-        public static SoundStyle Fire => new($"{MiscSoundRoute}/Fire") { Volume = 1f, Pitch = Main.rand.NextFloat(0.6f, 1.1f)};
-        public static SoundStyle FireBlast => new($"{MiscSoundRoute}/FireBlast") { Volume = 1f, Pitch = Main.rand.NextFloat(0.6f, 1.1f)};
-        public static SoundStyle FireBallBlast => new($"{MiscSoundRoute}/FireBallBlast") { Volume = 0.4f, Pitch = 0f, MaxInstances = 3 };
-        public static SoundStyle RiseBlast => new($"{MiscSoundRoute}/RiseBlast") { Volume = 1f, Pitch = Main.rand.NextFloat(0.6f, 1.1f) };
-        public static SoundStyle Blast01 => new($"{MiscSoundRoute}/Blast01") { Volume = 1f, Pitch = 1f};
-        public static SoundStyle Lighting => new($"{MiscSoundRoute}/Lighting") { Volume = 1f, Pitch = Main.rand.NextFloat(0.6f, 1.1f) };
-        public static SoundStyle LightingHit => new($"{MiscSoundRoute}/LightingHit") { Volume = 1f, Pitch = Main.rand.NextFloat(0.6f, 1.1f), MaxInstances = 0 };
-        public static SoundStyle SmallLighting => new($"{MiscSoundRoute}/SmallLighting") { Volume = 1f, Pitch  = Main.rand.NextFloat(0.6f, 1.1f) };
-        public static SoundStyle FastLighting => new($"{MiscSoundRoute}/FastLighting") { Volume = 1f, Pitch = Main.rand.NextFloat(0.6f, 1.1f), MaxInstances = 0 };
-        public static SoundStyle MetalHit => new($"{MiscSoundRoute}/MetalHit") { Volume = 1f, Pitch = Main.rand.NextFloat(0.6f, 1.1f) };
         #endregion
         #region 马格诺利亚
         public static SoundStyle MAGNOLIASPRelease => new($"{MAGNOLIASoundRoute}/MAGNOLIASPRelease") { Volume = 0.4f, Pitch = Main.rand.NextFloat(0.1f, 0.2f) };

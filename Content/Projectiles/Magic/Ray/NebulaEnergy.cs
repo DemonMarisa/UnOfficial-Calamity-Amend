@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
 using UCA.Assets;
+using UCA.Content.Configs;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Core.BaseClass;
@@ -76,27 +77,29 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 {
                     NebulaMetaBall.SpawnParticle(Projectile.Center + Projectile.velocity / DustCount * i, Vector2.Zero, 0.08f, 45);
                 }
-
-                Vector2 SpawnPos = Projectile.Center + Vector2.UnitX.RotatedBy(Time * 0.1f * Filp) * 5;
-                for (int i = 0; i < 3; i++)
+                if (!UCAConfig.Instance.PerformanceMode)
                 {
-                    Vector2 finalPos = Vector2.Lerp(OldPos, SpawnPos, i / 3f);
-                    NebulaMetaBall.SpawnParticle(finalPos, Vector2.Zero, 0.05f, 45);
-                }
-                SpawnPos = Projectile.Center + Vector2.UnitX.RotatedBy(Time * 0.1f * Filp) * 10;
+                    Vector2 SpawnPos = Projectile.Center + Vector2.UnitX.RotatedBy(Time * 0.1f * Filp) * 5;
+                    for (int i = 0; i < 3; i++)
+                    {
+                        Vector2 finalPos = Vector2.Lerp(OldPos, SpawnPos, i / 3f);
+                        NebulaMetaBall.SpawnParticle(finalPos, Vector2.Zero, 0.05f, 45);
+                    }
+                    SpawnPos = Projectile.Center + Vector2.UnitX.RotatedBy(Time * 0.1f * Filp) * 10;
 
-                for (int i = 0; i < 3; i++)
-                {
-                    Vector2 finalPos = Vector2.Lerp(OldPos2, SpawnPos, i / 3f);
-                    NebulaMetaBall.SpawnParticle(finalPos, Vector2.Zero, 0.05f, 45);
+                    for (int i = 0; i < 3; i++)
+                    {
+                        Vector2 finalPos = Vector2.Lerp(OldPos2, SpawnPos, i / 3f);
+                        NebulaMetaBall.SpawnParticle(finalPos, Vector2.Zero, 0.05f, 45);
+                    }
+                    OldPos = SpawnPos;
+                    OldPos2 = SpawnPos;
                 }
-                OldPos = SpawnPos;
-                OldPos2 = SpawnPos;
             }
 
             if (Projectile.timeLeft % 20 == 0)
             {
-                if (LAPUtilities.OutOffScreen(Projectile.Center))
+                if (LAPUtilities.OutOffScreen(Projectile.Center) || UCAConfig.Instance.PerformanceMode)
                     return;
                 if (Projectile.velocity.Length() > 1)
                 {             

@@ -7,6 +7,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Sounds;
+using UCA.Content.Configs;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld;
@@ -60,9 +61,17 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 SoundEngine.PlaySound(SoundsMenu.NightRayAttack, Projectile.Center);
                 Projectile.netUpdate = true;
             }
+            Vector2 Offset;
+            if (UCAConfig.Instance.PerformanceMode)
+            {
+                DustCount = 4;
+                Offset = new Vector2(Main.rand.Next(-1, 1), Main.rand.Next(-1, 1));
+            }
+            else
+                Offset = new Vector2(Main.rand.Next(-2, 2), Main.rand.Next(-2, 2));
             for (int i = 0; i < DustCount; i++)
             {
-                ShadowMetaBall.SpawnParticle(Projectile.Center + Projectile.velocity / DustCount * i + new Vector2(Main.rand.Next(-2, 2), Main.rand.Next(-2, 2)),
+                ShadowMetaBall.SpawnParticle(Projectile.Center + Projectile.velocity / DustCount * i + Offset,
                     new Vector2(1f, 0).RotatedBy(Main.rand.NextFloat(-6, 6)) * Main.rand.NextFloat(0, 1),
                     Main.rand.NextFloat(0.10f, 0.15f) * ScaleMult);
             }
@@ -77,13 +86,19 @@ namespace UCA.Content.Projectiles.Magic.Ray
                     float DistanceToNPC = Vector2.Distance(Projectile.Center, npc.Center);
                     float PredictMult = DistanceToNPC / 48;
                     Vector2 direction = (npc.Center + npc.velocity * PredictMult - Projectile.Center).SafeNormalize(Vector2.Zero) * 3;
-                    int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, direction, ModContent.ProjectileType<NightEnergySplit>(), Projectile.damage / 2, Projectile.knockBack, Projectile.owner, 0.6f);
-                    Main.projectile[p].penetrate = 1;
+                    if (Projectile.owner == Main.myPlayer)
+                    {
+                        int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, direction, ModContent.ProjectileType<NightEnergySplit>(), Projectile.damage / 2, Projectile.knockBack, Projectile.owner, 0.6f);
+                        Main.projectile[p].penetrate = 1;
+                    }
                 }
                 else
                 {
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2 * (Main.rand.NextBool() ? 1 : -1)),
-                        ModContent.ProjectileType<NightEnergySplit>(), Projectile.damage / 2, Projectile.knockBack, Projectile.owner, 0.6f);
+                    if (Projectile.owner == Main.myPlayer)
+                    {
+                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2 * (Main.rand.NextBool() ? 1 : -1)),
+                            ModContent.ProjectileType<NightEnergySplit>(), Projectile.damage / 2, Projectile.knockBack, Projectile.owner, 0.6f);
+                    }
                 }
             }
         }

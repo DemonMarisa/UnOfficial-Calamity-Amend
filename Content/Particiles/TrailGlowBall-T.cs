@@ -40,12 +40,23 @@ namespace UCA.Content.Particiles
             if (TSpeed != 0)
             {
                 Vector2 idealVelocity = -Vector2.UnitY.RotatedBy(MathHelper.Lerp(TToward - TAngle, TToward + TAngle, (float)Math.Sin(Time / 36f + SeedOffset) * 0.5f + 0.5f)) * TSpeed;
-                float movementInterpolant = MathHelper.Lerp(0.01f, 0.25f, Utils.GetLerpValue(0, Lifetime / 2, Time, true));
+                float movementInterpolant = MathHelper.Lerp(0.01f, 0.1f, Utils.GetLerpValue(0, Lifetime, Time, true));
                 Velocity = Vector2.Lerp(Velocity, idealVelocity, movementInterpolant);
                 Velocity = Velocity.SafeNormalize(-Vector2.UnitY) * TSpeed;
             }
 
             Scale = MathHelper.Lerp(BeginScale, 0f, EasingHelper.EaseOutCubic(LifetimeRatio));
+
+            OldPos.Add(Position);
+            if (OldPos.Count > 8)
+                OldPos.RemoveAt(0);
+
+            Position += Velocity;
+
+            OldPos.Add(Position);
+            if (OldPos.Count > 8)
+                OldPos.RemoveAt(0);
+            Position += Velocity;
 
             OldPos.Add(Position);
             if (OldPos.Count > 8)

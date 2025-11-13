@@ -36,8 +36,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             animationHelper.MaxAniProgress[AnimationState.Begin] = 120;
             animationHelper.MaxAniProgress[AnimationState.Middle] = 5;
             animationHelper.MaxAniProgress[AnimationState.End] = 120;
-            SoundEngine.PlaySound(SoundsMenu.MAGNOLIASPRelease, Projectile.Center);
-            SoundEngine.PlaySound(SoundsMenu.SoulStreamCharge, Projectile.Center);
+            SoundEngine.PlaySound(SoundsMenu.MAGNOLIASPRelease);
+            SoundEngine.PlaySound(SoundsMenu.SoulStreamCharge);
         }
 
         public void UpdateStarDustStream()
@@ -108,7 +108,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             Projectile.Center += new Vector2(baseRotation, 0).RotatedBy(BeginRot) * -25 * Owner.direction;
             if (CurAni == MaxAni)
             {
-                SoundEngine.PlaySound(SoundsMenu.SoulStreamFire, Projectile.Center);
+                SoundEngine.PlaySound(SoundsMenu.SoulStreamFire);
                 Vector2 offset = new Vector2(64, 0).RotatedBy(Projectile.rotation);
                 for (int i = 0; i < 100; i++)
                 {

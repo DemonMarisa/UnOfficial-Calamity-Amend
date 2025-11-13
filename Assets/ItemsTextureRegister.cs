@@ -23,6 +23,7 @@ namespace UCA.Assets
         public static Asset<Texture2D> ElementalRayOutLine { get; private set; }
         public static Asset<Texture2D> ShadowBoltStaffLong { get; private set; }
         public static Asset<Texture2D> ShadowBoltStaffOrb { get; private set; }
+        public static Asset<Texture2D> ShadowBoltStaffOverLay { get; private set; }
         public void LoadWeaponsTexture()
         {
             MainElementalFragments = ModContent.Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/MainElementalFragments");
@@ -36,6 +37,7 @@ namespace UCA.Assets
             ElementalRayOutLine = ModContent.Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/ElementalRayOutLine");
             ShadowBoltStaffLong = ModContent.Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/ShadowBoltStaffLong");
             ShadowBoltStaffOrb = ModContent.Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/ShadowBoltStaffOrb");
+            ShadowBoltStaffOverLay = ModContent.Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/ShadowBoltStaffOverLay");
         }
         public void UnLoadWeaponsTexture()
         {
@@ -50,6 +52,7 @@ namespace UCA.Assets
             ElementalRayOutLine = null;
             ShadowBoltStaffLong = null;
             ShadowBoltStaffOrb = null;
+            ShadowBoltStaffOverLay = null;
         }
     }
 }

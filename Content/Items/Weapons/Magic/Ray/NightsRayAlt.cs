@@ -1,5 +1,7 @@
 ﻿using CalamityMod;
 using CalamityMod.Items.Weapons.Magic;
+using LAP.Core.Enums;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
@@ -13,6 +15,7 @@ using UCA.Common.Misc;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld;
 using UCA.Content.UCACooldowns;
+using UCA.Content.UCARecipeGroups;
 using UCA.Core.BaseClass;
 using UCA.Core.GlobalInstance.Players;
 using UCA.Core.Keybinds;
@@ -49,8 +52,8 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
 
             Item.noUseGraphic = true;
             Item.channel = true;
-            Item.UCA().UseWeaponSkill = true;
-            Item.UCA().DrawSmallIcon = true;
+            Item.LAP().UseWeaponSkill = true;
+            Item.LAP().DrawUCASmallIcon = true;
         }
         public override bool CanUseItem(Player player)
         {
@@ -100,7 +103,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             CreateRecipe().
                 AddIngredient(ItemID.Vilethorn).
                 AddIngredient(ItemID.MagicMissile).
-                AddIngredient(ModContent.ItemType<PlasmaRod>()).
+                AddRecipeGroup(UCARecipeGroup.PlasmaRodGroup).
                 AddIngredient(ItemID.ThunderStaff).
                 AddTile(TileID.DemonAltar).
                 Register();

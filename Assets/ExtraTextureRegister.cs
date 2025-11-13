@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System.Collections.Generic;
 using Terraria.ModLoader;
+using static CalamityMod.Skies.ExoMechsSky;
 
 namespace UCA.Assets
 {
@@ -35,13 +36,23 @@ namespace UCA.Assets
         public static Asset<Texture2D> SoftEdgeCircle { get; private set; }
         public static Asset<Texture2D> BloomLine { get; private set; }
         public static Asset<Texture2D> SolarBladeGlowMask_Blue { get; private set; }
+        public static Asset<Texture2D> SolarBladeGlowMask_Grey { get; private set; }
         public static Asset<Texture2D> LaserHighContrast { get; private set; }
+        public static Asset<Texture2D> CosmicBG { get; private set; }
+        public static Asset<Texture2D> SlashLine01 { get; private set; }
+        public static Asset<Texture2D> SlashLine02 { get; private set; }
+        public static Asset<Texture2D> SlashLine03 { get; private set; }
+        public static Asset<Texture2D> SoulGreatSword { get; private set; }
+        public static Asset<Texture2D> SoulGreatSword_Grey { get; private set; }
+        public static Asset<Texture2D> HarshNoise { get; private set; }
+        public static Asset<Texture2D> OpticalFlaresLine { get; private set; }
         public static void LoadExtraTextures()
         {
             Noise = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/Noise");
             ShadowNebulaBackGround = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/MetaBall/ShadowNebula");
             NebulaBG = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/MetaBall/NebulaBG");
             StarDustBG = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/MetaBall/StarDustBG");
+            CosmicBG = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/MetaBall/CosmicBG");
 
             NightRayShield = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/NightShield");
             SpreadLine = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/SpreadLine");
@@ -59,12 +70,21 @@ namespace UCA.Assets
             ShockWave = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/ShockWave");
             FireStrike = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/FireStrike");
             BloomShockwave = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/BloomShockwave");
+            Lightning = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/Lightning");
             FusableBall = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/FusableBall");
             BloomRing = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/BloomRing");
             SoftEdgeCircle = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/SoftEdgeCircle");
             BloomLine = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/BloomLine");
             SolarBladeGlowMask_Blue = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/SolarBladeGlowMask_Blue");
+            SolarBladeGlowMask_Grey = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/SolarBladeGlowMask_Grey");
             LaserHighContrast = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/LaserHighContrast");
+            SlashLine01 = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/SlashLine01");
+            SlashLine02 = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/SlashLine02");
+            SlashLine03 = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/SlashLine03");
+            SoulGreatSword = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/SoulGreatSword");
+            SoulGreatSword_Grey = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/SoulGreatSword_Grey");
+            HarshNoise = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/HarshNoise");
+            OpticalFlaresLine = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/OpticalFlaresLine");
         }
         public static void UnLoadExtraTextures()
         {
@@ -89,12 +109,20 @@ namespace UCA.Assets
             ShockWave = null;
             FireStrike = null;
             BloomShockwave = null;
+            Lightning = null;
             FusableBall = null;
             BloomRing = null;
             SoftEdgeCircle = null;
             BloomLine = null;
             SolarBladeGlowMask_Blue = null;
             LaserHighContrast = null;
+            SlashLine01 = null;
+            SlashLine02 = null;
+            SlashLine03 = null;
+            SoulGreatSword = null;
+            SoulGreatSword_Grey = null;
+            HarshNoise = null;
+            OpticalFlaresLine = null;
         }
     }
 }

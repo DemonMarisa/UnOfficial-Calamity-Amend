@@ -82,7 +82,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public void TrackTarget()
         {
-            Target = Projectile.FindClosestTarget(900, false, false);
+            Target = Projectile.FindClosestTarget(2000, false, false);
             if (Target is not null)
             {
                 Vector2 home = Target.Center - Projectile.Center;

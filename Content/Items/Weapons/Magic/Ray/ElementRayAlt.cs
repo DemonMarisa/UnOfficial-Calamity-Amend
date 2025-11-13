@@ -1,6 +1,7 @@
 ﻿using CalamityMod;
 using CalamityMod.Items.Materials;
 using CalamityMod.Items.Weapons.Magic;
+using LAP.Core.Enums;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Mono.Cecil;
@@ -18,6 +19,7 @@ using UCA.Content.Paths;
 using UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld;
 using UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld;
 using UCA.Core.BaseClass;
+using UCA.Core.Enums;
 using UCA.Core.Keybinds;
 using UCA.Core.Utilities;
 using static System.Net.Mime.MediaTypeNames;
@@ -52,8 +54,14 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
 
             Item.noUseGraphic = true;
             Item.channel = true;
-            Item.UCA().UseWeaponSkill = true;
-            Item.UCA().DrawSmallIcon = true;
+
+            Item.LAP().UseWeaponSkill = true;
+            Item.LAP().DrawUCASmallIcon = true;
+
+            Item.LAP().UseCICalStatInflation = true;
+            Item.LAP().WeaponTier = AllWeaponTier.PostMoonLord;
+            Item.LAP().UseCustomStatInflationMult = true;
+            Item.LAP().StatInflationMult = 1f;
         }
         public override bool CanUseItem( Player player)
         {
@@ -77,7 +85,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
                         if (player.LAP().NameIsMAGNOLIA)
                             Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<ElementRaySpecialHeldProj>(), damage, knockback, player.whoAmI, player.UCA().ElementalRayStates, 1);
                         else
-                            Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<ElementRaySpecialHeldProj>(), damage, knockback, player.whoAmI, player.UCA().ElementalRayStates);
+                            Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<ElementRaySpecialHeldProj>(), damage, knockback, player.whoAmI, player.UCA().ElementalRayStates, 0);
                     }
                 }
             }

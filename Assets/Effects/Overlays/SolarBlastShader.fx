@@ -3,7 +3,7 @@ sampler InPutTexture : register(s0);
 sampler uDisplacementSampler : register(s1); // 我们的噪声置换图
 float uTime; // 时间变量，用于让火焰动起来
 float uIntensity; // 扭曲强度
-float uOpacity; // 扭曲强度
+float uOpacity; // 透明度
 float4 ubeginColor; // 染色颜色
 float4 uendColor; // 染色颜色
 bool UseColor; // 是否染色

@@ -7,6 +7,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Sounds;
+using UCA.Content.Configs;
 using UCA.Content.MetaBalls;
 using UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld;
 using UCA.Core.BaseClass;
@@ -52,9 +53,19 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 NightRayHeldProj.GenUnDeathSign(Projectile.Center, Projectile.ai[0]);
                 Projectile.netUpdate = true;
             }
+
+            Vector2 Offset;
+            if (UCAConfig.Instance.PerformanceMode)
+            {
+                DustCount = 4;
+                Offset = new Vector2(Main.rand.Next(-1, 1), Main.rand.Next(-1, 1));
+            }
+            else
+                Offset = new Vector2(Main.rand.Next(-2, 2), Main.rand.Next(-2, 2));
+
             for (int i = 0; i < DustCount; i++)
             {
-                ShadowMetaBall.SpawnParticle(Projectile.Center + Projectile.velocity / DustCount * i + new Vector2(Main.rand.Next(-2, 2), Main.rand.Next(-2, 2)),
+                ShadowMetaBall.SpawnParticle(Projectile.Center + Projectile.velocity / DustCount * i + Offset,
                     new Vector2(1f, 0).RotatedBy(Main.rand.NextFloat(-6, 6)) * Main.rand.NextFloat(0, 1),
                     Main.rand.NextFloat(0.10f, 0.15f) * ScaleMult);
             }

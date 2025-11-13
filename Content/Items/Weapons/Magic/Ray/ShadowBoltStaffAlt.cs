@@ -1,4 +1,8 @@
 ﻿using CalamityMod;
+using CalamityMod.Items.Materials;
+using LAP.Core.Enums;
+using LAP.Core.MiscDate;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
@@ -6,12 +10,12 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Common.Misc;
-using UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld;
 using UCA.Content.Projectiles.HeldProj.Magic.ShadowBoltStaffHeld;
+using UCA.Content.UCACooldowns;
 using UCA.Core.BaseClass;
-using LAP.Core.MiscDate;
+using UCA.Core.Enums;
+using UCA.Core.Keybinds;
 using UCA.Core.Utilities;
-using LAP.Core.Utilities;
 
 namespace UCA.Content.Items.Weapons.Magic.Ray
 {
@@ -23,7 +27,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
         }
         public override void SetDefaults()
         {
-            Item.damage = 1200;
+            Item.damage = 560;
             Item.DamageType = DamageClass.Magic;
             Item.mana = 10;
             Item.width = 44;
@@ -43,8 +47,11 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             Item.noUseGraphic = true;
             Item.channel = true;
 
-            Item.UCA().UseWeaponSkill = true;
-            Item.UCA().DrawSmallIcon = true;
+            Item.LAP().UseWeaponSkill = true;
+            Item.LAP().DrawUCASmallIcon = true;
+
+            Item.LAP().UseCICalStatInflation = true;
+            Item.LAP().WeaponTier = AllWeaponTier.PostPolterghast;
         }
         public override bool AltFunctionUse(Player player)
         {
@@ -58,7 +65,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
         {
             if (player.altFunctionUse == 2)
             {
-                Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<ShadowBoltStaffHeldProj>(), damage * 5, knockback, player.whoAmI);
+                Projectile.NewProjectile(source, position, Vector2.Zero, ModContent.ProjectileType<ShadowBoltStaffSpecialHeldProj>(), damage, knockback, player.whoAmI);
             }
             else
                 Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI);
@@ -66,30 +73,36 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
         }
         public override void WeaponSkill(Player player)
         {
-            if (!player.HasProj<PlasmaRodHeldProj>() && !player.HasProj<PlasmaRodHeldProjBlast>() && !player.HasProj<PlasmaRodSkillProj>())
+            if (!player.HasProj<ShadowBoltStaffSkillHeldProj>() && !player.HasProj<ShadowBoltStaffHeldProj>() && !player.HasProj<ShadowBoltStaffSpecialHeldProj>())
             {
-                if (player.CheckMana(player.ActiveItem(), (int)(50 * player.manaCost), true, false))
+                if (player.HasCooldown(ShadowBotlStaffCount.ID))
+                    return;
+
+                if (player.CheckMana(player.ActiveItem(), (int)(200 * player.manaCost), true, false))
                 {
                     float kb = player.GetWeaponKnockback(Item);
                     int Damage = player.GetWeaponDamage(Item);
-                    int Index = Projectile.NewProjectile(player.GetSource_FromThis(), player.Center, Vector2.Zero, ModContent.ProjectileType<PlasmaRodSkillProj>(), Damage * 10, kb, player.whoAmI);
-                    LAPUtilities.SendProjSync(Index);
+                    Projectile.NewProjectile(player.GetSource_FromThis(), player.Center, Vector2.Zero, ModContent.ProjectileType<ShadowBoltStaffSkillHeldProj>(), Damage, kb, player.whoAmI);
                 }
             }
         }
 
+        public override void UpdateHoldItem(Player player)
+        {
+        }
+
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            // tooltips.IntegrateHotkey(UCAKeybind.WeaponSkillHotKey);
+            tooltips.IntegrateHotkey(UCAKeybind.WeaponSkillHotKey);
         }
 
         public override void AddRecipes()
         {
             CreateRecipe().
-                AddIngredient(ItemID.Amethyst).
-                AddIngredient(ItemID.Glass, 2).
-                AddRecipeGroup(VanillaRecipeGroups.Wood, 12).
-                AddTile(TileID.WorkBenches).
+                AddIngredient(ItemID.ShadowbeamStaff).
+                AddIngredient<ArmoredShell>(3).
+                AddIngredient<RuinousSoul>(2).
+                AddTile(TileID.LunarCraftingStation).
                 Register();
         }
     }

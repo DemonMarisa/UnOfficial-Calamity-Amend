@@ -7,6 +7,7 @@ using Terraria.Audio;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Sounds;
+using UCA.Content.Configs;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.HealPRoj;
@@ -19,15 +20,13 @@ namespace UCA.Content.Projectiles.Magic.Ray
     {
         public override string Texture => UCATextureRegister.InvisibleTexturePath;
         public bool CanHit = true;
-        public int MaxLife = 90;
         public float DustCount = 5f;
-        public int Time;
+        public int MaxLife = 90;
         public int Filp;
         public float Vel;
         public Vector2 OldPos;
         public Vector2 OldPos2;
         public Vector2 OldStarPos;
-        public bool CanHomeIn => Projectile.ai[0] == 0;
         public bool PlayerHitEffect => Projectile.ai[1] != 0;
         public override void SetDefaults()
         {
@@ -44,12 +43,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override bool? CanHitNPC(NPC target)
         {
-            if (!CanHomeIn)
-                return base.CanHitNPC(target);
-            if (Time < 30)
-                return false;
-            else
-                return base.CanHitNPC(target);
+            return base.CanHitNPC(target);
         }
         public override void AI()
         {
@@ -70,31 +64,44 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 Vel = Projectile.velocity.Length();
             }
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
-            Time++;
-            if (!LAPUtilities.OutOffScreen(Projectile.Center, 0.2f))
+
+            if (!LAPUtilities.OutOffScreen(Projectile.Center, 0.5f))
             {
+                if (UCAConfig.Instance.PerformanceMode)
+                    DustCount = 3f;
                 for (int i = 0; i < DustCount; i++)
                 {
                     NebulaMetaBall.SpawnParticle(Projectile.Center + Projectile.velocity / DustCount * i, Vector2.Zero, 0.1f, 45);
                 }
                 Vector2 offset = Main.rand.NextVector2Circular(6, 6);
-                new Fire(Projectile.Center + offset, Projectile.velocity * 0.3f, Color.Violet, 30, Main.rand.NextFloat(MathHelper.TwoPi), 1, 0.2f).Spawn();
+                if (!UCAConfig.Instance.PerformanceMode)
+                    new Fire(Projectile.Center + offset, Projectile.velocity * 0.3f, Color.Violet, 30, Main.rand.NextFloat(MathHelper.TwoPi), 1, 0.2f).Spawn();
+                else
+                    new Fire(Projectile.Center + offset, Projectile.velocity * 0.3f, Color.Violet, 15, Main.rand.NextFloat(MathHelper.TwoPi), 1, 0.2f).Spawn();
             }
 
             if (Projectile.timeLeft % 15 == 0)
             {
-                if (LAPUtilities.OutOffScreen(Projectile.Center, 0.2f))
+                if (LAPUtilities.OutOffScreen(Projectile.Center, 0.5f))
                     return;
 
                 if (Projectile.velocity.Length() > 1)
                 {
                     Vector2 GenPosOffset = Main.rand.NextVector2Circular(45, 45);
 
-                    Color color = Color.Lerp(Color.DarkViolet, Color.Violet, Main.rand.NextFloat());
-                    new CrossGlow(Projectile.Center + GenPosOffset, Vector2.Zero, color, 60, 1f, 0.1f, false).Spawn();
+                    if (!UCAConfig.Instance.PerformanceMode)
+                    {
+                        Color color = Color.Lerp(Color.DarkViolet, Color.Violet, Main.rand.NextFloat());
+                        new CrossGlow(Projectile.Center + GenPosOffset, Vector2.Zero, color, 60, 1f, 0.1f, false).Spawn();
+                    }
 
                     if (OldStarPos != Vector2.Zero)
-                        UCAUtilities.GenStarLine(OldStarPos, Projectile.Center + GenPosOffset, 50, Color.Violet);
+                    {
+                        if (!UCAConfig.Instance.PerformanceMode)
+                            UCAUtilities.GenStarLine(OldStarPos, Projectile.Center + GenPosOffset, 50, Color.Violet);
+                        else
+                            UCAUtilities.GenStarLine(OldStarPos, Projectile.Center + GenPosOffset, 25, Color.Violet);
+                    }
 
                     OldStarPos = Projectile.Center + GenPosOffset;
                 }
@@ -110,10 +117,11 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 SoundEngine.PlaySound(SoundsMenu.MetalHit, Projectile.Center);
                 Projectile.ai[1] = 0;
             }
+
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (Projectile.LAP().OnceHitEffect && !CanHomeIn)
+            if (Projectile.LAP().OnceHitEffect)
             {
                 Projectile.ai[1]++;
                 Projectile.netUpdate = true;
@@ -130,7 +138,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 NebulaMetaBall.SpawnParticle(Projectile.Center, spawnVec, 0.2f, 45);
             }
 
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 8; i++)
             {
                 Vector2 spawnVec = Vector2.UnitX.RotateRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.6f, 1f) * 12;
                 Color color = LAPUtilities.LerpColor(Color.Violet, Color.LightPink);
@@ -144,10 +152,12 @@ namespace UCA.Content.Projectiles.Magic.Ray
         public override bool PreDraw(ref Color lightColor)
         {
             LAPUtilities.ReSetToBeginShader();
-            Texture2D texture = UCATextureRegister.CrossGlow.Value;
-            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.Violet, 0, texture.Size() / 2, Projectile.scale * 0.2f * new Vector2(1f, 1f), SpriteEffects.FlipHorizontally, 0f);
-            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.DarkViolet, 0, texture.Size() / 2, Projectile.scale * 0.15f * new Vector2(1f, 1f), SpriteEffects.None, 0f);
-
+            if (!UCAConfig.Instance.PerformanceMode)
+            {
+                Texture2D texture = UCATextureRegister.CrossGlow.Value;
+                Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.Violet, 0, texture.Size() / 2, Projectile.scale * 0.2f * new Vector2(1f, 1f), SpriteEffects.FlipHorizontally, 0f);
+                Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.DarkViolet, 0, texture.Size() / 2, Projectile.scale * 0.15f * new Vector2(1f, 1f), SpriteEffects.None, 0f);
+            }
             Texture2D Crystal = UCATextureRegister.Crystal.Value;
             Main.spriteBatch.Draw(Crystal, Projectile.Center - Main.screenPosition, null, Color.Violet, Projectile.rotation, Crystal.Size() / 2, Projectile.scale * 0.2f, SpriteEffects.FlipHorizontally, 0f);
             LAPUtilities.ReSetToEndShader();

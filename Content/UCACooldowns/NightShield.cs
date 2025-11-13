@@ -9,6 +9,7 @@ using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Core.GlobalInstance.Players;
 using UCA.Core.Utilities;
 
@@ -20,8 +21,8 @@ namespace UCA.Content.UCACooldowns
         private static Color ringColorLerpEnd = Color.DarkViolet;
         private float AdjustedCompletion => instance.timeLeft / (float)UCAPlayer.NightShieldMaxHP;
         public static new string ID => "UCANightShield";
-        public override bool CanTickDown => instance.player.HeldItem.type != ModContent.ItemType<NightsRay>() || instance.timeLeft <= 0;
-        public override bool ShouldDisplay => instance.player.HeldItem.type == ModContent.ItemType<NightsRay>();
+        public override bool CanTickDown => instance.player.HeldItem.type != ModContent.ItemType<NightsRayAlt>() || instance.timeLeft <= 0;
+        public override bool ShouldDisplay => instance.player.HeldItem.type == ModContent.ItemType<NightsRayAlt>();
         public override LocalizedText DisplayName => Language.GetOrRegister($"Mods.UCA.Cooldowns.{ID}");
         public override string Texture => "UCA/Content/UCACooldowns/NightShield";
         public override string OutlineTexture => "UCA/Content/UCACooldowns/NightShield_OutLine";

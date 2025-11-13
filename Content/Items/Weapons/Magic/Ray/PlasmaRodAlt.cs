@@ -45,8 +45,8 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             Item.noUseGraphic = true;
             Item.channel = true;
 
-            Item.UCA().UseWeaponSkill = true;
-            Item.UCA().DrawSmallIcon = true;
+            Item.LAP().UseWeaponSkill = true;
+            Item.LAP().DrawUCASmallIcon = true;
         }
         public override bool AltFunctionUse(Player player)
         {
@@ -80,7 +80,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
         {
             if (!player.HasProj<PlasmaRodHeldProj>() && !player.HasProj<PlasmaRodHeldProjBlast>() && !player.HasProj<PlasmaRodSkillProj>())
             {
-                if (player.CheckMana(player.ActiveItem(), (int)(50 * player.manaCost), true, false))
+                if (player.CheckMana(player.ActiveItem(), (int)(20 * player.manaCost), true, false))
                 {
                     if (PlasmaRodFilp == 1)
                     {

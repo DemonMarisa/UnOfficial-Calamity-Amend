@@ -11,22 +11,14 @@ namespace UCA.Content.MetaBalls
 {
     public class StarDustMetaBall : BaseMetaBall
     {
-        public class StarDustParticle
+        public class StarDustParticle(Vector2 center, Vector2 velocity, float scale, int maxTime)
         {
-            public float Scale;
-            public float BeginScale;
-            public Vector2 Velocity;
-            public Vector2 Center;
+            public float Scale = scale;
+            public float BeginScale = scale;
+            public Vector2 Velocity = velocity;
+            public Vector2 Center = center;
             public int Time;
-            public int MaxTime;
-            public StarDustParticle(Vector2 center, Vector2 velocity, float scale, int maxTime)
-            {
-                Center = center;
-                Velocity = velocity;
-                Scale = scale;
-                BeginScale = scale;
-                MaxTime = maxTime;           
-            }
+            public int MaxTime = maxTime;
 
             public void Update()
             {

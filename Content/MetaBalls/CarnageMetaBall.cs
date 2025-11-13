@@ -5,7 +5,6 @@ using Terraria;
 using UCA.Assets;
 using UCA.Assets.Effects;
 using LAP.Core.MetaBallsSystem;
-using static UCA.Content.MetaBalls.ShadowMetaBall;
 
 namespace UCA.Content.MetaBalls
 {

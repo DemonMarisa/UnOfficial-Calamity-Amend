@@ -14,7 +14,6 @@ namespace UCA.Content.Projectiles.HealPRoj
     public class NebulaHeal : BaseHealProj
     {
         public override int HealAmt => Main.rand.Next(6, 11);
-        public float DustCount = 5f;
         public int Time;
         public Vector2 OldPos;
         public Vector2 OldPos2;
@@ -22,26 +21,7 @@ namespace UCA.Content.Projectiles.HealPRoj
         {
             if (!LAPUtilities.OutOffScreen(Projectile.Center))
             {
-                for (int i = 0; i < DustCount; i++)
-                {
-                    NebulaMetaBall.SpawnParticle(Projectile.Center + Projectile.velocity / DustCount * i, Vector2.Zero, 0.08f, 45);
-                }
-
-                Vector2 SpawnPos = Projectile.Center + Vector2.UnitX.RotatedBy(Time * 0.1f) * 5;
-                for (int i = 0; i < 3; i++)
-                {
-                    Vector2 finalPos = Vector2.Lerp(OldPos, SpawnPos, i / 3f);
-                    NebulaMetaBall.SpawnParticle(finalPos, Vector2.Zero, 0.05f, 45);
-                }
-                SpawnPos = Projectile.Center + Vector2.UnitX.RotatedBy(Time * 0.1f) * 10;
-
-                for (int i = 0; i < 3; i++)
-                {
-                    Vector2 finalPos = Vector2.Lerp(OldPos2, SpawnPos, i / 3f);
-                    NebulaMetaBall.SpawnParticle(finalPos, Vector2.Zero, 0.05f, 45);
-                }
-                OldPos = SpawnPos;
-                OldPos2 = SpawnPos;
+                NebulaMetaBall.SpawnParticle(Projectile.Center, Vector2.Zero, 0.15f, 45);
             }
         }
 

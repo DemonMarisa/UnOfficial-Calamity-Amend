@@ -15,18 +15,9 @@ UCAConfig: {
 		Label: Screen Shake Strength Percentage
 		Tooltip: ""
 	}
-}
 
-LAPConfig: {
-	DisplayName: Lilac Arcane Pack Config
-
-	ParticleLimit: {
-		Label: Particle Limit
-		Tooltip: ""
-	}
-
-	ScreenShakeStrength: {
-		Label: Screen Shake Strength Percentage
-		Tooltip: ""
+	PerformanceMode: {
+		Label: Performance Mode
+		Tooltip: Turning this on will reduce most visual effects.
 	}
 }

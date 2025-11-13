@@ -1,4 +1,6 @@
 ﻿using CalamityMod;
+using LAP.Core.Graphics.Primitives.Trail;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
@@ -7,11 +9,10 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
+using UCA.Content.Configs;
 using UCA.Content.Particiles;
 using UCA.Core.BaseClass;
-using LAP.Core.Graphics.Primitives.Trail;
 using UCA.Core.Utilities;
-using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
@@ -70,7 +71,10 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
             Vector2 firVel = Vector2.UnitX.RotatedBy(Projectile.rotation) * 2f;
             Color DrawColor = Color.Lerp(Color.Orange, Color.OrangeRed, Main.rand.NextFloat());
-            new Fire(Projectile.Center, firVel, DrawColor, Main.rand.Next(30, 45), Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.2f).Spawn();
+            int timeleft = Main.rand.Next(20, 30);
+            if (UCAConfig.Instance.PerformanceMode)
+                timeleft = Main.rand.Next(10, 20);
+            new Fire(Projectile.Center, firVel, DrawColor, timeleft, Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.2f).Spawn();
 
             CalamityUtils.HomeInOnNPC(Projectile, true, 2500f, 12f, 100f);
         }
@@ -81,7 +85,10 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override void OnKill(int timeLeft)
         {
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<SolarBlast>(), Projectile.damage, Projectile.knockBack, Projectile.owner, -35, -0.7f, -4f);
+            if (UCAConfig.Instance.PerformanceMode)
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<SolarBlast>(), Projectile.damage, Projectile.knockBack, Projectile.owner, -45, -0.8f, -6f);
+            else
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<SolarBlast>(), Projectile.damage, Projectile.knockBack, Projectile.owner, -40, -0.7f, -4f);
         }
         public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
         {
@@ -93,10 +100,17 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Texture2D texture = UCATextureRegister.CrossGlow.Value;
             Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.Orange, 0, texture.Size() / 2, Projectile.scale * 0.2f * new Vector2(1.25f, 1f), SpriteEffects.FlipHorizontally, 0f);
             Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.OrangeRed, 0, texture.Size() / 2, Projectile.scale * 0.15f * new Vector2(1.25f, 1f), SpriteEffects.None, 0f);
-            DrawTrail(36, Color.OrangeRed);
-            DrawTrail(24, Color.Orange);
-            DrawTrail(12, Color.White);
-            
+            if (UCAConfig.Instance.PerformanceMode)
+            {
+                DrawTrail(16, Color.Orange);
+                DrawTrail(6, Color.White);
+            }
+            else
+            {
+                DrawTrail(36, Color.OrangeRed);
+                DrawTrail(24, Color.Orange);
+                DrawTrail(12, Color.White);
+            }
             DrawBall(Color.Red);
             DrawBallOutLine();
             LAPUtilities.ReSetToEndShader();

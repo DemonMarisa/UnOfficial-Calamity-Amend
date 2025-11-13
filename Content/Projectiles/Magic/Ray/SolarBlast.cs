@@ -11,6 +11,7 @@ using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
 using UCA.Assets.Sounds;
+using UCA.Content.Configs;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld;
 using UCA.Core.BaseClass;
@@ -70,7 +71,8 @@ namespace UCA.Content.Projectiles.Magic.Ray
                     float rot = MathHelper.TwoPi / strikeCount;
                     new FireStrike(Projectile.Center, Vector2.Zero, Color.White, 30, 1f, rot * j + Main.rand.NextFloat(-0.3f, 0.3f), Main.rand.NextFloat(0.3f, 0.35f) * scale).SpawnToPriority();
                 }
-                new CrossGlow(Projectile.Center, Vector2.Zero, Color.Orange, 60, 1f, 0.4f).Spawn();
+                if (!UCAConfig.Instance.PerformanceMode)
+                    new CrossGlow(Projectile.Center, Vector2.Zero, Color.Orange, 60, 1f, 0.4f).Spawn();
                 Projectile.netUpdate = true;
             }
 
@@ -98,7 +100,8 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Vector2 DrawPos = Projectile.Center - Main.screenPosition;
             Vector2 orig = new Vector2(UCATextureRegister.ShockWave.Size().X / 2, UCATextureRegister.ShockWave.Size().Y / 2 - 40);
             Main.spriteBatch.Draw(UCATextureRegister.ShockWave.Value, DrawPos, null, Color.Orange, 0, orig, Scale * 0.8f, SpriteEffects.None, 0);
-            Main.spriteBatch.Draw(UCATextureRegister.ShockWave.Value, DrawPos, null, Color.Orange, 0, orig, Scale * 0.8f, SpriteEffects.None, 0);
+            if (!UCAConfig.Instance.PerformanceMode)
+                Main.spriteBatch.Draw(UCATextureRegister.ShockWave.Value, DrawPos, null, Color.Orange, 0, orig, Scale * 0.8f, SpriteEffects.None, 0);
 
             UCAShaderRegister.SolarBlastShader.Parameters["uTime"].SetValue(-Main.GlobalTimeWrappedHourly);
             UCAShaderRegister.SolarBlastShader.Parameters["uIntensity"].SetValue(0.2f);
@@ -108,7 +111,8 @@ namespace UCA.Content.Projectiles.Magic.Ray
             UCAShaderRegister.SolarBlastShader.CurrentTechnique.Passes[0].Apply();
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.FireNoise.Value;
             Main.spriteBatch.Draw(UCATextureRegister.ShockWave.Value, DrawPos, null, Color.Orange, 0, orig, Scale * 0.6f, SpriteEffects.None, 0);
-            Main.spriteBatch.Draw(UCATextureRegister.ShockWave.Value, DrawPos, null, Color.Orange, 0, orig, Scale * 0.6f, SpriteEffects.None, 0);
+            if (!UCAConfig.Instance.PerformanceMode)
+                Main.spriteBatch.Draw(UCATextureRegister.ShockWave.Value, DrawPos, null, Color.Orange, 0, orig, Scale * 0.6f, SpriteEffects.None, 0);
             LAPUtilities.ReSetToEndShader();
             return false;
         }

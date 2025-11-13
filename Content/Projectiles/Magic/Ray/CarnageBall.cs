@@ -4,11 +4,11 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
 using UCA.Assets;
+using UCA.Content.Configs;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.HealPRoj;
 using UCA.Core.BaseClass;
-using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
@@ -36,13 +36,25 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
         public override void AI()
         {
-            CarnageMetaBall.SpawnParticle(Projectile.Center,
-                Projectile.rotation.ToRotationVector2(),
-                0.15f,
-                Projectile.rotation,
-                true);
-            
-            if (Projectile.timeLeft % 3 == 0)
+            if (UCAConfig.Instance.PerformanceMode)
+            {
+                CarnageMetaBall.SpawnParticle(Projectile.Center, Projectile.rotation.ToRotationVector2(), 0.1f, Projectile.rotation, true);
+            }
+            else
+            {
+                CarnageMetaBall.SpawnParticle(Projectile.Center, Projectile.rotation.ToRotationVector2(), 0.15f, Projectile.rotation, true);
+            }
+
+            int SpawnRate = 3;
+            int CircleSpawnRate = 25;
+            int dustCounts = 15;
+            if (UCAConfig.Instance.PerformanceMode)
+            {
+                CircleSpawnRate = 40;
+                SpawnRate = 6;
+                dustCounts = 10;
+            }
+            if (Projectile.timeLeft % SpawnRate == 0)
             {
                 Color color = Main.rand.NextBool(3) ? Color.Black : Color.DarkRed;
                 new LilyLiquid(Projectile.Center, Projectile.velocity * Main.rand.NextFloat(0.1f, 1.1f), color, Main.rand.Next(60, 90), 0, 1, 1f).Spawn();
@@ -57,9 +69,8 @@ namespace UCA.Content.Projectiles.Magic.Ray
             else
             {
                 #region 生成圆环
-                if (Projectile.timeLeft % 25 == 0)
+                if (Projectile.timeLeft % CircleSpawnRate == 0)
                 {
-                    int dustCounts = 15;
                     float rotArg = 360f / dustCounts;
                     for (int i = 0; i < dustCounts; i++)
                     {

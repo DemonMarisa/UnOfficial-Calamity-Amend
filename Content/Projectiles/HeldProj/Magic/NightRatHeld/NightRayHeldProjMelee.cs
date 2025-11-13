@@ -11,6 +11,7 @@ using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets;
@@ -91,7 +92,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
             if (AniProgress < InToAni)
                 return;
 
-            if (Owner.miscCounter % 4 == 0)
+            if (Owner.UCA().NightShieldHP != UCAPlayer.NightShieldMaxHP && Owner.miscCounter % 4 == 0)
             {
                 if (CanGiveBoost = Owner.CheckMana(Owner.ActiveItem(), 1, true, false))
                     Owner.UCA().NightShieldHP += 2;
@@ -302,8 +303,11 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
             Vector2 forcefieldStart = Projectile.Center + Projectile.rotation.ToRotationVector2() * 70;
             foreach (Projectile projectile in Main.ActiveProjectiles)
             {
-                // 需要：是敌对弹幕，活跃，伤害不超过100，不是无限穿，可以被反弹
-                if (!projectile.hostile || !projectile.active || projectile.reflected || projectile.UCA().HasThroughNightShield)
+                // 需要：是敌对弹幕，活跃，伤害不超过100，不是无限穿
+                if (!projectile.hostile || !projectile.active || projectile.UCA().HasThroughNightShield || Projectile.velocity == Vector2.Zero)
+                    continue;
+
+                if (ProjectileID.Sets.DrawScreenCheckFluff[projectile.type] > 500)
                     continue;
 
                 bool movingTowardsForcefield = Vector2.Dot(projectile.velocity, Projectile.rotation.ToRotationVector2()) < 0f;

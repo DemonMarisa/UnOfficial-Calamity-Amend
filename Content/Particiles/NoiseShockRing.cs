@@ -1,16 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Terraria;
-using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
 using LAP.Core.ParticleSystem;
-using UCA.Core.Utilities;
 using LAP.Core.Utilities;
 
 namespace UCA.Content.Particiles
@@ -56,6 +49,9 @@ namespace UCA.Content.Particiles
         }
         public override void Update()
         {
+            if (Index == -1)
+                Follow = false;
+
             if (Follow)
                 Position = Father.Center + Offset.RotatedBy(Father.rotation);
 

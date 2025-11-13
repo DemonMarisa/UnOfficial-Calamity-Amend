@@ -63,14 +63,13 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ShadowBoltStaffHeld
         {
             if (UseDelay <= 0 && Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.HeldItem.mana * Owner.manaCost), true, false))
             {
-                SoundEngine.PlaySound(SoundsMenu.PlasmaRodAttack, Projectile.Center);
                 FirePorj();
                 UseDelay = Owner.HeldItem.useTime;
             }
         }
         public void FirePorj()
         {
-            SoundEngine.PlaySound(SoundID.Item91, Projectile.Center);
+            SoundEngine.PlaySound(SoundsMenu.PlasmaRodAttack with { Pitch = 0f}, Projectile.Center);
             Vector2 FireOffset = new Vector2(54, 0).RotatedBy(Projectile.rotation);
             for (int i = 0; i < 35; i++)
             {
@@ -150,7 +149,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ShadowBoltStaffHeld
             SpriteEffects flipSprite = Projectile.spriteDirection * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             // spriteBatch会自动把textures0设置为当前使用的材质，所以需要你手动改一下
             Main.spriteBatch.Draw(DrawTexture, drawPosition, null, Color.White, 0, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
-
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Items.Weapons.Magic;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
@@ -8,10 +9,10 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Common.Misc;
 using UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld;
+using UCA.Content.UCARecipeGroups;
 using UCA.Core.BaseClass;
 using UCA.Core.Keybinds;
 using UCA.Core.Utilities;
-using LAP.Core.Utilities;
 
 namespace UCA.Content.Items.Weapons.Magic.Ray
 {
@@ -44,8 +45,8 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
 
             Item.noUseGraphic = true;
             Item.channel = true;
-            Item.UCA().UseWeaponSkill = true;
-            Item.UCA().DrawSmallIcon = true;
+            Item.LAP().UseWeaponSkill = true;
+            Item.LAP().DrawUCASmallIcon = true;
         }
 
         public override bool AltFunctionUse(Player player)
@@ -107,7 +108,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             CreateRecipe().
                 AddIngredient(ItemID.CrimsonRod).
                 AddIngredient(ItemID.MagicMissile).
-                AddIngredient(ModContent.ItemType<PlasmaRod>()).
+                AddRecipeGroup(UCARecipeGroup.PlasmaRodGroup).
                 AddIngredient(ItemID.ThunderStaff).
                 AddTile(TileID.DemonAltar).
                 Register();

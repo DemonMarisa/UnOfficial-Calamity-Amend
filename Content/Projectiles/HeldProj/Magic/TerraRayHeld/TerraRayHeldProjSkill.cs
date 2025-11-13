@@ -8,7 +8,6 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using Terraria.WorldBuilding;
 using UCA.Assets;
 using UCA.Assets.Sounds;
 using UCA.Content.DrawNodes;
@@ -20,7 +19,6 @@ using LAP.Core.AnimationHandle;
 using UCA.Core.Enums;
 using LAP.Core.Graphics;
 using UCA.Core.Utilities;
-using static System.Net.Mime.MediaTypeNames;
 using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
@@ -64,6 +62,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
             Owner.itemAnimation = 2;
             Owner.ChangeDir(Owner.LocalMouseWorld().X > Owner.Center.X ? 1 : -1);
             Owner.heldProj = Projectile.whoAmI;
+            if (!Owner.active || Owner.dead)
+                Projectile.Kill();
             // 基础信息
             Projectile.velocity = Vector2.Zero;
             Projectile.timeLeft = 2;

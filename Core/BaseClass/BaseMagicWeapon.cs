@@ -27,6 +27,7 @@ namespace UCA.Core.BaseClass
                 }
                 WeaponSkill(player);
             }
+
             UpdateHoldItem(player);
         }
 

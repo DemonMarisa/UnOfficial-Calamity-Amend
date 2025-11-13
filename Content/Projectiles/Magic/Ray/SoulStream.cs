@@ -6,6 +6,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets;
+using UCA.Content.Configs;
 using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld;
@@ -92,7 +93,9 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Projectile.timeLeft = 2;
             Projectile.scale = MathHelper.Lerp(Projectile.scale, 1.2f, 0.08f);
             #region 生成组成主光束的粒子
-
+            int Timeleft5 = 5;
+            if (UCAConfig.Instance.PerformanceMode)
+                Timeleft5 = 3;
             for (int i = 0; i < LaserLength; i += 40)
             {
                 Vector2 Spawn = Projectile.Center + Projectile.velocity * i + Main.rand.NextVector2Circular(36, 36);
@@ -109,7 +112,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                     continue;
 
                 Color color = LAPUtilities.LerpColor(Color.White, Color.White);
-                new FusableBall(Spawn, Projectile.velocity * 3, color, 5, 1f, new Vector2(1f, 0.08f)).Spawn();
+                new FusableBall(Spawn, Projectile.velocity * 3, color, Timeleft5, 1f, new Vector2(1f, 0.08f)).Spawn();
             }
             for (int i = 0; i < LaserLength; i += 20)
             {
@@ -117,7 +120,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 if (LAPUtilities.OutOffScreen(Spawn, CutMult))
                     continue;
                 Color color = LAPUtilities.LerpColor(Color.White, Color.White);
-                new FusableBall(Spawn, Projectile.velocity * 3, color, 5, 1f, new Vector2(1f, 0.08f)).Spawn();
+                new FusableBall(Spawn, Projectile.velocity * 3, color, Timeleft5, 1f, new Vector2(1f, 0.08f)).Spawn();
             }
             for (int i = 0; i < LaserLength; i += 20)
             {
@@ -125,7 +128,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 if (LAPUtilities.OutOffScreen(Spawn, CutMult))
                     continue;
                 Color color = LAPUtilities.LerpColor(Color.Black, Color.DarkBlue);
-                new FusableBall(Spawn, Projectile.velocity * 3, color, 5, 1f, new Vector2(1f, 0.3f)).SpawnToPriority();
+                new FusableBall(Spawn, Projectile.velocity * 3, color, Timeleft5, 1f, new Vector2(1f, 0.3f)).SpawnToPriority();
             }
             for (int i = 0; i < LaserLength; i += 40)
             {
@@ -137,7 +140,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             }
             #endregion
             #region 生成边缘的粒子
-            for (int i = 0; i < LaserLength; i += 600)
+            for (int i = 0; i < LaserLength; i += 400)
             {
                 Vector2 Spawn = Projectile.Center + Projectile.velocity * i - Projectile.velocity * 200 + Main.rand.NextVector2Circular(256, 32).RotatedBy(Projectile.rotation) + new Vector2(0, 36);
                 if (LAPUtilities.OutOffScreen(Spawn, CutMult))
@@ -145,7 +148,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 Color color = LAPUtilities.LerpColor(Color.White, Color.SkyBlue);
                 new FusableBall(Spawn, Projectile.velocity * 12, color, Main.rand.Next(60, 90), 1f, new Vector2(1f, 0.1f)).Spawn();
             }
-            for (int i = 0; i < LaserLength; i += 600)
+            for (int i = 0; i < LaserLength; i += 400)
             {
                 Vector2 Spawn = Projectile.Center + Projectile.velocity * i - Projectile.velocity * 200 + Main.rand.NextVector2Circular(256, 32).RotatedBy(Projectile.rotation) + new Vector2(0, -36);
                 if (LAPUtilities.OutOffScreen(Spawn, CutMult))
@@ -153,6 +156,8 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 Color color = LAPUtilities.LerpColor(Color.White, Color.SkyBlue);
                 new FusableBall(Spawn, Projectile.velocity * 12, color, Main.rand.Next(60, 90), 1f, new Vector2(1f, 0.1f)).Spawn();
             }
+            if (UCAConfig.Instance.PerformanceMode)
+                return;
             if (Time > 5)
             {
                 for (int i = 0; i < LaserLength + 200; i += 200)

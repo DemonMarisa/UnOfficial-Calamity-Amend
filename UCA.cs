@@ -22,6 +22,7 @@ namespace UCA
         MethodInfo preDraw2 = typeof(BrimstoneBarrageOld).GetMethod(nameof(BrimstoneBarrageOld.PreDraw));
         MonoModHooks.Add(preDraw2, PreDraw2_Hook);
 		*/
+        public Mod CalamityInheritance = null;
         public override void HandlePacket(BinaryReader reader, int whoAmI)
         {
             UCANetCode.HandleMouseWorldPacket(reader, whoAmI);
@@ -29,11 +30,16 @@ namespace UCA
         public override void Load()
         {
             Instance = this;
+
+            CalamityInheritance = null;
+            ModLoader.TryGetMod("CalamityInheritance", out CalamityInheritance);
         }
 
         public override void Unload()
         {
             Instance = null;
+
+            CalamityInheritance = null;
         }
     }
 }

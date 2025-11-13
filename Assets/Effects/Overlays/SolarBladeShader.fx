@@ -6,6 +6,7 @@ float uIntensity; // 扭曲强度
 float4 ubeginColor; // 染色颜色
 float4 uendColor; // 染色颜色
 bool UseColor; // 是否染色
+float Opacity; // 透明度
 
 float4 SolarBladeFunction(float2 coords : TEXCOORD0) : COLOR0
 {
@@ -27,9 +28,9 @@ float4 SolarBladeFunction(float2 coords : TEXCOORD0) : COLOR0
     float4 OutPutColor = lerp(ubeginColor, uendColor, originalColor.a);
     
     if (UseColor)
-        return float4(OutPutColor.rgb, originalColor.a);
+        return float4(OutPutColor.rgb, originalColor.a) * Opacity;
     else
-        return originalColor;
+        return originalColor * Opacity;
 }
 
 // 最终通道

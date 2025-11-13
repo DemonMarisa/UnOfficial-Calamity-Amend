@@ -24,8 +24,9 @@ namespace UCA.Content.DrawNodes
 
             Lifetime = life;
             Opacity = 1f;
+            
         }
-
+        
         public List<Vector2> OldPos = [];
         public List<float> OldRot = [];
         public Vector2 oldDustPos;

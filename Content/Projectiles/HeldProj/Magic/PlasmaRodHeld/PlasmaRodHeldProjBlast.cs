@@ -80,7 +80,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
             Owner.ChangeDir(OwnerDir);
             Owner.heldProj = Projectile.whoAmI;
             Projectile.Center = Owner.Center;
-
+            if (!Owner.active || Owner.dead)
+                Projectile.Kill();
             // 基础信息
             Projectile.velocity = Projectile.rotation.ToRotationVector2();
             Projectile.timeLeft = 2;
@@ -199,7 +200,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
                     Projectile.ai[1] = 1;
                 }
                 animationHelper = new AnimationHelper();
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, Type, Projectile.damage, Projectile.knockBack, Projectile.owner, 0, Projectile.ai[1]);
+                if (Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.HeldItem.mana * Owner.manaCost), true, false))
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, Type, Projectile.damage, Projectile.knockBack, Projectile.owner, 0, Projectile.ai[1]);
             }
         }
     }

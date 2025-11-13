@@ -1,10 +1,13 @@
 ﻿using CalamityMod;
 using CalamityMod.Graphics.Primitives;
+using CalamityMod.Physics;
+using LAP.Core.Graphics.Primitives.Trail;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.Localization;
@@ -16,13 +19,20 @@ using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Misc.Test
 {
-    public class TestProj : ModProjectile, ILocalizedModType
+    public class TestProj : ModProjectile, ILocalizedModType, IPixelatedPrimitiveRenderer
     {
         public override LocalizedText DisplayName => CalamityUtils.GetItemName<Sword>();
 
         public override string Texture => UCATextureRegister.InvisibleTexturePath;
         public Player Owner => Main.player[Projectile.owner];
-        public List<Vector2> pos = [];
+        /// <summary>
+        /// 绳子的起点
+        /// </summary>
+        public Vector2 RopStartPoint => Projectile.Center + Projectile.velocity * Projectile.scale * Projectile.width * 0.34f;
+        /// <summary>
+        /// 绳子实例
+        /// </summary>
+        public RopeHandle? Rope;
         public override void SetDefaults()
         {
             Projectile.width = 8;
@@ -36,50 +46,76 @@ namespace UCA.Content.Projectiles.Misc.Test
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 10 * (Projectile.extraUpdates + 1);
         }
-
         public override void OnSpawn(IEntitySource source)
         {
-            Projectile.ai[0] = Main.rand.NextFloat(3, 5);
-            Projectile.ai[2] = Main.rand.NextFloat(24f, 36f);
-            Main.NewText("OnSpawn");
+            InitializeRope();
         }
-
+        public void InitializeRope()
+        {
+            // 多少个体节
+            int ribbonSegmentCount = 12;
+            // 长度
+            float Length = 70;
+            // 体节之间的距离
+            float distancePerSegment = Length / ribbonSegmentCount;
+            RopeSettings ribbonSettings = new RopeSettings()
+            {
+                StartIsFixed = true,
+                Mass = 0.72f,
+                RespondToEntityMovement = true,
+                RespondToWind = true
+            };
+            Vector2 gravity = Vector2.UnitY;
+            Rope = ModContent.GetInstance<RopeManagerSystem>().RequestNew(RopStartPoint, Projectile.Center, ribbonSegmentCount, distancePerSegment, gravity, ribbonSettings, 25);  }
         public override void AI()
         {
             Projectile.timeLeft = 2;
             Projectile.Center = Main.MouseWorld;
+            UpdateRibbon();
         }
-
+        /// <summary>
+        ///     Updates a given ribbon.
+        /// </summary>
+        public void UpdateRibbon()
+        {
+            // Ensure that the handle is properly initialized before proceeding any further.
+            if (Rope is not RopeHandle rope)
+                return;
+            rope.Start = RopStartPoint;
+        }
         public override void OnKill(int timeLeft)
         {
-            base.OnKill(timeLeft);
+            Rope?.Dispose();
         }
-
-        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        public void RenderPixelatedPrimitives(SpriteBatch spriteBatch, PixelationPrimitiveLayer layer)
         {
-            base.OnHitNPC(target, hit, damageDone);
+            if (Rope is not RopeHandle rope)
+                return;
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null);
+
+            Texture2D texture = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/HammerRope").Value;
+            Vector2[] ribbonPositions = rope.Positions.ToArray();
+            DrawSetting drawSetting = new(texture, true, true);
+            List<TrailDrawDate> trailDrawDate = [];
+            int positionCount = ribbonPositions.Length;
+            for (int i = 0; i < positionCount - 1; i++)
+            {
+                // 这个顶点的旋转，从这个位置指向下一个位置
+                Vector2 Position = ribbonPositions[i];
+                Vector2 NextPosition = ribbonPositions[i + 1];
+                float rot = (NextPosition - Position).ToRotation();
+                trailDrawDate.Add(new(Position, Color.White, new Vector2(0, 3), rot));
+            }
+            TrailRender.RenderTrail(trailDrawDate.ToArray(), drawSetting);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null);
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
-            LAPUtilities.ReSetToBeginShader(BlendState.Additive);
-
-            UCAShaderRegister.PolarDistortShader.Parameters["uWidthMult"].SetValue(2f);
-            UCAShaderRegister.PolarDistortShader.Parameters["uRingMult"].SetValue(1f);
-            UCAShaderRegister.PolarDistortShader.Parameters["uYTime"].SetValue(Main.GlobalTimeWrappedHourly * 0.1f);
-            UCAShaderRegister.PolarDistortShader.CurrentTechnique.Passes[0].Apply();
-            Main.instance.GraphicsDevice.Textures[1] = UCATextureRegister.BloomShockwave.Value;
-
-            Texture2D texture = UCATextureRegister.MiscNoise01.Value;
-            Vector2 orig = texture.Size() / 2;
-            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.Orange, 0, orig, 1f, SpriteEffects.None, 0);
-            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.Orange, 0, orig, 1f, SpriteEffects.None, 0);
-            texture = UCATextureRegister.MiscNoise02.Value;
-            orig = texture.Size() / 2;
-            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.OrangeRed, 2, orig, 1f, SpriteEffects.None, 0);
-            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.Red, 2, orig, 1f, SpriteEffects.None, 0);
-
-            LAPUtilities.ReSetToEndShader();
+            
             return false;
         }
     }

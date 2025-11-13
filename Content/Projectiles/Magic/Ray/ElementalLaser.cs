@@ -257,12 +257,10 @@ namespace UCA.Content.Projectiles.Magic.Ray
             if (Projectile.LAP().OnceHitEffect)
             {
                 int NebulaEnergyCount = 6;
-                if (WeaponStates == ElementalRayState.Solar)
-                    NebulaEnergyCount = 4;
+                if (WeaponStates == ElementalRayState.Solar || WeaponStates == ElementalRayState.Vortex)
+                    NebulaEnergyCount = 0;
                 if (WeaponStates == ElementalRayState.Nebula)
                     NebulaEnergyCount = 10;
-                if (WeaponStates == ElementalRayState.Vortex)
-                    NebulaEnergyCount = 3;
                  
                 int Type = ModContent.ProjectileType<NebulaEnergy>();
                 if (WeaponStates == ElementalRayState.Solar)

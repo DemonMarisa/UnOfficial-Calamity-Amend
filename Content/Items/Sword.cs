@@ -1,9 +1,18 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Mono.Cecil;
+using System;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using UCA.Content.DrawNodes;
+using UCA.Content.MetaBalls;
 using UCA.Content.Projectiles.Magic.Ray;
+using UCA.Content.Projectiles.Misc.Test;
+using UCA.Content.UCACooldowns;
+using UCA.Core.Utilities;
+using static System.Net.Mime.MediaTypeNames;
 namespace UCA.Content.Items
 { 
 	// This is a basic item template.
@@ -33,7 +42,6 @@ namespace UCA.Content.Items
         {
             return true;
         }
-
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             /*
@@ -43,8 +51,27 @@ namespace UCA.Content.Items
                 Projectile.NewProjectile(source, position, velocity.RotatedBy(MathHelper.ToRadians(-15) + rotAdd * i) * Main.rand.NextFloat(1f, 2f) * 0.5f, ModContent.ProjectileType<NebulaEnegry>(), damage, knockback, player.whoAmI);
             }
             */
-            Projectile.NewProjectile(source, position, velocity * 0.25f, ModContent.ProjectileType<CarnageBall>(), damage, knockback, player.whoAmI);
+            Projectile.NewProjectile(source, position, velocity * 0.5f, ModContent.ProjectileType<NebulaCrystal>(), damage, knockback, player.whoAmI);
             return false;
+        }
+        public static void GenUnDeathSign(Vector2 firePos, float speedMult = 1)
+        {
+            // Éú³ÉÐÇÐÎ
+            for (int i = 0; i < 145f; i++)
+            {
+                float offsetAngle = MathHelper.TwoPi * i / 145f;
+
+                // Parametric equations for an asteroid.
+                float unitOffsetX = (float)Math.Pow(Math.Cos(offsetAngle), 5D) * 1.5f;
+                float unitOffsetY = (float)Math.Pow(Math.Sin(offsetAngle), 5D);
+
+                Vector2 puffDustVelocity = new Vector2(unitOffsetX, unitOffsetY) * 7f * speedMult;
+
+                CosmicMetaBall.SpawnCircleParticle(firePos, puffDustVelocity, 0.13f, 90);
+            }
+        }
+        public static void GenStar()
+        {
         }
         public override bool? UseItem(Player player)
         {

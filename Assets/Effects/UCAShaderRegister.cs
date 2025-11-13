@@ -21,6 +21,7 @@ namespace UCA.Assets.Effects
         public static Effect FlowWithAShader;
         public static Effect PolarDistortShader;
         public static Effect PolarDistortShaderWithR;
+        public static Effect SoulGreatSwordFlowShader;
         public override void Load()
         {
             if (Main.dedServ)
@@ -60,6 +61,9 @@ namespace UCA.Assets.Effects
 
             PolarDistortShaderWithR = LoadShader("PolarDistortShaderWithR");
             RegisterMiscShader(PolarDistortShaderWithR, "UCAPolarDistortPass", "PolarDistortShaderWithR");
+
+            SoulGreatSwordFlowShader = LoadShader("SoulGreatSwordFlowShader");
+            RegisterMiscShader(SoulGreatSwordFlowShader, "UCASGSShaderPass", "SoulGreatSwordFlowShader");
         }
 
         public static void RegisterMiscShader(Effect shader, string passName, string registrationName)

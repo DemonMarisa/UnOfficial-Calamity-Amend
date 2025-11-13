@@ -49,7 +49,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             {
                 Projectile.Kill();
             }
-            if (Time % 4 == 0 && !animationHelper.HasFinish[AnimationState.Middle])
+            if (Time % 12 == 0 && !animationHelper.HasFinish[AnimationState.Middle])
             {
                 SoundStyle sound = SoundsMenu.LightingHit;
                 sound.Volume = 0.2f;
@@ -107,7 +107,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         {
             int MaxAni = animationHelper.MaxAniProgress[AnimationState.End];
             ref float CurAni = ref animationHelper.Auxfloat[AnimationState.End];
-            float easedProgress = EasingHelper.EaseInCubic(CurAni / (float)MaxAni);
+            float easedProgress = EasingHelper.EaseInCubic(CurAni / MaxAni);
             float baseRotation = animationHelper.UpDateAngle(-60, -60, Owner.direction, easedProgress);
 
             if (CurAni == 0)

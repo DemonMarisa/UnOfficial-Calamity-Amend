@@ -1,34 +1,25 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LAP.Core.MetaBallsSystem;
+using LAP.Core.Utilities;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
+
 using UCA.Assets;
 using UCA.Assets.Effects;
-using LAP.Core.MetaBallsSystem;
-using UCA.Core.Utilities;
-using static UCA.Content.MetaBalls.StarDustMetaBall;
-using LAP.Core.Utilities;
 
 namespace UCA.Content.MetaBalls
 {
     public class NebulaMetaBall : BaseMetaBall
     {
-        public class NebulaParticle
+        public class NebulaParticle(Vector2 center, Vector2 velocity, float scale, int maxTime)
         {
-            public float Scale;
-            public float BeginScale;
-            public Vector2 Velocity;
-            public Vector2 Center;
+            public float Scale = scale;
+            public float BeginScale = scale;
+            public Vector2 Velocity = velocity;
+            public Vector2 Center = center;
             public int Time;
-            public int MaxTime;
-            public NebulaParticle(Vector2 center, Vector2 velocity, float scale, int maxTime)
-            {
-                Center = center;
-                Velocity = velocity;
-                Scale = scale;
-                BeginScale = scale;
-                MaxTime = maxTime;
-            }
+            public int MaxTime = maxTime;
 
             public void Update()
             {
@@ -39,7 +30,7 @@ namespace UCA.Content.MetaBalls
             }
         }
         public override Color EdgeColor => Color.Violet;
-        public static List<StarDustParticle> Particles = [];
+        public static List<NebulaParticle> Particles = [];
         public override Texture2D BgTexture => UCATextureRegister.NebulaBG.Value;
         public static void SpawnParticle(Vector2 position, Vector2 velocity, float size, int maxTime) => Particles.Add(new(position, velocity, size, maxTime));
         public override bool Active()

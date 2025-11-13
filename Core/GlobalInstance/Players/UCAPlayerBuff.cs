@@ -13,6 +13,7 @@ namespace UCA.Core.GlobalInstance.Players
 {
     public partial class UCAPlayer : ModPlayer
     {
+        #region 永夜射线
         public void AddNightBoost()
         {
             if (Player.HasCooldown(NightBoost.ID))
@@ -37,7 +38,8 @@ namespace UCA.Core.GlobalInstance.Players
                 }
             }
         }
-
+        #endregion
+        #region 屠杀射线
         public void AddCarnageBoost()
         {
             if (Player.HasCooldown(CarnageBoost.ID))
@@ -56,7 +58,8 @@ namespace UCA.Core.GlobalInstance.Players
                 }
             }
         }
-
+        #endregion
+        #region 泰拉射线
         public void AddTerraBoost()
         {
             if (Player.HasCooldown(TerraBoost.ID))
@@ -81,7 +84,8 @@ namespace UCA.Core.GlobalInstance.Players
                 }
             }
         }
-
+        #endregion
+        #region 元素射线
         public void AddElementalBoost()
         {
             if (Player.HasCooldown(MiscBoost.ID))
@@ -144,5 +148,21 @@ namespace UCA.Core.GlobalInstance.Players
                 }
             }
         }
+        #endregion
+        #region 影流法杖
+        public void AddShadowBoltStaffBoost()
+        {
+            if (Player.HasCooldown(ShadowBotlStaffDodge.ID))
+            {
+                for (int i = 0; i < 2; i++)
+                {
+                    Vector2 GenPos = Player.Center + new Vector2(Main.rand.Next(-16, 16), Main.rand.Next(-24, 24));
+                    Color Firecolor = LAPUtilities.LerpColor(Color.Black, Color.DarkViolet);
+                    Vector2 fireVel = Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.2f, 1.2f);
+                    new Fire(GenPos, fireVel, Firecolor, 90, Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.2f).SpawnToPriorityNonPreMult();
+                }
+            }
+        }
+        #endregion
     }
 }

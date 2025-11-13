@@ -58,7 +58,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
         {
             Owner.itemTime = 2;
             Owner.itemAnimation = 2;
-
+            if (!Owner.active || Owner.dead)
+                Projectile.Kill();
             Owner.ChangeDir(Owner.LocalMouseWorld().X > Owner.Center.X ? 1 : -1);
             float TargetRot = (Owner.Center - Projectile.Center).ToRotation() + MathHelper.PiOver2;
             Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, TargetRot + Owner.direction * 0.1f * 1.5f);

@@ -1,4 +1,7 @@
 ﻿using CalamityMod;
+using LAP.Core.Graphics;
+using LAP.Core.Graphics.Primitives.Trail;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
@@ -10,14 +13,12 @@ using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
 using UCA.Assets.Sounds;
+using UCA.Content.Configs;
 using UCA.Content.DrawNodes;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld;
 using UCA.Core.BaseClass;
-using LAP.Core.Graphics;
-using LAP.Core.Graphics.Primitives.Trail;
 using UCA.Core.Utilities;
-using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
@@ -69,23 +70,25 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
         public override void AI()
         {
+            Projectile.rotation = Projectile.velocity.ToRotation();
             if (Projectile.LAP().FirstFrame)
             {
                 SoundEngine.PlaySound(SoundsMenu.TerraLanceShoot, Projectile.Center);
                 float XScale = Main.rand.NextFloat(6, 12);
                 float Height = Main.rand.NextFloat(2, 6);
                 Vine.Add(new TerraLanceVine(Projectile.Center, Projectile.velocity, Color.ForestGreen, DrawLayer.BeforeDust, MaxLife, XScale, 1, Height));
-                Vine.Add(new TerraLanceVine(Projectile.Center, Projectile.velocity, Color.LightGreen, DrawLayer.AfterDust, MaxLife, XScale, -1, Height));
+                if (!UCAConfig.Instance.PerformanceMode)
+                    Vine.Add(new TerraLanceVine(Projectile.Center, Projectile.velocity, Color.LightGreen, DrawLayer.AfterDust, MaxLife, XScale, -1, Height));
                 float XScale2 = Main.rand.NextFloat(12, 18);
                 float Height2 = Main.rand.NextFloat(3, 11);
                 Vine.Add(new TerraLanceVine(Projectile.Center, Projectile.velocity, Color.DarkGreen, DrawLayer.BeforeDust, MaxLife, XScale2, 1, Height2));
-                Vine.Add(new TerraLanceVine(Projectile.Center, Projectile.velocity, Color.SaddleBrown, DrawLayer.AfterDust, MaxLife, XScale2, -1, Height2));
+                if (!UCAConfig.Instance.PerformanceMode)
+                    Vine.Add(new TerraLanceVine(Projectile.Center, Projectile.velocity, Color.SaddleBrown, DrawLayer.AfterDust, MaxLife, XScale2, -1, Height2));
                 if (Projectile.ai[0] != 0)
                 {
-                    TerraRayHeldProj.GenStar(Projectile.Center, MathHelper.PiOver2 + Projectile.rotation);
+                    TerraRayHeldProj.GenStar(Projectile.Center, MathHelper.PiOver2+ Projectile.rotation);
                 }
             }
-            Projectile.rotation = Projectile.velocity.ToRotation();
             FadeInOut();
             CatchLength();
             UpdateVine();

@@ -113,15 +113,20 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 #endregion
                 Opacity = MathHelper.Lerp(Opacity, 1f, 0.1f);
             }
-            if (Projectile.timeLeft < MaxTime / 5)
+            if (Projectile.timeLeft < MaxTime / 2)
                 inToFadeOut = true;
 
-            if (Projectile.ai[0] != 0)
+            if (inToFadeOut && Projectile.ai[1] == 0)
             {
                 for (int i = 0; i < Vine.Count; i++)
                 {
                     Vine[i].CanAdd = false;
                 }
+                Projectile.ai[1]++;
+            }
+
+            if (Projectile.ai[0] != 0)
+            {
                 inToFadeOut = true;
                 // 生成枝条
                 Vector2 firPos = Projectile.Center;

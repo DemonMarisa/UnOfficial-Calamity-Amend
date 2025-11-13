@@ -1,4 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LAP.Core.Graphics;
+using LAP.Core.Graphics.Primitives.Trail;
+using LAP.Core.Utilities;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
@@ -9,13 +12,11 @@ using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
 using UCA.Assets.Sounds;
+using UCA.Content.Configs;
 using UCA.Content.DrawNodes;
 using UCA.Content.Particiles;
 using UCA.Core.BaseClass;
-using LAP.Core.Graphics;
-using LAP.Core.Graphics.Primitives.Trail;
 using UCA.Core.Utilities;
-using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
@@ -73,9 +74,11 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 int Filp = Main.rand.NextBool() ? 1 : -1;
                 for (int i = 0; i < 2; i++)
                 {
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.DarkGreen, 0, DrawLayer.AfterDust, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
+                    if (!UCAConfig.Instance.PerformanceMode)
+                        new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.DarkGreen, 0, DrawLayer.AfterDust, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
                     new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.ForestGreen, 0, DrawLayer.AfterDust, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.LightGreen, 0, DrawLayer.AfterDust, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
+                    if (!UCAConfig.Instance.PerformanceMode)
+                        new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.LightGreen, 0, DrawLayer.AfterDust, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
                     new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.SaddleBrown, 0, DrawLayer.AfterDust, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
                 }
                 #endregion
@@ -110,10 +113,21 @@ namespace UCA.Content.Projectiles.Magic.Ray
                     Color RandomColor = Color.Lerp(Color.LightGreen, Color.Green, Main.rand.NextFloat(0, 1));
                     new MediumGlowBall(OldPos[i], -Projectile.velocity, RandomColor, 180, 0, 1, 0.12f, Main.rand.NextFloat(1f, 1.4f)).Spawn();
                 }
-                for (int i = 0; i < OldPos.Count; i += 20)
+                if (!UCAConfig.Instance.PerformanceMode)
                 {
-                    Color RandomColor = Color.Lerp(Color.Pink, Color.Green, Main.rand.NextFloat(0, 1));
-                    new Petal(OldPos[i], -Vector2.UnitY * 12f, RandomColor, 360, 0, 1, 0.1f, Main.rand.NextFloat(1f, 1.4f)).Spawn();
+                    for (int i = 0; i < OldPos.Count; i += 20)
+                    {
+                        Color RandomColor = Color.Lerp(Color.Pink, Color.Green, Main.rand.NextFloat(0, 1));
+                        new Petal(OldPos[i], -Vector2.UnitY * 12f, RandomColor, 360, 0, 1, 0.1f, Main.rand.NextFloat(1f, 1.4f)).Spawn();
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < OldPos.Count; i += 40)
+                    {
+                        Color RandomColor = Color.Lerp(Color.Pink, Color.Green, Main.rand.NextFloat(0, 1));
+                        new Petal(OldPos[i], -Vector2.UnitY * 12f, RandomColor, 360, 0, 1, 0.1f, Main.rand.NextFloat(1f, 1.4f)).Spawn();
+                    }
                 }
                 Projectile.ai[0]++;
             }
@@ -163,7 +177,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 FirePos.Add(genPos);
 
                 if (Projectile.ai[1] != 0)
-                    GenStar(genPos, 0, 1f);
+                    GenStar(genPos, 0);
 
                 Projectile.ai[1]++;
             }
@@ -231,10 +245,12 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 Color RandomColor = Color.Lerp(Color.LightGreen, Color.ForestGreen, Main.rand.NextFloat(0, 1));
                 new Butterfly(firPos, Vector2.Zero, RandomColor, 120, 0, 1, 0.2f, Main.rand.NextFloat(0.3f, 1.4f)).Spawn();
             }
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 30; i++)
             {
+                float offset = MathHelper.TwoPi / 30;
                 Color RandomColor = Color.Lerp(Color.LightGreen, Color.ForestGreen, Main.rand.NextFloat(0, 1));
-                new MediumGlowBall(firPos, Vector2.Zero, RandomColor, 60, 0, 1, 0.2f, 0).Spawn();
+                Vector2 firVel = Vector2.UnitX.BetterRotatedBy(offset * i, default, 1f, Xmult);
+                new MediumGlowBall(firPos, firVel.RotatedBy(RotOffset + MathHelper.PiOver2) * 1.5f, RandomColor, 60, 0, 1, 0.2f, 0).Spawn();
             }
         }
         #endregion

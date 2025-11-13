@@ -17,8 +17,12 @@ namespace UCA.Assets
         public static Asset<Texture2D> SmallGlowBall { get; private set; }
         public static Asset<Texture2D> MediumGlowBall { get; private set; }
         public static Asset<Texture2D> Line { get; private set; }
-        public static Asset<Texture2D> GlowStar { get; private set; }
+        public static Asset<Texture2D> Lozenge { get; private set; }
         public static Asset<Texture2D> GlowBall { get; private set; }
+        public static Asset<Texture2D> Star { get; private set; }
+        public static Asset<Texture2D> Star_Big { get; private set; }
+        public static Asset<Texture2D> Star_Glow { get; private set; }
+        public static Asset<Texture2D> Star_Big_Glow { get; private set; }
         public static void LoadParticileTextures()
         {
             BloodDrop = ModContent.Request<Texture2D>($"UCA/Assets/ParticilesTextures/BloodDrop");
@@ -27,8 +31,12 @@ namespace UCA.Assets
             MediumGlowBall = ModContent.Request<Texture2D>($"UCA/Assets/ParticilesTextures/MediumGlowBall");
             SmallGlowBall = ModContent.Request<Texture2D>($"UCA/Assets/ParticilesTextures/SmallGlowBall");
             Line = ModContent.Request<Texture2D>($"UCA/Assets/ParticilesTextures/Line");
-            GlowStar = ModContent.Request<Texture2D>($"UCA/Assets/ParticilesTextures/GlowStar");
+            Lozenge = ModContent.Request<Texture2D>($"UCA/Assets/ParticilesTextures/Lozenge");
             GlowBall = ModContent.Request<Texture2D>($"UCA/Assets/ParticilesTextures/GlowBall");
+            Star = ModContent.Request<Texture2D>($"UCA/Assets/ParticilesTextures/Star");
+            Star_Big = ModContent.Request<Texture2D>($"UCA/Assets/ParticilesTextures/Star_Big");
+            Star_Glow = ModContent.Request<Texture2D>($"UCA/Assets/ParticilesTextures/Star_Glow");
+            Star_Big_Glow = ModContent.Request<Texture2D>($"UCA/Assets/ParticilesTextures/Star_Big_Glow");
         }
         public static void UnLoadParticileTextures()
         {
@@ -38,8 +46,12 @@ namespace UCA.Assets
             SmallGlowBall = null;
             MediumGlowBall = null;
             Line = null;
-            GlowStar = null;
+            Lozenge = null;
             GlowBall = null;
+            Star = null;
+            Star_Big = null;
+            Star_Glow = null;
+            Star_Big_Glow = null;
         }
     }
 }

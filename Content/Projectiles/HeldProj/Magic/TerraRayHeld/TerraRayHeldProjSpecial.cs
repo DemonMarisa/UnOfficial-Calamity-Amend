@@ -17,7 +17,6 @@ using UCA.Content.Projectiles.Magic.Ray;
 using LAP.Core.AnimationHandle;
 using UCA.Core.Enums;
 using LAP.Core.Graphics;
-using UCA.Core.Utilities;
 using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
@@ -71,7 +70,9 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
             Owner.itemTime = 2;
             Owner.itemAnimation = 2;
             Owner.ChangeDir(OwnerDir);
-            
+            if (!Owner.active || Owner.dead)
+                Projectile.Kill();
+
             if (animationHelper.HasFinish[AnimationState.Begin])
                 Owner.heldProj = Projectile.whoAmI;
             
@@ -293,9 +294,9 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
                     float rotOffset = MathHelper.Pi / 4;
                     Vector2 firePos = ToMouseVector.ToRotationVector2() * (i == 0 ? -96 : 96);
                     firePos = firePos.RotatedBy(rotOffset * j - MathHelper.PiOver4 * 1);
-                    GenStar(Owner.Center + firePos, ToMouseVector + MathHelper.PiOver2, 0.6f);
+
                     if (Projectile.owner == Main.myPlayer)
-                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), Owner.Center + firePos, Owner.GetToMouseVector2(Owner.Center + firePos) * 15f, ModContent.ProjectileType<TerraLance>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), Owner.Center + firePos, Owner.GetToMouseVector2(Owner.Center + firePos) * 15f, ModContent.ProjectileType<TerraLance>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 1);
                 }
             }
         }

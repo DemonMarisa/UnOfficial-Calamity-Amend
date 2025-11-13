@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LAP.Core.Utilities;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -16,7 +17,7 @@ namespace UCA.Core.GlobalInstance.Items
         {
             if (UCAConfig.Instance.UCATurnoffCorner)
             {
-                if (DrawSmallIcon)
+                if (item.LAP().DrawUCASmallIcon)
                 {
                     Vector2 iconPosition = position + new Vector2(4f, 4f);
                     float iconScale = 0.45f;

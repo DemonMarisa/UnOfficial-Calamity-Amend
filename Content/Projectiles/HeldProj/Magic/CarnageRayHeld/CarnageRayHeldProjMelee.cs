@@ -64,7 +64,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 45;
+            Projectile.localNPCHitCooldown = -1;
             Projectile.netImportant = true;
         }
         public override void SendExtraAI(BinaryWriter writer)
@@ -152,6 +152,10 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
                 StabsFrame = 0;
                 UseDelay = 45;
                 AniProgress = 0;
+            }
+            if (UseDelay == 35)
+            {
+                Projectile.ResetLocalNPCHitImmunity();
             }
             if (AniProgress < IinToAni)
             {

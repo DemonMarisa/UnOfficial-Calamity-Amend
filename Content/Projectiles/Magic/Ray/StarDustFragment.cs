@@ -7,6 +7,7 @@ using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using UCA.Assets;
+using UCA.Content.Configs;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Core.BaseClass;
@@ -62,7 +63,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             if (!CanHit)
             {
                 Projectile.velocity *= 0.9f;
-                if (Projectile.timeLeft % 4 == 0)
+                if (Projectile.timeLeft % 4 == 0 && !UCAConfig.Instance.PerformanceMode)
                 {
                     Vector2 GenPosOffset = Main.rand.NextVector2Circular(10, 10);
                     Color color = Color.Lerp(Color.DarkBlue, Color.DeepSkyBlue, Main.rand.NextFloat());
@@ -77,8 +78,13 @@ namespace UCA.Content.Projectiles.Magic.Ray
                     Projectile.scale = MathHelper.Lerp(Projectile.scale, 1f, 0.1f);
                     Projectile.velocity *= 1.03f;
                 }
-                if (Projectile.timeLeft % 2 == 0)
+                if (Projectile.timeLeft % 2 == 0 && !UCAConfig.Instance.PerformanceMode)
                 {
+                    if (Projectile.velocity.Length() < 0.2f)
+                    {
+                        if (Projectile.timeLeft % 4 == 0)
+                            return;
+                    }
                     Vector2 GenPosOffset = Main.rand.NextVector2Circular(10, 10);
                     Color color = Color.Lerp(Color.DarkBlue, Color.DeepSkyBlue, Main.rand.NextFloat());
                     new CrossGlow(Projectile.Center + GenPosOffset, Vector2.Zero, color, 30, 1f, 0.1f, false).Spawn();
@@ -89,7 +95,10 @@ namespace UCA.Content.Projectiles.Magic.Ray
             for (int i = 0; i < 6; i++)
             {
                 Vector2 vec = Projectile.velocity / 6;
-                StarDustMetaBall.SpawnParticle(Projectile.Center + vec * i, Vector2.Zero, 0.1f, 30);
+                if (!UCAConfig.Instance.PerformanceMode)
+                    StarDustMetaBall.SpawnParticle(Projectile.Center + vec * i, Vector2.Zero, 0.1f, 30);
+                else
+                    StarDustMetaBall.SpawnParticle(Projectile.Center + vec * i, Vector2.Zero, 0.1f, 25);
             }
         }
         public override bool PreDraw(ref Color lightColor)
@@ -107,10 +116,21 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override void OnKill(int timeLeft)
         {
-            for (int i = 0; i < 15; i++)
+            if (!UCAConfig.Instance.PerformanceMode)
             {
-                Color RandomColor = Color.Lerp(Color.SkyBlue, Color.DarkBlue, Main.rand.NextFloat(0, 1));
-                new MediumGlowBall(Projectile.Center, RandomColor, 120, 0.2f, Main.rand.NextFloat(1f, 1.6f)).Spawn();
+                for (int i = 0; i < 15; i++)
+                {
+                    Color RandomColor = Color.Lerp(Color.SkyBlue, Color.DarkBlue, Main.rand.NextFloat(0, 1));
+                    new MediumGlowBall(Projectile.Center, RandomColor, 120, 0.2f, Main.rand.NextFloat(1f, 1.6f)).Spawn();
+                }
+            }
+            else
+            {
+                for (int i = 0; i < 6; i++)
+                {
+                    Color RandomColor = Color.Lerp(Color.SkyBlue, Color.DarkBlue, Main.rand.NextFloat(0, 1));
+                    new MediumGlowBall(Projectile.Center, RandomColor, 120, 0.2f, Main.rand.NextFloat(1f, 1.6f)).Spawn();
+                }
             }
         }
 

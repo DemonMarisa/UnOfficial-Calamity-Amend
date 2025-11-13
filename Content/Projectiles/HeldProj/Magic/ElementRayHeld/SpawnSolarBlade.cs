@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LAP.Core.Graphics.Primitives.Trail;
+using LAP.Core.Utilities;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -8,12 +10,11 @@ using Terraria.DataStructures;
 using UCA.Assets;
 using UCA.Assets.Effects;
 using UCA.Assets.Sounds;
+using UCA.Content.Configs;
 using UCA.Content.DrawNodes;
 using UCA.Content.Particiles;
 using UCA.Core.Enums;
-using LAP.Core.Graphics.Primitives.Trail;
 using UCA.Core.Utilities;
-using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
 {
@@ -164,15 +165,22 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 SpawnDust();
                 int LifeTime = 60;
                 Vector2 offset = new Vector2(96, 0);
+                float Scale14 = 1.4f;
+                float Scale1 = 1f;
+                if (UCAConfig.Instance.PerformanceMode)
+                {
+                    Scale14 = 0.8f;
+                    Scale1 = 0.4f;
+                }
                 if (IsMAGBOLIABlue)
                 {
-                    new FollowProjCrossGlow(Owner.Center, Color.DeepSkyBlue, LifeTime, 1.4f, Projectile.whoAmI, offset).Spawn();
-                    new FollowProjCrossGlow(Owner.Center, Color.SkyBlue, LifeTime, 1f, Projectile.whoAmI, offset).Spawn();
+                    new FollowProjCrossGlow(Owner.Center, Color.DeepSkyBlue, LifeTime, Scale14, Projectile.whoAmI, offset).Spawn();
+                    new FollowProjCrossGlow(Owner.Center, Color.SkyBlue, LifeTime, Scale1, Projectile.whoAmI, offset).Spawn();
                 }
                 else
                 {
-                    new FollowProjCrossGlow(Owner.Center, Color.OrangeRed, LifeTime, 1.4f, Projectile.whoAmI, offset).Spawn();
-                    new FollowProjCrossGlow(Owner.Center, Color.Orange, LifeTime, 1f, Projectile.whoAmI, offset).Spawn();
+                    new FollowProjCrossGlow(Owner.Center, Color.OrangeRed, LifeTime, Scale14, Projectile.whoAmI, offset).Spawn();
+                    new FollowProjCrossGlow(Owner.Center, Color.Orange, LifeTime, Scale1, Projectile.whoAmI, offset).Spawn();
                 }
             }
             float baseRotation = MathHelper.ToRadians(-145);
@@ -203,11 +211,14 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
 
             if (Time % 2 == 0)
             {
-                for (int i = 0; i < 10; i++)
+                float SpawRate = 10f;
+                if (UCAConfig.Instance.PerformanceMode)
+                    SpawRate = 5f;
+                for (int i = 0; i < SpawRate; i++)
                 {
                     Vector2 beginSpawnPos = Projectile.Center + new Vector2(64, 0).RotatedBy(Projectile.rotation);
                     Vector2 EndSpawnPos = Projectile.Center + new Vector2(SolarBladeXOffset + 720, 0).RotatedBy(Projectile.rotation);
-                    float Progress = i / 10f;
+                    float Progress = i / SpawRate;
                     Vector2 firVel = Vector2.UnitX.RotatedBy(Projectile.rotation + MathHelper.PiOver2) * 9 * Main.rand.NextFloat(0, 2f) * Owner.direction;
                     Color DrawColor;
                     if (IsMAGBOLIABlue)
@@ -216,7 +227,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                         DrawColor = Color.Lerp(Color.Orange, Color.OrangeRed, Main.rand.NextFloat());
                     new Fire(Vector2.Lerp(beginSpawnPos, EndSpawnPos, Progress), firVel, DrawColor, Main.rand.Next(45, 55), Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.8f).Spawn();
                 }
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < SpawRate; i++)
                 {
                     Vector2 beginSpawnPos = Projectile.Center + new Vector2(64, 0).RotatedBy(Projectile.rotation);
                     Vector2 EndSpawnPos = Projectile.Center + new Vector2(SolarBladeXOffset + 720, 0).RotatedBy(Projectile.rotation);
@@ -295,18 +306,19 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         #region 绘制耀斑大剑
         public void DrawSolarBlade(Vector2 DrawPos, Vector2 offset, float DrawRot, Vector2 scale)
         {
-            
-            LAPUtilities.ReSetToBeginShader(BlendState.Additive);
-            Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.FireNoise.Value;
-            if (IsMAGBOLIABlue)
-                PrepareShader(Color.SkyBlue, Color.DeepSkyBlue, 0.08f, false);
-            else
-                PrepareShader(Color.Red, Color.OrangeRed, 0.08f, false);
-
-            Vector2 GlowScale = new Vector2(1f * SolarBladeXScale, 1f) * scale;
-            DrawBladeGlowSource(DrawPos + offset.RotatedBy(DrawRot), DrawRot, GlowScale);
-            LAPUtilities.ReSetToEndShader();
-            
+            if (!UCAConfig.Instance.PerformanceMode)
+            {
+                LAPUtilities.ReSetToBeginShader(BlendState.Additive);
+                Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.FireNoise.Value;
+                // 准备shader
+                if (IsMAGBOLIABlue)
+                    PrepareShader(Color.Blue, Color.DeepSkyBlue, 0.08f, false, 0.5f);
+                else
+                    PrepareShader(Color.Red, Color.OrangeRed, 0.08f, false, 0.6f);
+                Vector2 GlowScale = new Vector2(1f * SolarBladeXScale, 1f) * scale;
+                DrawBladeGlowSource(DrawPos + offset.RotatedBy(DrawRot), DrawRot, GlowScale);
+                LAPUtilities.ReSetToEndShader();
+            }
             LAPUtilities.ReSetToBeginShader(BlendState.Additive);
             offset.Y = offset.Y + 56;
             if (IsMAGBOLIABlue)
@@ -317,14 +329,12 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             Vector2 MiddleBladeScale = new Vector2(0.5f * SolarBladeXScale, 1f) * scale;
             DrawMainBladeSource(DrawPos + offset.RotatedBy(DrawRot), DrawRot, MiddleBladeScale);
             LAPUtilities.ReSetToEndShader();
-
             LAPUtilities.ReSetToBeginShader(BlendState.Additive);
             // 准备shader
             if (IsMAGBOLIABlue)
                 PrepareShader(Color.Blue, Color.DeepSkyBlue, 0.15f, true);
             else
                 PrepareShader(Color.Red, Color.OrangeRed, 0.15f, true);
-
             // 设置材质和偏移
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Wood.Value;
             Vector2 OutSideBladeScale = new Vector2(0.85f * SolarBladeXScale, 1f) * scale;
@@ -335,15 +345,15 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             offset.Y = offset.Y - 64;
             DrawAuxBladeSource(DrawPos + offset.RotatedBy(DrawRot), DrawRot, InSideBladeScale);
             LAPUtilities.ReSetToEndShader();
-            
         }
-        public void PrepareShader(Color beginColor, Color endColor, float uIntensity = 0.15f, bool useColor = true)
+        public void PrepareShader(Color beginColor, Color endColor, float uIntensity = 0.15f, bool useColor = true, float Opacity = 0.5f)
         {
             UCAShaderRegister.SolarBladeShader.Parameters["uTime"].SetValue(-Main.GlobalTimeWrappedHourly);
             UCAShaderRegister.SolarBladeShader.Parameters["uIntensity"].SetValue(uIntensity);
             UCAShaderRegister.SolarBladeShader.Parameters["ubeginColor"].SetValue(beginColor.ToVector4());
             UCAShaderRegister.SolarBladeShader.Parameters["uendColor"].SetValue(endColor.ToVector4());
             UCAShaderRegister.SolarBladeShader.Parameters["UseColor"].SetValue(useColor);
+            UCAShaderRegister.SolarBladeShader.Parameters["Opacity"].SetValue(Opacity);
             UCAShaderRegister.SolarBladeShader.CurrentTechnique.Passes[0].Apply();
         }
         public void DrawMainBladeSource(Vector2 DrawPos, float DrawRot, Vector2 scale)
@@ -368,7 +378,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             if (IsMAGBOLIABlue)
                 SolarBlade = UCATextureRegister.SolarBladeGlowMask_Blue.Value;
             Vector2 drawPosition = DrawPos - Main.screenPosition;
-            Vector2 origin = new Vector2(SolarBlade.Size().X / 2, SolarBlade.Size().Y);
+            Vector2 origin = new(SolarBlade.Size().X / 2, SolarBlade.Size().Y);
             Main.spriteBatch.Draw(SolarBlade, drawPosition, null, Color.White, DrawRot, origin, scale, SpriteEffects.None, 0);
         }
         #endregion
@@ -379,6 +389,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             {
                 Vector2 beginSpawnPos = Projectile.Center + new Vector2(64, 0).RotatedBy(Projectile.rotation);
                 Vector2 firVel = Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * 9 * Main.rand.NextFloat(0, 2f);
+                if (UCAConfig.Instance.PerformanceMode)
+                    firVel *= 0.75f;
                 Color DrawColor;
                 if (IsMAGBOLIABlue)
                     DrawColor = Color.Lerp(Color.SkyBlue, Color.DeepSkyBlue, Main.rand.NextFloat());
@@ -397,12 +409,17 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                     DrawColor = Color.Lerp(Color.Orange, Color.OrangeRed, Main.rand.NextFloat());
                 new MediumGlowBall(beginSpawnPos, Vector2.Zero, DrawColor, Main.rand.Next(100, 200), Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.2f, Main.rand.NextFloat(2f, 12f)).Spawn();
             }
-            for (int i = 0; i < 25; i++)
+            float Rate25 = 25;
+            if (UCAConfig.Instance.PerformanceMode)
+                Rate25 = 15;
+            for (int i = 0; i < Rate25; i++)
             {
                 Vector2 beginSpawnPos = Projectile.Center + new Vector2(64, 0).RotatedBy(Projectile.rotation);
                 Vector2 EndSpawnPos = Projectile.Center + new Vector2(SolarBladeXOffset + 720, 0).RotatedBy(Projectile.rotation);
-                float Progress = i / 25f;
+                float Progress = i / Rate25;
                 Vector2 firVel = Vector2.UnitX.RotatedBy(Projectile.rotation + MathHelper.PiOver2) * 9 * Main.rand.NextFloat(0, 2f);
+                if (UCAConfig.Instance.PerformanceMode)
+                    firVel *= 0.75f;
                 Color DrawColor;
                 if (IsMAGBOLIABlue)
                     DrawColor = Color.Lerp(Color.SkyBlue, Color.DeepSkyBlue, Main.rand.NextFloat());
@@ -410,12 +427,14 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                     DrawColor = Color.Lerp(Color.Orange, Color.OrangeRed, Main.rand.NextFloat());
                 new PoisonSmoke(Vector2.Lerp(beginSpawnPos, EndSpawnPos, Progress), firVel + Owner.velocity, DrawColor, Main.rand.Next(45, 55), Main.rand.NextFloat(MathHelper.TwoPi), 1f, 1f).Spawn();
             }
-            for (int i = 0; i < 25; i++)
+            for (int i = 0; i < Rate25; i++)
             {
                 Vector2 beginSpawnPos = Projectile.Center + new Vector2(64, 0).RotatedBy(Projectile.rotation);
                 Vector2 EndSpawnPos = Projectile.Center + new Vector2(SolarBladeXOffset + 640, 0).RotatedBy(Projectile.rotation);
-                float Progress = i / 25f;
+                float Progress = i / Rate25;
                 Vector2 firVel = Vector2.UnitX.RotatedBy(Projectile.rotation + MathHelper.PiOver2) * -9 * Main.rand.NextFloat(0, 2f);
+                if (UCAConfig.Instance.PerformanceMode)
+                    firVel *= 0.75f;
                 Color DrawColor;
                 if (IsMAGBOLIABlue)
                     DrawColor = Color.Lerp(Color.SkyBlue, Color.DeepSkyBlue, Main.rand.NextFloat());
@@ -423,11 +442,14 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                     DrawColor = Color.Lerp(Color.Orange, Color.OrangeRed, Main.rand.NextFloat());
                 new PoisonSmoke(Vector2.Lerp(beginSpawnPos, EndSpawnPos, Progress), firVel + Owner.velocity, DrawColor, Main.rand.Next(45, 55), Main.rand.NextFloat(MathHelper.TwoPi), 1f, 1f).Spawn();
             }
-            for (int i = 0; i < 200; i++)
+            float Rate200 = 200;
+            if (UCAConfig.Instance.PerformanceMode)
+                Rate200 = 100;
+            for (int i = 0; i < Rate200; i++)
             {
                 Vector2 beginSpawnPos = Projectile.Center + new Vector2(64, Main.rand.Next(-100, 100)).RotatedBy(Projectile.rotation);
                 Vector2 EndSpawnPos = Projectile.Center + new Vector2(SolarBladeXOffset + 640, Main.rand.Next(-100, 100)).RotatedBy(Projectile.rotation);
-                float Progress = i / 200f;
+                float Progress = i / Rate200;
                 Color DrawColor;
                 if (IsMAGBOLIABlue)
                     DrawColor = Color.Lerp(Color.SkyBlue, Color.DeepSkyBlue, Main.rand.NextFloat());

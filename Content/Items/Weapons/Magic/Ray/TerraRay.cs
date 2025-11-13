@@ -46,8 +46,8 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
 
             Item.noUseGraphic = true;
             Item.channel = true;
-            Item.UCA().UseWeaponSkill = true;
-            Item.UCA().DrawSmallIcon = true;
+            Item.LAP().UseWeaponSkill = true;
+            Item.LAP().DrawUCASmallIcon = true;
         }
         public override bool AltFunctionUse(Player player)
         {

@@ -10,18 +10,11 @@ namespace UCA.Content.MetaBalls
 {
     public class ShadowMetaBall : BaseMetaBall
     {
-        public class ShadownParticle
+        public class ShadownParticle(Vector2 center, Vector2 velocity, float scale)
         {
-            public float Scale;
-            public Vector2 Velocity;
-            public Vector2 Center;
-
-            public ShadownParticle(Vector2 center, Vector2 velocity, float scale)
-            {
-                Center = center;
-                Velocity = velocity;
-                Scale = scale;
-            }
+            public float Scale = scale;
+            public Vector2 Velocity = velocity;
+            public Vector2 Center = center;
 
             public void Update()
             {

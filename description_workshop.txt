@@ -1,4 +1,4 @@
-﻿目前仅修改了永夜法杖
+﻿目前仅修目前仅修改了射线杖
 未来会作出更多修改
 目前计划：
 重做所有星流武器极其所有材料的效果
@@ -12,3 +12,17 @@
 工程源代码：
 https://github.com/DemonMarisa/UnOfficial-Calamity-Amend
 有些资产来源是网络，如果有其他Mod作者发现自己的资产被使用，请联系我删除
+
+Currently, only the Ray Staff series has been modified.
+Future modifications will include more changes.
+Current plan: Rework all EXO weapons and the effects of all related materials
+Future ideas:
+Rework Bosses
+Add more mechanics
+Restore and rework deleted weapons
+
+SourceCode：
+https://github.com/DemonMarisa/UnOfficial-Calamity-Amend[quote=tModLoader UCA]
+Some assets come from the internet.
+ If other mod authors find that their assets are being used, please contact me to have them removed.
+Developed By DemonMarisa[/quote]

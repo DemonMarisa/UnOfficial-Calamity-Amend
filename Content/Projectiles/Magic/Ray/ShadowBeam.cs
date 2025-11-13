@@ -1,11 +1,12 @@
 ﻿using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets;
+using UCA.Content.Configs;
 using UCA.Content.Particiles;
 using UCA.Core.BaseClass;
-using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
@@ -25,6 +26,9 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 240;
             Projectile.extraUpdates = 50;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 10;
+
         }
         public override void AI()
         {
@@ -34,8 +38,15 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public void GenDust()
         {
-            if (LAPUtilities.OutOffScreen(Projectile.Center, 2f))
-                return;
+            if (UCAConfig.Instance.PerformanceMode)
+            {
+                if (LAPUtilities.OutOffScreen(Projectile.Center, 0.3f))
+                    return;
+            }
+            else if (LAPUtilities.OutOffScreen(Projectile.Center, 2f))
+            {
+                    return;
+            }
 
             Vector2 offset = Main.rand.NextVector2Circular(12, 12) + new Vector2(-48, 0).RotatedBy(Projectile.rotation);
             Color color = LAPUtilities.LerpColor(Color.Violet, Color.DarkViolet);
@@ -107,6 +118,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
+            target.AddBuff(BuffID.ShadowFlame, 300);
         }
         public override void OnKill(int timeLeft)
         {

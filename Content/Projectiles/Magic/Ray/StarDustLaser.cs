@@ -9,6 +9,7 @@ using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
 using UCA.Assets.Sounds;
+using UCA.Content.Configs;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Core.BaseClass;
@@ -70,18 +71,36 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 if (UseFadeIn)
                 {
                     Projectile.netUpdate = true;
-                    for (int j = 0; j < 10; j++)
+                    if (!UCAConfig.Instance.PerformanceMode)
                     {
-                        Color RandomColor = Color.Lerp(Color.SkyBlue, Color.DarkBlue, Main.rand.NextFloat(0, 1));
-                        new MediumGlowBall(Projectile.Center, RandomColor, 60, 0.2f, Main.rand.NextFloat(1.6f, 2f)).Spawn();
+                        for (int j = 0; j < 10; j++)
+                        {
+                            Color RandomColor = Color.Lerp(Color.SkyBlue, Color.DarkBlue, Main.rand.NextFloat(0, 1));
+                            new MediumGlowBall(Projectile.Center, RandomColor, 60, 0.2f, Main.rand.NextFloat(1.6f, 2f)).Spawn();
+                        }
+                        for (int i = 0; i < 15; i++)
+                        {
+                            Vector2 spawnVec = Vector2.UnitX.RotateRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.2f, 0.3f) * 12;
+                            StarDustMetaBall.SpawnParticle(Projectile.Center, spawnVec, 0.2f, 45);
+                        }
+                        new CrossGlow(Projectile.Center, Vector2.Zero, Color.SkyBlue, 60, 1f, 0.2f).Spawn();
+                        new CrossGlow(Projectile.Center, Vector2.Zero, Color.DeepSkyBlue, 60, 1f, 0.2f).Spawn();
                     }
-                    for (int i = 0; i < 15; i++)
+                    else
                     {
-                        Vector2 spawnVec = Vector2.UnitX.RotateRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.2f, 0.3f) * 12;
-                        StarDustMetaBall.SpawnParticle(Projectile.Center, spawnVec, 0.2f, 45);
+                        for (int j = 0; j < 5; j++)
+                        {
+                            Color RandomColor = Color.Lerp(Color.SkyBlue, Color.DarkBlue, Main.rand.NextFloat(0, 1));
+                            new MediumGlowBall(Projectile.Center, RandomColor, 45, 0.2f, Main.rand.NextFloat(1.6f, 2f)).Spawn();
+                        }
+                        for (int i = 0; i < 7; i++)
+                        {
+                            Vector2 spawnVec = Vector2.UnitX.RotateRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.2f, 0.3f) * 12;
+                            StarDustMetaBall.SpawnParticle(Projectile.Center, spawnVec, 0.2f, 45);
+                        }
+                        new CrossGlow(Projectile.Center, Vector2.Zero, Color.SkyBlue, 60, 1f, 0.2f).Spawn();
+                        new CrossGlow(Projectile.Center, Vector2.Zero, Color.DeepSkyBlue, 60, 1f, 0.2f).Spawn();
                     }
-                    new CrossGlow(Projectile.Center, Vector2.Zero, Color.SkyBlue, 60, 1f, 0.2f).Spawn();
-                    new CrossGlow(Projectile.Center, Vector2.Zero, Color.DeepSkyBlue, 60, 1f, 0.2f).Spawn();
                 }
                 BeginPos = Projectile.Center;
             }
@@ -90,7 +109,15 @@ namespace UCA.Content.Projectiles.Magic.Ray
             if (!BeginFadeOut)
             {
                 Color color = LAPUtilities.LerpColor(Color.DeepSkyBlue, Color.SkyBlue);
-                new TrailGlowBall(Projectile.Center + Main.rand.NextVector2Circular(9, 9), Projectile.velocity * 0.25f, color, Main.rand.Next(45, 65), 0.08f, true).Spawn();
+                if (!UCAConfig.Instance.PerformanceMode)
+                {
+                    new TrailGlowBall(Projectile.Center + Main.rand.NextVector2Circular(9, 9), Projectile.velocity * 0.25f, color, Main.rand.Next(45, 65), 0.08f, true).Spawn();
+                }
+                else
+                {
+                    if (Projectile.timeLeft % 4 == 0)
+                        new TrailGlowBall(Projectile.Center + Main.rand.NextVector2Circular(9, 9), Projectile.velocity * 0.25f, color, Main.rand.Next(45, 65), 0.08f, true).Spawn();
+                }
             }
             if (Projectile.timeLeft < MaxLife / 2)
                 BeginFadeOut = true;

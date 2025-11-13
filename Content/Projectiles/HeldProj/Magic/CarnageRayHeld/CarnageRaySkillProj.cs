@@ -1,5 +1,8 @@
 ﻿using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
+using LAP.Core.AnimationHandle;
+using LAP.Core.SpecificEffectManagers;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoMod.Core.Utils;
@@ -14,6 +17,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using UCA.Assets;
 using UCA.Assets.Sounds;
+using UCA.Content.Configs;
 using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
@@ -21,12 +25,9 @@ using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
 using UCA.Content.Projectiles.Misc;
 using UCA.Content.UCACooldowns;
-using LAP.Core.AnimationHandle;
 using UCA.Core.Enums;
 using UCA.Core.GlobalInstance.NPCs;
-using LAP.Core.SpecificEffectManagers;
 using UCA.Core.Utilities;
-using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
 {
@@ -103,7 +104,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
         {
             Owner.itemTime = 2;
             Owner.itemAnimation = 2;
-
+            if (!Owner.active || Owner.dead)
+                Projectile.Kill();
             Owner.ChangeDir(Owner.LocalMouseWorld().X > Owner.Center.X ? 1 : -1);
             Owner.heldProj = Projectile.whoAmI;
             Projectile.Center = Owner.Center;
@@ -120,8 +122,13 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
            {
                 int Lenth = LengthOffset + 50;
                 int Spawn = 9;
+                int LilyLiquidSpawn = 6;
                 float Scale = 0.2f;
-
+                if (UCAConfig.Instance.PerformanceMode)
+                {
+                    Spawn = 6;
+                    LilyLiquidSpawn = 3;
+                }
                 // 进行一定的补正，因为这里最初面向的没有椭圆挥砍，所以先这样打补丁了
                 float BA = BeginRot + MathHelper.PiOver2;
                 float Progress = BA / MathHelper.Pi;
@@ -143,9 +150,9 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
 
                     Scale *= 0.97f;
                 }
-                for (int i = 1; i < 6; i++)
+                for (int i = 1; i < LilyLiquidSpawn; i++)
                 {
-                    Vector2 FinalLength = SpawnLength * ((float)i / 6);
+                    Vector2 FinalLength = SpawnLength * ((float)i / LilyLiquidSpawn);
 
                     new LilyLiquid(Projectile.Center + FinalLength + BaseOffset,
                         Projectile.velocity.RotatedBy(MathHelper.PiOver2) * Main.rand.NextFloat(0f, 1.2f) * -6f * Owner.direction, Color.Red, 64, 0, 1, 1.5f).Spawn();

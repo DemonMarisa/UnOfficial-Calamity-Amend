@@ -8,6 +8,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Sounds;
+using UCA.Content.Configs;
 using UCA.Content.Particiles;
 using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
@@ -75,10 +76,19 @@ namespace UCA.Content.Projectiles.Magic.Ray
             {
                 if (CanSplits)
                 {
-                    for (int i = 0; i < 2; i++)
+                    if (UCAConfig.Instance.PerformanceMode)
                     {
                         Color RandomColor = Color.Lerp(Color.Violet, Color.Purple, Main.rand.NextFloat(0, 1));
-                        new MediumGlowBall(Projectile.Center + Projectile.velocity / 2 * i, -Projectile.velocity, RandomColor, 180, 0, 1, 0.12f, Main.rand.NextFloat(0.2f, 0.5f)).Spawn();
+                        new MediumGlowBall(Projectile.Center, -Projectile.velocity, RandomColor, 180, 0, 1, 0.12f, Main.rand.NextFloat(0.2f, 0.5f)).Spawn();
+
+                    }
+                    else
+                    {
+                        for (int i = 0; i < 2; i++)
+                        {
+                            Color RandomColor = Color.Lerp(Color.Violet, Color.Purple, Main.rand.NextFloat(0, 1));
+                            new MediumGlowBall(Projectile.Center + Projectile.velocity / 2 * i, -Projectile.velocity, RandomColor, 180, 0, 1, 0.12f, Main.rand.NextFloat(0.2f, 0.5f)).Spawn();
+                        }
                     }
                 }
                 else
@@ -136,7 +146,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 {
                     float offset = MathHelper.TwoPi / 8;
                     int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, baseVector.RotatedBy(offset * i),
-                        ModContent.ProjectileType<PlasmaSpark>(), Projectile.damage / 2, Projectile.knockBack, Projectile.owner, 1);
+                        ModContent.ProjectileType<PlasmaSpark>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 1);
                     Main.projectile[p].extraUpdates = 5;
                 }
             }

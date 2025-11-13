@@ -1,5 +1,7 @@
 ﻿using CalamityMod;
 using CalamityMod.Items.Weapons.Magic;
+using LAP.Core.BaseClass;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -10,13 +12,12 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
+using UCA.Content.Configs;
 using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.Magic.Ray;
-using LAP.Core.BaseClass;
 using UCA.Core.Utilities;
-using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
 {
@@ -175,6 +176,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
 
         public static void GenUnDeathSign(Vector2 firePos, float speedMult = 1)
         {
+            if (UCAConfig.Instance.PerformanceMode)
+                speedMult *= 0.7f;
             // 生成星形
             for (int i = 0; i < 60; i++)
             {

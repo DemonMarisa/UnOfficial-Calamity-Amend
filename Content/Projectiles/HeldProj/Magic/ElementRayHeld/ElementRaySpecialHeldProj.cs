@@ -87,6 +87,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 ToMouseVector = Utils.AngleLerp(ToMouseVector, Owner.GetPlayerToMouseVector2().ToRotation(), 0.2f);
             if (HitCooldown > 0)
                 HitCooldown--;
+            if (!Owner.active || Owner.dead)
+                Projectile.Kill();
             Time ++;
             // 基础信息
             Projectile.velocity = Projectile.rotation.ToRotationVector2();
@@ -173,6 +175,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
+            if (HitCount > 10)
+                HitCount = 10;
             modifiers.SourceDamage *= MathHelper.Lerp(100f, 10f, HitCount / 10f);
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
@@ -223,11 +227,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 return;
             float DrawRot = Projectile.rotation + MathHelper.PiOver2;
             DrawSolarBlade(Projectile.Center, new Vector2(0, SolarBladeXOffset), DrawRot, new Vector2(1f, 1f));
-        }
-
-        public void DrawStar()
-        {
-
         }
     }
 }

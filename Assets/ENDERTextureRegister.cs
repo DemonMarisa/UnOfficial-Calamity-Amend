@@ -48,6 +48,8 @@ namespace UCA.Assets
         public static Asset<Texture2D> Aura_01 { get; private set; }
         public static Asset<Texture2D> Aura_02 { get; private set; }
         public static Asset<Texture2D> Flash_01 { get; private set; }
+        public static Asset<Texture2D> BladeTrail { get; private set; }
+        public static Asset<Texture2D> Slash2 { get; private set; }
         #endregion
         public static void LoadENDERTextures()
         {
@@ -87,6 +89,8 @@ namespace UCA.Assets
             Aura_01 = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/Aura_01");
             Aura_02 = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/Aura_02");
             Flash_01 = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/flash_01");
+            BladeTrail = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/BladeTrail");
+            Slash2 = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/Slash2");
         }
         public static void UnLoadENDERTextures()
         {
@@ -124,6 +128,8 @@ namespace UCA.Assets
             Aura_01 = null;
             Aura_02 = null;
             Flash_01 = null;
+            BladeTrail = null;
+            Slash2 = null;
         }
     }
 }

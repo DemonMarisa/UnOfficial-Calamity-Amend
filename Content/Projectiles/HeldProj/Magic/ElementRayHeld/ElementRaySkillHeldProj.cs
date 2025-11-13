@@ -61,7 +61,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             Owner.heldProj = Projectile.whoAmI;
             Projectile.velocity = Projectile.rotation.ToRotationVector2();
             Projectile.timeLeft = 2;
-
+            if (!Owner.active || Owner.dead)
+                Projectile.Kill();
             HandleAni();
             Projectile.Center = Owner.Center + OffsetToOwner.RotatedBy(Projectile.rotation);
             UpdateDrawOffset();
@@ -155,6 +156,13 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             }
         }
 
+        public override void OnKill(int timeLeft)
+        {
+            Main.mouseRight = false;
+            Main.mouseRightRelease = true;
+            Owner.itemAnimation = 0;
+            Owner.itemTime = 0;
+        }
         public override bool PreDraw(ref Color lightColor)
         {
             DrawBaseElementalRay();

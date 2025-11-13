@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Localization;
@@ -9,6 +10,8 @@ using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld;
 using UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld;
+using UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld;
+using UCA.Content.Projectiles.Magic.Ray;
 
 namespace UCA.Content.Projectiles.Misc
 {
@@ -69,14 +72,31 @@ namespace UCA.Content.Projectiles.Misc
                     Color color = Main.rand.NextBool(3) ? Color.Black : Color.DarkRed;
                     new BloodDrop(Projectile.Center, shootVel, color, Main.rand.Next(60, 90), 0, 1, 0.1f).Spawn();
                 }
-
                 for (int i = 0; i < 10; i++)
                 {
                     Vector2 SpawnVector = ToMouseVector.RotatedByRandom(MathHelper.PiOver4) * Main.rand.NextFloat(0f, 1.2f) * 36f;
                     CarnageMetaBall.SpawnParticle(Projectile.Center,
                         SpawnVector,
                         1.5f, SpawnVector.ToRotation());
-
+                }
+            }
+            if (ID == ModContent.ProjectileType<CosmicSlash>())
+            {
+                for (int i = 0; i < 10; i++)
+                    CosmicMetaBall.SpawnLozengeParticle(Projectile.Center, Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.3f, 1f) * 18, 0.4f, 60);
+            }
+            if (ID == ModContent.ProjectileType<SoulPiercerSkillHeldProj>())
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    Color DrawColor;
+                    DrawColor = Color.Lerp(Color.Violet, Color.DarkViolet, Main.rand.NextFloat());
+                    new TrailGlowBall_T(Projectile.Center, DrawColor, Main.rand.Next(45, 90), 0.15f, Main.rand.NextFloat(2f, 4f), Main.rand.NextFloat(MathHelper.TwoPi), 1f).Spawn();
+                }
+                for (int i = 0; i < 20; i++)
+                {
+                    Color Firecolor = LAPUtilities.LerpColor(Color.Violet, Color.DarkViolet);
+                    new Fire(Projectile.Center, Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.3f, 1f) * 6, Firecolor, 64, Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.3f).Spawn();
                 }
             }
         }

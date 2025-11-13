@@ -9,7 +9,5 @@ namespace UCA.Core.GlobalInstance.Items
 {
     public partial class UCAGlobalItem : GlobalItem
     {
-        public bool UseWeaponSkill = false;
-        public bool DrawSmallIcon = false;
     }
 }

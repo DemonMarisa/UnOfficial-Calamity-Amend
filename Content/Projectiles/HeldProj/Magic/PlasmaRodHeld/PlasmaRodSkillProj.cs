@@ -1,26 +1,25 @@
 ﻿using CalamityMod;
 using CalamityMod.Graphics.Primitives;
 using CalamityMod.Items.Weapons.Magic;
+using LAP.Core.AnimationHandle;
+using LAP.Core.SpecificEffectManagers;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets;
+using UCA.Assets.Effects;
 using UCA.Assets.Sounds;
+using UCA.Content.Configs;
 using UCA.Content.Particiles;
 using UCA.Content.Paths;
-using UCA.Content.Projectiles.Magic.Ray;
 using UCA.Content.Projectiles.Misc;
-using LAP.Core.AnimationHandle;
 using UCA.Core.Enums;
-using LAP.Core.SpecificEffectManagers;
-using UCA.Core.Utilities;
-using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
 {
@@ -56,21 +55,12 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
             Projectile.localNPCHitCooldown = 45;
             Projectile.netImportant = true;
         }
-
         public override bool? CanHitNPC(NPC target)
         {
-            if (target.friendly)
-                return false;
-            else if (CanHit)
-                return true;
-
+            if (CanHit)
+                return null;
             return false;
         }
-        #region 注册数据
-        public override void OnSpawn(IEntitySource source)
-        {
-        }
-        #endregion
         public override void SendExtraAI(BinaryWriter writer)
         {
             writer.Write(animationHelper.MaxAniProgress[AnimationState.Begin]);
@@ -94,7 +84,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
             bool c = Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center, Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.Zero) * SwordLength * Projectile.scale, 12f, ref _);
             return c;
         }
-
         public override void AI()
         {
             Projectile.netUpdate = true;
@@ -102,18 +91,16 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
             {
                 animationHelper.MaxAniProgress[AnimationState.Begin] = 45;
                 animationHelper.MaxAniProgress[AnimationState.End] = 10;
-
                 OwnerDir = Owner.LocalMouseWorld().X > Owner.Center.X ? 1 : -1;
-
                 BeginRot = Owner.GetPlayerToMouseVector2().ToRotation();
             }
             Owner.itemTime = 2;
             Owner.itemAnimation = 2;
-
             Owner.ChangeDir(OwnerDir);
             Owner.heldProj = Projectile.whoAmI;
             Projectile.Center = Owner.Center;
-
+            if (!Owner.active || Owner.dead)
+                Projectile.Kill();
             // 基础信息
             Projectile.velocity = Projectile.rotation.ToRotationVector2();
             Projectile.timeLeft = 2;
@@ -143,7 +130,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
             {
                 animationHelper.AniProgress[AnimationState.End]++;
 
-                Opacity = MathHelper.Lerp(0f, 1f, animationHelper.AniProgress[AnimationState.End] / (float)animationHelper.MaxAniProgress[AnimationState.End]);
+                Opacity = MathHelper.Lerp(1f, 0f, animationHelper.AniProgress[AnimationState.End] / (float)animationHelper.MaxAniProgress[AnimationState.End]);
 
                 if (animationHelper.AniProgress[AnimationState.End] == animationHelper.MaxAniProgress[AnimationState.End])
                     animationHelper.HasFinish[AnimationState.End] = true;
@@ -158,7 +145,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
         {
             int MaxAni = animationHelper.MaxAniProgress[AnimationState.Begin];
             int CurAni = animationHelper.AniProgress[AnimationState.Begin];
-            Opacity = MathHelper.Lerp(1f, 0f, CurAni / 25f);
+            Opacity = MathHelper.Lerp(0f, 1f, CurAni / 25f);
             // 播放音效与开始判定
             if (CurAni == 25)
                 SoundEngine.PlaySound(SoundsMenu.CarnageRightUse, Projectile.Center);
@@ -188,44 +175,33 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
             float curProjCenterToPointLength = TargetPos.Length() * BaseLength;
             Projectile.scale = curProjCenterToPointLength / BaseLength;
             // 生成粒子
-            for (int i = 2; i < 6; i++)
+            Vector2 EndPos = Projectile.Center + Vector2.UnitX.RotatedBy(Projectile.rotation) * Main.rand.Next(180, 240) * Projectile.scale;
+            for (int i = 1; i < 4; i++)
             {
-                Vector2 BeginPos = Vector2.Lerp(Projectile.Center, Projectile.Center + Vector2.UnitX.RotatedBy(Projectile.rotation) * Main.rand.Next(60, 160) * Projectile.scale, i / 4f);
-                new Fire(BeginPos, Projectile.velocity.RotatedBy(MathHelper.PiOver2), Color.Purple, 64, Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.2f).Spawn();
-                new Fire(BeginPos, Projectile.velocity.RotatedBy(MathHelper.PiOver2), Color.Violet, 64, Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.1f).Spawn();
+                Vector2 BeginPos = Vector2.Lerp(Projectile.Center, EndPos, i / 4f);
+                float Rot = Main.rand.NextFloat(MathHelper.TwoPi);
+                new Fire(BeginPos, Projectile.velocity.RotatedBy(MathHelper.PiOver2), Color.Purple, 64, Rot, 1f, 0.3f).Spawn();
+                new Fire(BeginPos, Projectile.velocity.RotatedBy(MathHelper.PiOver2), Color.Violet, 64, Rot, 1f, 0.2f).Spawn();
+            }
+            if (UCAConfig.Instance.PerformanceMode)
+                return;
+            Vector2 EndPosOffset = Projectile.Center + Vector2.UnitX.RotatedBy(Projectile.rotation) * 200 * Projectile.scale;
+            for (int i = 0; i < 2; i++)
+            {
+                Vector2 BeginPos = Vector2.Lerp(Projectile.Center, EndPosOffset, Main.rand.NextFloat());
+                Vector2 fireVel = Projectile.velocity.RotatedBy(MathHelper.PiOver2) * Main.rand.NextFloat() * 3 * Filp;
+                Color DrawColor = Color.Lerp(Color.Violet, Color.DarkViolet, Main.rand.NextFloat());
+                new TrailGlowBall(BeginPos, -fireVel, DrawColor, Main.rand.Next(45, 90), 0.1f, true).Spawn();
             }
         }
 
         public void RenderPixelatedPrimitives(SpriteBatch spriteBatch, PixelationPrimitiveLayer layer)
         {
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullCounterClockwise, null);
-
-            Texture2D texture = UCATextureRegister.BladeAura.Value;
-
-            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-
-            float drawRotation = Projectile.rotation + (Owner.direction == -1 ? MathHelper.Pi : 0f);
-
-            SpriteEffects flipSprite = Owner.direction * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-
-            Main.spriteBatch.Draw(UCATextureRegister.BladeAura.Value, drawPosition / 2, null, Color.Violet * (1 - Opacity), drawRotation + MathHelper.PiOver2 * Owner.direction,
-                new Vector2(texture.Size().X / 2, texture.Size().Y + 200), Projectile.scale * Main.player[Projectile.owner].gravDir * 0.07f, flipSprite, default);
-
-            Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
-            Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
-
-            LAPUtilities.FastApplyEdgeMeltsShader(Opacity, ModContent.Request<Texture2D>(Texture).Size(), Color.Violet, 0.01f, 0);
-
-            Main.spriteBatch.Draw(UCATextureRegister.BladeAura.Value, drawPosition / 2, null, Color.Violet, drawRotation + MathHelper.PiOver2 * Owner.direction,
-               new Vector2(texture.Size().X / 2, texture.Size().Y + 200), Projectile.scale * Main.player[Projectile.owner].gravDir * 0.07f, flipSprite, default);
-
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null);
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
+            DrawBlade();
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
             // 绘制位置，在这里进行偏移，碰撞箱使用自定义碰撞箱
             Vector2 drawPosition = Projectile.Center - Main.screenPosition + Vector2.UnitX.RotatedBy(Projectile.rotation) * 0;
@@ -239,6 +215,35 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
             // spriteBatch会自动把textures0设置为当前使用的材质，所以需要你手动改一下
             Main.spriteBatch.Draw(texture, drawPosition, null, Color.White, drawRotation - MathHelper.PiOver4, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
             return false;
+        }
+        public void DrawBlade()
+        {
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Texture2D texture = UCATextureRegister.BladeAura.Value;
+            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+            float drawRotation = Projectile.rotation + (Owner.direction == -1 ? MathHelper.Pi : 0f);
+            SpriteEffects flipSprite = Owner.direction * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.FireNoise.Value;
+            UCAShaderRegister.SolarBladeShader.Parameters["uTime"].SetValue(-Main.GlobalTimeWrappedHourly);
+            UCAShaderRegister.SolarBladeShader.Parameters["uIntensity"].SetValue(0.1f);
+            UCAShaderRegister.SolarBladeShader.Parameters["ubeginColor"].SetValue(Color.Violet.ToVector4());
+            UCAShaderRegister.SolarBladeShader.Parameters["uendColor"].SetValue(Color.DarkViolet.ToVector4());
+            UCAShaderRegister.SolarBladeShader.Parameters["UseColor"].SetValue(true);
+            UCAShaderRegister.SolarBladeShader.Parameters["Opacity"].SetValue(0.6f * Opacity);
+            UCAShaderRegister.SolarBladeShader.CurrentTechnique.Passes[0].Apply();
+            Main.spriteBatch.Draw(UCATextureRegister.BladeAura.Value, drawPosition, null, Color.White, drawRotation + MathHelper.PiOver2 * Owner.direction, new Vector2(texture.Size().X / 2, texture.Size().Y + 100), Projectile.scale * Main.player[Projectile.owner].gravDir * 0.16f * new Vector2(1.2f, 1f), flipSprite, default);
+            UCAShaderRegister.SolarBladeShader.Parameters["uTime"].SetValue(-Main.GlobalTimeWrappedHourly);
+            UCAShaderRegister.SolarBladeShader.Parameters["uIntensity"].SetValue(0.1f);
+            UCAShaderRegister.SolarBladeShader.Parameters["ubeginColor"].SetValue(Color.Violet.ToVector4());
+            UCAShaderRegister.SolarBladeShader.Parameters["uendColor"].SetValue(Color.Purple.ToVector4());
+            UCAShaderRegister.SolarBladeShader.Parameters["UseColor"].SetValue(true);
+            UCAShaderRegister.SolarBladeShader.Parameters["Opacity"].SetValue(0.6f * Opacity);
+            UCAShaderRegister.SolarBladeShader.CurrentTechnique.Passes[0].Apply();
+            Main.spriteBatch.Draw(UCATextureRegister.BladeAura.Value, drawPosition, null, Color.White, drawRotation + MathHelper.PiOver2 * Owner.direction, new Vector2(texture.Size().X / 2, texture.Size().Y + 100), Projectile.scale * Main.player[Projectile.owner].gravDir * 0.16f * new Vector2(0.6f, 1f), flipSprite, default);
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {

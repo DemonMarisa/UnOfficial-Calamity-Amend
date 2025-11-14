@@ -122,6 +122,14 @@ ShadowBoltStaffAlt: {
 }
 
 SoulPiercerAlt: {
-	DisplayName: Soul Piercer Alt
-	Tooltip: ""
+	DisplayName: Soul Piercer
+	Tooltip:
+		'''
+		Casts a Cosmic ray that summons extra rays and spawn orbs that heal you
+		Right click: Swings the staff, summoning Cosmic Slash at the cursor and inflict 20s Marked for Death debuffs
+		Weapon Skill: Soul Greatsword
+		Consumes 300 mana to slash forward.
+		During charging and slashing, grant 50% damage reduction
+		Hitting an enemy will grant you 30 immunity frames 
+		'''
 }

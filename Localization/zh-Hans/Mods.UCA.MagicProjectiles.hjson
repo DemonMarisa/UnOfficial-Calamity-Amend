@@ -22,5 +22,5 @@ SoulStream.DisplayName: 灵魂激流
 NebulaCrystal.DisplayName: 寰宇冰晶
 ShadowBeam.DisplayName: 暗面光束
 ShadowPlayer.DisplayName: 自我之影
-// CosmicSlash.DisplayName: Cosmic Slash
-// CosmicLaser.DisplayName: Cosmic Laser
+CosmicSlash.DisplayName: 宇宙伤口
+CosmicLaser.DisplayName: 灵魂之光

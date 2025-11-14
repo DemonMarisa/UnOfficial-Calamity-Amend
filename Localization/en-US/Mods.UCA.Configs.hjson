@@ -1,19 +1,9 @@
 UCAConfig: {
 	DisplayName: UnOfficial Calamity Amend Config
 
-	ParticleLimit: {
-		Label: Particle Limit
-		Tooltip: ""
-	}
-
 	UCATurnoffCorner: {
 		Label: Turn On Corner
 		Tooltip: All modified weapons will have a corner mark indicating the change.
-	}
-
-	ScreenShakeStrength: {
-		Label: Screen Shake Strength Percentage
-		Tooltip: ""
 	}
 
 	PerformanceMode: {

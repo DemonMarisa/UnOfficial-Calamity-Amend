@@ -1,4 +1,6 @@
 ﻿using CalamityMod;
+using CalamityMod.Items.Materials;
+using CalamityMod.Tiles.Furniture.CraftingStations;
 using LAP.Core.Enums;
 using LAP.Core.MiscDate;
 using LAP.Core.Utilities;
@@ -9,6 +11,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Common.Misc;
+using UCA.Content.MetaBalls;
 using UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld;
 using UCA.Content.Projectiles.HeldProj.Magic.ShadowBoltStaffHeld;
 using UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld;
@@ -95,10 +98,8 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
         public override void AddRecipes()
         {
             CreateRecipe().
-                AddIngredient(ItemID.Amethyst).
-                AddIngredient(ItemID.Glass, 2).
-                AddRecipeGroup(VanillaRecipeGroups.Wood, 12).
-                AddTile(TileID.WorkBenches).
+                AddIngredient<CosmiliteBar>(12).
+                AddTile<CosmicAnvil>().
                 Register();
         }
     }

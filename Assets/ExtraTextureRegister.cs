@@ -46,6 +46,11 @@ namespace UCA.Assets
         public static Asset<Texture2D> SoulGreatSword_Grey { get; private set; }
         public static Asset<Texture2D> HarshNoise { get; private set; }
         public static Asset<Texture2D> OpticalFlaresLine { get; private set; }
+        public static Asset<Texture2D> Trail_ManaStreak { get; private set; }
+        public static Asset<Texture2D> Trail_RvSlash { get; private set; }
+        public static Asset <Texture2D> Trail_VShapeWithTail { get; private set; }
+        public static Asset<Texture2D> Misc_HRStarTexture { get; private set; }
+        private static string E_Path => "UCA/Assets/ExtraTextures/";
         public static void LoadExtraTextures()
         {
             Noise = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/Noise");
@@ -85,6 +90,11 @@ namespace UCA.Assets
             SoulGreatSword_Grey = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/SoulGreatSword_Grey");
             HarshNoise = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/HarshNoise");
             OpticalFlaresLine = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/OpticalFlaresLine");
+
+            Trail_ManaStreak = ModContent.Request<Texture2D>(E_Path + nameof(Trail_ManaStreak));
+            Trail_RvSlash = ModContent.Request<Texture2D>(E_Path + nameof(Trail_RvSlash));
+            Trail_VShapeWithTail = ModContent.Request<Texture2D>(E_Path+nameof(Trail_VShapeWithTail));
+            Misc_HRStarTexture = ModContent.Request<Texture2D>(E_Path + nameof(Misc_HRStarTexture));
         }
         public static void UnLoadExtraTextures()
         {
@@ -123,6 +133,12 @@ namespace UCA.Assets
             SoulGreatSword_Grey = null;
             HarshNoise = null;
             OpticalFlaresLine = null;
+
+            Trail_ManaStreak = null;
+            Trail_RvSlash = null;
+            Trail_VShapeWithTail = null;
+
+            Misc_HRStarTexture = null;
         }
     }
 }

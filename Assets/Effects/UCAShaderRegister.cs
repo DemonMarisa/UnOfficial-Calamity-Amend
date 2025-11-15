@@ -22,6 +22,8 @@ namespace UCA.Assets.Effects
         public static Effect PolarDistortShader;
         public static Effect PolarDistortShaderWithR;
         public static Effect SoulGreatSwordFlowShader;
+
+        public static Effect VolcanoEruptingShader;
         public override void Load()
         {
             if (Main.dedServ)
@@ -32,38 +34,41 @@ namespace UCA.Assets.Effects
                 return ModContent.Request<Effect>($"{ShaderPath}{path}", AssetRequestMode.ImmediateLoad).Value;
             }
 
-            MetaballShader = LoadShader("MetaBallShader");
-            RegisterMiscShader(MetaballShader, "UCAMetalBallPass", "MetaBallShader");
+            MetaballShader = LoadShader(nameof(MetaballShader));
+            RegisterMiscShader(MetaballShader, "UCAMetalBallPass", nameof(MetaballShader));
 
             EdgeMeltsShader = LoadShader("EdgeMeltsShader");
-            RegisterMiscShader(EdgeMeltsShader, "UCAEdgeMeltsPass", "EdgeMeltsShader");
+            RegisterMiscShader(EdgeMeltsShader, "UCAEdgeMeltsPass", nameof(EdgeMeltsShader));
 
             TerraRayVinesShader = LoadShader("TerraRayVinesShader");
-            RegisterMiscShader(TerraRayVinesShader, "UCATerraRayVinesPass", "TerraRayVinesShader");
+            RegisterMiscShader(TerraRayVinesShader, "UCATerraRayVinesPass", nameof(TerraRayVinesShader));
 
             TerrarRayLaser = LoadShader("TerrarRayLaser");
-            RegisterMiscShader(TerrarRayLaser, "UCATerrarRayLaserPass", "TerrarRayLaser");
+            RegisterMiscShader(TerrarRayLaser, "UCATerrarRayLaserPass", nameof(TerrarRayLaser));
 
             SolarBladeShader = LoadShader("SolarBladeShader");
-            RegisterMiscShader(SolarBladeShader, "UCASolarBladePass", "SolarBladeShader");
+            RegisterMiscShader(SolarBladeShader, "UCASolarBladePass", nameof(SolarBladeShader));
 
             StandardFlowShader = LoadShader("StandardFlowShader");
-            RegisterMiscShader(StandardFlowShader, "UCAStandardFlowPass", "StandardFlowShader");
+            RegisterMiscShader(StandardFlowShader, "UCAStandardFlowPass", nameof(StandardFlowShader));
 
             SolarBlastShader = LoadShader("SolarBlastShader");
-            RegisterMiscShader(SolarBlastShader, "UCASolarBlastPass", "SolarBlastShader");
+            RegisterMiscShader(SolarBlastShader, "UCASolarBlastPass", nameof(SolarBlastShader));
             
             FlowWithAShader = LoadShader("FlowWithAShader");
-            RegisterMiscShader(StandardFlowShader, "UCAFlowWithAPass", "FlowWithAShader");
+            RegisterMiscShader(StandardFlowShader, "UCAFlowWithAPass", nameof(FlowWithAShader));
 
             PolarDistortShader = LoadShader("PolarDistortShader");
-            RegisterMiscShader(PolarDistortShader, "UCAPolarDistortPass", "PolarDistortShader");
+            RegisterMiscShader(PolarDistortShader, "UCAPolarDistortPass", nameof(PolarDistortShader));
 
             PolarDistortShaderWithR = LoadShader("PolarDistortShaderWithR");
-            RegisterMiscShader(PolarDistortShaderWithR, "UCAPolarDistortPass", "PolarDistortShaderWithR");
+            RegisterMiscShader(PolarDistortShaderWithR, "UCAPolarDistortPass", nameof(PolarDistortShaderWithR));
 
             SoulGreatSwordFlowShader = LoadShader("SoulGreatSwordFlowShader");
-            RegisterMiscShader(SoulGreatSwordFlowShader, "UCASGSShaderPass", "SoulGreatSwordFlowShader");
+            RegisterMiscShader(SoulGreatSwordFlowShader, "UCASGSShaderPass", nameof(SoulGreatSwordFlowShader));
+
+            VolcanoEruptingShader = LoadShader(nameof(VolcanoEruptingShader));
+            RegisterMiscShader(VolcanoEruptingShader, "UCA" + nameof(VolcanoEruptingShader), nameof(VolcanoEruptingShader));
         }
 
         public static void RegisterMiscShader(Effect shader, string passName, string registrationName)

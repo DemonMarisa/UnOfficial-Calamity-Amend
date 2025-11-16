@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Terraria.Localization;
+﻿using Terraria.Localization;
 
 namespace UCA.Core.Utilities
 {
@@ -17,5 +12,5 @@ namespace UCA.Core.Utilities
         {
             return Language.GetTextValue("Mods.UCA." + key);
         }
-    }
+            }
 }

@@ -15,6 +15,8 @@ namespace UCA.Core.GlobalInstance.Projectiles
         public bool HasThroughNightShieldOverMax = false;
 
         public int DamageDefence = 0;
+        public float[] ExtraAI = new float[100];
+        public int StoredEU = -1;
         public override void AI(Projectile projectile)
         {
         }

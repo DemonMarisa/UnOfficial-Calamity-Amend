@@ -30,6 +30,8 @@ namespace UCA.Assets.Sounds
         public static SoundStyle SwordAttack => new($"{MiscSoundRoute}/SwordAttack") { Volume = 1f, Pitch = Main.rand.NextFloat(0.6f, 1.1f), MaxInstances = 0 };
         public static SoundStyle SwordSwing => new($"{MiscSoundRoute}/SwordSwing") { Volume = 1f, Pitch = Main.rand.NextFloat(0.6f, 1.1f), MaxInstances = 0 };
         public static SoundStyle SwordSwing2 => new($"{MiscSoundRoute}/SwordSwing2") { Volume = 1f, Pitch = Main.rand.NextFloat(0.1f, 0.3f), MaxInstances = 0 };
+        public static SoundStyle SwordHit => new($"{MiscSoundRoute}/SwordHit0");
+        public static SoundStyle Misc_AngelBlast => new($"{MiscSoundRoute}/{nameof(Misc_AngelBlast)}");
         #endregion
-    }
+    }   
 }

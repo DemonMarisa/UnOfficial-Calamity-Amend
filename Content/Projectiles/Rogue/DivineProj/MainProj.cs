@@ -1,0 +1,524 @@
+using CalamityMod;
+using CalamityMod.Buffs.DamageOverTime;
+using CalamityMod.Graphics.Primitives;
+using CalamityMod.Particles;
+using CalamityMod.Projectiles.Melee;
+using LAP.Core.ParticleSystem;
+using LAP.Core.SpecificEffectManagers;
+using LAP.Core.Utilities;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Collections.Generic;
+using Terraria;
+using Terraria.Audio;
+using Terraria.DataStructures;
+using Terraria.Graphics.Shaders;
+using Terraria.ID;
+using Terraria.ModLoader;
+using UCA.Assets.Sounds;
+using UCA.Content.Items.Weapons.Rogue;
+using UCA.Content.Particiles;
+using UCA.Core.Utilities;
+
+namespace UCA.Content.Projectiles.Rogue.DivineProj
+{
+    public class DivineHammerProj: BaseHammerClass, ILocalizedModType
+    {
+        protected override BoomerangDefault BoomerangStat => new(
+            returnTime: 34,
+            returnSpeed: 28f,
+            acceleration: 0.4f,
+            killDistance: 1800
+        );
+        protected override BaseProjSD ProjStat => new(
+            //这里的无敌帧有意整成15
+            HitCooldown: 15,
+            //这里存续时间无所谓，因为会在AI里时刻被更新
+            LifeTime: 200,
+            Width: 86,
+            Height: 72,
+            rotation: 0.2f
+        );
+        private enum DoType
+        {
+            IsShooted,
+            IsReturning,
+            IsStealth
+        }
+        private DoType AttackType
+        {
+            get => (DoType)Projectile.ai[0];
+            set => Projectile.ai[0] = (float)value;
+        }
+        public static Color TrailColor => new(255, 142, 246);
+        public static readonly SoundStyle HitSound = SoundID.Item88 with { Volume = 0.85f }; //Item88:使用流星法杖的音效
+        #region Typedef
+        public ref bool Update => ref Projectile.netUpdate;
+        public ref bool IsHanging => ref ModPlayer._anyHammerAttacking;
+        public bool CanDrawTrail
+        {
+            get => ModProj.ExtraAI[0] == 1f;
+            set => ModProj.ExtraAI[0] = value ? 1f : 0f;
+        }
+        public ref float SpriteRotation => ref ModProj.ExtraAI[1];
+        #endregion
+        public override string Texture => ModContent.GetInstance<DivineHammer>().Texture;
+        public override void SetStaticDefaults()
+        {
+
+            ProjectileID.Sets.TrailCacheLength[Type] = 30;
+            ProjectileID.Sets.TrailingMode[Type] = 2;
+        }
+        public override void ExSD()
+        {
+            Projectile.extraUpdates = 4;
+        }
+        public override void OnSpawn(IEntitySource source)
+        {
+            SpriteRotation = Projectile.velocity.ToRotation();
+        }
+        public override void AI()
+        {
+            Projectile.timeLeft = 2;
+            DoGeneric();
+            switch (AttackType)
+            {
+                case DoType.IsShooted:
+                    DoShooted();
+                    break;
+                case DoType.IsReturning:
+                    DoReturning();
+                    break;
+                case DoType.IsStealth:
+                    DoStealth();
+                    break;
+            }
+        }
+        public override bool PreKill(int timeLeft)
+        {
+            //额外锤子不要震屏
+            if (AttackType is DoType.IsStealth && _drawArcTime > 0 && Stealth)
+            {
+                SoundStyle select = Utils.SelectRandom(Main.rand, SoundsMenu.Smash_AirHeavy);
+                SoundEngine.PlaySound(select, Projectile.Center);
+                //震屏
+                ScreenShakeSystem.AddScreenShakes(Projectile.Center, -40 * Owner.direction, 15, Projectile.rotation, 0.2f, true, 1000);
+            }
+            return true;
+        }
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.AddBuff(ModContent.BuffType<GodSlayerInferno>(), 600);
+            //允许绘制轨迹的锤子永远不会执行普攻效果
+            //byd什么史山啊
+            bool canSpawnSpark = CanDrawTrail && !Stealth && AttackType == DoType.IsStealth || Stealth;
+            if (canSpawnSpark)
+            {
+                DrawHitSpark(target, hit.Damage);
+                //只有潜伏状态下才允许额外生成锤子，其余状态处死
+                if (AttackType == DoType.IsStealth)
+                {
+                    if (_drawArcTime > 0 && Stealth)
+                    {
+                        StealthHit(target, hit.Damage, target.whoAmI);
+                        Projectile.Kill();
+                    }
+                    else if (CanDrawTrail && !Stealth)
+                        Projectile.Kill();
+                }
+            }
+            if (CanDrawTrail)
+                return;
+
+            NormalHit(target);
+            TargetIndex = target.whoAmI;
+            SoundEngine.PlaySound(HitSound with { MaxInstances = 2 }, Projectile.Center);
+        }
+        private void DrawHitSpark(NPC target, int damage)
+        {
+            SoundStyle pickSound2 = Utils.SelectRandom(Main.rand, SoundsMenu.Smash_AirHeavy);
+            SoundEngine.PlaySound(pickSound2 with { Pitch = Main.rand.NextFloat(0.6f, 0.7f), Volume = 0.7f, MaxInstances = 1 }, target.Center);
+            PrettySpark(damage);
+        }
+        private List<int> ProjID = [];
+        public void StealthHit(NPC target, int hitDamage, int targetIndex)
+        {
+            for (int i = -1; i < 2; i += 2)
+            {
+                //归一化方向并提供自定义速度
+                Vector2 direc = Projectile.velocity.SafeNormalize(Vector2.UnitX);
+                Vector2 spawnVelocity = (direc * 32f).RotatedBy(MathHelper.PiOver4 * i);
+                //两把锤子有属于自己的转角
+                //不会这里写成了一个终极史山吧？
+                float arcAngle = i * (MathHelper.PiOver2 + MathHelper.PiOver4);
+                int echo = Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, spawnVelocity, ModContent.ProjectileType<PhantasmalHammer>(), Projectile.damage / 2, 0f, Owner.whoAmI, targetIndex, 0f, arcAngle);
+                Main.projectile[echo].Calamity().stealthStrike = true;
+                ProjID.Add(echo);
+            }
+        }
+        private void PrettySpark(int hitDamage)
+        {
+            //圆环
+            Vector2 dir = Projectile.velocity.SafeNormalize(Vector2.UnitX) * Projectile.scale;
+            for (int i = 0; i < 36; i++)
+            {
+                Vector2 dir2 = MathHelper.ToRadians(i * 10f).ToRotationVector2() * Projectile.scale;
+                dir2.X /= 3.6f;
+                dir2 = dir2.RotatedBy(Projectile.velocity.ToRotation());
+                Vector2 pos = Projectile.Center + dir * 12f + dir2 * 18f;
+                ShinyOrbParticle shinyOrbParticle = new ShinyOrbParticle(pos, dir2 * 5f, Main.rand.NextBool() ? Color.White : Color.HotPink, 40, 3.5f - Math.Abs(18f - i) / 6f, BlendStateID.Additive);
+                shinyOrbParticle.Spawn();
+            }
+            //从灾厄抄写的锤子特效
+            float damageInterpolant = Utils.GetLerpValue(950f, 2000f, hitDamage, true);
+            Vector2 splatterDirection = Projectile.velocity * 0.8f;
+            for (int i = 0; i < 10; i++)
+            {
+                int sparkLifetime = Main.rand.Next(55, 70);
+                float sparkScale = Main.rand.NextFloat(0.7f, Main.rand.NextFloat(3.3f, 5.5f)) + damageInterpolant * 0.85f;
+                Color sparkColor = Color.Lerp(Color.Purple, Color.GhostWhite, Main.rand.NextFloat(0.7f));
+                sparkColor = Color.Lerp(sparkColor, Color.HotPink, Main.rand.NextFloat());
+
+                Vector2 sparkVelocity = splatterDirection.RotatedByRandom(0.7f) * Main.rand.NextFloat(1.4f, 1.8f);
+                sparkVelocity.Y -= 7f;
+                SparkParticle spark = new(Projectile.Center, sparkVelocity, false, sparkLifetime, sparkScale, sparkColor);
+                GeneralParticleHandler.SpawnParticle(spark);
+            }
+
+        }
+        public void NormalHit(NPC target)
+        {
+            int dustSets = Main.rand.Next(5, 8);
+            int dustRadius = 6;
+            Vector2 corner = new(target.Center.X - dustRadius, target.Center.Y - dustRadius);
+            for (int i = 0; i < dustSets; ++i)
+            {
+                float scaleOrb = 1.2f + Main.rand.NextFloat(1f);
+                Dust orb = Dust.NewDustDirect(corner, 2 * dustRadius, 2 * dustRadius, DustID.Clentaminator_Purple);
+                orb.noGravity = true;
+                orb.velocity *= 4f;
+                orb.scale = scaleOrb;
+                for (int j = 0; j < 6; ++j)
+                {
+                    float scaleSparkle = 0.8f + Main.rand.NextFloat(1.1f);
+                    Dust sparkle = Dust.NewDustDirect(corner, 2 * dustRadius, 2 * dustRadius, DustID.ShadowbeamStaff);
+                    sparkle.noGravity = true;
+                    float dustSpeed = Main.rand.NextFloat(10f, 18f);
+                    sparkle.velocity = Main.rand.NextVector2Unit() * dustSpeed;
+                    sparkle.scale = scaleSparkle;
+                }
+            }
+            //生成一点星云射线。
+            Projectile.netUpdate = true;
+            int laserID = ModContent.ProjectileType<NebulaShot>();
+            int laserDamage = Projectile.damage / 3;
+            float laserKB = 2.5f;
+            int numLasers = 3;
+            for (int i = 0; i < numLasers; ++i)
+            {
+                float startDist = Main.rand.NextFloat(260f, 270f);
+                Vector2 startDir = Main.rand.NextVector2Unit();
+                Vector2 startPoint = target.Center + startDir * startDist;
+
+                float laserSpeed = Main.rand.NextFloat(15f, 18f);
+                Vector2 velocity = startDir * -laserSpeed;
+
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    int proj = Projectile.NewProjectile(Projectile.GetSource_FromThis(), startPoint, velocity, laserID, laserDamage, laserKB, Projectile.owner);
+                    if (proj.WithinBounds(Main.maxProjectiles))
+                    {
+                        Main.projectile[proj].DamageType = ModContent.GetInstance<RogueDamageClass>();
+                        Main.projectile[proj].tileCollide = false;
+                        Main.projectile[proj].timeLeft = 30;
+                    }
+                }
+            }
+        }
+        private SpriteBatch SB { get => Main.spriteBatch; }
+        #region DrawMethod
+        public float SetProjWidth(float ratio)
+        {
+            float width = Projectile.width;
+            width *= MathHelper.SmoothStep(0.8f, 0.6f, Utils.GetLerpValue(0f, 0.5f, ratio, true));
+            return width;
+        }
+        public Color SetTrailColor(float ratio)
+        {
+            float velocityOpacityFadeout = Utils.GetLerpValue(2f, 5f, Projectile.velocity.Length(), true);
+            Color c = TrailColor * Projectile.Opacity * (1f - ratio);
+            return c * Utils.GetLerpValue(0.04f, 0.1f, ratio, true) * velocityOpacityFadeout;
+        }
+        public Vector2 PrimitiveOffsetFunction(float ratio)
+        {
+            Vector2 off = Projectile.Size * 0.5f + Projectile.velocity.SafeNormalize(Vector2.Zero) * Projectile.scale * 0.2f * Vector2.UnitX;
+            return off;
+        }
+        #endregion
+        //TODO：下面那个轨迹把归元漩涡的轨迹改成另外一种，现在这个纯纯占位符
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Projectile.QuickDrawBloomEdge(rotOffset: -MathHelper.PiOver4);
+            Projectile.QuickDrawWithTrailing(0.7f, Color.White, 4, -MathHelper.PiOver4);
+            if (CanDrawTrail && !LAPUtilities.OutOffScreen(Projectile.Center))
+            {
+                SB.EnterShaderRegion(BlendState.Additive);
+                float spinRotation = Main.GlobalTimeWrappedHourly * 5.2f;
+                GameShaders.Misc["CalamityMod:SideStreakTrail"].UseImage1("Images/Misc/Perlin");
+                PrimitiveRenderer.RenderTrail(Projectile.oldPos, new(SetProjWidth, SetTrailColor, PrimitiveOffsetFunction, shader: GameShaders.Misc["CalamityMod:SideStreakTrail"]), 51);
+                SB.ExitShaderRegion();
+            }
+            return false;
+        }
+        private void DoStealth()
+        {
+            //初始化上一锚点缓存位为玩家中心
+            if (_lastAnchorPosition == Vector2.Zero)
+                _lastAnchorPosition = Owner.Center;
+
+            if (CanDrawTrail && !Stealth && AttackTimer < 10f)
+            {
+                AttackTimer += 1;
+                return;
+            }
+            else if (_drawArcTime < 1 && Stealth)
+            {
+                //小于特定次数前ban掉下方所有AI
+                //并且额外生成的锤子别直接去画圆弧，而是冲过去
+                DrawDynamicArc();
+                return;
+            }
+
+            if (Projectile.GetTargetSafe(out NPC target, TargetIndex, true, 4800f))
+            {
+                //以超高的速度冲向你的敌怪
+                Projectile.HomingNPCBetter(target, 24f, 18f, 2);
+            }
+        }
+        private void DoGeneric()
+        {
+            //潜伏射弹允许绘制轨迹
+            if (Stealth)
+                CanDrawTrail = true;
+            //所有允许绘制轨迹的锤子都不会执行普攻的特效
+            if (CanDrawTrail)
+            {
+                Projectile.rotation = Projectile.velocity.ToRotation();
+                IsHanging = true;
+                return;
+            }
+            Projectile.rotation += ProjStat.RotationSpeed;
+            if (Main.rand.NextBool(8))
+            {
+                Vector2 offset = new Vector2(10, 0).RotatedByRandom(MathHelper.ToRadians(360f));
+                Vector2 velOffset = new Vector2(2, 0).RotatedBy(offset.ToRotation());
+                Dust dust = Dust.NewDustPerfect(new Vector2(Projectile.Center.X, Projectile.Center.Y) + offset, DustID.WitherLightning, new Vector2(Projectile.velocity.X * 0.2f + velOffset.X, Projectile.velocity.Y * 0.2f + velOffset.Y), 100, default, 0.8f);
+                dust.noGravity = true;
+            }
+
+            if (Main.rand.NextBool(10))
+            {
+                Vector2 offset = new Vector2(12, 0).RotatedByRandom(MathHelper.ToRadians(360f));
+                Vector2 velOffset = new Vector2(4, 0).RotatedBy(offset.ToRotation());
+                Dust dust = Dust.NewDustPerfect(new Vector2(Projectile.Center.X, Projectile.Center.Y) + offset, DustID.GemDiamond, new Vector2(Projectile.velocity.X * 0.15f + velOffset.X, Projectile.velocity.Y * 0.15f + velOffset.Y), 100, default, 0.8f);
+                dust.noGravity = true;
+            }
+        }
+        private void DoShooted()
+        {
+            //潜伏+初始状态下，执行特殊ACT音效，并获得超高EU
+            bool ShouldACT = AttackTimer is 0 && Stealth;
+            if (ShouldACT)
+            {
+                Projectile.extraUpdates = Projectile.extraUpdates + 2;
+                Projectile.localNPCHitCooldown = 20;
+                SoundStyle selectOne = Utils.SelectRandom(Main.rand, SoundsMenu.Hammer_Shoot) with { Volume = 0.8f, MaxInstances = 0 };
+                SoundEngine.PlaySound(selectOne, Projectile.Center);
+            }
+
+            AttackTimer += 1;
+            float retTime = BoomerangStat.ReturnTime;
+            if (AttackTimer > retTime)
+            {
+                AttackTimer = 0;
+                AttackType = DoType.IsReturning;
+                if (Stealth)
+                    SpawnSkyFallHammer();
+                Update = true;
+            }
+        }
+        private void DoReturning()
+        {
+            Projectile.AccelerateToTarget(Owner.Center, BoomerangStat.ReturnSpeed, BoomerangStat.Acceleration, BoomerangStat.KillDistance);
+            if (!Projectile.Hitbox.Intersects(Owner.Hitbox))
+                return;
+
+            //允许绘制轨迹的所有锤子都会执行潜伏的AI
+            if (!CanDrawTrail)
+            {
+                Projectile.Kill();
+                Update = true;
+                return;
+            }
+            //否则，其他情况下都会执行这个潜伏ai
+            AttackType = DoType.IsStealth;
+            //重新设定无敌帧
+            Projectile.localNPCHitCooldown = 45;
+            Update = true;
+        }
+
+        private void SpawnSkyFallHammer()
+        {
+
+            Vector2 pos = new Vector2(Main.MouseWorld.X + Main.rand.NextFloat(-300f, 300f), Main.MouseWorld.Y - 1200f);
+            Vector2 vel = (Main.MouseWorld - pos).SafeNormalize(Vector2.UnitX) * 22f;
+            Projectile extraHammer = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), pos, vel, ModContent.ProjectileType<DivineHammerProj>(), Projectile.damage / 2, Projectile.knockBack);
+            //启用轨迹。
+            extraHammer.UCA().ExtraAI[0] = 1f;
+            extraHammer.extraUpdates = 6;
+            //这个射弹直接从回程至玩家进行
+            extraHammer.ai[0] = (float)DoType.IsShooted;
+            extraHammer.ai[1] = -30f;
+        }
+        #region 一个比较顺滑的，圆弧运动示例
+        /// <summary>
+        /// 射弹锚点“前一次更新”的位置，初始设定为Vector.Zero，在下一帧会被瞬间更新
+        /// </summary>
+        private Vector2 _lastAnchorPosition = Vector2.Zero;
+        /// <summary>
+        /// 标记射弹是否开始“绕圆弧旋转”
+        /// </summary>
+        private bool _isArcRotating = false;
+        /// <summary>
+        /// 存储射弹进入圆弧运动前的转角
+        /// </summary>
+        private float _arcStartRotation;
+        private Vector2 _rotCenter;
+        /// <summary>
+        /// 总圆弧的运动角
+        /// </summary>
+        private readonly float TotalArcAngle = MathHelper.ToRadians(360f);
+        /// <summary>
+        /// 存储射弹开始绕圆弧旋转前的原始速度
+        /// </summary>
+        private float _originalSpeed;
+        /// <summary>
+        /// 过渡到圆弧运动起始点的判定
+        /// </summary>
+        private bool _isMovingStartPoint = false;
+        /// <summary>
+        /// 过度到圆弧运动起始点的进度
+        /// </summary>
+        private float _startTransitionProgress = 0f;
+
+        /// <summary>
+        /// 绕圆弧的旋转次数
+        /// </summary>
+        private int _drawArcTime = 0;
+        /// <summary>
+        /// 总圆弧绘制时间
+        /// </summary>
+        private const float ArcDuration = 50f;
+        /// <summary>
+        /// 圆弧半径
+        /// </summary>
+        private const float ArcRadius = 12 * 16;
+        #endregion
+        #region ArcRotation
+        /// <summary>
+        /// 超级大史山，必须得找个时间重构了
+        /// </summary>
+        private void DrawDynamicArc()
+        {
+            //平滑玩家自身位置，因为玩家自身是一个不断位移的单位
+            _rotCenter = Vector2.Lerp(_lastAnchorPosition, Owner.Center, 0.2f);
+            //刷新记录位置
+            _lastAnchorPosition = _rotCenter;
+            //初始化一次圆弧情况
+            if (!_isArcRotating)
+            {
+                //存入初始转角
+                _arcStartRotation = Projectile.velocity.ToRotation();
+                //存入原始速度
+                _originalSpeed = Projectile.velocity.Length();
+                //重置过渡状态
+                _startTransitionProgress = 0f;
+                //启用过度开始
+                _isMovingStartPoint = true;
+                _isArcRotating = true;
+            }
+
+            if (_isMovingStartPoint)
+            {
+                _startTransitionProgress += 1f / 20f;
+                //这里需要先取用后者可能会用上的“默认第一帧”
+                float progress = MathHelper.Clamp(_startTransitionProgress, 0f, 1f);
+                //计算圆弧起点位置
+                Vector2 nextPosition = _rotCenter + _arcStartRotation.ToRotationVector2() * ArcRadius;
+                float possibleFinalRot = _arcStartRotation + TotalArcAngle * 0.02f;
+                //使用三次方函数进行缓动
+                float posEase = 1f - (float)Math.Pow(1f - progress, 3);
+                Projectile.Center = Vector2.Lerp(Owner.Center, nextPosition, posEase);
+                //进行方向过度，使其能够在当前方向刀圆弧切线之间平滑
+                Vector2 initDir = (nextPosition - Owner.Center).SafeNormalize(Vector2.UnitX);
+                Vector2 tarDir = possibleFinalRot.ToRotationVector2().RotatedBy(MathHelper.PiOver2);
+                //球形线性插值
+                Vector2 curDir = Vector2.SmoothStep(initDir, tarDir, progress);
+                //速度过度
+                Projectile.velocity = curDir * _originalSpeed * MathHelper.Lerp(0.2f, 0.8f, posEase);
+                //旋转过度
+                SpriteRotation = MathHelper.Lerp(initDir.ToRotation(), possibleFinalRot, progress);
+                //过渡完成
+                if (_startTransitionProgress >= 1 || Vector2.Distance(Projectile.Center,nextPosition)<8f)
+                {
+                    _isMovingStartPoint = false;
+                    Projectile.Center = nextPosition;
+                    //过渡完成后再调整速度，这里故意放缓
+                    Projectile.velocity = tarDir * _originalSpeed * 0.8f;
+                    SpriteRotation = _arcStartRotation;
+                }
+            }
+            else if (_isArcRotating)
+            {
+
+                AttackTimer += 1;
+                float progress = AttackTimer / ArcDuration;
+                float curAngle = TotalArcAngle * progress;
+                float orbitAngle = _arcStartRotation + curAngle;
+                //跟随转角
+                SpriteRotation = orbitAngle;
+
+                //切线方向
+                Vector2 radiusDir = (Projectile.Center - _rotCenter).SafeNormalize(Vector2.Zero);
+                Vector2 wantedTanDir = radiusDir.RotatedBy(MathHelper.PiOver2);
+                //实际调整速度
+                Vector2 targetVelocity = wantedTanDir * _originalSpeed * 0.8f;
+                //接近圆弧终点时开始向最终朝向过渡
+                Vector2 finalDir = orbitAngle.ToRotationVector2();
+                float transitionStart = 0.8f;
+                if (progress >= transitionStart && progress <= 1.0f)
+                {
+                    //过渡因子
+                    float transitionFactor = (progress - transitionStart) / (1.0f - transitionStart);
+                    //从切线方向平滑过渡到最终朝向
+                    targetVelocity = Vector2.Lerp(targetVelocity, finalDir * _originalSpeed * 0.8f, transitionFactor);
+                }
+                Projectile.velocity = Vector2.Lerp(Projectile.velocity, targetVelocity, 0.2f);
+                //修正半径
+                float curRadius = (Projectile.Center - _rotCenter).Length();
+                float radiusError = curRadius - ArcRadius;
+                Projectile.velocity -= radiusDir * radiusError * 0.1f;
+                if (progress > 1)
+                {
+                    AttackTimer = 0;
+                    //自增
+                    _drawArcTime++;
+                    _isArcRotating = false;
+                }
+            }
+        }
+        #endregion
+
+    }
+}

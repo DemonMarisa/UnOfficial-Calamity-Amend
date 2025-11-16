@@ -31,24 +31,23 @@ namespace UCA.Content.Items.Weapons.Rogue
         }
         public override bool AltFunctionUse(Player player)
         {
-            return false;
             bool canAltFunction = !player.UCA().CanDisableGuideForGrandHammer && DownedBossSystem.downedExoMechs && DownedBossSystem.downedCalamitas;
             return true;
             return canAltFunction;
         }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            /*正常情况下， 他应该只会执行一次…… 
+            //正常情况下， 他应该只会执行一次…… 
             if (player.altFunctionUse == 2)
             {
                 Projectile.NewProjectile(source, position, new Vector2(0f, -28f), ModContent.ProjectileType<DivineHammerFlyingUpProj>(), 0, 0f,player.whoAmI);
                 return false;
             }
             else
-            {*/
-                Projectile st = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, player.whoAmI);
+            {
+            Projectile st = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, player.whoAmI);
                 st.Calamity().stealthStrike = player.Calamity().StealthStrikeAvailable();
-            //}
+            }
             return false;
         }
         public override bool ConsumeItem(Player player)

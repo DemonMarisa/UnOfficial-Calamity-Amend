@@ -13,7 +13,7 @@ BlazingHammer: {
 
 DivineHammer: {
 	DisplayName: Divine Twin
-	Tooltip: 
+	Tooltip:
 		'''
 		Throw a powerful Stellar Hammer that unleashes regular Nebula Rays upon hitting enemies
 		Stealth strikes hurl an ultra-fast Divine Hammer that strikes back at enemies when returning to the player.
@@ -33,7 +33,7 @@ NightmareHammer: {
 		While the sub-hammers are latched, multiple homing Light Arrows are summoned from behind.
 		When latching ends, the sub-hammers return and deliver another strike.
 		'''
-	ShimmerTooltip: "This weapons seems like will do something when being thrown into shimmer lake..."
+	ShimmerTooltip: This weapons seems like will do something when being thrown into shimmer lake...
 }
 
 PunishmentHammer: {

@@ -56,8 +56,8 @@ namespace UCA.Content.Particiles
             OldPos.Add(Position);
             if (OldPos.Count > 8)
                 OldPos.RemoveAt(0);
-            Position += Velocity;
 
+            Position += Velocity;
             OldPos.Add(Position);
             if (OldPos.Count > 8)
                 OldPos.RemoveAt(0);

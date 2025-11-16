@@ -194,7 +194,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
             }
             Owner.UCA().SoulPiercerSGSUse = 2;
         }
-        public bool HasAdd = false;
         public void HandleEndAni()
         {
             CanHit = false;
@@ -205,25 +204,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
             Vector2 TargetPos = new Vector2(SwordLength, 0).BetterRotatedBy(baseRotation, SourceOffset, 1, XScale);
             Projectile.scale = TargetPos.Distance(Vector2.Zero) / (float)SwordLength;
             Projectile.rotation = TargetPos.ToRotation() + TargetRot;
-            if (Projectile.FinalExtraUpdate())
-            {
-                if (!HasAdd)
-                {
-                    float FinalRot = animationHelper.UpDateAngle(145, 175, Owner.direction, 1);
-                    Vector2 FinalTargetPos = new Vector2(SwordLength, 0).BetterRotatedBy(FinalRot, SourceOffset, 1, XScale);
-                    float FinalScale = FinalTargetPos.Distance(Vector2.Zero) / (float)SwordLength;
-                    OldAimPos.Add(FinalTargetPos.RotatedBy(FinalRot));
-                    OldRot.Add(FinalRot);
-                    OldScale.Add(FinalScale);
-                    HasAdd = true;
-                }
-                if (OldAimPos.Count > 30)
-                    OldAimPos.RemoveAt(0);
-                if (OldRot.Count > 30)
-                    OldRot.RemoveAt(0);
-                if (OldScale.Count > 30)
-                    OldScale.RemoveAt(0);
-            }
         }
         #endregion
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)

@@ -25,7 +25,7 @@ namespace UCA
         public Mod CalamityInheritance = null;
         public override void HandlePacket(BinaryReader reader, int whoAmI)
         {
-            UCANetCode.HandleMouseWorldPacket(reader, whoAmI);
+            UCANetCode.HandlePacket(reader, whoAmI);
         }
         public override void Load()
         {

@@ -53,10 +53,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 {
                     BallScale = MathHelper.Lerp(BallScale, 0f, 0.02f);
                 }
-
-                if (animationHelper.Auxfloat[AnimationState.Begin] == 15)
-                {
-                }
             }
             else if (!animationHelper.HasFinish[AnimationState.Middle])
             {

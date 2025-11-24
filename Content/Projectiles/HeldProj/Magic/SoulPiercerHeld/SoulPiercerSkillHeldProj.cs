@@ -90,7 +90,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
                 animationHelper.MaxAniProgress[AnimationState.End] = 300;
                 TargetRot = Owner.GetPlayerToMouseVector2().ToRotation();
             }
-            Projectile.SetHeldProj(Owner, true, CanUpdateAngle);
+            Projectile.SetHeldProj(Owner, false, CanUpdateAngle);
             if (CanUpdateAngle)
                 TargetRot = Utils.AngleLerp(TargetRot, Owner.GetPlayerToMouseVector2().ToRotation(), 0.2f);
             HandleAni();
@@ -132,8 +132,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
                 Vector2 RealAimPoint = TargetPos.RotatedBy(TargetRot);
                 Vector2 beginSpawnPos = Projectile.Center + new Vector2(64, 0).RotatedBy(Projectile.rotation);
                 Vector2 EndSpawnPos = Projectile.Center + RealAimPoint;
-                Color DrawColor;
-                DrawColor = Color.Lerp(Color.DarkViolet, Color.SkyBlue, Main.rand.NextFloat());
+                Color DrawColor = Color.Lerp(Color.DarkViolet, Color.SkyBlue, Main.rand.NextFloat());
                 new TLineOF(Vector2.Lerp(beginSpawnPos, EndSpawnPos, Main.rand.NextFloat()), Main.rand.NextFloat(2f, 4f), DrawColor, Main.rand.Next(60, 120), 0.15f, Main.rand.NextFloat(MathHelper.TwoPi)).Spawn();
                 Color TGBColor = Color.Lerp(Color.Violet, Color.SkyBlue, Main.rand.NextFloat());
                 new TrailGlowBall_T(Vector2.Lerp(beginSpawnPos, EndSpawnPos, Main.rand.NextFloat() - 0.1f), TGBColor, Main.rand.Next(45, 90), 0.15f, Main.rand.NextFloat(1f, 2f), Main.rand.NextFloat(MathHelper.TwoPi), 1f).Spawn();
@@ -223,29 +222,31 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
             float drawRotation = Projectile.rotation + (Projectile.spriteDirection == -1 ? MathHelper.PiOver2 + MathHelper.PiOver4 : MathHelper.PiOver4);
             Vector2 rotationPoint = texture.Size() / 2f;
             SpriteEffects flipSprite = Projectile.spriteDirection * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            Main.spriteBatch.Draw(texture, drawPosition, null, Color.White, drawRotation, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
-            
+
             LAPUtilities.ReSetToBeginShader();
+
             // 绘制基础的灵魂大剑
             Texture2D Sword = UCATextureRegister.SoulGreatSword.Value;
             Vector2 SwordPoint = new Vector2(Sword.Width / 2, Sword.Height - 100);
             float SwordRot = Projectile.rotation + MathHelper.PiOver2;
-            Main.spriteBatch.Draw(Sword, drawPosition, null, Color.White * 0.6f * Opacity, SwordRot, SwordPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
+            Main.spriteBatch.Draw(Sword, drawPosition, null, Color.White * 1f * Opacity, SwordRot, SwordPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
+            
             // 绘制辉光和流光
             Texture2D Ball = UCATextureRegister.FusableBall.Value;
             float Ballrot = Projectile.rotation;
             Vector2 BallrotPoint = new Vector2(0, Ball.Height / 2);
             Vector2 DrawOffset = new Vector2(-60, 0).RotatedBy(Projectile.rotation);
-            Main.spriteBatch.Draw(Ball, drawPosition + DrawOffset, null, Color.White * 0.55f * Opacity, Ballrot, BallrotPoint, Projectile.scale * Main.player[Projectile.owner].gravDir * new Vector2(1.3f, 0.25f), flipSprite, 0f);
+            Main.spriteBatch.Draw(Ball, drawPosition + DrawOffset, null, Color.White * 1f * Opacity, Ballrot, BallrotPoint, Projectile.scale * Main.player[Projectile.owner].gravDir * new Vector2(1.3f, 0.25f), flipSprite, 0f);
+         
             // 画两次流光
             UCAShaderRegister.SoulGreatSwordFlowShader.Parameters["UVOffset"].SetValue(new Vector2(-Main.GlobalTimeWrappedHourly * Owner.direction, 0));
             UCAShaderRegister.SoulGreatSwordFlowShader.Parameters["NoiseTextureScale"].SetValue(new Vector2(2f, 1f));
             UCAShaderRegister.SoulGreatSwordFlowShader.CurrentTechnique.Passes[0].Apply();
             LAPUtilities.SetTexture(UCATextureRegister.Aura_01.Value, 1);
             Vector2 DrawOffset2 = new Vector2(-90, 0).RotatedBy(Projectile.rotation);
-            Main.spriteBatch.Draw(Ball, drawPosition + DrawOffset2, null, Color.White * 0.55f * Opacity, Ballrot, BallrotPoint, Projectile.scale * Main.player[Projectile.owner].gravDir * new Vector2(1.8f, 0.4f), flipSprite, 0f);
+            Main.spriteBatch.Draw(Ball, drawPosition + DrawOffset2, null, Color.White * 1f * Opacity, Ballrot, BallrotPoint, Projectile.scale * Main.player[Projectile.owner].gravDir * new Vector2(1.8f, 0.4f), flipSprite, 0f);
             UCAShaderRegister.SoulGreatSwordFlowShader.Parameters["NoiseTextureScale"].SetValue(new Vector2(3f, 1f));
-            Main.spriteBatch.Draw(Ball, drawPosition + DrawOffset2, null, Color.White * 0.55f * Opacity, Ballrot, BallrotPoint, Projectile.scale * Main.player[Projectile.owner].gravDir * new Vector2(1.4f, 0.2f), flipSprite, 0f);
+            Main.spriteBatch.Draw(Ball, drawPosition + DrawOffset2, null, Color.White * 1f * Opacity, Ballrot, BallrotPoint, Projectile.scale * Main.player[Projectile.owner].gravDir * new Vector2(1.4f, 0.2f), flipSprite, 0f);
            
             if (OldAimPos.Count > 2)
             {
@@ -263,6 +264,9 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
                 DrawTrail(0.9f, 0.2f);
             }
             LAPUtilities.ReSetToEndShader();
+
+            Main.spriteBatch.Draw(texture, drawPosition, null, Color.White, drawRotation, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
+
             return false;
         }
         public void DrawTrail(float BeginScale , float EndScale)

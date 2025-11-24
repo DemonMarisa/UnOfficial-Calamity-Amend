@@ -138,7 +138,6 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
                     GlowOrbParticle glowOrbParticle = new(Projectile.Center + offsetPos, dVel, false, 80, 1.2f, Main.rand.NextBool() ? Color.Gold : Color.White);
                     GeneralParticleHandler.SpawnParticle(glowOrbParticle);
                 }
-
                 SoundEngine.PlaySound(AdditionHitSigSound, Projectile.Center);
                 //生成准备进行十字裁决的挂载射弹
                 Projectile proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<HolyJudgementMounted>(), Projectile.damage, 0f, Owner.whoAmI);
@@ -150,7 +149,6 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
         {
             Projectile.QuickDrawBloomEdge();
             Projectile.QuickDrawWithTrailing(0.4f, Color.White);
-            
             return false;
         }
 
@@ -177,7 +175,6 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
                 Dust dust = Dust.NewDustPerfect(new Vector2(Projectile.Center.X, Projectile.Center.Y) + offset, DustID.GemDiamond, new Vector2(Projectile.velocity.X * 0.2f + velOffset.X, Projectile.velocity.Y * 0.2f + velOffset.Y), 100, default, 0.8f);
                 dust.noGravity = true;
             }
-
             if (Main.rand.NextBool(5))
             {
                 Vector2 offset = new Vector2(12, 0).RotatedByRandom(MathHelper.ToRadians(360f));
@@ -293,7 +290,6 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
                     hammer.DamageType = ModContent.GetInstance<RogueDamageClass>();
                     hammer.ai[2] = 1f;
                     Update = true;
-
                 }
             }
             //无论如何，都直接处死这个锤子

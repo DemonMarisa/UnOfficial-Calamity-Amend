@@ -318,9 +318,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
         {
             int MaxAni = animationHelper.MaxAniProgress[AnimationState.End];
             int CurAni = animationHelper.AniProgress[AnimationState.End];
-
             Projectile.rotation += angularVelocity * (float)Math.Sin(MathHelper.TwoPi * (CurAni / (float)MaxAni)) * 0.25f * -Owner.direction;
-
             Opacity = MathHelper.Lerp(0, 1, CurAni / (float)MaxAni);
         }
         #endregion

@@ -96,7 +96,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             if (FollowOwner)
             {
                 UpdateOwner();
-                Projectile.Center = Owner.Center + RelativeOwnerPos.RotatedBy(RelativeOwnerPosRot);
+                Projectile.Center = Owner.RotatedRelativePoint(Owner.Center) + RelativeOwnerPos.RotatedBy(RelativeOwnerPosRot);
                 // 设置玩家手持效果
                 float baseRotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
                 float directionVerticality = MathF.Abs(Projectile.velocity.X);
@@ -170,8 +170,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
 
             if (CanChangeDir)
                 Owner.ChangeDir(Owner.LocalMouseWorld().X > Owner.Center.X ? 1 : -1);
-
-            Owner.heldProj = Projectile.whoAmI;
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {

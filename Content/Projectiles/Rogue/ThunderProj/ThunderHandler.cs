@@ -260,7 +260,7 @@ namespace UCA.Content.Projectiles.Rogue.ThunderProj
         private void Strike_StrikingDown()
         {
             //将速度飞向过去。用追踪方法
-            Projectile.HomingTarget(PlatformPos, 99999, 24f, 20f, MathHelper.ToRadians(30f));
+            Projectile.HomingTarget(PlatformPos, -1, 24f, 20f, MathHelper.ToRadians(30f));
             Projectile platformProj = Main.projectile[PlatformIndex];
             if (Projectile.Hitbox.Intersects(platformProj.Hitbox))
             {

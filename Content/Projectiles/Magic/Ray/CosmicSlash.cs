@@ -25,10 +25,6 @@ namespace UCA.Content.Projectiles.Magic.Ray
         public int LaserLength;
         public Vector2 BeginPos;
         public Vector2 EndPos;
-        public override void SetStaticDefaults()
-        {
-            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 4400;
-        }
         public override void SetDefaults()
         {
             Projectile.width = 18;
@@ -98,42 +94,6 @@ namespace UCA.Content.Projectiles.Magic.Ray
         public override bool PreDraw(ref Color lightColor)
         {
             return false;
-        }
-        public static void GenUnDeathSign(Vector2 firePos, float speedMult = 1)
-        {
-            if (UCAConfig.Instance.PerformanceMode)
-                speedMult *= 0.7f;
-            // 生成星形
-            for (int i = 0; i < 120; i++)
-            {
-                float offsetAngle = MathHelper.TwoPi * i / 120f;
-                // Parametric equations for an asteroid.
-                float unitOffsetX = (float)Math.Pow(Math.Cos(offsetAngle), 5D) * 1.5f;
-                float unitOffsetY = (float)Math.Pow(Math.Sin(offsetAngle), 5D);
-                Vector2 puffDustVelocity = new Vector2(unitOffsetX, unitOffsetY) * 7f * speedMult;
-                CosmicMetaBall.SpawnCircleParticle(firePos, puffDustVelocity, 0.13f, 90);
-            }
-            // 生成四条线
-            for (int i = 0; i < 4; i++)
-            {
-                float offsetAngle = MathHelper.TwoPi * i / 4f + MathHelper.PiOver4;
-                Vector2 vector = offsetAngle.ToRotationVector2() * 4 * speedMult;
-                for (int j = 0; j < 18; j++)
-                {
-                    CosmicMetaBall.SpawnCircleParticle(firePos, vector + vector * (j / 20f), 0.15f, 90);
-                }
-            }
-            // 生成四条线的切线
-            for (int i = 0; i < 4; i++)
-            {
-                for (int j = 0; j < 20; j++)
-                {
-                    Vector2 beginVector = new(1, 0.3f);
-                    Vector2 endVector = new(1, -0.3f);
-                    Vector2 vector = Vector2.Lerp(beginVector, endVector, j / 20f);
-                    CosmicMetaBall.SpawnCircleParticle(firePos, vector.RotatedBy(MathHelper.PiOver4 + MathHelper.PiOver2 * i) * 5.7f * speedMult, 0.15f, 90);
-                }
-            }
         }
     }
 }

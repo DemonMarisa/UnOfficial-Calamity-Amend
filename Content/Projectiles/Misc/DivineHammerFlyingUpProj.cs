@@ -22,7 +22,7 @@ namespace UCA.Content.Projectiles.Misc
     {
         public override string Texture => ModContent.GetInstance<DivineHammer>().Texture;
         private ref float Timer => ref Projectile.ai[0];
-        public SpriteBatch SB { get=>Main.spriteBatch;}
+        public static SpriteBatch SB { get=>Main.spriteBatch;}
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.TrailCacheLength[Type] = 20;

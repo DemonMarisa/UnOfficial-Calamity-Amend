@@ -348,6 +348,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         }
         public void PrepareShader(Color beginColor, Color endColor, float uIntensity = 0.15f, bool useColor = true, float Opacity = 0.5f)
         {
+            Opacity *= 2f;
             UCAShaderRegister.SolarBladeShader.Parameters["uTime"].SetValue(-Main.GlobalTimeWrappedHourly);
             UCAShaderRegister.SolarBladeShader.Parameters["uIntensity"].SetValue(uIntensity);
             UCAShaderRegister.SolarBladeShader.Parameters["ubeginColor"].SetValue(beginColor.ToVector4());

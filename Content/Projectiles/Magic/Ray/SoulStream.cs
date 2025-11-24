@@ -37,8 +37,8 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override void SetDefaults()
         {
-            Projectile.width = 24;
-            Projectile.height = 24;
+            Projectile.width = 128;
+            Projectile.height = 128;
             Projectile.extraUpdates = 0;
             Projectile.friendly = true;
             Projectile.timeLeft = MaxLife;
@@ -57,7 +57,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             float _ = float.NaN;
             Vector2 beamBeginPos = Projectile.Center;
             Vector2 beamEndPos = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.Zero) * LaserLength;
-            bool c = Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), beamBeginPos, beamEndPos, 64F, ref _);
+            bool c = Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), beamBeginPos, beamEndPos, 72f, ref _);
             return c;
         }
         public override bool? CanHitNPC(NPC target)

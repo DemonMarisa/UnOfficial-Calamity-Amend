@@ -1,4 +1,7 @@
 ﻿using CalamityMod;
+using LAP.Core.Keybind;
+using LAP.Core.MiscDate;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
@@ -9,9 +12,7 @@ using UCA.Common.Misc;
 using UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld;
 using UCA.Core.BaseClass;
 using UCA.Core.Keybinds;
-using LAP.Core.MiscDate;
 using UCA.Core.Utilities;
-using LAP.Core.Utilities;
 
 namespace UCA.Content.Items.Weapons.Magic.Ray
 {
@@ -46,6 +47,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             Item.channel = true;
 
             Item.LAP().UseWeaponSkill = true;
+            Item.LAP().UseCustomWeaponSkill = true;
             Item.LAP().DrawUCASmallIcon = true;
         }
         public override bool AltFunctionUse(Player player)
@@ -100,7 +102,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            tooltips.IntegrateHotkey(UCAKeybind.WeaponSkillHotKey);
+            tooltips.IntegrateHotkey(LAPKeybind.WeaponSkillHotKey);
         }
 
         public override void AddRecipes()

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LAP.Core.Keybind;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
@@ -42,7 +43,7 @@ namespace UCA.Core.BaseClass
             if (player.whoAmI != Main.myPlayer)
                 return;
 
-            if (UCAKeybind.WeaponSkillHotKey.JustPressed && !Main.blockMouse)
+            if (LAPKeybind.WeaponSkillHotKey.JustPressed && !Main.blockMouse)
             {
                 if (Main.playerInventory)
                 {

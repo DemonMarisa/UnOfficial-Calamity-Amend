@@ -51,6 +51,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             Item.LAP().DrawUCASmallIcon = true;
 
             Item.LAP().UseCICalStatInflation = true;
+            Item.LAP().UseCustomWeaponSkill = true;
             Item.LAP().WeaponTier = AllWeaponTier.PostPolterghast;
         }
         public override bool AltFunctionUse(Player player)
@@ -89,11 +90,6 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
 
         public override void UpdateHoldItem(Player player)
         {
-        }
-
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            tooltips.IntegrateHotkey(UCAKeybind.WeaponSkillHotKey);
         }
 
         public override void AddRecipes()

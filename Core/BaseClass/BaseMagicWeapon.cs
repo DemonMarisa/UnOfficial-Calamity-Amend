@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CalamityMod;
+using LAP.Core.Keybind;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,7 +20,7 @@ namespace UCA.Core.BaseClass
             if (player.whoAmI != Main.myPlayer)
                 return;
 
-            if (UCAKeybind.WeaponSkillHotKey.JustPressed && !Main.blockMouse)
+            if (LAPKeybind.WeaponSkillHotKey.JustPressed && !Main.blockMouse)
             {
                 if (Main.playerInventory)
                 {
@@ -30,7 +32,10 @@ namespace UCA.Core.BaseClass
 
             UpdateHoldItem(player);
         }
-
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            tooltips.IntegrateHotkey(LAPKeybind.WeaponSkillHotKey);
+        }
         public virtual void WeaponSkill(Player player)
         {
 

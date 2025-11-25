@@ -10,6 +10,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Content.Projectiles.Rogue;
 using UCA.Content.Projectiles.Rogue.NightmareProj;
+using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
 
 namespace UCA.Content.Items.Weapons.Rogue

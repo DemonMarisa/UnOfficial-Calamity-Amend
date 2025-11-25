@@ -4,6 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Common.Misc;
 using UCA.Content.Projectiles.Rogue.BlazingProj;
+using UCA.Core.BaseClass;
 
 namespace UCA.Content.Items.Weapons.Rogue
 {

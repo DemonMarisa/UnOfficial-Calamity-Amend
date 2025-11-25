@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Items.Weapons.Magic;
+using LAP.Core.Keybind;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -46,6 +47,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             Item.noUseGraphic = true;
             Item.channel = true;
             Item.LAP().UseWeaponSkill = true;
+            Item.LAP().UseCustomWeaponSkill = true;
             Item.LAP().DrawUCASmallIcon = true;
         }
 
@@ -75,7 +77,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            tooltips.IntegrateHotkey(UCAKeybind.WeaponSkillHotKey);
+            tooltips.IntegrateHotkey(LAPKeybind.WeaponSkillHotKey);
         }
 
         public override void HoldItem(Player player)
@@ -83,7 +85,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             if (player.whoAmI != Main.myPlayer)
                 return;
 
-            if (UCAKeybind.WeaponSkillHotKey.JustPressed && !Main.blockMouse)
+            if (LAPKeybind.WeaponSkillHotKey.JustPressed && !Main.blockMouse)
             {
                 if (Main.playerInventory)
                 {

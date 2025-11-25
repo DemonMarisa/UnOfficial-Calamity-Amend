@@ -2,6 +2,7 @@
 using CalamityMod.Items.Placeables.Walls;
 using CalamityMod.Physics;
 using LAP.Core.Graphics.Primitives.Trail;
+using LAP.Core.Keybind;
 using LAP.Core.Utilities;
 using Microsoft.Build.Evaluation;
 using Microsoft.Xna.Framework;
@@ -423,7 +424,7 @@ namespace UCA.Content.Projectiles.Rogue.ThunderProj
         public AttackMode StoredMode = AttackMode.ModeGeneral;
         public override void ProcessTriggers(TriggersSet triggersSet)
         {
-            if (UCAKeybind.WeaponSkillHotKey.JustPressed && StoredMode == AttackMode.ModeGeneral)
+            if (LAPKeybind.WeaponSkillHotKey.JustPressed && StoredMode == AttackMode.ModeGeneral)
                 StoredMode = AttackMode.ModeStrike;
         }
     }

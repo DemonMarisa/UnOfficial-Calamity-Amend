@@ -50,6 +50,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
        
             Item.LAP().UseWeaponSkill = true;
             Item.LAP().DrawUCASmallIcon = true;
+            Item.LAP().UseCustomWeaponSkill = true;
 
             Item.LAP().WeaponTier = AllWeaponTier.PostDOG;
             Item.LAP().UseCICalStatInflation = true; 
@@ -88,11 +89,6 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
 
         public override void UpdateHoldItem(Player player)
         {
-        }
-
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            tooltips.IntegrateHotkey(UCAKeybind.WeaponSkillHotKey);
         }
 
         public override void AddRecipes()

@@ -1,6 +1,4 @@
 ﻿using CalamityMod;
-using CalamityMod.Items.Weapons.Magic;
-using Humanizer;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Terraria;

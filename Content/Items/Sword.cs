@@ -1,18 +1,12 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Mono.Cecil;
 using System;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using UCA.Content.DrawNodes;
 using UCA.Content.MetaBalls;
 using UCA.Content.Projectiles.Magic.Ray;
-using UCA.Content.Projectiles.Misc.Test;
-using UCA.Content.UCACooldowns;
 using UCA.Core.Utilities;
-using static System.Net.Mime.MediaTypeNames;
 namespace UCA.Content.Items
 { 
 	// This is a basic item template.
@@ -75,7 +69,8 @@ namespace UCA.Content.Items
         }
         public override bool? UseItem(Player player)
         {
-            // new Flame(Main.MouseWorld, Vector2.Zero, Color.White, 64, 0, 1, 1f).Spawn();
+            var UCAPlayer = player.UCA();
+            UCAPlayer.ShouldHandleHammerStealth = true;
             return base.UseItem(player);
         }   
 

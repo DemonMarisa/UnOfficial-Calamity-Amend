@@ -1,20 +1,15 @@
-﻿using LAP.Core.Graphics.Primitives.Trail;
-using LAP.Core.Utilities;
+﻿using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using UCA.Assets;
 using UCA.Assets.Effects;
 using UCA.Assets.Sounds;
 using UCA.Content.Configs;
-using UCA.Content.DrawNodes;
 using UCA.Content.Particiles;
 using UCA.Core.Enums;
-using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
 {

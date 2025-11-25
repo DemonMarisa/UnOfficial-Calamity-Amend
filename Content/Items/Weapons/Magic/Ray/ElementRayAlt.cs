@@ -2,6 +2,7 @@
 using CalamityMod.Items.Materials;
 using CalamityMod.Items.Weapons.Magic;
 using LAP.Core.Enums;
+using LAP.Core.Keybind;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Mono.Cecil;
@@ -61,6 +62,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             Item.LAP().UseCICalStatInflation = true;
             Item.LAP().WeaponTier = AllWeaponTier.PostMoonLord;
             Item.LAP().UseCustomStatInflationMult = true;
+            Item.LAP().UseCustomWeaponSkill = true;
             Item.LAP().StatInflationMult = 1f;
         }
         public override bool CanUseItem( Player player)
@@ -171,7 +173,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            tooltips.IntegrateHotkey(UCAKeybind.WeaponSkillHotKey);
+            tooltips.IntegrateHotkey(LAPKeybind.WeaponSkillHotKey);
 
             Player player = Main.LocalPlayer;
 

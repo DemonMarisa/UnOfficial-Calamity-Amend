@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 using UCA.Content.Projectiles.Rogue;
 using UCA.Core.Utilities;
 
-namespace UCA.Content.Items.Weapons.Rogue
+namespace UCA.Core.BaseClass
 {
     public abstract class BaseHammerItem : ModItem, ILocalizedModType 
     {
@@ -51,6 +51,11 @@ namespace UCA.Content.Items.Weapons.Rogue
             Projectile st = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, player.whoAmI);
             st.Calamity().stealthStrike = player.Calamity().StealthStrikeAvailable();
             return false;
+        }
+        public override void HoldItem(Player player)
+        {
+            var UCAPlayer = player.UCA();
+            UCAPlayer.ShouldHandleHammerStealth = true;
         }
     }
 }

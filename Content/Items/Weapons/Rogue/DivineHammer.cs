@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using UCA.Common.Misc;
 using UCA.Content.Projectiles.Misc;
 using UCA.Content.Projectiles.Rogue.DivineProj;
+using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
 
 namespace UCA.Content.Items.Weapons.Rogue

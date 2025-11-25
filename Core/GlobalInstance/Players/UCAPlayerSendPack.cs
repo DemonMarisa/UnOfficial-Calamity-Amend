@@ -1,4 +1,5 @@
-﻿using LAP.Core.NetCode;
+﻿using LAP.Core.Keybind;
+using LAP.Core.NetCode;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace UCA.Core.GlobalInstance.Players
         {
             if (Main.myPlayer == Player.whoAmI)
             {
-                JustPressedWeaponSKill = UCAKeybind.WeaponSkillHotKey.JustPressed;
+                JustPressedWeaponSKill = LAPKeybind.WeaponSkillHotKey.JustPressed;
             }
             if (JustPressedWeaponSKill != OldJustPressedWeaponSKill)
             {
@@ -34,14 +35,14 @@ namespace UCA.Core.GlobalInstance.Players
                     // 写入是哪个玩家发送的
                     packet.Write((byte)Player.whoAmI);
                     // 写入鼠标坐标
-                    packet.Write(UCAKeybind.WeaponSkillHotKey.JustPressed);
+                    packet.Write(LAPKeybind.WeaponSkillHotKey.JustPressed);
                     // 发送给服务器
                     packet.Send();
                 }
             }
             if (Main.myPlayer == Player.whoAmI)
             {
-                OldJustPressedWeaponSKill = UCAKeybind.WeaponSkillHotKey.JustPressed;
+                OldJustPressedWeaponSKill = LAPKeybind.WeaponSkillHotKey.JustPressed;
             }
         }
     }

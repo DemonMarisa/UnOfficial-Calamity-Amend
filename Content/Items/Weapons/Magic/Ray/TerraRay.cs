@@ -1,6 +1,7 @@
 ﻿using CalamityMod;
 using CalamityMod.Items.Materials;
 using CalamityMod.Items.Weapons.Magic;
+using LAP.Core.Keybind;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -48,6 +49,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             Item.channel = true;
             Item.LAP().UseWeaponSkill = true;
             Item.LAP().DrawUCASmallIcon = true;
+            Item.LAP().UseCustomWeaponSkill = true;
         }
         public override bool AltFunctionUse(Player player)
         {
@@ -73,8 +75,8 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            tooltips.IntegrateHotkey(UCAKeybind.WeaponSkillHotKey);
-            tooltips.IntegrateHotkey(UCAKeybind.WeaponSkillHotKey);
+            tooltips.IntegrateHotkey(LAPKeybind.WeaponSkillHotKey);
+            tooltips.IntegrateHotkey(LAPKeybind.WeaponSkillHotKey);
         }
         public override void WeaponSkill(Player player)
         {

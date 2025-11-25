@@ -1,6 +1,7 @@
 ﻿using CalamityMod;
 using CalamityMod.Items.Weapons.Magic;
 using LAP.Core.Enums;
+using LAP.Core.Keybind;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -53,6 +54,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             Item.noUseGraphic = true;
             Item.channel = true;
             Item.LAP().UseWeaponSkill = true;
+            Item.LAP().UseCustomWeaponSkill = true;
             Item.LAP().DrawUCASmallIcon = true;
         }
         public override bool CanUseItem(Player player)
@@ -91,11 +93,6 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             player.AddCooldown(NightShield.ID, UCAPlayer.NightShieldMaxHP);
             if (player.Calamity().cooldowns.TryGetValue(NightShield.ID, out var Durability))
                 Durability.timeLeft = player.UCA().NightShieldHP;
-        }
-
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            tooltips.IntegrateHotkey(UCAKeybind.WeaponSkillHotKey);
         }
 
         public override void AddRecipes()

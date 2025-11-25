@@ -1,5 +1,6 @@
 ﻿using CalamityMod.Graphics.Primitives;
 using CalamityMod.Physics;
+using LAP.Core.Graphics.Primitives.Trail;
 using LAP.Core.SpecificEffectManagers;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
@@ -11,8 +12,9 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using UCA.Assets;
 using UCA.Assets.Sounds;
-using UCA.Content.Items.Weapons.Rogue;
+using UCA.Content.Items.Weapons.Rogue.Hammer;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.Rogue;
 using UCA.Content.Projectiles.Rogue.ThunderProj;
@@ -59,8 +61,6 @@ namespace UCA.Content.Projectiles.Misc
                 Init();
                 return;
             }
-
-            
             //整个过程检测御主的存活等状态
             CheckPlayerStatus();
             //别让Timer < 1，不然又会进行一次初始化
@@ -373,31 +373,6 @@ namespace UCA.Content.Projectiles.Misc
         #endregion
         #region 绳子实例控制
         public PixelationPrimitiveLayer LayerToRenderTo => PixelationPrimitiveLayer.AfterPlayers;
-        public struct TrailDrawDate(Vector2 drawPos, Color drawColor, Vector2 primitivesHeight, float primitivesHeightRot)
-        {
-            /// <summary>
-            /// 传入的世界坐标
-            /// </summary>
-            public Vector2 PosDate = drawPos;
-            /// <summary>
-            /// 传入每个点的颜色
-            /// </summary>
-            public Color DrawColor = drawColor;
-            /// <summary>
-            /// 顶点的偏移
-            /// </summary>
-            public Vector2 PrimitivesOffset = primitivesHeight;
-            /// <summary>
-            /// 顶点偏移的整体旋转
-            /// </summary>
-            public float PrimitivesHeightRot = primitivesHeightRot;
-        }
-        public struct DrawSetting(Texture2D texture, bool usePosTransformation, bool usePixelTransformation)
-        {
-            public Texture2D texture = texture;
-            public bool usePosTransformation = usePosTransformation;
-            public bool usePixelTransformation = usePixelTransformation;
-        }
         /// <summary>
         /// 绳子的起点
         /// </summary>
@@ -415,7 +390,6 @@ namespace UCA.Content.Projectiles.Misc
         /// 绳子实例
         /// </summary>
         public RopeHandle? Rope;
-
         /// <summary>
         /// 初始化绳子实例
         /// </summary>
@@ -434,7 +408,6 @@ namespace UCA.Content.Projectiles.Misc
                 RespondToEntityMovement = true,
                 RespondToWind = true,
                 TileColliderArea = Collision.TileCollision(Projectile.Center, Projectile.velocity, Projectile.width, Projectile.height)
-
             };
             Vector2 dir;
             if (CurRotation > 0)
@@ -479,16 +452,11 @@ namespace UCA.Content.Projectiles.Misc
                 return;
             SB.End();
             SB.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null);
-
-            var instance = ModContent.GetInstance<ThunderHandler>();
-            string path = $"{instance.GetType().Namespace}.{instance.GetType().Name}Rope".Replace(".", "/");
             //获取这个绳子示例。
-            Texture2D texture = ModContent.Request<Texture2D>(path).Value;
+            Texture2D texture = UCATextureRegister.HammerRope.Value;
             Vector2[] ribbonPositions = rope.Positions.ToArray();
             DrawSetting drawSetting = new(texture, true, true);
             List<TrailDrawDate> trailDrawDate = [];
-            List<TrailDrawDate> trailDrawDate1 = [];
-            List<TrailDrawDate> trailDrawDate2 = [];
             int positionCount = ribbonPositions.Length;
             for (int i = 0; i < positionCount - 1; i++)
             {
@@ -498,48 +466,13 @@ namespace UCA.Content.Projectiles.Misc
                 float rot = (NextPosition - Position).ToRotation();
                 float height = 2.5f;
                 if (i < 8)
-                {
                     rot -= MathHelper.PiOver4;
-                }
-
                 Vector2 dir1 = Position.SafeNormalize(Vector2.UnitX);
-                Vector2 pos1 = Position + dir1 * 4.5f;
-                Vector2 pos2 = Position - dir1 * 4.5f;
                 trailDrawDate.Add(new(Position, Color.White, new Vector2(0, height), rot));
             }
-            DrawTrail([.. trailDrawDate], drawSetting);
+            TrailRender.DrawTrail([.. trailDrawDate], drawSetting);
             SB.End();
             SB.BeginDefault();
-        }
-        /// <summary>
-        /// 实际绘制绳子
-        /// </summary>
-        /// <param name="DrawDate"></param>
-        /// <param name="drawSetting"></param>
-        public static void DrawTrail(TrailDrawDate[] DrawDate, DrawSetting drawSetting)
-        {
-            List<VertexPosition2DColorTexture> Vertexlist = new List<VertexPosition2DColorTexture>();
-
-            for (int i = 0; i < DrawDate.Length; i++)
-            {
-                float progress = (float)i / DrawDate.Length;
-                //绘制位置
-                Vector2 DrawPos = DrawDate[i].PosDate - (drawSetting.usePosTransformation ? Main.screenPosition : Vector2.Zero);
-
-                if (drawSetting.usePixelTransformation)
-                    DrawPos = DrawPos / 2;
-
-                //每个片的高度与旋转
-                Vector2 PrimitivesHeight = DrawDate[i].PrimitivesOffset;
-                float PrimitivesHeightRot = DrawDate[i].PrimitivesHeightRot;
-                Color DrawColor = DrawDate[i].DrawColor;
-
-                Vertexlist.Add(new VertexPosition2DColorTexture(DrawPos - PrimitivesHeight.RotatedBy(PrimitivesHeightRot), DrawColor, new Vector2(progress, 0), 0));
-                Vertexlist.Add(new VertexPosition2DColorTexture(DrawPos + PrimitivesHeight.RotatedBy(PrimitivesHeightRot), DrawColor, new Vector2(progress, 1), 0));
-            }
-
-            Main.graphics.GraphicsDevice.Textures[0] = drawSetting.texture;
-            Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, Vertexlist.ToArray(), 0, Vertexlist.Count - 2);
         }
         #endregion
 

@@ -11,7 +11,7 @@ using Terraria.ModLoader;
 using UCA.Content.Projectiles.Rogue.ThunderProj;
 using UCA.Core.Keybinds;
 
-namespace UCA.Content.Items.Weapons.Rogue
+namespace UCA.Content.Items.Weapons.Rogue.Hammer
 {
     public class ThunderHammer : ModItem, ILocalizedModType
     {

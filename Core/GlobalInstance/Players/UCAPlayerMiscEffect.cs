@@ -18,7 +18,6 @@ namespace UCA.Core.GlobalInstance.Players
             AddTerraBoost();
             AddElementalBoost();
             AddShadowBoltStaffBoost();
-
             Reset_PostUpdateMiscEffects();
         }
     }

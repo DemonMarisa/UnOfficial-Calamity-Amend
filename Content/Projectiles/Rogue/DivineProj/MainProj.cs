@@ -17,8 +17,9 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets.Sounds;
-using UCA.Content.Items.Weapons.Rogue;
+using UCA.Content.Items.Weapons.Rogue.Hammer;
 using UCA.Content.Particiles;
+using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Rogue.DivineProj

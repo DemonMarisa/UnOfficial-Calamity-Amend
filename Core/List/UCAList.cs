@@ -1,5 +1,5 @@
 ﻿using Terraria.ModLoader;
-using UCA.Content.Items.Weapons.Rogue;
+using UCA.Content.Items.Weapons.Rogue.Hammer;
 
 namespace UCA.Core.List
 {

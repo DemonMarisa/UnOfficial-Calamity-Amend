@@ -13,7 +13,7 @@ using UCA.Content.Projectiles.Rogue.NightmareProj;
 using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
 
-namespace UCA.Content.Items.Weapons.Rogue
+namespace UCA.Content.Items.Weapons.Rogue.Hammer
 {
     public class NightmareHammer: BaseHammerItem
     {

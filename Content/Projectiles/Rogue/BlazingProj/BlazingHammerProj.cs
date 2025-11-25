@@ -8,8 +8,9 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using UCA.Content.Items.Weapons.Rogue;
+using UCA.Content.Items.Weapons.Rogue.Hammer;
 using UCA.Content.Particiles;
+using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
 using static UCA.Content.Projectiles.Rogue.BlazingProj.BlazingNamePick;
 

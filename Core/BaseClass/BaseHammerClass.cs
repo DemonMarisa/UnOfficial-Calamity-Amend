@@ -5,7 +5,7 @@ using UCA.Core.GlobalInstance.Players;
 using UCA.Core.GlobalInstance.Projectiles;
 using UCA.Core.Utilities;
 
-namespace UCA.Content.Projectiles.Rogue
+namespace UCA.Core.BaseClass
 {
     public struct BaseProjSD(int HitCooldown, int LifeTime, int Width, int Height, float rotation,bool UseLocalHit = true)
     {

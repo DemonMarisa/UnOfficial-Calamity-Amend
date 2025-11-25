@@ -50,6 +50,7 @@ namespace UCA.Assets
         public static Asset<Texture2D> Trail_RvSlash { get; private set; }
         public static Asset <Texture2D> Trail_VShapeWithTail { get; private set; }
         public static Asset<Texture2D> Misc_HRStarTexture { get; private set; }
+        public static Asset<Texture2D> HammerRope { get; private set; }
         private static string E_Path => "UCA/Assets/ExtraTextures/";
         public static void LoadExtraTextures()
         {
@@ -95,6 +96,7 @@ namespace UCA.Assets
             Trail_RvSlash = ModContent.Request<Texture2D>(E_Path + nameof(Trail_RvSlash));
             Trail_VShapeWithTail = ModContent.Request<Texture2D>(E_Path+nameof(Trail_VShapeWithTail));
             Misc_HRStarTexture = ModContent.Request<Texture2D>(E_Path + nameof(Misc_HRStarTexture));
+            HammerRope = ModContent.Request<Texture2D>(E_Path + nameof(HammerRope));
         }
         public static void UnLoadExtraTextures()
         {

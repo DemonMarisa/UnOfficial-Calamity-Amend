@@ -5,7 +5,7 @@ using UCA.Common.Misc;
 using UCA.Content.Projectiles.Rogue.PunishmentProj;
 using UCA.Core.BaseClass;
 
-namespace UCA.Content.Items.Weapons.Rogue
+namespace UCA.Content.Items.Weapons.Rogue.Hammer
 {
     public class PunishmentHammer: BaseHammerItem
     {

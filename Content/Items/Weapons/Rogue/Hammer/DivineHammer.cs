@@ -11,7 +11,7 @@ using UCA.Content.Projectiles.Rogue.DivineProj;
 using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
 
-namespace UCA.Content.Items.Weapons.Rogue
+namespace UCA.Content.Items.Weapons.Rogue.Hammer
 {
     public class DivineHammer: BaseHammerItem
     {

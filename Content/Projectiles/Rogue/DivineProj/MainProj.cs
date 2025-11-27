@@ -2,7 +2,6 @@ using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Graphics.Primitives;
 using CalamityMod.Particles;
-using CalamityMod.Projectiles.Melee;
 using LAP.Core.ParticleSystem;
 using LAP.Core.SpecificEffectManagers;
 using LAP.Core.Utilities;
@@ -19,26 +18,18 @@ using Terraria.ModLoader;
 using UCA.Assets.Sounds;
 using UCA.Content.Items.Weapons.Rogue;
 using UCA.Content.Particiles;
+using UCA.Content.Projectiles.Rogue.PunishmentProj;
 using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Rogue.DivineProj
 {
-    public class DivineHammerProj: BaseHammerClass, ILocalizedModType
+    public class DivineHammerProj: ThrownHammerProj, ILocalizedModType
     {
         protected override BoomerangDefault BoomerangStat => new(
             returnTime: 34,
             returnSpeed: 28f,
             acceleration: 0.4f,
             killDistance: 1800
-        );
-        protected override BaseProjSD ProjStat => new(
-            //这里的无敌帧有意整成15
-            HitCooldown: 15,
-            //这里存续时间无所谓，因为会在AI里时刻被更新
-            LifeTime: 200,
-            Width: 86,
-            Height: 72,
-            rotation: 0.2f
         );
         private enum DoType
         {
@@ -72,14 +63,18 @@ namespace UCA.Content.Projectiles.Rogue.DivineProj
         }
         public override void ExSD()
         {
+            Projectile.width = 86;
+            Projectile.height = 72;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 15;
             Projectile.extraUpdates = 4;
         }
         public override void OnSpawn(IEntitySource source)
         {
-            SpriteRotation = Projectile.velocity.ToRotation();
         }
         public override void AI()
         {
+            //这里需要手动处死
             Projectile.timeLeft = 2;
             DoGeneric();
             switch (AttackType)
@@ -97,51 +92,41 @@ namespace UCA.Content.Projectiles.Rogue.DivineProj
         }
         public override bool PreKill(int timeLeft)
         {
-            //额外锤子不要震屏
             if (AttackType is DoType.IsStealth && _drawArcTime > 0 && Stealth)
             {
                 SoundStyle select = Utils.SelectRandom(Main.rand, SoundsMenu.Smash_AirHeavy);
                 SoundEngine.PlaySound(select, Projectile.Center);
-                //震屏
-                ScreenShakeSystem.AddScreenShakes(Projectile.Center, -40 * Owner.direction, 15, Projectile.rotation, 0.2f, true, 1000);
+                ScreenShakeSystem.AddScreenShakes(Projectile.Center, -80 * Owner.direction, 23, Projectile.rotation, 0.2f, true, 1000);
             }
             return true;
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(ModContent.BuffType<GodSlayerInferno>(), 600);
-            //允许绘制轨迹的锤子永远不会执行普攻效果
-            //byd什么史山啊
-            bool canSpawnSpark = CanDrawTrail && !Stealth && AttackType == DoType.IsStealth || Stealth;
-            if (canSpawnSpark)
+            if (Stealth)
             {
                 DrawHitSpark(target, hit.Damage);
-                //只有潜伏状态下才允许额外生成锤子，其余状态处死
-                if (AttackType == DoType.IsStealth)
+                if (_drawArcTime > 0)
                 {
-                    if (_drawArcTime > 0 && Stealth)
-                    {
-                        StealthHit(target, hit.Damage, target.whoAmI);
-                        Projectile.Kill();
-                    }
-                    else if (CanDrawTrail && !Stealth)
-                        Projectile.Kill();
+                    StealthHit(target, hit.Damage, target.whoAmI);
+                    Projectile.Kill();
                 }
             }
-            if (CanDrawTrail)
-                return;
-
-            NormalHit(target);
-            TargetIndex = target.whoAmI;
-            SoundEngine.PlaySound(HitSound with { MaxInstances = 2 }, Projectile.Center);
+            else
+            {
+                if (Projectile.numHits < 5)
+                    NormalHit(target);
+                TargetIndex = target.whoAmI;
+                SoundStyle pickSound2 = Utils.SelectRandom(Main.rand, SoundsMenu.Smash_AirHeavy);
+                SoundEngine.PlaySound(pickSound2 with { Pitch = Main.rand.NextFloat(0.3f, 0.5f), Volume = 0.7f, MaxInstances = 1 }, target.Center);
+            }
         }
         private void DrawHitSpark(NPC target, int damage)
         {
-            SoundStyle pickSound2 = Utils.SelectRandom(Main.rand, SoundsMenu.Smash_AirHeavy);
-            SoundEngine.PlaySound(pickSound2 with { Pitch = Main.rand.NextFloat(0.6f, 0.7f), Volume = 0.7f, MaxInstances = 1 }, target.Center);
+            SoundStyle pickSound2 = Utils.SelectRandom(Main.rand, SoundsMenu.Smash_GroundHeavy);
+            SoundEngine.PlaySound(pickSound2 with { Pitch = Main.rand.NextFloat(0.8f, 0.7f), Volume = 0.7f, MaxInstances = 1 }, target.Center);
             PrettySpark(damage);
         }
-        private List<int> ProjID = [];
         public void StealthHit(NPC target, int hitDamage, int targetIndex)
         {
             for (int i = -1; i < 2; i += 2)
@@ -151,11 +136,36 @@ namespace UCA.Content.Projectiles.Rogue.DivineProj
                 Vector2 spawnVelocity = (direc * 32f).RotatedBy(MathHelper.PiOver4 * i);
                 //两把锤子有属于自己的转角
                 //不会这里写成了一个终极史山吧？
-                float arcAngle = i * (MathHelper.PiOver2 + MathHelper.PiOver4);
+                float arcAngle = i * (MathHelper.PiOver2 + MathHelper.PiOver4 * 1.1f);
                 int echo = Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, spawnVelocity, ModContent.ProjectileType<PhantasmalHammer>(), Projectile.damage / 2, 0f, Owner.whoAmI, targetIndex, 0f, arcAngle);
                 Main.projectile[echo].Calamity().stealthStrike = true;
-                ProjID.Add(echo);
             }
+        }
+        public void NormalHit(NPC target)
+        {
+            int dustSets = Main.rand.Next(5, 8);
+            int dustRadius = 6;
+            Vector2 corner = new(target.Center.X - dustRadius, target.Center.Y - dustRadius);
+            for (int i = 0; i < dustSets; ++i)
+            {
+                float scaleOrb = 1.2f + Main.rand.NextFloat(1f);
+                Dust orb = Dust.NewDustDirect(corner, 2 * dustRadius, 2 * dustRadius, DustID.Clentaminator_Purple);
+                orb.noGravity = true;
+                orb.velocity *= 4f;
+                orb.scale = scaleOrb;
+                for (int j = 0; j < 6; ++j)
+                {
+                    float scaleSparkle = 0.8f + Main.rand.NextFloat(1.1f);
+                    Dust sparkle = Dust.NewDustDirect(corner, 2 * dustRadius, 2 * dustRadius, DustID.ShadowbeamStaff);
+                    sparkle.noGravity = true;
+                    float dustSpeed = Main.rand.NextFloat(10f, 18f);
+                    sparkle.velocity = Main.rand.NextVector2Unit() * dustSpeed;
+                    sparkle.scale = scaleSparkle;
+                }
+            }
+            //生成一点星云射线。
+            Projectile.netUpdate = true;
+            PhantasmalHammer.SpawnNebulaShot(Owner, Projectile, target, 2, false);
         }
         private void PrettySpark(int hitDamage)
         {
@@ -185,57 +195,8 @@ namespace UCA.Content.Projectiles.Rogue.DivineProj
                 SparkParticle spark = new(Projectile.Center, sparkVelocity, false, sparkLifetime, sparkScale, sparkColor);
                 GeneralParticleHandler.SpawnParticle(spark);
             }
-
         }
-        public void NormalHit(NPC target)
-        {
-            int dustSets = Main.rand.Next(5, 8);
-            int dustRadius = 6;
-            Vector2 corner = new(target.Center.X - dustRadius, target.Center.Y - dustRadius);
-            for (int i = 0; i < dustSets; ++i)
-            {
-                float scaleOrb = 1.2f + Main.rand.NextFloat(1f);
-                Dust orb = Dust.NewDustDirect(corner, 2 * dustRadius, 2 * dustRadius, DustID.Clentaminator_Purple);
-                orb.noGravity = true;
-                orb.velocity *= 4f;
-                orb.scale = scaleOrb;
-                for (int j = 0; j < 6; ++j)
-                {
-                    float scaleSparkle = 0.8f + Main.rand.NextFloat(1.1f);
-                    Dust sparkle = Dust.NewDustDirect(corner, 2 * dustRadius, 2 * dustRadius, DustID.ShadowbeamStaff);
-                    sparkle.noGravity = true;
-                    float dustSpeed = Main.rand.NextFloat(10f, 18f);
-                    sparkle.velocity = Main.rand.NextVector2Unit() * dustSpeed;
-                    sparkle.scale = scaleSparkle;
-                }
-            }
-            //生成一点星云射线。
-            Projectile.netUpdate = true;
-            int laserID = ModContent.ProjectileType<NebulaShot>();
-            int laserDamage = Projectile.damage / 3;
-            float laserKB = 2.5f;
-            int numLasers = 3;
-            for (int i = 0; i < numLasers; ++i)
-            {
-                float startDist = Main.rand.NextFloat(260f, 270f);
-                Vector2 startDir = Main.rand.NextVector2Unit();
-                Vector2 startPoint = target.Center + startDir * startDist;
-
-                float laserSpeed = Main.rand.NextFloat(15f, 18f);
-                Vector2 velocity = startDir * -laserSpeed;
-
-                if (Projectile.owner == Main.myPlayer)
-                {
-                    int proj = Projectile.NewProjectile(Projectile.GetSource_FromThis(), startPoint, velocity, laserID, laserDamage, laserKB, Projectile.owner);
-                    if (proj.WithinBounds(Main.maxProjectiles))
-                    {
-                        Main.projectile[proj].DamageType = ModContent.GetInstance<RogueDamageClass>();
-                        Main.projectile[proj].tileCollide = false;
-                        Main.projectile[proj].timeLeft = 30;
-                    }
-                }
-            }
-        }
+        
         private SpriteBatch SB { get => Main.spriteBatch; }
         #region DrawMethod
         public float SetProjWidth(float ratio)
@@ -261,7 +222,7 @@ namespace UCA.Content.Projectiles.Rogue.DivineProj
         {
             Projectile.QuickDrawBloomEdge(rotOffset: -MathHelper.PiOver4);
             Projectile.QuickDrawWithTrailing(0.7f, Color.White, 4, -MathHelper.PiOver4);
-            if (CanDrawTrail && !LAPUtilities.OutOffScreen(Projectile.Center))
+            if (Stealth && !LAPUtilities.OutOffScreen(Projectile.Center))
             {
                 SB.EnterShaderRegion(BlendState.Additive);
                 float spinRotation = Main.GlobalTimeWrappedHourly * 5.2f;
@@ -300,15 +261,12 @@ namespace UCA.Content.Projectiles.Rogue.DivineProj
         {
             //潜伏射弹允许绘制轨迹
             if (Stealth)
-                CanDrawTrail = true;
-            //所有允许绘制轨迹的锤子都不会执行普攻的特效
-            if (CanDrawTrail)
             {
                 Projectile.rotation = Projectile.velocity.ToRotation();
                 IsHanging = true;
                 return;
             }
-            Projectile.rotation += ProjStat.RotationSpeed;
+            Projectile.rotation += 0.2f;
             if (Main.rand.NextBool(8))
             {
                 Vector2 offset = new Vector2(10, 0).RotatedByRandom(MathHelper.ToRadians(360f));
@@ -325,21 +283,25 @@ namespace UCA.Content.Projectiles.Rogue.DivineProj
                 dust.noGravity = true;
             }
         }
+        private void InitIfStealth()
+        {
+            Projectile.extraUpdates = Projectile.extraUpdates + 2;
+            Projectile.localNPCHitCooldown = 20;
+            SoundStyle selectOne = Utils.SelectRandom(Main.rand, SoundsMenu.Hammer_Shoot) with { Volume = 0.8f, MaxInstances = 0 };
+            SoundEngine.PlaySound(selectOne, Projectile.Center);
+        }
         private void DoShooted()
         {
             //潜伏+初始状态下，执行特殊ACT音效，并获得超高EU
-            bool ShouldACT = AttackTimer is 0 && Stealth;
-            if (ShouldACT)
+            if (AttackTimer == 0)
             {
-                Projectile.extraUpdates = Projectile.extraUpdates + 2;
-                Projectile.localNPCHitCooldown = 20;
-                SoundStyle selectOne = Utils.SelectRandom(Main.rand, SoundsMenu.Hammer_Shoot) with { Volume = 0.8f, MaxInstances = 0 };
-                SoundEngine.PlaySound(selectOne, Projectile.Center);
+                SpriteRotation = Projectile.velocity.ToRotation();
+                if (Stealth)
+                    InitIfStealth();
             }
-
+        
             AttackTimer += 1;
-            float retTime = BoomerangStat.ReturnTime;
-            if (AttackTimer > retTime)
+            if (AttackTimer > BoomerangStat.ReturnTime)
             {
                 AttackTimer = 0;
                 AttackType = DoType.IsReturning;
@@ -353,33 +315,28 @@ namespace UCA.Content.Projectiles.Rogue.DivineProj
             Projectile.AccelerateToTarget(Owner.Center, BoomerangStat.ReturnSpeed, BoomerangStat.Acceleration, BoomerangStat.KillDistance);
             if (!Projectile.Hitbox.Intersects(Owner.Hitbox))
                 return;
-
-            //允许绘制轨迹的所有锤子都会执行潜伏的AI
-            if (!CanDrawTrail)
+            if (Stealth)
+            {
+                //否则，其他情况下都会执行这个潜伏ai
+                AttackType = DoType.IsStealth;
+                //重新设定无敌帧
+                Projectile.localNPCHitCooldown = 45;
+                Update = true; 
+            }
+            else
             {
                 Projectile.Kill();
                 Update = true;
-                return;
             }
-            //否则，其他情况下都会执行这个潜伏ai
-            AttackType = DoType.IsStealth;
-            //重新设定无敌帧
-            Projectile.localNPCHitCooldown = 45;
-            Update = true;
         }
 
         private void SpawnSkyFallHammer()
         {
-
-            Vector2 pos = new Vector2(Main.MouseWorld.X + Main.rand.NextFloat(-300f, 300f), Main.MouseWorld.Y - 1200f);
-            Vector2 vel = (Main.MouseWorld - pos).SafeNormalize(Vector2.UnitX) * 22f;
-            Projectile extraHammer = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), pos, vel, ModContent.ProjectileType<DivineHammerProj>(), Projectile.damage / 2, Projectile.knockBack);
-            //启用轨迹。
-            extraHammer.UCA().ExtraAI[0] = 1f;
+            Vector2 mw = Owner.LocalMouseWorld();
+            Vector2 pos = new Vector2(mw.X + Main.rand.NextFloat(-300f, 300f), mw.Y - 1200f);
+            Vector2 vel = (mw - pos).SafeNormalize(Vector2.UnitX) * 22f;
+            Projectile extraHammer = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), pos, vel, ModContent.ProjectileType<DivineHammerProjClone>(), Projectile.damage / 2, Projectile.knockBack);
             extraHammer.extraUpdates = 6;
-            //这个射弹直接从回程至玩家进行
-            extraHammer.ai[0] = (float)DoType.IsShooted;
-            extraHammer.ai[1] = -30f;
         }
         #region 一个比较顺滑的，圆弧运动示例
         /// <summary>

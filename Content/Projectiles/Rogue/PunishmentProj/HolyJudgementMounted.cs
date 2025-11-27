@@ -7,6 +7,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets;
+using UCA.Content.Particiles;
 using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
 
@@ -56,10 +57,10 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
             //让这个东西全局跟随转角动画
             Projectile.rotation += MathHelper.ToRadians(1);
             //全局获取敌对单位的位置并时刻更新。
-            if (Projectile.GetTargetSafe(out NPC target, TargetIndex, false))
+            if (Projectile.GetTargetSafe(out NPC target, TargetIndex, true))
                 Projectile.Center = target.Center;
 
-            switch(AttackType)
+            switch (AttackType)
             {
                 case DoType.Begin:
                     DoBeginAI();
@@ -78,7 +79,7 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
             GeneralProgress += EasingHelper.EaseInOutExpo(AttackTimer / BeginAniTime);
             GeneralProgress = MathHelper.Clamp(GeneralProgress, 0f, 1f);
             AttackTimer++;
-            if(GeneralProgress >= 1f)
+            if (GeneralProgress >= 1f)
             {
                 AttackType = DoType.End;
                 AttackTimer = 0f;
@@ -94,33 +95,52 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
             AttackTimer++;
             if (GeneralProgress <= 0f)
             {
-                //处死时释放
-                for (int i = 0; i < 4; i++)
-                {
-                    //666我还要存他们的数组信息来着
-                    float curRadians = MathHelper.ToRadians(MathHelper.ToDegrees(Projectile.rotation) + 90f * i);
-                    Vector2 velocity = curRadians.ToRotationVector2() * 16;
-                    Projectile proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, velocity, ModContent.ProjectileType<HolyJudgement>(), (int)(Projectile.damage * 0.35f), 0f, Projectile.owner);
-                    proj.DamageType = ModContent.GetInstance<RogueDamageClass>();
-                    proj.ai[1] = 16f;
-                    proj.Calamity().stealthStrike = true;
-                    proj.rotation = curRadians;
-                    proj.localAI[0] = Projectile.Center.X;
-                    proj.localAI[1] = Projectile.Center.Y;
-                    BeamList.Add(proj.whoAmI);
-                }
+                SpawnHolyJudement();
                 //延后更新
                 AttackType = DoType.Extra;
                 AttackTimer = 0f;
                 Projectile.netUpdate = true;
             }
         }
+        private void SpawnHolyJudement()
+        {
+            //原版粒子总体够用，但我还是决定用这个光球。
+            float rotArg = 360f / 36;
+            for (int j = 0; j <= 1; j++)
+            {
+                for (int i = 0; i < 36; i++)
+                {
+                    float rot = MathHelper.ToRadians(i * rotArg);
+                    Vector2 offsetPos = new Vector2(12f + j * 12, 0f).RotatedBy(rot);
+                    Vector2 dVel = new Vector2(4f + 4 * j, 0f).RotatedBy(rot);
+                    float scale = 0.15f;
+                    new GlowBall(Projectile.Center + offsetPos, dVel, Main.rand.NextBool() ? Color.Gold : Color.White, 80, 0f, 1f, scale).Spawn();
+                    new GlowBall(Projectile.Center + offsetPos, dVel, Color.White, 80, 0f, 1f, scale * 0.25f).Spawn();
+                }
+            }
+            //处死时释放
+            for (int i = 0; i < 4; i++)
+            {
+                //666我还要存他们的数组信息来着
+                float curRadians = MathHelper.ToRadians(MathHelper.ToDegrees(Projectile.rotation) + 90f * i);
+                Projectile proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, curRadians.ToRotationVector2() * 16f, ModContent.ProjectileType<HolyJudgement>(), (int)(Projectile.damage * 0.35f), 0f, Projectile.owner);
+                proj.DamageType = ModContent.GetInstance<RogueDamageClass>();
+                proj.ai[1] = 16f;
+                proj.Calamity().stealthStrike = true;
+                //这里必须得保留，确保初始生成的射线角度是正确的
+                proj.rotation = curRadians;
+                proj.localAI[0] = Projectile.Center.X;
+                proj.localAI[1] = Projectile.Center.Y;
+                BeamList.Add(proj.whoAmI);
+            }
+
+        }
         private void DoExta()
         {
             //等待一段时间后自然死亡。
             //遍历所有可能存在的射弹
             int[] array = [.. BeamList];
-            for (int i =0; i < array.Length;i++)
+            for (int i = 0; i < array.Length;i++)
             {
                 //这里写的一堆shit本质上是为了更新四个射线的中心点。
                 Main.projectile[array[i]].localAI[0] = Projectile.Center.X;
@@ -130,26 +150,22 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
             if (AttackTimer > 10f && Owner.ownedProjectileCounts[ModContent.ProjectileType<HolyJudgement>()] < 1)
                 Projectile.Kill();
         }
+        private SpriteBatch SB { get => Main.spriteBatch; }
         public override bool PreDraw(ref Color lightColor)
         {
-            Vector2 backgroundScale = new Vector2(1.4f, 1.4f);
-            Vector2 bloomScale = new Vector2(0.8f, 0.8f);
             //这里的放缩会被lerp进行一次总控。
-            Vector2 dynamicBackgroundScale = Vector2.Lerp(Vector2.Zero, backgroundScale, GeneralProgress) *Projectile.scale * 1.1f;
-            Vector2 dynamicBloomScale = Vector2.Lerp(Vector2.Zero, bloomScale, GeneralProgress) *Projectile.scale * 1.1f;
+            Vector2 dynamicBackgroundScale = Vector2.Lerp(Vector2.Zero, new Vector2(1.4f,1.4f), GeneralProgress) * Projectile.scale * 1.1f;
+            Vector2 dynamicBloomScale = Vector2.Lerp(Vector2.Zero, new Vector2(0.8f,0.8f), GeneralProgress) * Projectile.scale * 1.1f;
+            Vector2 ori = UCATextureRegister.Misc_HRStarTexture.Size() / 2;
             //最后我们实际绘制他。
-            //前提是我们需要重置他的绘制批次。
-            Texture2D projTex =  UCATextureRegister.Misc_HRStarTexture.Value;
-            Vector2 drawPos = Projectile.Center - Main.screenPosition;
+            SB.End();
+            SB.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            SB.Draw(UCATextureRegister.Misc_HRStarTexture.Value, Projectile.Center - Main.screenPosition, null, Color.Yellow, Projectile.rotation, ori, dynamicBackgroundScale, SpriteEffects.None, 0.1f);
+            SB.Draw(UCATextureRegister.Misc_HRStarTexture.Value, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, ori, dynamicBloomScale, SpriteEffects.None, 0.1f);
 
-            Main.spriteBatch.Draw(projTex, drawPos, null, Color.Yellow, Projectile.rotation, projTex.Size() / 2, dynamicBackgroundScale, SpriteEffects.None, 0f);
-            Main.spriteBatch.Draw(projTex, drawPos, null, Color.White, Projectile.rotation, projTex.Size() / 2, dynamicBloomScale, SpriteEffects.None, 0f);
-
-            Main.spriteBatch.End();
-            Main.spriteBatch.BeginDefault();
+            SB.End();
+            SB.BeginDefault();
             return false;
         }
     }

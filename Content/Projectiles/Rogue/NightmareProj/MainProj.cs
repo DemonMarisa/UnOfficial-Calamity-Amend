@@ -14,10 +14,11 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Content.Items.Weapons.Rogue;
 using UCA.Content.Particiles;
+using UCA.Content.Projectiles.Rogue.PunishmentProj;
 using UCA.Core.Utilities;
 namespace UCA.Content.Projectiles.Rogue.NightmareProj
 {
-    public class NightmareHammerProj: BaseHammerClass, ILocalizedModType
+    public class NightmareHammerProj: ThrownHammerProj, ILocalizedModType
     {
         #region Typedef
         internal ref bool Update => ref Projectile.netUpdate;
@@ -44,13 +45,6 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
             returnSpeed: 26f,
             acceleration: 1.5f,
             killDistance: 1800
-        );
-        protected override BaseProjSD ProjStat => new (
-            HitCooldown: 30,
-            LifeTime:300,
-            Width:66,
-            Height:66,
-            rotation: 0.2f
         );
         //潜伏攻击的总时间，为了这个锤子所有攻击方式，如果你知道你在做什么，你不应该修改这个值“低于”480
         private const int TotalSpinTime = 480;
@@ -79,6 +73,10 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
         public override void ExSD()
         {
             //夜明后的锤子应该上4eu了
+            Projectile.height = Projectile.width = 66;
+            Projectile.timeLeft = 300;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 30;
             Projectile.extraUpdates = 4;
         }
         public override void AI()
@@ -103,7 +101,7 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
         //全局AI
         private void DoGeneric() 
         {
-            Projectile.rotation += ProjStat.RotationSpeed;
+            Projectile.rotation += 0.2f;
             if (!Stealth)
                 Projectile.ArmorPenetration = 50;
             Lighting.AddLight(Projectile.Center, TorchID.Purple);
@@ -156,7 +154,7 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
                 Projectile.Kill();
         }
 
-         private bool _isArcRotating = false;
+        private bool _isArcRotating = false;
         private float _arcStartRotation;
         private float TotalArcAngle;
         private float _originalSpeed;

@@ -15,6 +15,18 @@ namespace UCA.Content.Projectiles.Rogue
     public static class Temp
     {
         public static float ToClamp(this float value, float min = 0f, float max = 1f) => MathHelper.Clamp(value, min, max);
+        /// <summary>
+        /// 让任意”实体“安全转向至你需要的位置。如果实体位置不存在，会默认处置为Vector0避免崩溃
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="position"></param>
+        /// <returns></returns>
+        public static Vector2 DirectionToSafe(this Entity entity, Vector2 position)
+        {
+            Vector2 dir = entity.DirectionTo(position);
+            if (dir.HasNaNs()) dir = Vector2.Zero;
+            return dir;
+        }
         public static void BeginDefault(this SpriteBatch SB) =>
             SB.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
         /// <summary>
@@ -402,6 +414,31 @@ namespace UCA.Content.Projectiles.Rogue
                 return baseTextValue + "格式化出错";
             }
         }
+        public static bool GetNPCByWorldPos(this Vector2 searchPos, out NPC target, float halfRadians, bool ignoreTiles = true)
+        {
+            float distStoraged = halfRadians;
+            NPC acceptableTarget = null;
+            foreach (NPC npc in Main.ActiveNPCs)
+            {
+                float exDist = npc.width + npc.height;
+                //单位不可被追踪 或者 超出索敌距离则continue
+                if (Vector2.Distance(searchPos, npc.Center) > distStoraged + exDist)
+                    continue;
 
+                if (!npc.active || npc.friendly || npc.lifeMax < 5)
+                    continue;
+
+                //搜索符合条件的敌人, 准备返回这个NPC实例
+                float curNpcDist = Vector2.Distance(npc.Center, searchPos);
+                if (curNpcDist < distStoraged && (ignoreTiles || Collision.CanHit(searchPos, 1, 1, npc.Center, 1, 1)))
+                {
+                    distStoraged = curNpcDist;
+                    acceptableTarget = npc;
+                }
+            }
+            target = acceptableTarget;
+            //返回这个NPC实例
+            return acceptableTarget != null;
+        }
     }
 }

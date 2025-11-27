@@ -1,4 +1,5 @@
 using CalamityMod.Graphics.Primitives;
+using LAP.Core.Graphics.Primitives.Trail;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -7,6 +8,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets;
+using UCA.Assets.Effects;
+using UCA.Content.Particiles;
 using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
 
@@ -31,9 +34,14 @@ namespace UCA.Content.Projectiles.Rogue.DivineProj
         }
         private ref float TargetIndex => ref Projectile.ai[0];
         private ref float Accele => ref Projectile.ai[1];
+        private bool CanSpawnDust
+        {
+            get => Projectile.UCA().ExtraAI[1] == 1f;
+            set => Projectile.UCA().ExtraAI[1] = value ? 1f : 0f;
+        }
         private bool IsHit = false; 
         private ref float Progress => ref Projectile.localAI[2];
-
+        private Vector2 InitCenter;
         public override string Texture => UCATextureRegister.InvisibleTexturePath;
         public override void SetStaticDefaults()
         {
@@ -61,11 +69,10 @@ namespace UCA.Content.Projectiles.Rogue.DivineProj
             //初始化
             if (Accele is 0)
             {
-                //InitDust(Projectile.Center, Projectile.velocity);
-                SpawnFlyingDust();
-                Accele += 1;
+                InitCenter = Projectile.Center;
                 Progress = 45f;
             }
+            Accele += 1;
             Projectile.rotation = Projectile.velocity.ToRotation();
             switch (AttackType)
             {
@@ -77,12 +84,24 @@ namespace UCA.Content.Projectiles.Rogue.DivineProj
                     break;
             }
         }
+        private void DrawDust(Vector2 targetCenter)
+        {
+            if (!CanSpawnDust)
+                return;
+            float lengthRatio = MathHelper.Clamp(Vector2.Distance(Projectile.Center, InitCenter) / Vector2.Distance(InitCenter, targetCenter) , 0f, 2f);
+            int d = Main.rand.NextFloat(0f, 2f - lengthRatio) < 0.5f ?  DustID.CorruptSpray: DustID.WitherLightning;
+            float dScale = Main.rand.NextFloat(0f, 2f - lengthRatio) < 0.5f ? 0.65f : 0.75f;
+            Dust newDust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(4, 4), d, (Projectile.velocity * 0.30f).RotatedBy(Main.rand.NextFloat(-MathHelper.PiOver4 / 6,MathHelper.PiOver4 / 6)),0, default, 1);
+            newDust.noGravity = true;
+            newDust.scale *= dScale;
+            newDust.color = Color.Purple;
+        }
 
         private void DoArcRotating()
         {
             float progress = Progress / 45f;
             DrawScale = EasingHelper.EaseOutCubic(progress).ToClamp();
-            Projectile.velocity *= 0.923f;
+            Projectile.velocity *= 0.89f;
             Progress--;
             if (progress <- 15f)
                 Projectile.Kill();
@@ -92,10 +111,13 @@ namespace UCA.Content.Projectiles.Rogue.DivineProj
         {
             //获取敌对单位
             //重新搜索一次单位
-            if (!Projectile.GetTargetSafe(out NPC target, (int)TargetIndex,true))
+            if (!Projectile.GetTargetSafe(out NPC target, (int)TargetIndex, true))
                 return;
-            
-            Projectile.HomingNPCBetter(target, 24f + Accele / 2f, 20f, 2);
+            if (Main.rand.NextBool(3))
+                DrawDust(target.Center);
+            float maxAccele = MathHelper.Clamp(Accele / 2f, 0f, 8f);
+            //这里的惯性有意降的非常低
+            Projectile.HomingNPCBetter(target, 24f + maxAccele, 10f, 2);
         }
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
@@ -106,30 +128,7 @@ namespace UCA.Content.Projectiles.Rogue.DivineProj
                 IsHit = true;
                 AttackType = DoType.IsArcRotating;
                 Projectile.netUpdate = true;
-            }
-        }
-        private void SpawnFlyingDust()
-        {
-            if (Main.rand.NextBool())
-            {
-                Vector2 offset = new Vector2(14, 0).RotatedByRandom(MathHelper.ToRadians(360f));
-                Vector2 velOffset = new Vector2(4, 0).RotatedBy(offset.ToRotation());
-                float dFlyVelX = Projectile.velocity.X * 0.4f + velOffset.X;
-                float dFlyVelY = Projectile.velocity.Y * 0.4f + velOffset.Y;
-                float dScale = 0.8f;
-                Dust dust = Dust.NewDustPerfect(Projectile.Center + offset, DustID.WitherLightning, new Vector2(dFlyVelX, dFlyVelY), 100, default, dScale);
-                dust.noGravity = true;
-            }
-
-            if (Main.rand.NextBool(6))
-            {
-                Vector2 offset = new Vector2(12, 0).RotatedByRandom(MathHelper.TwoPi);
-                Vector2 velOffset = new Vector2(4, 0).RotatedBy(offset.ToRotation());
-                float dFlyVelX = Projectile.velocity.X * 0.5f + velOffset.X;
-                float dFlyVelY = Projectile.velocity.Y * 0.5f + velOffset.Y;
-                float dScale = 0.8f;
-                Dust dust = Dust.NewDustPerfect(Projectile.Center + offset, DustID.GemDiamond, new Vector2(dFlyVelX, dFlyVelY), 100, default, dScale);
-                dust.noGravity = true;
+                DrawDust(target.Center);
             }
         }
         private SpriteBatch SB { get => Main.spriteBatch; }
@@ -137,43 +136,65 @@ namespace UCA.Content.Projectiles.Rogue.DivineProj
         public override bool PreDraw(ref Color lightColor)
         {
             SB.End();
-            SB.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullClockwise, null, Main.GameViewMatrix.TransformationMatrix);
-            //做掉可能存在的零向量。
-            Projectile.ClearInvaidData(out List<Vector2> validPosition, out List<float> validRot, Projectile.oldPos, Projectile.oldRot);
+            SB.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            DrawNebulaTrail(Color.MediumPurple, 14f); 
+            DrawNebulaTrail(Color.LightPink with { A  = 50 }, 12.2f); 
+            DrawNebulaTrail(Color.White with { A = 100}, 10.8f); 
+            SB.End();
+            SB.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            if (Projectile.oldPos.Length > 12)
+            {
+                for (int k = 0; k < 12; k += 3)
+                {
+                    Vector2 dir = Projectile.oldPos[k] - Projectile.oldPos[k + 1];
+                    DrawStar(Projectile.oldPos[k] + Projectile.Size / 2 - Main.screenPosition, dir.ToRotation(), Color.Lerp(DivineHammerProj.TrailColor, Color.Purple, (float)k / 16));
+                }
+            }
+            SB.End();
+            SB.BeginDefault();
+            return false;
+        }
+        public void DrawStar(Vector2 drawPos, float rot,Color starColor)
+        {
+            Texture2D sharpTears = UCATextureRegister.Misc_HRStarTexture.Value;
+            Vector2 targetSize = 0.36f * Projectile.scale * new Vector2(1.2f, 0.25f) * DrawScale;
+            SB.Draw(sharpTears, drawPos, null, starColor, rot, sharpTears.Size() / 2, targetSize, SpriteEffects.None, 0);
+            SB.Draw(sharpTears, drawPos, null, Color.White with { A = 150 }, rot, sharpTears.Size() / 2, targetSize * 0.5f, SpriteEffects.None, 0);
+        }
 
+        public void DrawNebulaTrail(Color trailColor, float height)
+        {
+            float laserLength = 50;
+            UCAShaderRegister.TerrarRayLaser.Parameters["LaserTextureSize"].SetValue(UCATextureRegister.Trail_ManaStreak.Size());
+            UCAShaderRegister.TerrarRayLaser.Parameters["targetSize"].SetValue(new Vector2(laserLength, UCATextureRegister.Trail_ManaStreak.Height()));
+            UCAShaderRegister.TerrarRayLaser.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly * -50);
+            UCAShaderRegister.TerrarRayLaser.Parameters["uColor"].SetValue(trailColor.ToVector4() * DrawScale);
+            UCAShaderRegister.TerrarRayLaser.Parameters["uFadeoutLength"].SetValue(0.1f);
+            UCAShaderRegister.TerrarRayLaser.Parameters["uFadeinLength"].SetValue(0.05f);
+            UCAShaderRegister.TerrarRayLaser.CurrentTechnique.Passes[0].Apply();
+
+            //做掉可能存在的零向量
+            Projectile.ClearInvaidData(out List<Vector2> validPosition, out List<float> validRot, Projectile.oldPos, Projectile.oldRot);
+            GD.Textures[0] = UCATextureRegister.Trail_ManaStreak.Value;
+            GD.SamplerStates[0] = SamplerState.PointClamp;
             //直接获取需要的贝塞尔曲线。
-            List<VertexPosition2DColorTexture> list = [];
+            List<VertexPositionColorTexture2D> list = [];
+            int totalpoints = validPosition.Count;
             //创建顶点列表
             for (int i = 0; i < validPosition.Count; i++)
             {
-                Vector2 worldCenter = validPosition[i] + Projectile.Size / 2;
-                Vector2 oldCenter = worldCenter - Main.screenPosition;
+                Vector2 oldCenter = validPosition[i] + Projectile.Size / 2  - Main.screenPosition;
                 float progress = (float)i / (validPosition.Count - 1);
-                Vector2 posOffset = new Vector2(0, 6 *DrawScale).RotatedBy(validRot[i]);
-                Color color = DivineHammerProj.TrailColor;
-                VertexPosition2DColorTexture upClass = new(oldCenter + posOffset, color, new Vector2(progress, 0), 0f);
-                VertexPosition2DColorTexture downClass = new(oldCenter - posOffset, color, new Vector2(progress, 1), 0f);
+                Vector2 posOffset = new Vector2(0, height * DrawScale * ((float)(totalpoints - i) / totalpoints)).RotatedBy(validRot[i]);
+                VertexPositionColorTexture2D upClass = new(oldCenter + posOffset, trailColor, new Vector3(progress, 0, 0f));
+                VertexPositionColorTexture2D downClass = new(oldCenter - posOffset, trailColor, new Vector3(progress, 1, 0f));
                 list.Add(upClass);
                 list.Add(downClass);    
             }
             if (list.Count >= 3)
             {
-                GD.Textures[0] = UCATextureRegister.Trail_ManaStreak.Value;
                 GD.DrawUserPrimitives(PrimitiveType.TriangleStrip, list.ToArray(), 0, list.Count - 2);
-                GD.Textures[0] = null;
             }
-            SB.End();
-            SB.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-
-            Texture2D sharpTears = UCATextureRegister.Misc_HRStarTexture.Value;
-            Color projColor = Color.White;
-            projColor.A = 0;
-            Vector2 drawPos = Projectile.Center - Main.screenPosition;
-            SB.Draw(sharpTears, drawPos, null, Color.White, Projectile.rotation, sharpTears.Size() / 2, 0.36f * Projectile.scale * new Vector2(1.4f, 0.5f) * DrawScale, SpriteEffects.None, 0);
-
-            SB.End();
-            SB.BeginDefault();
-            return false;
         }
     }
 }

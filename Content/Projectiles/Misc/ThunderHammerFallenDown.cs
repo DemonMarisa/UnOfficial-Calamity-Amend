@@ -15,7 +15,7 @@ using UCA.Assets.Sounds;
 using UCA.Content.Items.Weapons.Rogue;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.Rogue;
-using UCA.Content.Projectiles.Rogue.ThunderProj;
+using UCA.Content.Projectiles.Rogue.ThunderProj.RightHandHammer;
 using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
 

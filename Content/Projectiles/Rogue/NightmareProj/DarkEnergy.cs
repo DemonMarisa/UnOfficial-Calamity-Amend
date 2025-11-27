@@ -34,7 +34,7 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
         }
         public override void SetStaticDefaults()
         {
-            ProjectileID.Sets.TrailCacheLength[Type] = 16;
+            ProjectileID.Sets.TrailCacheLength[Type] = 24;
             ProjectileID.Sets.TrailingMode[Type] = 2;
         }
         public override void SetDefaults()

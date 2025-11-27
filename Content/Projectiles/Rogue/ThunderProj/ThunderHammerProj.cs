@@ -4,11 +4,13 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Content.Items.Weapons.Rogue;
+using UCA.Content.Projectiles.Rogue.PunishmentProj;
+using UCA.Content.Projectiles.Rogue.ThunderProj.RightHandHammer;
 using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Rogue.ThunderProj
 {
-    public class ThunderHammerProj : BaseHammerClass
+    public class ThunderHammerProj : ThrownHammerProj
     {
         public override string Texture => ModContent.GetInstance<ThunderHammer>().Texture;
         protected override BoomerangDefault BoomerangStat => new(
@@ -17,13 +19,6 @@ namespace UCA.Content.Projectiles.Rogue.ThunderProj
             returnSpeed: 26f,
             acceleration: 1.5f,
             killDistance: 1800
-        );
-        protected override BaseProjSD ProjStat => new (
-            HitCooldown: 30,
-            LifeTime:300000,
-            Width:66,
-            Height:66,
-            rotation: 0.2f
         );
         private enum DoType
         {
@@ -57,12 +52,16 @@ namespace UCA.Content.Projectiles.Rogue.ThunderProj
         }
         public override void ExSD()
         {
+            Projectile.width = Projectile.height = 66;
+            Projectile.timeLeft = 3000;
+            Projectile.localNPCHitCooldown = 30;
+            Projectile.usesLocalNPCImmunity = true;
             Projectile.extraUpdates = 4;
         }
         public override void AI()
         {
             Projectile.timeLeft = 2;
-            Projectile.rotation += ProjStat.RotationSpeed / 2f;
+            Projectile.rotation += 0.1f;
             //攻击枚举与切换
             switch (AttackType)
             {

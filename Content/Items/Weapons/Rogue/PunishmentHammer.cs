@@ -1,13 +1,21 @@
+using CalamityMod;
+using LAP.Core.Utilities;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 using Terraria;
+using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Common.Misc;
+using UCA.Content.Projectiles.Rogue;
 using UCA.Content.Projectiles.Rogue.PunishmentProj;
-using UCA.Core.BaseClass;
+using UCA.Core.Utilities;
 
 namespace UCA.Content.Items.Weapons.Rogue
 {
-    public class PunishmentHammer: BaseHammerItem
+    public class PunishmentHammer: ThrownHammerItem
     {
         public override int ShootProjID => ModContent.ProjectileType<PunishmentHammerProj>();
         public override void ExSD()
@@ -19,6 +27,19 @@ namespace UCA.Content.Items.Weapons.Rogue
             Item.shootSpeed = 18f;
             Item.rare = ItemRarityID.LightRed;
             Item.value = UCAShopValue.RarityLightRedBuyPrice;
+        }
+        public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
+        {
+            Texture2D tex = TextureAssets.Item[Type].Value;
+            Vector2 position = Item.position - Main.screenPosition + tex.Size() / 2;
+            Rectangle iFrame = tex.Frame();
+            //为锤子添加描边，并时刻更新大小
+            for (int i = 0; i < 16; i++)
+                spriteBatch.Draw(tex, position + MathHelper.ToRadians(i * 60f).ToRotationVector2() * 2.4f, null, Color.White with { A = 0 }, 0f, tex.Size() / 2, scale, 0, 0f);
+            //然后绘制锤子本身。
+            spriteBatch.Draw(tex, position, iFrame, Color.White, 0f, tex.Size() / 2, scale, 0f, 0f);
+            Lighting.AddLight(position, TorchID.UltraBright);
+            return false;
         }
         public override void AddRecipes()
         {
@@ -32,4 +53,54 @@ namespace UCA.Content.Items.Weapons.Rogue
                 Register();
         }
     }
+    public abstract class ThrownHammerItem : ModItem, ILocalizedModType 
+    {
+        public new string LocalizationCategory => "Weapons.Rogue";
+        public virtual int ShootProjID { get; }
+        //锤类武器初始提供的潜伏值
+        public const float BaseMaxStealth = 0.1f;
+
+        public override void SetStaticDefaults()
+        {
+            Item.ResearchUnlockCount = 1;
+            ExSSD();
+        }
+        public virtual void ExSSD() {}
+        public override void SetDefaults()
+        {
+            Item.DamageType = ModContent.GetInstance<RogueDamageClass>();
+            Item.noUseGraphic = true;
+            Item.noMelee = true;
+            Item.autoReuse = true;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.UseSound = SoundID.Item1;
+            Item.shoot = ShootProjID;
+            Item.knockBack = 18f;
+            Item.LAP().DrawUCASmallIcon = true;
+            ExSD();
+        }
+        
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            ExModifyTooltips(tooltips);
+            string path = $"{Temp.UCALocalPrefix}Weapons.Rogue.Hammer_General";
+            tooltips.QuickAddTooltip(path, Color.Yellow);
+        }
+        public virtual void ExModifyTooltips(List<TooltipLine> tooltips) {}
+        public virtual void ExSD() { }
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+        {
+            bool stealth = player.Calamity().StealthStrikeAvailable();
+            damage = (int)(damage * (1 + 0.5f * stealth.ToInt()));
+            Projectile st = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, player.whoAmI);
+            st.Calamity().stealthStrike = player.Calamity().StealthStrikeAvailable();
+            return false;
+        }
+        public override void HoldItem(Player player)
+        {
+            var UCAPlayer = player.UCA();
+            UCAPlayer.ShouldHandleHammerStealth = true;
+        }
+    }
+
 }

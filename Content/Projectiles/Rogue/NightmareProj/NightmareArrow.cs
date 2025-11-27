@@ -220,7 +220,7 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
         public override bool PreDraw(ref Color lightColor)
         {
             SpriteBatch SB = Main.spriteBatch;
-            Texture2D projTex =  ModContent.Request<Texture2D>("CalamityEntropy/Content/Particles/StarTrail").Value;
+            Texture2D projTex =  UCATextureRegister.Misc_HRStarTexture.Value;
             SB.Draw(projTex, Projectile.Center - Main.screenPosition, null, Color.Black, Projectile.rotation, projTex.Size() / 2, new Vector2(0.7f, 0.5f), SpriteEffects.None, 0f);
             SB.End();
             SB.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);

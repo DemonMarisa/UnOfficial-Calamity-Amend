@@ -1,8 +1,13 @@
+using System;
 using System.IO;
+using System.Xml.Schema;
 using CalamityMod;
 using CalamityMod.Graphics.Primitives;
+using LAP.Core.ParticleSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json.Serialization;
+using Steamworks;
 using Terraria;
 using Terraria.Audio;
 using Terraria.Graphics.Shaders;
@@ -203,69 +208,81 @@ namespace UCA.Content.Projectiles.Rogue.DivineProj
             SoundEngine.PlaySound(SoundID.Item109 with {MaxInstances = 1, Pitch = 0.2f, PitchVariance = 0.1f }, Owner.Center);
             TargetIndex = target.whoAmI;
             if (Projectile.numHits % 2 is 0)
-                SpawnNebulaShot(Projectile, target);
+            {
+                int ownedProjCounts = Owner.ownedProjectileCounts[Type]; 
+                //每轮生成两个，超过3把以上的锤子在场时生成一个
+                int maxCount = ownedProjCounts < 3 ? 2 : 1;
+                SpawnNebulaShot(Owner, Projectile, target, maxCount);
+            }
             
         }
 
-        public void SpawnNebulaShot(Projectile projectile,NPC target)
+        public static void SpawnNebulaShot(Player owner, Projectile projectile, NPC target, int maxSpawnCounts = 2, bool canSpawnDust = true)
         {
             //灾厄抄写下来的
             projectile.netUpdate = true;
-            Vector2 targetPos = target.Center;
-            int laserID = ModContent.ProjectileType<NebulaEnegry>();
-            //每轮生成两个，超过3把以上的锤子在场时生成一个
-            int maxCount = Owner.ownedProjectileCounts[Type] < 3 ? 2 : 1;
-            for (int i = 0; i < maxCount; ++i)
+            for (int i = 0; i < maxSpawnCounts; ++i)
             {
                 //确定位置
-                Vector2 spawnPosBase = (target.Center - Owner.Center).SafeNormalize(Vector2.UnitX);
-                float warpDistance = 12f * 16f;
-                float warpRadians = Main.rand.NextFloat(-MathHelper.PiOver4, MathHelper.PiOver4);
-                Vector2 warpOffset = -warpDistance * spawnPosBase.RotatedBy(warpRadians);
-                Vector2 spawnPos = Owner.MountedCenter + warpOffset;
+                Vector2 spawnPosBase = (owner.MountedCenter - target.Center).SafeNormalize(Vector2.UnitX);
+                float warpRadians = Main.rand.NextFloat(-MathHelper.PiOver2 * 0.45f, MathHelper.PiOver2 * 0.45f);
+                Vector2 warpOffset = 150f * spawnPosBase.RotatedBy(warpRadians);
+                Vector2 spawnPos =  owner.MountedCenter + warpOffset * Main.rand.Next(6, 9) * 0.25f;
                 //确定初始速度，精准一些。
-                Vector2 velDir = (targetPos - spawnPos).SafeNormalize(Vector2.UnitX);
-                Vector2 vel = velDir * Main.rand.NextFloat(15f, 19f);
-                SpawnDust(spawnPos, vel);
+                Vector2 velDir = (target.Center - spawnPos).SafeNormalize(Vector2.UnitX);
+                SpawnDust(spawnPos, velDir);
                 if (projectile.owner == Main.myPlayer)
                 {
-                    Projectile proj = Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), spawnPos, vel, laserID, projectile.damage, 2.5f, projectile.owner, target.whoAmI);
+                    Projectile proj = Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), spawnPos, velDir * Main.rand.NextFloat(15f, 19f), ModContent.ProjectileType<NebulaEnegry>(), projectile.damage, 2.5f, projectile.owner, target.whoAmI);
                     proj.DamageType = ModContent.GetInstance<RogueDamageClass>();
-                    proj.UCA().ExtraAI[0] = Main.rand.NextBool() ? (float)NebulaEnegry.Flip.DoFlip : (float)NebulaEnegry.Flip.None;
+                    proj.ai[0] = target.whoAmI;
+                    proj.UCA().ExtraAI[1] = canSpawnDust.ToInt();
                 }
             }
         }
-        private void SpawnDust(Vector2 spawnPos, Vector2 dir)
+        private static void SpawnDust(Vector2 spawnPos, Vector2 dir)
         {
-            int particlesCounts = 24;
             float baseRot = dir.ToRotation() + MathHelper.PiOver2;
-            for (int i = 0; i < particlesCounts; i++)
+            int totalParticleCounts = 8;
+            int repeatedCountForAxis = 24;
+            for (int k = 4; k < repeatedCountForAxis - 4; k++)
             {
-                //角度步长
-                float angleStep = (float)(MathHelper.TwoPi / particlesCounts);
-                //粒子角度
-                float angle = i * angleStep;
-                //转化为椭圆点
-                Vector2 toEdge = spawnPos + angle.ToEllipseVector2Edge(10f, 30f, baseRot);
-                //设置速度，略微朝内
-                ShinyOrbParticle orbs = new ShinyOrbParticle(toEdge, Vector2.Zero, DivineHammerProj.TrailColor, 30, 0.7f);
-                orbs.Spawn();
-            }
-            int yetAnotherParticlesCounts = 12;
-            for (int k = 0; k < 18; k++)
-            {
-                float shortAxis = 6f - k;
-                float longAxis = 16f - k;
-                for (int j = 0; j < yetAnotherParticlesCounts; j++)
+                //在外部调用这个以整体对点位进行偏移。
+                //整体扩大一下，因为距离明显过小了
+                float shortAxis = k * 1.7f;
+                float longAxis = (repeatedCountForAxis - k) * 1.7f;
+                for (int j = 0; j < totalParticleCounts; j++)
                 {
-                    float angleStep = (float)(MathHelper.TwoPi / yetAnotherParticlesCounts);
-                    float angle = j * angleStep;
-                    Vector2 edge = spawnPos + angle.ToEllipseVector2Edge(shortAxis, longAxis, baseRot);
-                    ShinyOrbParticle orbs = new ShinyOrbParticle(edge, Vector2.Zero, DivineHammerProj.TrailColor, 30, 0.6f);
+                    float angle = j * (float)(MathHelper.TwoPi / totalParticleCounts);
+                    Vector2 edge = spawnPos + GetCertainPointBaseOnVectorCircle(angle, shortAxis, longAxis, baseRot);
+                    Color drawColor = Color.Lerp(DivineHammerProj.TrailColor with { A = 75 }, Color.MediumPurple with { A = 75 }, (totalParticleCounts - j) / (float)totalParticleCounts);
+                    ShinyOrbParticle orbs = new ShinyOrbParticle(edge, dir * 0.2f, drawColor, 30, Main.rand.NextFloat(0.11f, 0.22f), BlendStateID.Alpha);
                     orbs.Spawn();
                 }
             }
+            //在中心点位额外绘制一个orb
+             new ShinyOrbParticle(spawnPos, dir * 0.2f, Color.Violet, 30, 0.75f, glowCenter:false).Spawn();
+             new ShinyOrbParticle(spawnPos, dir * 0.2f, Color.MediumPurple, 30, 0.45f, glowCenter:false).Spawn();
         }
+        /// <summary>
+        /// 基于圆+极坐标的复杂计算来获取需要的位置
+        /// </summary>
+        public static Vector2 GetCertainPointBaseOnVectorCircle(float radians, float shortAxis, float longAxis, float rotation = 0f)
+        {
+            //极坐标转化
+            float x = longAxis * (float)Math.Cos(radians);
+            float y = shortAxis * (float)Math.Sin(radians);
+
+            //转化你输入的rotation，让整个图整体旋转一定角度
+            float cosRot = (float)Math.Cos(rotation);
+            float sinRot = (float)Math.Sin(rotation);
+
+            //最后转化为实际需要的点位
+            float rotX = x * cosRot - y * sinRot;
+            float rotY = x * sinRot + y * cosRot;
+            return new Vector2(rotX, rotY);
+        }
+
         public override bool PreKill(int timeLeft)
         {
             //即将死亡的时候，生成一个克隆锤子。

@@ -1,14 +1,23 @@
 using CalamityMod.Items.Materials;
+using Microsoft.CodeAnalysis;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using rail;
+using System;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.UI.Chat;
 using UCA.Common.Misc;
+using UCA.Content.Projectiles.Rogue;
 using UCA.Content.Projectiles.Rogue.BlazingProj;
-using UCA.Core.BaseClass;
+using UCA.Core.Utilities;
+using static UCA.Content.Projectiles.Rogue.BlazingProj.BlazingNamePick;
 
 namespace UCA.Content.Items.Weapons.Rogue
 {
-    public class BlazingHammer: BaseHammerItem
+    public class BlazingHammer: ThrownHammerItem
     {
         public override int ShootProjID => ModContent.ProjectileType<BlazingHammerProj>();
         public override void ExSD()
@@ -21,6 +30,70 @@ namespace UCA.Content.Items.Weapons.Rogue
             Item.shootSpeed = 18f;
             Item.rare = ItemRarityID.Yellow;
             Item.value = UCAShopValue.RarityYellowBuyPrice;
+        }
+        private void DrawSpecialColor(DrawableTooltipLine line, Color drawColor, string colorValue)
+        {
+            //获取全局Sin值，让描边发生一定程度的动态变化
+            float sine = (float)((1 + Math.Sin(Main.GlobalTimeWrappedHourly * 2.5f)) / 2);
+            float sineOffset = MathHelper.Lerp(0.5f, 1f, sine);
+            string textValue = line.Text;
+            Vector2 textPos = new(line.X, line.Y);
+            string colorTextPath = Temp.UCALocalPrefix + $"Weapons.Rogue.{GetType().Name}.Color.{colorValue}";
+            string needReplacedText = textValue + " - " + colorTextPath.ToLangValue();
+            //绘制发光描边
+            for (int i = 0; i < 12; i++)
+            {
+                Vector2 afterimageOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * (1.8f * sineOffset);
+                ChatManager.DrawColorCodedString(Main.spriteBatch, line.Font, needReplacedText, (textPos + afterimageOffset).RotatedBy(MathHelper.TwoPi * (i / 12)), drawColor * 0.9f, line.Rotation, line.Origin, line.BaseScale);
+            }
+            ChatManager.DrawColorCodedString(Main.spriteBatch, line.Font, needReplacedText, textPos, Color.White, line.Rotation, line.Origin, line.BaseScale);
+        }
+        public override bool PreDrawTooltipLine(DrawableTooltipLine line, ref int yOffset)
+        {
+           //除非你的武器不存在武器名。否则这个判定不可能过不去
+            if (line.Mod == "Terraria" && line.Name == "ItemName")
+            {
+                //暴力枚举，便于引用
+                switch(Main.LocalPlayer.name.SelectedName())
+                {
+                    case NameType.Emma:
+                        DrawSpecialColor(line, Color.HotPink, "Sakura");
+                        return false;
+                    case NameType.TrueScarlet:
+                        DrawSpecialColor(line, Color.Red, "Red");
+                        return false;
+                    case NameType.Shizuku:
+                        DrawSpecialColor(line, Color.MidnightBlue, "IcyBlue");
+                        return false;
+                    case NameType.SerratAntler:
+                        DrawSpecialColor(line, Color.Purple, "Purple");
+                        return false;
+                    case NameType.WutivOrChaLost:
+                        DrawSpecialColor(line, Color.Gold, "Gold");
+                        return false;
+                    case NameType.SherryOrAnnOrKino:
+                        DrawSpecialColor(line, Color.RoyalBlue, "Blue");
+                        return false;
+                    case NameType.Hanna:
+                        DrawSpecialColor(line, Color.Green, "Green");
+                        return false;
+                    default:
+                        break;
+                }
+            }
+            return base.PreDrawTooltipLine(line, ref yOffset);
+        }
+        public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
+        {
+            Texture2D tex = TextureAssets.Item[Type].Value;
+            Vector2 position = Item.position - Main.screenPosition + tex.Size() / 2;
+            Rectangle iFrame = tex.Frame();
+            //为锤子添加描边，并时刻更新大小
+            for (int i = 0; i < 16; i++)
+                spriteBatch.Draw(tex, position + MathHelper.ToRadians(i * 60f).ToRotationVector2() * 2.4f, null, Color.DarkRed with { A = 0 }, 0f, tex.Size() / 2, scale, 0, 0f);
+            //然后绘制锤子本身。
+            spriteBatch.Draw(tex, position, iFrame, Color.GhostWhite, 0f, tex.Size() / 2, scale, 0f, 0f);
+            return false;
         }
         //实际合成材料可随意，我个人推荐为花后
         public override void AddRecipes()

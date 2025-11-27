@@ -9,6 +9,16 @@ BlazingHammer: {
 		While latched, pressing the right mouse button will make the hammer dash toward the cursor before striking back at the latched target.
 		Automatically unleash a massive fire pillar when the hammer expires.
 		'''
+
+	Color: {
+		Red: Pure Red
+		Blue: Royal Blue
+		Gold: Gold
+		Purple: Dark Purle
+		Green: Green
+		IcyBlue: Icy Blue
+		Sakura: Light Pink
+	}
 }
 
 DivineHammer: {
@@ -52,6 +62,8 @@ PunishmentHammer: {
 ThunderHammer: {
 	DisplayName: Thunder Hammer
 	Tooltip: ""
+	WeaponSkill: ""
+	Minion: ""
 }
 
 Hammer_General:
@@ -60,3 +72,8 @@ Hammer_General:
 	No longer gaining any damage bounes from stealth strike
 	Stealth strikes only cost half of your max stealth that won't stack
 	'''
+
+CrimsonScythe: {
+	DisplayName: Tlipocaz's Scythe - UnOffcial
+	Tooltip: ""
+}

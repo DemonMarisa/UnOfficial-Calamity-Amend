@@ -56,7 +56,6 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
         public override void AI()
         {
             //下方会进行手动处死，这里需要全程保证射弹存活维持演出效果
-            //所以做平衡的别他妈动这里！！！
             Projectile.timeLeft = 2;
             Projectile.rotation = Projectile.velocity.ToRotation();
             if ((Projectile.Center - Owner.Center).Length() > 1800f)
@@ -126,8 +125,7 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
             List<VertexPosition2DColorTexture> list = [];
             for (int i = 0; i < smoothPosList.Count; i++)
             {
-                Vector2 worldCenter = smoothPosList[i] + Projectile.Size / 2;
-                Vector2 oldCenter = worldCenter - Main.screenPosition;
+                Vector2 oldCenter = smoothPosList[i] + Projectile.Size / 2 - Main.screenPosition;
                 float progress = (float)i / (smoothPosList.Count - 1);
                 //处理一下起始顶点，宽度小一点
                 float handleHeight = i < 6 ? height / 6 * i : height;
@@ -144,11 +142,8 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
                 //这里这个轨迹大部分都被预存了。
                 GD.Textures[0] = UCATextureRegister.Trail_ManaStreak.Value  ;
                 GD.DrawUserPrimitives(PrimitiveType.TriangleStrip, list.ToArray(), 0, list.Count - 2);
-                GD.Textures[0] = null;
             }
-
         }
-
         #region AI方法合集
         private void DoShooted()
         {
@@ -184,10 +179,9 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
             AttackTimer += 1;
             //除非整个过程完成，否则不执行追踪AI
             float progress = AttackTimer / 8f;
-            //progress没进去
             //潜伏状态下，神圣新星才会转圈
             bool canHome = !CanArcRotate || progress > 1f && CanArcRotate;
-            if(canHome)
+            if (canHome)
                 HandleHoming();
             else
             { 

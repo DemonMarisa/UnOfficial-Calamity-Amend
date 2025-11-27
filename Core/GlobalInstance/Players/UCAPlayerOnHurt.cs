@@ -1,7 +1,11 @@
 ﻿using CalamityMod;
+using CalamityMod.Balancing;
+using CalamityMod.Cooldowns;
+using CalamityMod.Items.Accessories;
 using CalamityMod.Items.Weapons.Magic;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -26,6 +30,7 @@ namespace UCA.Core.GlobalInstance.Players
             {
                 modifiers.SourceDamage *= 0.5f;
             }
+
         }
         /*
         public override void ModifyHitByProjectile(Projectile proj, ref Player.HurtModifiers modifiers)

@@ -92,8 +92,18 @@ namespace UCA.Core.Utilities
         /// <param name="posMove"></param>
         public static void QuickDrawBloomEdge(this Projectile proj, Color color, int totalDrawTime = 8, float rotOffset = 0, float posMove = 2f)
         {
+            QuickDrawBloomEdge(proj, Color.White, proj.scale, totalDrawTime, rotOffset, posMove);
+        }
+        /// <summary>
+        /// 为你的射弹绘制一个发光描边。基于射弹本体，重载输入颜色
+        /// </summary>
+        /// <param name="proj"></param>
+        /// <param name="totalDrawTime"></param>
+        /// <param name="posMove"></param>
+        public static void QuickDrawBloomEdge(this Projectile proj, Color color, float scale, int totalDrawTime = 8, float rotOffset = 0, float posMove = 2f)
+        {
             for (int i = 0; i < totalDrawTime; i++)
-                Main.spriteBatch.Draw(proj.GetTexture(), proj.Center - Main.screenPosition + MathHelper.ToRadians(i * 60f).ToRotationVector2() * posMove, null, color with { A = 0 }, proj.rotation + rotOffset, proj.GetTexture().Size() / 2, proj.scale, 0, 0f);
+                Main.spriteBatch.Draw(proj.GetTexture(), proj.Center - Main.screenPosition + MathHelper.ToRadians(i * 60f).ToRotationVector2() * posMove, null, color with { A = 0 }, proj.rotation + rotOffset, proj.GetTexture().Size() / 2, scale, 0, 0f);
         }
         public static Texture2D GetTexture(this Projectile proj) => TextureAssets.Projectile[proj.type].Value;  
         /// <summary>

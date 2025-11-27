@@ -10,12 +10,11 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Content.Projectiles.Rogue;
 using UCA.Content.Projectiles.Rogue.NightmareProj;
-using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
 
 namespace UCA.Content.Items.Weapons.Rogue
 {
-    public class NightmareHammer: BaseHammerItem
+    public class NightmareHammer: ThrownHammerItem
     {
         public override int ShootProjID => ModContent.ProjectileType<NightmareHammerProj>();
         public override void ExSSD()
@@ -39,6 +38,19 @@ namespace UCA.Content.Items.Weapons.Rogue
         {
             if (DownedBossSystem.downedDoG && !Main.LocalPlayer.UCA().CanDisableGuideForGodsHammer)
                 tooltips.QuickAddTooltip($"{Temp.UCALocalPrefix}Weapons.Rogue.{GetType().Name}.ShimmmerTooltip", Color.LightPink);
+        }
+        public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
+        {
+            Texture2D tex = TextureAssets.Item[Type].Value;
+            Vector2 position = Item.position - Main.screenPosition + tex.Size() / 2;
+            Rectangle iFrame = tex.Frame();
+            //为锤子添加描边，并时刻更新大小
+            for (int i = 0; i < 16; i++)
+                spriteBatch.Draw(tex, position + MathHelper.ToRadians(i * 60f).ToRotationVector2() * 2.4f, null, Color.Purple with { A = 0 }, 0f, tex.Size() / 2, scale, 0, 0f);
+            //然后绘制锤子本身。
+            spriteBatch.Draw(tex, position, iFrame, Color.White, 0f, tex.Size() / 2, scale, 0f, 0f);
+            Lighting.AddLight(position, TorchID.UltraBright);
+            return false;
         }
         private static float UpdatePos
         {

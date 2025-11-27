@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using UCA.Assets;
 using UCA.Content.Items.Weapons.Rogue;
 using UCA.Content.Projectiles.Rogue.PunishmentProj;
 using UCA.Content.Projectiles.Rogue.ThunderProj.RightHandHammer;
@@ -12,7 +13,7 @@ namespace UCA.Content.Projectiles.Rogue.ThunderProj
 {
     public class ThunderHammerProj : ThrownHammerProj
     {
-        public override string Texture => ModContent.GetInstance<ThunderHammer>().Texture;
+        public override string Texture => UCATextureRegister.InvisibleTexturePath;
         protected override BoomerangDefault BoomerangStat => new(
             //不准修改这个returnTime低于35
             returnTime: 35,

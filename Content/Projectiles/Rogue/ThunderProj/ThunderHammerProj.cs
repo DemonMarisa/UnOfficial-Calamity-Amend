@@ -12,7 +12,6 @@ namespace UCA.Content.Projectiles.Rogue.ThunderProj
 {
     public class ThunderHammerProj : ThrownHammerProj
     {
-        public override string Texture => ModContent.GetInstance<ThunderHammer>().Texture;
         protected override BoomerangDefault BoomerangStat => new(
             //不准修改这个returnTime低于35
             returnTime: 35,

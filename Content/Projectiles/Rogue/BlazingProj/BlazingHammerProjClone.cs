@@ -15,7 +15,7 @@ using static UCA.Content.Projectiles.Rogue.BlazingProj.BlazingNamePick;
 
 namespace UCA.Content.Projectiles.Rogue.BlazingProj
 {
-    public class BlazingHammerProjClone : BaseRogueProj
+    public class BlazingHammerProjClone : RogueProjClass
     {
         private ref float AttackTimer => ref Projectile.ai[0];
         private ref float CanDamageTimer => ref Projectile.ai[1];
@@ -30,7 +30,7 @@ namespace UCA.Content.Projectiles.Rogue.BlazingProj
             Projectile.width = Projectile.height = 66;
             Projectile.timeLeft = 120;
             Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 10;
+            Projectile.localNPCHitCooldown = 12;
             Projectile.ignoreWater = true;
             Projectile.friendly = true;
             Projectile.tileCollide = false;
@@ -116,7 +116,7 @@ namespace UCA.Content.Projectiles.Rogue.BlazingProj
             {
                 DirectlySpawnEruptionFireBall();
                 Vector2 center = new Vector2(target.Center.X, target.Center.Y + 30f);
-                Projectile proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), center, Vector2.Zero, ModContent.ProjectileType<BlazingVolcano>(), Projectile.damage * 5, Projectile.knockBack);
+                Projectile proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), center, Vector2.Zero, ModContent.ProjectileType<BlazingVolcano>(), Projectile.damage * 2, Projectile.knockBack);
                 proj.ai[1] = target.whoAmI;
                 CanSpawnVolcano = false;
                 Projectile.Kill();

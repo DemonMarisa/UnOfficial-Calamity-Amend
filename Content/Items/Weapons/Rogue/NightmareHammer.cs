@@ -25,15 +25,18 @@ namespace UCA.Content.Items.Weapons.Rogue
         {
             Item.width = 88;
             Item.height = 94;
-            Item.damage = 200;
+            Item.damage = 167;
             Item.useTime = 18;
             //这里的UseTime是有意改的很慢的
             Item.useAnimation = 18;
             Item.shootSpeed = 24f;
             Item.rare = ItemRarityID.Red;
-            Item.UseSound = SoundID.Item103;
+            //这里不会给音效，因为要考虑一些射弹的联动
+            //实际音效会在射弹初始化的时候提供
+            Item.UseSound = null;
             Item.value = Item.buyPrice(gold: 12);
         }
+        public override float StealthDamageMultipler => 0.35f;
         public override void ExModifyTooltips(List<TooltipLine> tooltips)
         {
             if (DownedBossSystem.downedDoG && !Main.LocalPlayer.UCA().CanDisableGuideForGodsHammer)

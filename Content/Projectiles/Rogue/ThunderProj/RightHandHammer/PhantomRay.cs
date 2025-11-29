@@ -15,7 +15,7 @@ using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Rogue.ThunderProj.RightHandHammer
 {
-    public class PhantomRay : BaseRogueProj
+    public class PhantomRay : RogueProjClass
     {
         private float DrawScale = 1f;
         public override void SetStaticDefaults()

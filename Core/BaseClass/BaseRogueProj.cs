@@ -5,7 +5,7 @@ using UCA.Assets;
 
 namespace UCA.Core.BaseClass
 {
-    public abstract class BaseRogueProj : ModProjectile, ILocalizedModType
+    public abstract class RogueProjClass : ModProjectile, ILocalizedModType
     {
         public new string LocalizationCategory => "Projectiles.Rogue";
         public override string Texture => UCATextureRegister.InvisibleTexturePath;

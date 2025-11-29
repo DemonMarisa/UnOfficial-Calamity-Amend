@@ -11,7 +11,7 @@ using UCA.Core.BaseClass;
 
 namespace UCA.Content.Projectiles.Rogue.ThunderProj.RightHandHammer
 {
-    public partial class ThunderHandler : BaseRogueProj, IPixelatedPrimitiveRenderer
+    public partial class ThunderHandler : RogueProjClass, IPixelatedPrimitiveRenderer
     {
         float Oscillation = 0;
         private void UpdateMode_General()

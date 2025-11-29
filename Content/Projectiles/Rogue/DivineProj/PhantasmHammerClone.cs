@@ -18,7 +18,7 @@ using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Rogue.DivineProj
 {
-    public class PhantasmalHammerClone : BaseRogueProj, ILocalizedModType
+    public class PhantasmalHammerClone : RogueProjClass, ILocalizedModType
     {
         //攻击枚举
         private enum AttackStyle

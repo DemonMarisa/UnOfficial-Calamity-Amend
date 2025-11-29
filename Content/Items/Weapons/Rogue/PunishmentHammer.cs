@@ -59,7 +59,9 @@ namespace UCA.Content.Items.Weapons.Rogue
         public virtual int ShootProjID { get; }
         //锤类武器初始提供的潜伏值
         public const float BaseMaxStealth = 0.1f;
-
+        public override bool WeaponPrefix() => true;
+        //你灾组到现在都没让盗贼伤害成功不吃远程词缀的加成
+        public override bool RangedPrefix() => false;
         public override void SetStaticDefaults()
         {
             Item.ResearchUnlockCount = 1;
@@ -88,12 +90,14 @@ namespace UCA.Content.Items.Weapons.Rogue
         }
         public virtual void ExModifyTooltips(List<TooltipLine> tooltips) {}
         public virtual void ExSD() { }
+        public virtual float StealthDamageMultipler => 0.5f; 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             bool stealth = player.Calamity().StealthStrikeAvailable();
-            damage = (int)(damage * (1 + 0.5f * stealth.ToInt()));
+            //锤子的潜伏固定1.5倍伤害
+            damage = (int)(damage * (1 + StealthDamageMultipler * stealth.ToInt()));
             Projectile st = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, player.whoAmI);
-            st.Calamity().stealthStrike = player.Calamity().StealthStrikeAvailable();
+            st.Calamity().stealthStrike = stealth;
             return false;
         }
         public override void HoldItem(Player player)

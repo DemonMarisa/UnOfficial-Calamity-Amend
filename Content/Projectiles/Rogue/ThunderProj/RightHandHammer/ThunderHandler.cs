@@ -17,7 +17,7 @@ using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Rogue.ThunderProj.RightHandHammer
 {
-    public partial class ThunderHandler : BaseRogueProj, IPixelatedPrimitiveRenderer
+    public partial class ThunderHandler : RogueProjClass, IPixelatedPrimitiveRenderer
     {
         public override string Texture => (GetType().Namespace + "." + GetType().Name).Replace(".","/");
         public override void SetStaticDefaults()

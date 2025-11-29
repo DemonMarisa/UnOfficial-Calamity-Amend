@@ -15,7 +15,7 @@ using UCA.Core.BaseClass;
 
 namespace UCA.Content.Projectiles.Rogue.ThunderProj.RightHandHammer
 {
-    public partial class ThunderHandler: BaseRogueProj, IPixelatedPrimitiveRenderer
+    public partial class ThunderHandler: RogueProjClass, IPixelatedPrimitiveRenderer
     {
         #region 特殊攻击模组 - 下砸
         private int PlatformIndex = -1;

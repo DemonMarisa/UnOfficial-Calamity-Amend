@@ -54,7 +54,11 @@ namespace UCA.Assets.Sounds
         private static SoundStyle Hammer_Shoot1 => new($"{WeaponsSoundRoute}/Rogue/ThrownHammer/{nameof(Hammer_Shoot1)}");
         private static SoundStyle Hammer_Shoot2 => new($"{WeaponsSoundRoute}/Rogue/ThrownHammer/{nameof(Hammer_Shoot2)}");
         private static SoundStyle Hammer_Shoot3 => new($"{WeaponsSoundRoute}/Rogue/ThrownHammer/{nameof(Hammer_Shoot3)}");
+        private static SoundStyle Atom_Strike1 => new($"{WeaponsSoundRoute}/Rogue/{nameof(Atom_Strike1)}");
+        private static SoundStyle Atom_Strike2 => new($"{WeaponsSoundRoute}/Rogue/{nameof(Atom_Strike2)}");
+        private static SoundStyle Atom_Strike3 => new($"{WeaponsSoundRoute}/Rogue/{nameof(Atom_Strike3)}");
         public static SoundStyle Pipes => new($"{WeaponsSoundRoute}/Rogue/ThrownHammer/{nameof(Pipes)}");
+        public static SoundStyle Mana_Toss=> new($"{WeaponsSoundRoute}/Rogue/{nameof(Mana_Toss)}");
         public static SoundStyle[] Hammer_Shoot =>
             [
                 Hammer_Shoot1,
@@ -65,6 +69,12 @@ namespace UCA.Assets.Sounds
             [
                 Smash_AirHeavy1,
                 Smash_AirHeavy2,
+            ];
+        public static SoundStyle[] Atom_Strike =>
+            [
+                Atom_Strike1,
+                Atom_Strike2,
+                Atom_Strike3,
             ];
         #endregion
     }

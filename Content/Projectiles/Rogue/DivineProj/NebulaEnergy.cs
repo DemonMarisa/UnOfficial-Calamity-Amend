@@ -15,7 +15,7 @@ using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Rogue.DivineProj
 {
-    public class NebulaEnegry : BaseRogueProj, ILocalizedModType
+    public class NebulaEnegry : RogueProjClass, ILocalizedModType
     {
         private enum DoType
         {

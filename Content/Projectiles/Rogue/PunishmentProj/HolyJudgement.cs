@@ -11,7 +11,7 @@ using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Rogue.PunishmentProj
 {
-    public class HolyJudgement : BaseRogueProj 
+    public class HolyJudgement : RogueProjClass 
     {
         private ref float Counter => ref Projectile.ai[0];
         private float OriginalSpeed => Projectile.ai[1];

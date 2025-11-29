@@ -10,7 +10,7 @@ using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Rogue.ThunderProj
 {
-    public class ThunderPlatform : BaseRogueProj
+    public class ThunderPlatform : RogueProjClass
     {
         public override string Texture => (GetType().Namespace + "." + GetType().Name).Replace(".", "/");
         public int SmashHammerIndex

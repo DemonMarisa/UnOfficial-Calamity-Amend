@@ -1,24 +1,28 @@
 // DivineHammerFlyingUpProj.DisplayName: Divine Hammer Flying Up Proj
 // ThunderHammerFallenDown.DisplayName: Thunder Hammer Fallen Down
-// BlazingEruption.DisplayName: Blazing Eruption
-// BlazingHammerProj.DisplayName: Blazing Hammer Proj
-// BlazingVolcano.DisplayName: Blazing Volcano
-// DivineHammerProj.DisplayName: Divine Hammer Proj
-// NebulaEnegry.DisplayName: Nebula Enegry
-// PhantasmalHammer.DisplayName: Phantasmal Hammer
-// PhantasmalHammerClone.DisplayName: Phantasmal Hammer Clone
-// DarkEnergy.DisplayName: Dark Energy
-// NightmareArrow.DisplayName: Nightmare Arrow
-// NightmareHammerProj.DisplayName: Nightmare Hammer Proj
-// HolyJudgement.DisplayName: Holy Judgement
+// BlazingEruption.DisplayName: 炽热火球
+// BlazingHammerProj.DisplayName: 炽热锚锤
+// BlazingVolcano.DisplayName: 炽热火山
+// DivineHammerProj.DisplayName: 双联神锤
+// NebulaEnegry.DisplayName: 光之矢
+// PhantasmalHammer.DisplayName: 双联子锤
+// PhantasmalHammerClone.DisplayName: 双联子锤
+// DarkEnergy.DisplayName: 冥思能量
+// NightmareArrow.DisplayName: 梦魇之箭
+// NightmareHammerProj.DisplayName: 梦魇之锤
+// HolyJudgement.DisplayName: 裁决射线
 // HolyJudgementMounted.DisplayName: Holy Judgement Mounted
-// PunishmentHammerProj.DisplayName: Punishment Hammer Proj
-// PunishmentStar.DisplayName: Punishment Star
+// PunishmentHammerProj.DisplayName: 裁罚圣锤
+// PunishmentStar.DisplayName: 惩戒新星
 // PunishmentStarMounted.DisplayName: Punishment Star Mounted
 // ThunderHammerProj.DisplayName: Thunder Hammer Proj
 // ThunderHandler.DisplayName: Thunder Handler
 // ThunderPlatform.DisplayName: Thunder Platform
 // PhantomRay.DisplayName: Phantom Ray
-// PunishmentHammerLock.DisplayName: Punishment Hammer Lock
-// BlazingHammerProjClone.DisplayName: Blazing Hammer Proj Clone
-// DivineHammerProjClone.DisplayName: Divine Hammer Proj Clone
+// PunishmentHammerLock.DisplayName: 裁罚圣锤
+// BlazingHammerProjClone.DisplayName: 炽热锚锤
+// DivineHammerProjClone.DisplayName: 双联子锤
+// MainProjClone.DisplayName: Main Proj Clone
+// NightmareHammerProjClone.DisplayName: 梦魇之锤
+// NightmareHammerMinion.DisplayName: 梦魇子锤
+// MeldStreak.DisplayName: 梦魇射线

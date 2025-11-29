@@ -24,7 +24,7 @@ using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Rogue.DivineProj
 {
-    public class DivineHammerProjClone: BaseRogueProj
+    public class DivineHammerProjClone: RogueProjClass
     {
         public override string Texture => ModContent.GetInstance<DivineHammer>().Texture;
         private enum DoType

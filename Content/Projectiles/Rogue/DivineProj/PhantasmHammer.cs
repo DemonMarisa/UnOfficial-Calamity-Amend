@@ -21,7 +21,7 @@ using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Rogue.DivineProj
 {
-    public class PhantasmalHammer: BaseRogueProj, ILocalizedModType
+    public class PhantasmalHammer: RogueProjClass, ILocalizedModType
     {
         public UCAGlobalProj ModProj => Projectile.UCA();
         public override string Texture => ModContent.GetInstance<DivineHammer>().Texture;

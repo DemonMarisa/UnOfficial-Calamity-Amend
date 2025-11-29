@@ -13,7 +13,7 @@ using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Rogue.PunishmentProj
 {
-    public class HolyJudgementMounted : BaseRogueProj
+    public class HolyJudgementMounted : RogueProjClass
     {
         private enum DoType
         {

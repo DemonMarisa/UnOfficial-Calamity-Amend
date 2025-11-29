@@ -23,7 +23,7 @@ namespace UCA.Content.Items.Weapons.Rogue
         public override void ExSD()
         {
             Item.width = Item.height = 66;
-            Item.damage = 75;
+            Item.damage = 60;
             //这里的ut有意为之
             Item.useTime = 8;
             Item.useAnimation = 8;
@@ -85,12 +85,28 @@ namespace UCA.Content.Items.Weapons.Rogue
         }
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
+            Color edgeColor = Color.White;
+            edgeColor = Main.LocalPlayer.name.SelectedName() switch
+            {
+                NameType.TrueScarlet => Color.Red,
+                //查 -- 金
+                NameType.WutivOrChaLost => new Color(255, 178, 36),
+                NameType.Emma => Color.HotPink,
+                //锯角 - 紫
+                NameType.SerratAntler => Color.Purple,
+                //Kino - 蓝
+                NameType.SherryOrAnnOrKino => Color.RoyalBlue,
+                NameType.Shizuku => Color.LightSkyBlue,
+                //绿
+                NameType.Hanna => Color.Green,
+                _ => Color.White,
+            };
             Texture2D tex = TextureAssets.Item[Type].Value;
             Vector2 position = Item.position - Main.screenPosition + tex.Size() / 2;
             Rectangle iFrame = tex.Frame();
             //为锤子添加描边，并时刻更新大小
             for (int i = 0; i < 16; i++)
-                spriteBatch.Draw(tex, position + MathHelper.ToRadians(i * 60f).ToRotationVector2() * 2.4f, null, Color.DarkRed with { A = 0 }, 0f, tex.Size() / 2, scale, 0, 0f);
+                spriteBatch.Draw(tex, position + MathHelper.ToRadians(i * 60f).ToRotationVector2() * 2.4f, null, edgeColor with { A = 0 }, 0f, tex.Size() / 2, scale, 0, 0f);
             //然后绘制锤子本身。
             spriteBatch.Draw(tex, position, iFrame, Color.GhostWhite, 0f, tex.Size() / 2, scale, 0f, 0f);
             return false;

@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Projectiles.Typeless;
+using LAP.Core.ParticleSystem;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using System;
@@ -75,8 +76,8 @@ namespace UCA.Content.Projectiles.Rogue.BlazingProj
                     break;
             }
         }
-        
-        private void DirectlySpawnEruptionFireBall(float initTime, int eu = 1, int totalCount = 6)
+
+        private void DirectlySpawnEruptionFireBall(float initTime, int eu = 1, int totalCount = 6, bool stealth = true)
         {
             for (int i = 0; i < totalCount; i++)
             {
@@ -85,6 +86,7 @@ namespace UCA.Content.Projectiles.Rogue.BlazingProj
                 proj.timeLeft = 480;
                 proj.ai[0] = initTime;
                 proj.extraUpdates = eu;
+                proj.Calamity().stealthStrike = stealth;
             }
         }
         //终 极 史 山
@@ -172,7 +174,7 @@ namespace UCA.Content.Projectiles.Rogue.BlazingProj
         private void DoStealth()
         {
             bool available = Projectile.GetTargetSafe(out NPC target, TargetIndex,true);
-            if (Main.mouseRight && MouseRight is false)
+            if (LAPUtilities.JustPressRightClick() && MouseRight is false)
             {
                 MouseRight = true;
                 Update = true;
@@ -201,51 +203,20 @@ namespace UCA.Content.Projectiles.Rogue.BlazingProj
         {
             Projectile.rotation += 0.2f;
             if (Stealth)
-            {
                 DrawTrailingDust();
-                return;
-            }
-
-            //开潜伏的情况下下面的普攻粒子是全部不生成的
-            Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitX);
-            //基础速度
-            Vector2 speedValue = direction * 2.5f;
-            //基础横向偏移，用于控制射弹与路径的距离。
-            float baseOffset = 1f;
-            //让相位差不变，使他们在零点上同步
-            float angle = AttackTimer * 0.2f;
-            //曲线1使用Sin，曲线2使用-Sin确保反向运动
-            float wave = (float)Math.Sin(angle);
-            //计算垂直方向向量。
-            Vector2 perpendDir = direction.RotatedBy(MathHelper.PiOver2);
-            //最终确定生成位置的偏差
-            Vector2 waveOffset = perpendDir * wave * 35f + perpendDir * baseOffset;
-            //修改粒子生成位置。
-            Vector2 spawnPosition = Projectile.Center + waveOffset;
-            //这里是一个数学问题：Sin开导实际上就是Cos曲线。也就是“速度”
-            float verticleVel = (float)Math.Cos(angle) * 1.2f;
-            Vector2 realVel = speedValue + perpendDir * verticleVel;
-            //最终生成粒子。
-            Dust d = Dust.NewDustPerfect(spawnPosition, PickTagDust, realVel);
-            d.scale *= 2.1f;
-            d.noGravity = true;
-            //全局会一直生成的粒子
-            if (Main.rand.NextBool())
-                return;
-            if (Main.rand.NextBool())
+            else
             {
-                Vector2 offset = new Vector2(10, 0).RotatedByRandom(MathHelper.ToRadians(360f));
-                Vector2 velOffset = new Vector2(2, 0).RotatedBy(offset.ToRotation());
-                Dust dust = Dust.NewDustPerfect(new Vector2(Projectile.Center.X, Projectile.Center.Y) + offset, DustID.SolarFlare, new Vector2(Projectile.velocity.X * 0.2f + velOffset.X, Projectile.velocity.Y * 0.2f + velOffset.Y), 100, default, 0.8f);
-                dust.noGravity = true;
-            }
-
-            if (Main.rand.NextBool(5))
-            {
-                Vector2 offset = new Vector2(12, 0).RotatedByRandom(MathHelper.ToRadians(360f));
-                Vector2 velOffset = new Vector2(4, 0).RotatedBy(offset.ToRotation());
-                Dust dust = Dust.NewDustPerfect(new Vector2(Projectile.Center.X, Projectile.Center.Y) + offset, DustID.GemRuby, new Vector2(Projectile.velocity.X * 0.15f + velOffset.X, Projectile.velocity.Y * 0.15f + velOffset.Y), 100, default, 0.8f);
-                dust.noGravity = true;
+                if (Main.rand.NextBool(Projectile.extraUpdates + 1))
+                {
+                    PickTagColor(out Color baseColor, out Color targetColor);
+                    Vector2 spawnPos = Projectile.Center + Main.rand.NextVector2Circular(Projectile.height / 2, Projectile.width / 2);
+                    Vector2 glowDustVelocity = Projectile.velocity.SafeNormalize(Vector2.UnitX).RotatedBy(Main.rand.NextFloat(-MathHelper.PiOver4 / 4f, MathHelper.PiOver4 / 4f)) * 4f;
+                    Dust d = Dust.NewDustPerfect(spawnPos, PickTagDust, glowDustVelocity);
+                    d.scale *= 1.2f;
+                    d.noGravity = true;
+                    Color glowColor = LAPUtilities.LerpColor(baseColor, targetColor);
+                    new ShinyOrbParticle(spawnPos, glowDustVelocity, glowColor, 40, 0.5f, BlendStateID.Additive, glowCenter: true).Spawn();
+                }
             }
         }
         private short PickTagDust

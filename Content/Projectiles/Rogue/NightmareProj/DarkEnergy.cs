@@ -11,7 +11,7 @@ using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Rogue.NightmareProj
 {
-    public class DarkEnergy : BaseRogueProj, ILocalizedModType
+    public class DarkEnergy : RogueProjClass, ILocalizedModType
     {
         public override string Texture => UCATextureRegister.InvisibleTexturePath;
         //完全重做这个玩意的AI

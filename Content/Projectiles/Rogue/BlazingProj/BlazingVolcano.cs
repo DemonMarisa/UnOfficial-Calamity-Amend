@@ -14,7 +14,7 @@ using static UCA.Content.Projectiles.Rogue.BlazingProj.BlazingNamePick;
 
 namespace UCA.Content.Projectiles.Rogue.BlazingProj
 {
-    public class BlazingVolcano : BaseRogueProj
+    public class BlazingVolcano : RogueProjClass
     {
         //写在全局里防止局部多次调用。
         private int InitPhase = 10;

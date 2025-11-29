@@ -13,7 +13,7 @@ using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Rogue.PunishmentProj
 {
-    public class PunishmentHammerLock : BaseRogueProj
+    public class PunishmentHammerLock : RogueProjClass
     {
         public override string Texture => ModContent.GetInstance<PunishmentHammer>().Texture;
         public override void SetStaticDefaults()

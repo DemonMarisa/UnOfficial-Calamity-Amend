@@ -11,7 +11,7 @@ using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Rogue.PunishmentProj
 {
-    public class PunishmentStarMounted : BaseRogueProj 
+    public class PunishmentStarMounted : RogueProjClass 
     {
         private ref float MountedX => ref Projectile.localAI[0];
         private ref float MountedY => ref Projectile.localAI[1];

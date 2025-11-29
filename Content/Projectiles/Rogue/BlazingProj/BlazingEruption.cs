@@ -11,7 +11,7 @@ using static UCA.Content.Projectiles.Rogue.BlazingProj.BlazingNamePick;
 
 namespace UCA.Content.Projectiles.Rogue.BlazingProj
 {
-    public class BlazingEruption : BaseRogueProj
+    public class BlazingEruption : RogueProjClass
     {
         public override string Texture => UCATextureRegister.InvisibleTexturePath;
         public override void SetStaticDefaults()
@@ -36,7 +36,6 @@ namespace UCA.Content.Projectiles.Rogue.BlazingProj
         public override bool? CanDamage() => CanHome;
         public override void AI()
         {
-
             float minScale = 1.9f;
             float maxScale = 2.5f;
             int numDust = 2;
@@ -46,7 +45,10 @@ namespace UCA.Content.Projectiles.Rogue.BlazingProj
                 d.noGravity = true;
                 d.scale *= Main.rand.NextFloat(minScale, maxScale);
             }
-
+            StealthAI();
+        }
+        private void StealthAI()
+        {
             ref float Timer = ref Projectile.ai[0];
             Timer++;
             Projectile.rotation = Projectile.velocity.ToRotation();
@@ -68,7 +70,7 @@ namespace UCA.Content.Projectiles.Rogue.BlazingProj
                     Projectile.HomingTarget(target.Center, 1800f, 18f + Timer / 5f, 15f);
                 else
                     Projectile.velocity.Y += 0.18f;
-            }
+            } 
         }
         private short PickTagDust
         {

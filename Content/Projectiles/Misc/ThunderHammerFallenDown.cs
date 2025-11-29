@@ -21,7 +21,7 @@ using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Misc
 {
-    public class ThunderHammerFallenDown : BaseRogueProj, ILocalizedModType, IPixelatedPrimitiveRenderer
+    public class ThunderHammerFallenDown : RogueProjClass, ILocalizedModType, IPixelatedPrimitiveRenderer
     {
         public override string Texture => ModContent.GetInstance<ThunderHandler>().Texture;
         public ref float CurRotation => ref Projectile.ai[0];

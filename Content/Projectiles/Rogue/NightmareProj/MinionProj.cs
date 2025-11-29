@@ -56,7 +56,7 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
             //锤子生命值即将结束的时候，让锤子本身直接去撞击距离最近的敌人
             if (Projectile.timeLeft < 200 && !IsReadyToDead)
             {
-                SoundEngine.PlaySound(SoundsMenu.Mana_Toss, Projectile.Center);
+                SoundEngine.PlaySound(SoundsMenu.Mana_Toss with { MaxInstances = 0}, Projectile.Center);
                 IsReadyToDead = true;
                 ShootTimer = 0;
             }
@@ -82,22 +82,10 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
                 {
                     //锁定当前的生存时间避免处死
                     Projectile.timeLeft = CurrentTimeLeft;
-                    UpdateMinionIdleState();
                 }
+                //无论如何，更新仆从的运动状态
+                UpdateMinionIdleState();
             }
-        }
-        private void DirectlyStrikeToTarget()
-        {
-            ShootTimer += 1;
-            if (ShootTimer == 45f)
-            {
-                SoundEngine.PlaySound(SoundsMenu.MagicStaffFire, Projectile.Center);
-                Vector2 dir = (Owner.LocalMouseWorld() - Projectile.Center).SafeNormalize(Vector2.UnitX);
-                Projectile.extraUpdates = 4;
-                Projectile.velocity = dir * 18f;
-                Projectile.rotation = Projectile.velocity.ToRotation();
-            }
-            
         }
         private void ShootLaserIfNeed()
         {
@@ -113,7 +101,18 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
             //设定为46确保其不会出现可能的情况
             ShootTimer -= (rate + 2f);
         }
-
+        private void DirectlyStrikeToTarget()
+        {
+            ShootTimer += 1;
+            if (ShootTimer == 45f)
+            {
+                SoundEngine.PlaySound(SoundsMenu.MagicStaffFire, Projectile.Center);
+                Vector2 dir = (Owner.LocalMouseWorld() - Projectile.Center).SafeNormalize(Vector2.UnitX);
+                Projectile.extraUpdates = 4;
+                Projectile.velocity = dir * 18f;
+                Projectile.rotation = Projectile.velocity.ToRotation();
+            }
+        }
         private void DrawTrailingDust()
         {
             if (Projectile.velocity != Vector2.Zero)

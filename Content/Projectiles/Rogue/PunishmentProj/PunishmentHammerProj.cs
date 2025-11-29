@@ -15,35 +15,26 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
     public class PunishmentHammerProj: ThrownHammerProj
     {
         
-        #region 攻击逻辑的枚举
         private enum DoType
         {
             IsShooted,
             IsReturning,
-            IsStealth,
-            IsAddition
         }
         private DoType AttackType
         {
             get => (DoType)Projectile.ai[0];
             set => Projectile.ai[0] = (float)value;
         }
-        #endregion
-
-        #region 一些其他的东西，如果你真的很需要调整平衡，就修改这里
         protected override BoomerangDefault BoomerangStat => new(
             returnTime: 30,
             acceleration: 0.7f,
             returnSpeed: 12f,
             killDistance: 1800
         );
-        #endregion
-        #region Typedef
         //没啥必要，我写这个纯因为觉得长单词麻烦
         internal ref bool Update => ref Projectile.netUpdate;
         public static readonly SoundStyle AdditionHitSigSound = new("CalamityMod/Sounds/Item/PwnagehammerSound") { MaxInstances = 0, Volume = 0.80f };
         public override string Texture => ModContent.GetInstance<PunishmentHammer>().Texture;
-        #endregion
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.TrailCacheLength[Type] = 4;
@@ -72,7 +63,6 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
                     break;
             }
         }
-
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             TargetIndex = target.whoAmI;

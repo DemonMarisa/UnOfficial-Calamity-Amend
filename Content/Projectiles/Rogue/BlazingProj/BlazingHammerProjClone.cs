@@ -30,7 +30,7 @@ namespace UCA.Content.Projectiles.Rogue.BlazingProj
             Projectile.width = Projectile.height = 66;
             Projectile.timeLeft = 120;
             Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 12;
+            Projectile.localNPCHitCooldown = 13;
             Projectile.ignoreWater = true;
             Projectile.friendly = true;
             Projectile.tileCollide = false;
@@ -110,7 +110,7 @@ namespace UCA.Content.Projectiles.Rogue.BlazingProj
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             //不在onkill执行，为了确保其允许生成的火柱合规。
-            Projectile fuckYou = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<FuckYou>(), Projectile.damage / 2, Projectile.knockBack, Owner.whoAmI, 0f, 0.85f + Main.rand.NextFloat() * 1.15f);
+            Projectile fuckYou = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<FuckYou>(), Projectile.damage / 3, Projectile.knockBack, Owner.whoAmI, 0f, 0.85f + Main.rand.NextFloat() * 1.15f);
             fuckYou.Calamity().stealthStrike = true;
             if (target.whoAmI == Projectile.UCA().TargetIndex && CanSpawnVolcano)
             {

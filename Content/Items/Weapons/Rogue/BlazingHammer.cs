@@ -31,7 +31,7 @@ namespace UCA.Content.Items.Weapons.Rogue
             Item.rare = ItemRarityID.Yellow;
             Item.value = UCAShopValue.RarityYellowBuyPrice;
         }
-        public override float StealthDamageMultipler => 0.30f;
+        public override float StealthDamageMultipler => 0.25f;
         private void DrawSpecialColor(DrawableTooltipLine line, Color drawColor, string colorValue)
         {
             //获取全局Sin值，让描边发生一定程度的动态变化

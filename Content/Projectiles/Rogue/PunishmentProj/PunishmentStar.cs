@@ -59,11 +59,6 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
             Projectile.timeLeft = 2;
             Projectile.rotation = Projectile.velocity.ToRotation();
             Projectile.GetTargetSafe(out NPC target, null, true, 1800);
-            if (target != null)
-            {   
-                Vector2 dir = target.velocity.SafeNormalize(Vector2.Zero);
-                Projectile.velocity += dir;
-            }
 
             if ((Projectile.Center - Owner.Center).Length() > 1800f)
                 Projectile.Kill();

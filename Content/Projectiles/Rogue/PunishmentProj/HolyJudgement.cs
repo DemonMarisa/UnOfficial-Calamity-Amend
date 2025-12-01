@@ -55,7 +55,7 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
             //转角处理。
             Projectile.rotation = Projectile.velocity.ToRotation();
             //维持悬挂让他跟随敌对单位
-            Projectile.Center = new Vector2(MountedX, MountedY);
+            Projectile.Center = Vector2.Lerp(Projectile.Center, new Vector2(MountedX, MountedY), 0.1f);
             if (Counter > 60)
             {
                 opc -= 1f / 20f;

@@ -28,6 +28,7 @@ namespace UCA.Content.Items.Weapons.Rogue
             Item.rare = ItemRarityID.LightRed;
             Item.value = UCAShopValue.RarityLightRedBuyPrice;
         }
+        public override float StealthDamageMultipler => 0.25f;
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
             Texture2D tex = TextureAssets.Item[Type].Value;

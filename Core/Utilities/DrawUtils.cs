@@ -68,7 +68,6 @@ namespace UCA.Core.Utilities
                 SB.Draw(tex, position + MathHelper.ToRadians(i * 60f).ToRotationVector2() * 2.4f, null, color with { A = 0 }, 0f, tex.Size() / 2, scale, 0, 0f);
             //然后绘制锤子本身。
             SB.Draw(tex, position, iFrame, Color.White, 0f, tex.Size() / 2, scale, 0f, 0f);
-
         }
         public static SpriteEffects FlipHorizonHandler(this Projectile projectile)
         {

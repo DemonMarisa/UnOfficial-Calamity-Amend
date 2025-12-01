@@ -1,4 +1,5 @@
 using CalamityMod;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
@@ -44,7 +45,7 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
         {
             //气笑了
             Projectile.width = Projectile.height = 66;
-            Projectile.localNPCHitCooldown = 20;
+            Projectile.localNPCHitCooldown = 30;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.timeLeft = 300;
             Projectile.scale *= 1.1f;
@@ -66,8 +67,8 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             TargetIndex = target.whoAmI;
-            float vol = Owner.ownedProjectileCounts[ModContent.ProjectileType<PunishmentHammerLock>()] > 0 ? 0.4f : 0.7f;
-            if (Projectile.numHits % 2 == 0)
+            float vol = Owner.HasProj<PunishmentHammerLock>() ? 0.4f : 0.7f;
+            if (Projectile.numHits % 3 == 0)
             {
                 NormalShootPunishmentStar(target);
                 SoundStyle pickSound2 = Utils.SelectRandom(Main.rand, SoundsMenu.Smash_AirHeavy);
@@ -143,7 +144,7 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
                     //音效
                     SoundEngine.PlaySound(AdditionHitSigSound, Projectile.Center);
                     //当前没有任何挂载锤，则正常进入挂载状态
-                    if (Owner.ownedProjectileCounts[ModContent.ProjectileType<PunishmentHammerLock>()] < 1)
+                    if (!Owner.HasProj<PunishmentHammerLock>())
                     {
                         Projectile.Center.CirclrDust(24, 3f, DustID.HallowedWeapons, 10);
                         Projectile lockHammer = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<PunishmentHammerLock>(), Projectile.damage, 0f, Owner.whoAmI);
@@ -255,12 +256,6 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
             ExSD();
         }
         public virtual void ExSD() { }
-        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
-        {
-            if (!Stealth)
-                modifiers.DefenseEffectiveness *= 0.3f;
-        }
-        public virtual void ExModifyHit(NPC target, ref NPC.HitModifiers modifiers) { }
     }
 
 }

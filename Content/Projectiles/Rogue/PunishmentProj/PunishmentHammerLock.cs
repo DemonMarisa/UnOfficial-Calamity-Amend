@@ -87,7 +87,7 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
         }
         public override void OnKill(int timeLeft)
         {
-            
+            Owner.Calamity().rogueStealth = Owner.Calamity().rogueStealthMax;
             if (CanSpawnHolyPunishment)
             {
                 SoundEngine.PlaySound(PunishmentHammerProj.AdditionHitSigSound, Projectile.Center);
@@ -108,7 +108,7 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
                     GlowOrbParticle glowOrbParticle = new(Projectile.Center + offsetPos, dVel, false, 80, 1.2f, Main.rand.NextBool() ? Color.Gold : Color.White);
                     GeneralParticleHandler.SpawnParticle(glowOrbParticle);
                 }
-            }    
+            }
         }
         private void UpdateMountedStarProj()
         {

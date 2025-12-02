@@ -2,6 +2,7 @@ BlazingHammer: {
 	DisplayName: 炽热锚锤
 	Tooltip:
 		'''
+		[c/F0E68C:武器前身：][c/DC143C:陨落圣骑士锤(盗贼版本)][i:CalamityMod/FallenPaladinsHammer]
 		投掷强大的炽热之锤，命中时造成爆炸
 		潜伏攻击状态下，锤子返程时会回击敌人并完全锁定在敌人身上
 		挂载后，锤子以超高频率持续攻击，每次命中均触发爆炸
@@ -25,6 +26,7 @@ DivineHammer: {
 	DisplayName: 双联神锤
 	Tooltip:
 		'''
+		[c/F0E68C:武器前身：][c/EE82EE:银河溃灭者(盗贼版本)][i:CalamityMod/GalaxySmasher]
 		投掷强大的星系之锤，命中敌人时释放普通的星云射线
 		潜伏攻击时，掷出一个超高速的神明之锤，在返程至玩家身上时回击敌人
 		撞击敌人后分裂成两个子锤，子锤在一定时间后发起挂载
@@ -37,6 +39,7 @@ NightmareHammer: {
 	DisplayName: 冥魇陨星
 	Tooltip:
 		'''
+		[c/F0E68C:武器前身：][c/87CEEB:星体击碎者(盗贼版本)][i:CalamityMod/StellarContempt]
 		投掷强大的梦魇之锤，命中时梦魇之星从天而降
 		潜伏攻击时，命中敌人一定时间后发起挂载，并持续释放冥思能量与梦魇之星
 		场上已有允许挂载的梦魇锤或未命中敌人时，梦魇锤将直接返程成为仆从
@@ -51,6 +54,7 @@ PunishmentHammer: {
 	DisplayName: 裁罚圣锤
 	Tooltip:
 		'''
+		[c/F0E68C:武器前身：][c/FFD700:圣时之锤(盗贼版本)][i:CalamityMod/Pwnagehammer]
 		投掷一把裁决之锤，命中时迸发裁决新星
 		潜伏攻击时，裁决之锤将在返程后回击，并挂载在敌人上造成持续伤害
 		挂载时持续释放裁决之星，并在消失后追加裁决射线

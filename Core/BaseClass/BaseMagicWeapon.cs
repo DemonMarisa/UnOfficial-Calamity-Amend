@@ -40,7 +40,6 @@ namespace UCA.Core.BaseClass
         {
 
         }
-
         public virtual void UpdateHoldItem(Player player)
         {
 

@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Items.Weapons.Magic;
+using LAP.Content.Configs;
 using LAP.Core.BaseClass;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
@@ -176,7 +177,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
 
         public static void GenUnDeathSign(Vector2 firePos, float speedMult = 1)
         {
-            if (UCAConfig.Instance.PerformanceMode)
+            if (LAPConfig.Instance.PerformanceMode)
                 speedMult *= 0.7f;
             // 生成星形
             for (int i = 0; i < 60; i++)

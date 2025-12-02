@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Particles;
+using LAP.Content.Configs;
 using LAP.Core.Graphics.Primitives.Trail;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
@@ -58,7 +59,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             {
                 if (LAPUtilities.OutOffScreen(Projectile.Center) || !CanPlayerInto)
                     return;
-                if (!UCAConfig.Instance.PerformanceMode)
+                if (!LAPConfig.Instance.PerformanceMode)
                 {
                     for (int i = 0; i < 15; i++)
                     {
@@ -107,7 +108,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
             if (!LAPUtilities.OutOffScreen(Projectile.Center))
             {
-                if (!UCAConfig.Instance.PerformanceMode)
+                if (!LAPConfig.Instance.PerformanceMode)
                 {
                     for (int i = 0; i < 5; i++)
                     {
@@ -143,7 +144,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             if (!LAPUtilities.OutOffScreen(Projectile.Center))
             {
                 SoundEngine.PlaySound(SoundsMenu.LightingHit, Projectile.Center);
-                if (!CanPlayerInto || UCAConfig.Instance.PerformanceMode)
+                if (!CanPlayerInto || LAPConfig.Instance.PerformanceMode)
                 {
                     for (int i = 0; i < 5; i++)
                     {
@@ -176,7 +177,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         public override bool PreDraw(ref Color lightColor)
         {
             LAPUtilities.ReSetToBeginShader();
-            if (UCAConfig.Instance.PerformanceMode)
+            if (LAPConfig.Instance.PerformanceMode)
             {
                 DrawTrail(24);
                 DrawTrail(12);

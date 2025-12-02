@@ -1,4 +1,5 @@
-﻿using LAP.Core.Graphics;
+﻿using LAP.Content.Configs;
+using LAP.Core.Graphics;
 using LAP.Core.Graphics.Primitives.Trail;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
@@ -74,10 +75,10 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 int Filp = Main.rand.NextBool() ? 1 : -1;
                 for (int i = 0; i < 2; i++)
                 {
-                    if (!UCAConfig.Instance.PerformanceMode)
+                    if (!LAPConfig.Instance.PerformanceMode)
                         new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.DarkGreen, 0, DrawLayer.AfterDust, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
                     new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.ForestGreen, 0, DrawLayer.AfterDust, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
-                    if (!UCAConfig.Instance.PerformanceMode)
+                    if (!LAPConfig.Instance.PerformanceMode)
                         new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.LightGreen, 0, DrawLayer.AfterDust, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
                     new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.SaddleBrown, 0, DrawLayer.AfterDust, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
                 }
@@ -113,7 +114,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                     Color RandomColor = Color.Lerp(Color.LightGreen, Color.Green, Main.rand.NextFloat(0, 1));
                     new MediumGlowBall(OldPos[i], -Projectile.velocity, RandomColor, 180, 0, 1, 0.12f, Main.rand.NextFloat(1f, 1.4f)).Spawn();
                 }
-                if (!UCAConfig.Instance.PerformanceMode)
+                if (!LAPConfig.Instance.PerformanceMode)
                 {
                     for (int i = 0; i < OldPos.Count; i += 20)
                     {

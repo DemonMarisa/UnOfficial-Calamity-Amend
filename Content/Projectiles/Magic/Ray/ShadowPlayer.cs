@@ -1,4 +1,5 @@
 ﻿using CalamityMod.DataStructures;
+using LAP.Content.Configs;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -47,7 +48,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             {
                 float DistanceToPlayer = Vector2.Distance(Owner.Center , Projectile.Center);
                 DistanceToPlayer /= 16;
-                if (UCAConfig.Instance.PerformanceMode)
+                if (LAPConfig.Instance.PerformanceMode)
                     DistanceToPlayer /= 2;
                 GenLine(Owner.Center, Projectile.Center, DistanceToPlayer);
                 StaffRot = Owner.GetToMouseVector2(Projectile.Center).ToRotation();
@@ -63,7 +64,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             }
             if (!LAPUtilities.OutOffScreen(Projectile.Center, 0.4f))
             {
-                if (UCAConfig.Instance.PerformanceMode)
+                if (LAPConfig.Instance.PerformanceMode)
                 {
                     Vector2 GenPos = Projectile.Center + new Vector2(Main.rand.Next(-16, 16), Main.rand.Next(-24, 24));
                     Color Firecolor = LAPUtilities.LerpColor(Color.Black, Color.DarkViolet);

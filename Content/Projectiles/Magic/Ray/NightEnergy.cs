@@ -1,4 +1,5 @@
-﻿using LAP.Core.Utilities;
+﻿using LAP.Content.Configs;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using System.IO;
 using Terraria;
@@ -62,7 +63,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 Projectile.netUpdate = true;
             }
             Vector2 Offset;
-            if (UCAConfig.Instance.PerformanceMode)
+            if (LAPConfig.Instance.PerformanceMode)
             {
                 DustCount = 4;
                 Offset = new Vector2(Main.rand.Next(-1, 1), Main.rand.Next(-1, 1));

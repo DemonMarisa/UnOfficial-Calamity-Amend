@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using LAP.Content.Configs;
 using LAP.Core.Graphics.Primitives.Trail;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
@@ -72,7 +73,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Vector2 firVel = Vector2.UnitX.RotatedBy(Projectile.rotation) * 2f;
             Color DrawColor = Color.Lerp(Color.Orange, Color.OrangeRed, Main.rand.NextFloat());
             int timeleft = Main.rand.Next(20, 30);
-            if (UCAConfig.Instance.PerformanceMode)
+            if (LAPConfig.Instance.PerformanceMode)
                 timeleft = Main.rand.Next(10, 20);
             new Fire(Projectile.Center, firVel, DrawColor, timeleft, Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.2f).Spawn();
 
@@ -85,7 +86,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override void OnKill(int timeLeft)
         {
-            if (UCAConfig.Instance.PerformanceMode)
+            if (LAPConfig.Instance.PerformanceMode)
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<SolarBlast>(), Projectile.damage, Projectile.knockBack, Projectile.owner, -45, -0.8f, -6f);
             else
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<SolarBlast>(), Projectile.damage, Projectile.knockBack, Projectile.owner, -40, -0.7f, -4f);
@@ -100,7 +101,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Texture2D texture = UCATextureRegister.CrossGlow.Value;
             Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.Orange, 0, texture.Size() / 2, Projectile.scale * 0.2f * new Vector2(1.25f, 1f), SpriteEffects.FlipHorizontally, 0f);
             Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.OrangeRed, 0, texture.Size() / 2, Projectile.scale * 0.15f * new Vector2(1.25f, 1f), SpriteEffects.None, 0f);
-            if (UCAConfig.Instance.PerformanceMode)
+            if (LAPConfig.Instance.PerformanceMode)
             {
                 DrawTrail(16, Color.Orange);
                 DrawTrail(6, Color.White);

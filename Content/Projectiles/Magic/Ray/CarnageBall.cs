@@ -1,4 +1,5 @@
 ﻿using CalamityMod.Buffs.DamageOverTime;
+using LAP.Content.Configs;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -36,7 +37,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
         public override void AI()
         {
-            if (UCAConfig.Instance.PerformanceMode)
+            if (LAPConfig.Instance.PerformanceMode)
             {
                 CarnageMetaBall.SpawnParticle(Projectile.Center, Projectile.rotation.ToRotationVector2(), 0.1f, Projectile.rotation, true);
             }
@@ -48,7 +49,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             int SpawnRate = 3;
             int CircleSpawnRate = 25;
             int dustCounts = 15;
-            if (UCAConfig.Instance.PerformanceMode)
+            if (LAPConfig.Instance.PerformanceMode)
             {
                 CircleSpawnRate = 40;
                 SpawnRate = 6;

@@ -15,6 +15,10 @@ namespace UCA.Content.Items.Weapons.Rogue.Hammer
 {
     public class ThunderHammer : ModItem, ILocalizedModType
     {
+        public override bool IsLoadingEnabled(Mod mod)
+        {
+            return false;
+        }
         public new string LocalizationCategory => "Weapons.Rogue";
         public override void SetDefaults()
         {

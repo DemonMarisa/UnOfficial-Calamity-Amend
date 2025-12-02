@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using LAP.Content.Configs;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -77,7 +78,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 {
                     NebulaMetaBall.SpawnParticle(Projectile.Center + Projectile.velocity / DustCount * i, Vector2.Zero, 0.08f, 45);
                 }
-                if (!UCAConfig.Instance.PerformanceMode)
+                if (!LAPConfig.Instance.PerformanceMode)
                 {
                     Vector2 SpawnPos = Projectile.Center + Vector2.UnitX.RotatedBy(Time * 0.1f * Filp) * 5;
                     for (int i = 0; i < 3; i++)
@@ -99,7 +100,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
             if (Projectile.timeLeft % 20 == 0)
             {
-                if (LAPUtilities.OutOffScreen(Projectile.Center) || UCAConfig.Instance.PerformanceMode)
+                if (LAPUtilities.OutOffScreen(Projectile.Center) || LAPConfig.Instance.PerformanceMode)
                     return;
                 if (Projectile.velocity.Length() > 1)
                 {             

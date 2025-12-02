@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
+using LAP.Content.Configs;
 using LAP.Core.AnimationHandle;
 using LAP.Core.SpecificEffectManagers;
 using LAP.Core.Utilities;
@@ -124,7 +125,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
                 int Spawn = 9;
                 int LilyLiquidSpawn = 6;
                 float Scale = 0.2f;
-                if (UCAConfig.Instance.PerformanceMode)
+                if (LAPConfig.Instance.PerformanceMode)
                 {
                     Spawn = 6;
                     LilyLiquidSpawn = 3;

@@ -1,4 +1,5 @@
-﻿using LAP.Core.Utilities;
+﻿using LAP.Content.Configs;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using System.IO;
 using Terraria;
@@ -76,7 +77,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             {
                 if (CanSplits)
                 {
-                    if (UCAConfig.Instance.PerformanceMode)
+                    if (LAPConfig.Instance.PerformanceMode)
                     {
                         Color RandomColor = Color.Lerp(Color.Violet, Color.Purple, Main.rand.NextFloat(0, 1));
                         new MediumGlowBall(Projectile.Center, -Projectile.velocity, RandomColor, 180, 0, 1, 0.12f, Main.rand.NextFloat(0.2f, 0.5f)).Spawn();

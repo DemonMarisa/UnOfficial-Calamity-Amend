@@ -1,4 +1,5 @@
-﻿using LAP.Core.Utilities;
+﻿using LAP.Content.Configs;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
@@ -71,7 +72,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 if (UseFadeIn)
                 {
                     Projectile.netUpdate = true;
-                    if (!UCAConfig.Instance.PerformanceMode)
+                    if (!LAPConfig.Instance.PerformanceMode)
                     {
                         for (int j = 0; j < 10; j++)
                         {
@@ -109,7 +110,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             if (!BeginFadeOut)
             {
                 Color color = LAPUtilities.LerpColor(Color.DeepSkyBlue, Color.SkyBlue);
-                if (!UCAConfig.Instance.PerformanceMode)
+                if (!LAPConfig.Instance.PerformanceMode)
                 {
                     new TrailGlowBall(Projectile.Center + Main.rand.NextVector2Circular(9, 9), Projectile.velocity * 0.25f, color, Main.rand.Next(45, 65), 0.08f, true).Spawn();
                 }

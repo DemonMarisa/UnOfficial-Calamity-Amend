@@ -1,4 +1,5 @@
-﻿using LAP.Core.Utilities;
+﻿using LAP.Content.Configs;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
@@ -63,7 +64,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             if (!CanHit)
             {
                 Projectile.velocity *= 0.9f;
-                if (Projectile.timeLeft % 4 == 0 && !UCAConfig.Instance.PerformanceMode)
+                if (Projectile.timeLeft % 4 == 0 && !LAPConfig.Instance.PerformanceMode)
                 {
                     Vector2 GenPosOffset = Main.rand.NextVector2Circular(10, 10);
                     Color color = Color.Lerp(Color.DarkBlue, Color.DeepSkyBlue, Main.rand.NextFloat());
@@ -78,7 +79,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                     Projectile.scale = MathHelper.Lerp(Projectile.scale, 1f, 0.1f);
                     Projectile.velocity *= 1.03f;
                 }
-                if (Projectile.timeLeft % 2 == 0 && !UCAConfig.Instance.PerformanceMode)
+                if (Projectile.timeLeft % 2 == 0 && !LAPConfig.Instance.PerformanceMode)
                 {
                     if (Projectile.velocity.Length() < 0.2f)
                     {
@@ -95,7 +96,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             for (int i = 0; i < 6; i++)
             {
                 Vector2 vec = Projectile.velocity / 6;
-                if (!UCAConfig.Instance.PerformanceMode)
+                if (!LAPConfig.Instance.PerformanceMode)
                     StarDustMetaBall.SpawnParticle(Projectile.Center + vec * i, Vector2.Zero, 0.1f, 30);
                 else
                     StarDustMetaBall.SpawnParticle(Projectile.Center + vec * i, Vector2.Zero, 0.1f, 25);
@@ -116,7 +117,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override void OnKill(int timeLeft)
         {
-            if (!UCAConfig.Instance.PerformanceMode)
+            if (!LAPConfig.Instance.PerformanceMode)
             {
                 for (int i = 0; i < 15; i++)
                 {

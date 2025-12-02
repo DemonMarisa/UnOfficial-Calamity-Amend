@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using LAP.Content.Configs;
 using LAP.Core.Graphics.Primitives.Trail;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
@@ -46,7 +47,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Projectile.rotation = Projectile.velocity.ToRotation();
             if (Projectile.LAP().FirstFrame)
             {
-                if (!UCAConfig.Instance.PerformanceMode)
+                if (!LAPConfig.Instance.PerformanceMode)
                 {
                     for (int i = 0; i < 15; i++)
                     {
@@ -95,7 +96,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             Projectile.ExpandHitboxBy((float)7);
             Projectile.Damage();
-            if (!UCAConfig.Instance.PerformanceMode)
+            if (!LAPConfig.Instance.PerformanceMode)
             {
                 for (int i = 0; i < 15; i++)
                 {

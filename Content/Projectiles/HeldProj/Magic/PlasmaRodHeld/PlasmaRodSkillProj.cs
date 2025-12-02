@@ -1,6 +1,7 @@
 ﻿using CalamityMod;
 using CalamityMod.Graphics.Primitives;
 using CalamityMod.Items.Weapons.Magic;
+using LAP.Content.Configs;
 using LAP.Core.AnimationHandle;
 using LAP.Core.SpecificEffectManagers;
 using LAP.Core.Utilities;
@@ -183,7 +184,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
                 new Fire(BeginPos, Projectile.velocity.RotatedBy(MathHelper.PiOver2), Color.Purple, 64, Rot, 1f, 0.3f).Spawn();
                 new Fire(BeginPos, Projectile.velocity.RotatedBy(MathHelper.PiOver2), Color.Violet, 64, Rot, 1f, 0.2f).Spawn();
             }
-            if (UCAConfig.Instance.PerformanceMode)
+            if (LAPConfig.Instance.PerformanceMode)
                 return;
             Vector2 EndPosOffset = Projectile.Center + Vector2.UnitX.RotatedBy(Projectile.rotation) * 200 * Projectile.scale;
             for (int i = 0; i < 2; i++)

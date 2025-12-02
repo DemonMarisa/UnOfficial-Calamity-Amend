@@ -1,4 +1,5 @@
-﻿using LAP.Core.Utilities;
+﻿using LAP.Content.Configs;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -162,7 +163,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 Vector2 offset = new Vector2(96, 0);
                 float Scale14 = 1.4f;
                 float Scale1 = 1f;
-                if (UCAConfig.Instance.PerformanceMode)
+                if (LAPConfig.Instance.PerformanceMode)
                 {
                     Scale14 = 0.8f;
                     Scale1 = 0.4f;
@@ -207,7 +208,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             if (Time % 2 == 0)
             {
                 float SpawRate = 10f;
-                if (UCAConfig.Instance.PerformanceMode)
+                if (LAPConfig.Instance.PerformanceMode)
                     SpawRate = 5f;
                 for (int i = 0; i < SpawRate; i++)
                 {
@@ -301,7 +302,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         #region 绘制耀斑大剑
         public void DrawSolarBlade(Vector2 DrawPos, Vector2 offset, float DrawRot, Vector2 scale)
         {
-            if (!UCAConfig.Instance.PerformanceMode)
+            if (!LAPConfig.Instance.PerformanceMode)
             {
                 LAPUtilities.ReSetToBeginShader(BlendState.Additive);
                 Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.FireNoise.Value;
@@ -385,7 +386,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             {
                 Vector2 beginSpawnPos = Projectile.Center + new Vector2(64, 0).RotatedBy(Projectile.rotation);
                 Vector2 firVel = Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * 9 * Main.rand.NextFloat(0, 2f);
-                if (UCAConfig.Instance.PerformanceMode)
+                if (LAPConfig.Instance.PerformanceMode)
                     firVel *= 0.75f;
                 Color DrawColor;
                 if (IsMAGBOLIABlue)
@@ -406,7 +407,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 new MediumGlowBall(beginSpawnPos, Vector2.Zero, DrawColor, Main.rand.Next(100, 200), Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.2f, Main.rand.NextFloat(2f, 12f)).Spawn();
             }
             float Rate25 = 25;
-            if (UCAConfig.Instance.PerformanceMode)
+            if (LAPConfig.Instance.PerformanceMode)
                 Rate25 = 15;
             for (int i = 0; i < Rate25; i++)
             {
@@ -414,7 +415,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 Vector2 EndSpawnPos = Projectile.Center + new Vector2(SolarBladeXOffset + 720, 0).RotatedBy(Projectile.rotation);
                 float Progress = i / Rate25;
                 Vector2 firVel = Vector2.UnitX.RotatedBy(Projectile.rotation + MathHelper.PiOver2) * 9 * Main.rand.NextFloat(0, 2f);
-                if (UCAConfig.Instance.PerformanceMode)
+                if (LAPConfig.Instance.PerformanceMode)
                     firVel *= 0.75f;
                 Color DrawColor;
                 if (IsMAGBOLIABlue)
@@ -429,7 +430,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 Vector2 EndSpawnPos = Projectile.Center + new Vector2(SolarBladeXOffset + 640, 0).RotatedBy(Projectile.rotation);
                 float Progress = i / Rate25;
                 Vector2 firVel = Vector2.UnitX.RotatedBy(Projectile.rotation + MathHelper.PiOver2) * -9 * Main.rand.NextFloat(0, 2f);
-                if (UCAConfig.Instance.PerformanceMode)
+                if (LAPConfig.Instance.PerformanceMode)
                     firVel *= 0.75f;
                 Color DrawColor;
                 if (IsMAGBOLIABlue)
@@ -439,7 +440,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 new PoisonSmoke(Vector2.Lerp(beginSpawnPos, EndSpawnPos, Progress), firVel + Owner.velocity, DrawColor, Main.rand.Next(45, 55), Main.rand.NextFloat(MathHelper.TwoPi), 1f, 1f).Spawn();
             }
             float Rate200 = 200;
-            if (UCAConfig.Instance.PerformanceMode)
+            if (LAPConfig.Instance.PerformanceMode)
                 Rate200 = 100;
             for (int i = 0; i < Rate200; i++)
             {

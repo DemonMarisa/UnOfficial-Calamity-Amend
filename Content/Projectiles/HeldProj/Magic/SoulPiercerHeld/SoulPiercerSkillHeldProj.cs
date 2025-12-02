@@ -1,6 +1,7 @@
 ﻿using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
 using LAP.Assets.Effects;
+using LAP.Content.Configs;
 using LAP.Core.AnimationHandle;
 using LAP.Core.Graphics.Primitives.Trail;
 using LAP.Core.SpecificEffectManagers;
@@ -172,7 +173,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
             if (Time % 2 == 0)
             {
                 float SpawRate = 2f;
-                if (UCAConfig.Instance.PerformanceMode)
+                if (LAPConfig.Instance.PerformanceMode)
                     SpawRate = 1f;
                 for (int i = 0; i < SpawRate; i++)
                 {

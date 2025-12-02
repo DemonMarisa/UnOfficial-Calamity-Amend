@@ -1,4 +1,5 @@
 ﻿using CalamityMod.Buffs.DamageOverTime;
+using LAP.Content.Configs;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -21,7 +22,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
         public float ScaleMult => MainRay ? 1 : 0.6f;
 
-        public int DustCount => UCAConfig.Instance.PerformanceMode ? 4 : 7;
+        public int DustCount => LAPConfig.Instance.PerformanceMode ? 4 : 7;
         public override void SetDefaults()
         {
             Projectile.width = 8;
@@ -39,7 +40,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             if (Projectile.LAP().FirstFrame)
             {
-                if (UCAConfig.Instance.PerformanceMode)
+                if (LAPConfig.Instance.PerformanceMode)
                 {
                     for (int i = 0; i < 25; i++)
                         new LilyLiquid(Projectile.Center, Projectile.velocity.SafeNormalize(Vector2.Zero).RotatedByRandom(MathHelper.PiOver4 * 0.6f) * Main.rand.NextFloat(0f, 1.2f) * 12f, Color.Red, 64, 0, 1, 1.5f).Spawn();
@@ -62,7 +63,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             {
                 Vector2 RandomOffset;
 
-                if (UCAConfig.Instance.PerformanceMode)
+                if (LAPConfig.Instance.PerformanceMode)
                     RandomOffset = new Vector2(Main.rand.Next(-6, 6), Main.rand.Next(-6, 6));
                 else
                     RandomOffset = new Vector2(Main.rand.Next(-9, 9), Main.rand.Next(-9, 9));
@@ -72,7 +73,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                     Main.rand.NextFloat(0.4f, 0.55f) * ScaleMult,
                     Projectile.rotation);
             }
-            if (UCAConfig.Instance.PerformanceMode)
+            if (LAPConfig.Instance.PerformanceMode)
             {
                 if (Projectile.timeLeft % 6 == 0)
                 {
@@ -104,7 +105,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             if (Projectile.timeLeft % 15 == 0)
             {
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * 3f, ModContent.ProjectileType<CarnageBall>(), Projectile.damage / 2, Projectile.knockBack, Projectile.owner, 0);
-                if (UCAConfig.Instance.PerformanceMode)
+                if (LAPConfig.Instance.PerformanceMode)
                     return;
                 for (int i = 0; i < 15; i++)
                 {
@@ -117,7 +118,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
         public override void OnKill(int timeLeft)
         {
-            if (UCAConfig.Instance.PerformanceMode)
+            if (LAPConfig.Instance.PerformanceMode)
             {
                 for (int i = 0; i < 15; i++)
                 {

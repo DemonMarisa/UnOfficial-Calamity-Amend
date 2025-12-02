@@ -14,9 +14,5 @@ namespace UCA.Content.Configs
         [BackgroundColor(211, 211, 211, 192)]
         [DefaultValue(true)]
         public bool UCATurnoffCorner { get; set; }
-
-        [BackgroundColor(211, 211, 211, 192)]
-        [DefaultValue(false)]
-        public bool PerformanceMode { get; set; }
     }
 }

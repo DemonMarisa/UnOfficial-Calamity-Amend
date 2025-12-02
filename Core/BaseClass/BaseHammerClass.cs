@@ -31,9 +31,12 @@ namespace UCA.Core.BaseClass
         public float ReturnSpeed = returnSpeed;
         public int KillDistance = killDistance;
     }
-
     public abstract class BaseHammerClass : ModProjectile, ILocalizedModType
     {
+        public override bool IsLoadingEnabled(Mod mod)
+        {
+            return false;
+        }
         public Player Owner => Main.player[Projectile.owner];
         public UCAPlayer ModPlayer => Owner.UCA();
         public UCAGlobalProj ModProj => Projectile.UCA();

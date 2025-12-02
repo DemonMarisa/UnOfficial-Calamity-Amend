@@ -94,7 +94,7 @@ namespace UCA.Assets
 
             Trail_ManaStreak = ModContent.Request<Texture2D>(E_Path + nameof(Trail_ManaStreak));
             Trail_RvSlash = ModContent.Request<Texture2D>(E_Path + nameof(Trail_RvSlash));
-            Trail_VShapeWithTail = ModContent.Request<Texture2D>(E_Path+nameof(Trail_VShapeWithTail));
+            Trail_VShapeWithTail = ModContent.Request<Texture2D>(E_Path + nameof(Trail_VShapeWithTail));
             Misc_HRStarTexture = ModContent.Request<Texture2D>(E_Path + nameof(Misc_HRStarTexture));
             HammerRope = ModContent.Request<Texture2D>(E_Path + nameof(HammerRope));
         }

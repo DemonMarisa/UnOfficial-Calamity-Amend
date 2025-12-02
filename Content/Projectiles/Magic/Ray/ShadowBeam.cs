@@ -1,4 +1,5 @@
-﻿using LAP.Core.Utilities;
+﻿using LAP.Content.Configs;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -38,7 +39,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public void GenDust()
         {
-            if (UCAConfig.Instance.PerformanceMode)
+            if (LAPConfig.Instance.PerformanceMode)
             {
                 if (LAPUtilities.OutOffScreen(Projectile.Center, 0.3f))
                     return;

@@ -1,4 +1,5 @@
-﻿using LAP.Core.Utilities;
+﻿using LAP.Content.Configs;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
@@ -67,14 +68,14 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
             if (!LAPUtilities.OutOffScreen(Projectile.Center, 0.5f))
             {
-                if (UCAConfig.Instance.PerformanceMode)
+                if (LAPConfig.Instance.PerformanceMode)
                     DustCount = 3f;
                 for (int i = 0; i < DustCount; i++)
                 {
                     NebulaMetaBall.SpawnParticle(Projectile.Center + Projectile.velocity / DustCount * i, Vector2.Zero, 0.1f, 45);
                 }
                 Vector2 offset = Main.rand.NextVector2Circular(6, 6);
-                if (!UCAConfig.Instance.PerformanceMode)
+                if (!LAPConfig.Instance.PerformanceMode)
                     new Fire(Projectile.Center + offset, Projectile.velocity * 0.3f, Color.Violet, 30, Main.rand.NextFloat(MathHelper.TwoPi), 1, 0.2f).Spawn();
                 else
                     new Fire(Projectile.Center + offset, Projectile.velocity * 0.3f, Color.Violet, 15, Main.rand.NextFloat(MathHelper.TwoPi), 1, 0.2f).Spawn();
@@ -89,7 +90,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 {
                     Vector2 GenPosOffset = Main.rand.NextVector2Circular(45, 45);
 
-                    if (!UCAConfig.Instance.PerformanceMode)
+                    if (!LAPConfig.Instance.PerformanceMode)
                     {
                         Color color = Color.Lerp(Color.DarkViolet, Color.Violet, Main.rand.NextFloat());
                         new CrossGlow(Projectile.Center + GenPosOffset, Vector2.Zero, color, 60, 1f, 0.1f, false).Spawn();
@@ -97,7 +98,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
                     if (OldStarPos != Vector2.Zero)
                     {
-                        if (!UCAConfig.Instance.PerformanceMode)
+                        if (!LAPConfig.Instance.PerformanceMode)
                             UCAUtilities.GenStarLine(OldStarPos, Projectile.Center + GenPosOffset, 50, Color.Violet);
                         else
                             UCAUtilities.GenStarLine(OldStarPos, Projectile.Center + GenPosOffset, 25, Color.Violet);
@@ -152,7 +153,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         public override bool PreDraw(ref Color lightColor)
         {
             LAPUtilities.ReSetToBeginShader();
-            if (!UCAConfig.Instance.PerformanceMode)
+            if (!LAPConfig.Instance.PerformanceMode)
             {
                 Texture2D texture = UCATextureRegister.CrossGlow.Value;
                 Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.Violet, 0, texture.Size() / 2, Projectile.scale * 0.2f * new Vector2(1f, 1f), SpriteEffects.FlipHorizontally, 0f);

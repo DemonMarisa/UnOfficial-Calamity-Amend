@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Graphics.Primitives;
+using LAP.Content.Configs;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -71,7 +72,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                     float rot = MathHelper.TwoPi / strikeCount;
                     new FireStrike(Projectile.Center, Vector2.Zero, Color.White, 30, 1f, rot * j + Main.rand.NextFloat(-0.3f, 0.3f), Main.rand.NextFloat(0.3f, 0.35f) * scale).SpawnToPriority();
                 }
-                if (!UCAConfig.Instance.PerformanceMode)
+                if (!LAPConfig.Instance.PerformanceMode)
                     new CrossGlow(Projectile.Center, Vector2.Zero, Color.Orange, 60, 1f, 0.4f).Spawn();
                 Projectile.netUpdate = true;
             }
@@ -100,7 +101,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Vector2 DrawPos = Projectile.Center - Main.screenPosition;
             Vector2 orig = new Vector2(UCATextureRegister.ShockWave.Size().X / 2, UCATextureRegister.ShockWave.Size().Y / 2 - 40);
             Main.spriteBatch.Draw(UCATextureRegister.ShockWave.Value, DrawPos, null, Color.Orange, 0, orig, Scale * 0.8f, SpriteEffects.None, 0);
-            if (!UCAConfig.Instance.PerformanceMode)
+            if (!LAPConfig.Instance.PerformanceMode)
                 Main.spriteBatch.Draw(UCATextureRegister.ShockWave.Value, DrawPos, null, Color.Orange, 0, orig, Scale * 0.8f, SpriteEffects.None, 0);
 
             UCAShaderRegister.SolarBlastShader.Parameters["uTime"].SetValue(-Main.GlobalTimeWrappedHourly);
@@ -111,7 +112,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             UCAShaderRegister.SolarBlastShader.CurrentTechnique.Passes[0].Apply();
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.FireNoise.Value;
             Main.spriteBatch.Draw(UCATextureRegister.ShockWave.Value, DrawPos, null, Color.Orange, 0, orig, Scale * 0.6f, SpriteEffects.None, 0);
-            if (!UCAConfig.Instance.PerformanceMode)
+            if (!LAPConfig.Instance.PerformanceMode)
                 Main.spriteBatch.Draw(UCATextureRegister.ShockWave.Value, DrawPos, null, Color.Orange, 0, orig, Scale * 0.6f, SpriteEffects.None, 0);
             LAPUtilities.ReSetToEndShader();
             return false;

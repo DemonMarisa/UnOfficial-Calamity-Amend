@@ -10,8 +10,12 @@ using UCA.Core.Utilities;
 
 namespace UCA.Core.BaseClass
 {
-    public abstract class BaseHammerItem : ModItem, ILocalizedModType 
+    public abstract class BaseHammerItem : ModItem, ILocalizedModType
     {
+        public override bool IsLoadingEnabled(Mod mod)
+        {
+            return false;
+        }
         public new string LocalizationCategory => "Weapons.Rogue";
         public virtual int ShootProjID { get; }
         //锤类武器初始提供的潜伏值

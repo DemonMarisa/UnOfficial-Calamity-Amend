@@ -1,4 +1,5 @@
-﻿using LAP.Core.Utilities;
+﻿using LAP.Content.Configs;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
@@ -94,7 +95,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Projectile.scale = MathHelper.Lerp(Projectile.scale, 1.2f, 0.08f);
             #region 生成组成主光束的粒子
             int Timeleft5 = 5;
-            if (UCAConfig.Instance.PerformanceMode)
+            if (LAPConfig.Instance.PerformanceMode)
                 Timeleft5 = 3;
             for (int i = 0; i < LaserLength; i += 40)
             {
@@ -156,7 +157,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 Color color = LAPUtilities.LerpColor(Color.White, Color.SkyBlue);
                 new FusableBall(Spawn, Projectile.velocity * 12, color, Main.rand.Next(60, 90), 1f, new Vector2(1f, 0.1f)).Spawn();
             }
-            if (UCAConfig.Instance.PerformanceMode)
+            if (LAPConfig.Instance.PerformanceMode)
                 return;
             if (Time > 5)
             {

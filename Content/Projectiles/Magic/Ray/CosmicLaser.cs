@@ -1,4 +1,5 @@
-﻿using LAP.Core.AnimationHandle;
+﻿using LAP.Content.Configs;
+using LAP.Core.AnimationHandle;
 using LAP.Core.Enums;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
@@ -86,7 +87,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public static void GenUnDeathSign(Vector2 firePos, float speedMult = 1)
         {
-            if (UCAConfig.Instance.PerformanceMode)
+            if (LAPConfig.Instance.PerformanceMode)
                 speedMult *= 0.7f;
             // 生成星形
             for (int i = 0; i < 180; i++)

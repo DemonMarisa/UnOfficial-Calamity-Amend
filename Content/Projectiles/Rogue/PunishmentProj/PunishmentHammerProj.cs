@@ -1,7 +1,4 @@
 using CalamityMod;
-using CalamityMod.Buffs.DamageOverTime;
-using CalamityMod.Particles;
-using CalamityMod.Tiles.FurnitureMonolith;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -9,54 +6,36 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets.Sounds;
-using UCA.Content.Items.Weapons.Rogue.Hammer;
-using UCA.Core.BaseClass;
+using UCA.Content.Items.Weapons.Rogue;
+using UCA.Core.GlobalInstance.Players;
+using UCA.Core.GlobalInstance.Projectiles;
 using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Rogue.PunishmentProj
 {
-    public partial class PunishmentHammerProj: BaseHammerClass
+    public class PunishmentHammerProj: ThrownHammerProj
     {
         
-        #region 攻击逻辑的枚举
         private enum DoType
         {
             IsShooted,
             IsReturning,
-            IsStealth,
-            IsAddition
         }
         private DoType AttackType
         {
             get => (DoType)Projectile.ai[0];
             set => Projectile.ai[0] = (float)value;
         }
-        #endregion
-
-        #region 一些其他的东西，如果你真的很需要调整平衡，就修改这里
-        protected override BaseProjSD ProjStat => new(
-            HitCooldown: 20,
-            LifeTime: 300,
-            Width: 66,
-            Height: 66,
-            rotation: 0.2f
-        );
         protected override BoomerangDefault BoomerangStat => new(
             returnTime: 30,
             acceleration: 0.7f,
             returnSpeed: 12f,
             killDistance: 1800
         );
-        //总的挂载时间
-        private const int TotalSpinTime = 1800;
-        private int MountedIndex = -1;
-        #endregion
-        #region Typedef
         //没啥必要，我写这个纯因为觉得长单词麻烦
         internal ref bool Update => ref Projectile.netUpdate;
         public static readonly SoundStyle AdditionHitSigSound = new("CalamityMod/Sounds/Item/PwnagehammerSound") { MaxInstances = 0, Volume = 0.80f };
         public override string Texture => ModContent.GetInstance<PunishmentHammer>().Texture;
-        #endregion
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.TrailCacheLength[Type] = 4;
@@ -65,6 +44,10 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
         public override void ExSD()
         {
             //气笑了
+            Projectile.width = Projectile.height = 66;
+            Projectile.localNPCHitCooldown = 30;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.timeLeft = 300;
             Projectile.scale *= 1.1f;
         }
         public override void AI()
@@ -79,70 +62,17 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
                 case DoType.IsReturning:
                     DoReturning();
                     break;
-                case DoType.IsStealth:
-                    DoStealth();
-                    break;
-                case DoType.IsAddition:
-                    DoAddition();
-                    break;
             }
         }
-
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (Projectile.numHits % 2 == 0 && Projectile.numHits < 6)
+            TargetIndex = target.whoAmI;
+            float vol = Owner.HasProj<PunishmentHammerLock>() ? 0.4f : 0.7f;
+            if (Projectile.numHits % 3 == 0)
             {
                 NormalShootPunishmentStar(target);
-                SoundStyle pickSound = Utils.SelectRandom(Main.rand, SoundsMenu.Smash_AirHeavy);
-                SoundEngine.PlaySound(pickSound with { Pitch = Main.rand.NextFloat(0.6f, 0.7f), Volume = 0.7f, MaxInstances = 1 }, target.Center);
-            }
-            if (!Stealth)
-                return;
-            
-            TargetIndex = target.whoAmI;
-            SoundStyle pickSound2 = Utils.SelectRandom(Main.rand, SoundsMenu.Smash_AirHeavy);
-            SoundEngine.PlaySound(pickSound2 with { Pitch = Main.rand.NextFloat(0.6f, 0.7f), Volume = 0.7f, MaxInstances = 1 }, target.Center);
-            //处于挂载条件下，持续发射神圣新星
-            if (AttackType == DoType.IsStealth)
-            {
-                target.AddBuff(ModContent.BuffType<HolyFlames>(), 360);
-                int type = ModContent.ProjectileType<PunishmentStarMounted>();
-                //生成神圣新星用的挂载弹
-                if (Owner.ownedProjectileCounts[type] < 1)
-                {
-                    Projectile proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, type, Projectile.damage, Projectile.knockBack, Owner.whoAmI);
-                    proj.localAI[0] = Projectile.Center.X;
-                    proj.localAI[1] = Projectile.Center.Y;
-                    proj.ai[2] = Projectile.whoAmI;
-                    proj.Calamity().stealthStrike = true;
-                    MountedIndex = proj.whoAmI;
-                }
-            }
-            else
-            {
-                //其余状态下，存入敌对单位
-                TargetIndex = target.whoAmI;
-            }
-        }
-        public override void OnKill(int timeLeft)
-        {
-            if (Stealth && AttackType is DoType.IsStealth && _isHanging && Projectile.timeLeft < 30)
-            {
-                Projectile.Center.CirclrDust(36, 3f, DustID.HallowedWeapons, 12);
-                //原版粒子总体够用，但我还是决定用这个光球。
-                float rotArg = 360f / 36;
-                for (int i = 0; i < 36; i++)
-                {
-                    float rot = MathHelper.ToRadians(i * rotArg);
-                    Vector2 offsetPos = new Vector2(4f, 0f).RotatedBy(rot);
-                    Vector2 dVel = new Vector2(4f, 0f).RotatedBy(rot);
-                    GlowOrbParticle glowOrbParticle = new(Projectile.Center + offsetPos, dVel, false, 80, 1.2f, Main.rand.NextBool() ? Color.Gold : Color.White);
-                    GeneralParticleHandler.SpawnParticle(glowOrbParticle);
-                }
-                SoundEngine.PlaySound(AdditionHitSigSound, Projectile.Center);
-                //生成准备进行十字裁决的挂载射弹
-                Projectile proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<HolyJudgementMounted>(), Projectile.damage, 0f, Owner.whoAmI);
-                proj.ai[0] = TargetIndex;
+                SoundStyle pickSound2 = Utils.SelectRandom(Main.rand, SoundsMenu.Smash_AirHeavy);
+                SoundEngine.PlaySound(pickSound2 with { Pitch = Main.rand.NextFloat(0.6f, 0.7f), Volume = 0.4f, MaxInstances = 1 }, target.Center);
             }
         }
         //手动绘制这个射弹，我不想用你灾的绘制方式
@@ -156,18 +86,6 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
         #region AI方法合集
         private void DoGeneric()
         {
-            //挂载单位存在的时候，时刻更新他
-            if(MountedIndex != -1)
-            {
-                Projectile proj = Main.projectile[MountedIndex];
-                proj.localAI[0] = Projectile.Center.X;
-                proj.localAI[1] = Projectile.Center.Y;
-            }
-            if (Stealth && AttackType == DoType.IsStealth)
-            {
-                Projectile.rotation += MathHelper.ToRadians(5f);
-                return;
-            }
             Projectile.rotation += 0.2f;
             if (Main.rand.NextBool())
             {
@@ -183,16 +101,15 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
                 Dust dust = Dust.NewDustPerfect(new Vector2(Projectile.Center.X, Projectile.Center.Y) + offset, DustID.HallowedWeapons, new Vector2(Projectile.velocity.X * 0.15f + velOffset.X, Projectile.velocity.Y * 0.15f + velOffset.Y), 100, default, 0.8f);
                 dust.noGravity = true;
             }
-            Projectile.ArmorPenetration = 30;
         }
         private void NormalShootPunishmentStar(NPC target)
         {
-            int dCounts = 36;
             Vector2 center = target.Center;
             float randsRad = MathHelper.Pi;
             Vector2 dir = Projectile.velocity.SafeNormalize(Vector2.UnitX);
             int div = 3;
-            if (_isHanging)
+            //已有挂载射弹，将生成位置更新在玩家身上
+            if (Owner.ownedProjectileCounts[ModContent.ProjectileType<PunishmentHammerLock>()] > 0)
             {
                 center = Owner.Center;
                 randsRad = MathHelper.PiOver2;
@@ -200,11 +117,10 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
                 div = 4;
             }
             else
-                center.CirclrDust(dCounts, Main.rand.NextFloat(1.2f, 1.4f), Main.rand.NextBool() ? DustID.GemDiamond : DustID.HallowedWeapons, 3);
+                center.CirclrDust(36, Main.rand.NextFloat(1.2f, 1.4f), Main.rand.NextBool() ? DustID.GemDiamond : DustID.HallowedWeapons, 3);
             for (int i = 1 ; i < 3; i++)
             {
-                float beginAngle = dir.ToRotation();
-                Vector2 velocity = beginAngle.ToRotationVector2().RotatedBy(Main.rand.NextFloat(-randsRad / div, randsRad / div)) * 8f;
+                Vector2 velocity = dir.RotatedBy(Main.rand.NextFloat(-randsRad / div, randsRad / div)) * 8f;
                 Projectile star = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), center, velocity, ModContent.ProjectileType<PunishmentStar>(), Projectile.damage, Projectile.knockBack, Owner.whoAmI);
                 star.timeLeft = 100;
                 star.penetrate = 1;
@@ -220,7 +136,6 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
                 //无潜伏属性，处死射弹
                 if (!Stealth)
                 {
-                    Projectile.Kill();
                     Update = true;
                 }
                 //其余情况下，根据情况进行潜伏攻击
@@ -229,73 +144,30 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
                     //音效
                     SoundEngine.PlaySound(AdditionHitSigSound, Projectile.Center);
                     //当前没有任何挂载锤，则正常进入挂载状态
-                    if (!_isHanging)
+                    if (!Owner.HasProj<PunishmentHammerLock>())
                     {
                         Projectile.Center.CirclrDust(24, 3f, DustID.HallowedWeapons, 10);
-                        AttackType = DoType.IsStealth;
-                        Update = true;
-
-                        //以防万一干掉局部无敌帧，改用静态无敌帧
-                        Projectile.usesLocalNPCImmunity = false;
-                        Projectile.timeLeft = TotalSpinTime;
-                        Projectile.usesIDStaticNPCImmunity = true;
-                        Projectile.idStaticNPCHitCooldown = 40;
-                        Projectile.damage = (int)(Projectile.damage *  2f); 
+                        Projectile lockHammer = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<PunishmentHammerLock>(), Projectile.damage, 0f, Owner.whoAmI);
+                        lockHammer.ai[1] = TargetIndex;
+                        lockHammer.Calamity().stealthStrike = true;
+                        //处死射弹。
                     }
                     //否则，执行其他AI
                     else
                     {
                         Owner.Center.CirclrDust(24, 3f, DustID.GemRuby, 10);
                         //锤子本身会在进入这个AI逻辑后处死
-                        AttackType = DoType.IsAddition;
                         Update = true;
-                        Projectile.timeLeft = ProjStat.LifeTime;
+                        //追加射弹，然后处死锤子
+                        DoAddition();
                     }
                 }
-            }
-        }
-        private void DoStealth()
-        {
-            //此处需首次获得射弹并处理，仅第一帧
-            bool canHomingToTarget = Projectile.GetTargetSafe(out NPC target, TargetIndex, true, 600f);
-            //第一帧刷新攻击时间。
-            if (AttackTimer is 0)
-            {
-                Projectile.timeLeft = TotalSpinTime - 1;
-                AttackTimer = 1;
-                
-            }
-            //没有合理的目标，处死射弹
-            if (!canHomingToTarget)
-            {
+                //无论如何都直接处死射弹
                 Projectile.Kill();
-                return;
             }
-            //正式执行潜伏AI逻辑，注意这里实际上直接无视最低距离
-            Projectile.HomingNPCBetter(target, 20f, 20f, 1);
-            //标记挂载状态
-            _isHanging = true;
         }
-        private void DoAddition()
-        {
-            //其他情况下投掷出来的潜伏锤子只会正常回击并于玩家位置生成echo锤
-            bool hasValidTarget = Projectile.GetTargetSafe(out NPC target, TargetIndex, true);
-            if (hasValidTarget)
-            {
-                for (int i = 0; i < 6; i++)
-                {
-                    Vector2 dir = Projectile.velocity.SafeNormalize(Vector2.UnitX).RotatedBy(Main.rand.NextFloat(Main.rand.NextFloat(MathHelper.PiOver4)));
-                    Vector2 spawnSpeed = dir * 12f;
-                    float ai1 = target.whoAmI;
-                    Projectile hammer = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Owner.Center, spawnSpeed, ModContent.ProjectileType<PunishmentStar>(), Projectile.damage, Projectile.knockBack * 1.5f, Projectile.owner, 0f, ai1);
-                    hammer.DamageType = ModContent.GetInstance<RogueDamageClass>();
-                    hammer.ai[2] = 1f;
-                    Update = true;
-                }
-            }
-            //无论如何，都直接处死这个锤子
-            Projectile.Kill();
-        }
+        
+        
         private void DoShooted()
         {
             AttackTimer += 1;
@@ -310,6 +182,80 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
                 Update = true;
             }
         }
+        private void DoAddition()
+        {
+            if (Projectile.GetTargetSafe(out NPC target, TargetIndex, true))
+            {
+                for (int i = 0; i < 6; i++)
+                {
+                    Vector2 dir = Projectile.velocity.SafeNormalize(Vector2.UnitX).RotatedBy(Main.rand.NextFloat(Main.rand.NextFloat(MathHelper.PiOver4)));
+                    Vector2 spawnSpeed = dir * 12f;
+                    float ai1 = target.whoAmI;
+                    Projectile hammer = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Owner.Center, spawnSpeed, ModContent.ProjectileType<PunishmentStar>(), Projectile.damage, Projectile.knockBack * 1.5f, Projectile.owner, 0f, ai1);
+                    hammer.DamageType = ModContent.GetInstance<RogueDamageClass>();
+                    hammer.ai[2] = 1f;
+                    Update = true;
+                }
+            }
+        }
         #endregion
+
+
     }
+    /// <summary>
+    /// 基础回旋镖的相关数据
+    /// </summary>
+    /// <param name="returnTime">返程时间m/param>
+    /// <param name="returnSpeed">返程基础速度</param>
+    /// <param name="acceleration">返程加速度</param>
+    /// <param name="killDistance">超出距离处死</param>
+    public struct BoomerangDefault(int returnTime, float returnSpeed, float acceleration, int killDistance)
+    {
+        public int ReturnTime = returnTime;
+        public float Acceleration = acceleration;
+        public float ReturnSpeed = returnSpeed;
+        public int KillDistance = killDistance;
+    }
+
+    public abstract class ThrownHammerProj : ModProjectile, ILocalizedModType
+    {
+        public Player Owner => Main.player[Projectile.owner];
+        public UCAPlayer ModPlayer => Owner.UCA();
+        public UCAGlobalProj ModProj => Projectile.UCA();
+        public bool Stealth => Projectile.Calamity().stealthStrike;
+        public ref bool _isHanging => ref ModPlayer._anyHammerAttacking;
+        public int AttackTimer
+        {
+            get => (int)Projectile.ai[1];
+            set => Projectile.ai[1] = value;
+        }
+        public int TargetIndex
+        {
+            get => (int)Projectile.ai[2];
+            set => Projectile.ai[2] = value;
+        }
+        public new string LocalizationCategory => "Projectiles.Rogue";
+        /// <summary>
+        /// 基础射弹数据
+        /// </summary>
+        /// <summary>
+        /// 基础回旋镖类模组数据。
+        /// returnTime：返程时间
+        /// returnSpeed：返程基础速度
+        /// acceleration：返程加速度
+        /// killDistance：处死距离
+        /// </summary>
+        protected abstract BoomerangDefault BoomerangStat{ get; }
+        public override void SetDefaults()
+        {
+            Projectile.penetrate = -1;
+            Projectile.ignoreWater = true;
+            Projectile.friendly = true;
+            Projectile.tileCollide = false;
+            Projectile.extraUpdates = 3;
+            ExSD();
+        }
+        public virtual void ExSD() { }
+    }
+
 }

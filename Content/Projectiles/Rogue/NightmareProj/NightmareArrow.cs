@@ -1,4 +1,5 @@
 ﻿using CalamityMod.Graphics.Primitives;
+using LAP.Core.Graphics.Primitives.Trail;
 using LAP.Core.ParticleSystem;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
@@ -18,7 +19,7 @@ using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Rogue.NightmareProj
 {
-    public class NightmareArrow : BaseRogueProj 
+    public class NightmareArrow : RogueProjClass 
     {
         private enum DoType
         {
@@ -90,20 +91,14 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
             //正弦波频率
             float freq = 0.2f;
             //振幅
-            if(AttackType is DoType.IsHit)
-            {
-                amp2 -= 1f;
-                if (amp2 < 5f)
-                    amp2 = 5f;
-            }
+            float amp2 = 12f;
             Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitX);
             //基础速度
-            Vector2 speedValue = direction * 2.5f;
+            Vector2 speedValue = direction * 2.5f / Projectile.extraUpdates;
             for (int i = 0; i < 2; i++)
             {
-                int side = i == 0 ? 1 : -1;
                 //基础横向偏移，用于控制射弹与路径的距离。
-                float baseOffset = 5f;
+                float baseOffset = 0;
                 //让相位差不变，使他们在零点上同步
                 float angle = AttackTimer * freq;
                 //曲线1使用Sin，曲线2使用-Sin确保反向运动
@@ -117,7 +112,7 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
                 Vector2 spawnPosition = Projectile.Center + waveOffset;
                 //计算例子速度，粒子需要在零点反向运动。因为总体上，他们是在原点位置被“推开”的
                 //这里是一个数学问题：Sin开导实际上就是Cos曲线。也就是“速度”
-                float verticleVel = (float)Math.Cos(angle) * 1.2f;
+                float verticleVel = (float)Math.Cos(angle) * 0.8f;
                 if (i == 1) verticleVel = -verticleVel;
                 Vector2 realVel = speedValue + perpendDir * verticleVel;
                 //最终生成粒子。
@@ -185,9 +180,10 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
             //重新给予射弹向上的初速度。
         }
         #endregion
-        private void DrawTrail(Color color, int height, int width = 0)
+        private void DrawTrail(float height)
         {
             //干掉可能存在零向量
+            Color color = Color.Black;
             Projectile.ClearInvaidData(out List<Vector2> validPositions, out List<float> validRot);
             int drawPointTime = 4;
             //自定义尝试获取贝塞尔曲线
@@ -220,17 +216,18 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
         public override bool PreDraw(ref Color lightColor)
         {
             SpriteBatch SB = Main.spriteBatch;
-            Texture2D projTex =  ModContent.Request<Texture2D>("CalamityEntropy/Content/Particles/StarTrail").Value;
-            SB.Draw(projTex, Projectile.Center - Main.screenPosition, null, Color.Black, Projectile.rotation, projTex.Size() / 2, new Vector2(0.7f, 0.5f), SpriteEffects.None, 0f);
-            SB.End();
-            SB.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            //Texture2D projTex =  UCATextureRegister.Misc_HRStarTexture.Value;
+            //SB.End();
+            //SB.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
-            //需要绘制第二个，作为辉光效果
-            SB.Draw(projTex, Projectile.Center - Main.screenPosition, null, Color.DarkViolet, Projectile.rotation, projTex.Size() / 2, new Vector2(0.5f, 0.3f), SpriteEffects.None, 0f);
+            //SB.Draw(projTex, Projectile.Center - Main.screenPosition, null, Color.Black with { A = 0}, Projectile.rotation, projTex.Size() / 2, new Vector2(0.7f, 0.5f), SpriteEffects.None, 0f);
+            ////需要绘制第二个，作为辉光效果
+            //SB.Draw(projTex, Projectile.Center - Main.screenPosition, null, Color.DarkViolet with { A = 0 }, Projectile.rotation, projTex.Size() / 2, new Vector2(0.5f, 0.3f), SpriteEffects.None, 0f);
 
             SB.End();
             SB.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-            DrawTrail(Color.Black, 10);
+            DrawTrail(12);
+            DrawTrail(8);
 
             SB.End();
             SB.BeginDefault();

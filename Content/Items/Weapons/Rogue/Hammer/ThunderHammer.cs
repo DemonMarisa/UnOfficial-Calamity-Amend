@@ -8,8 +8,10 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using UCA.Content.Projectiles.Rogue;
 using UCA.Content.Projectiles.Rogue.ThunderProj;
-using UCA.Core.Keybinds;
+using UCA.Content.Projectiles.Rogue.ThunderProj.RightHandHammer;
+using UCA.Core.Utilities;
 
 namespace UCA.Content.Items.Weapons.Rogue.Hammer
 {
@@ -20,6 +22,8 @@ namespace UCA.Content.Items.Weapons.Rogue.Hammer
             return false;
         }
         public new string LocalizationCategory => "Weapons.Rogue";
+        //先做掉他
+        public override bool IsLoadingEnabled(Mod mod) => false;
         public override void SetDefaults()
         {
             Item.width = Item.height = 132;
@@ -40,9 +44,14 @@ namespace UCA.Content.Items.Weapons.Rogue.Hammer
             Item.knockBack = 18f;
 
         }
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        public override bool PreDrawTooltipLine(DrawableTooltipLine line, ref int yOffset)
         {
-            base.ModifyTooltips(tooltips);
+            if(line.Name == "ItemName" && line.Mod == "Terraria")
+            {
+                line.CustomTooltipDraw(ref yOffset, Color.Blue, Color.White);
+                return false;
+            }
+            return base.PreDrawTooltipLine(line, ref yOffset);
         }
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {

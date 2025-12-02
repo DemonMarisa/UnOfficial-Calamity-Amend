@@ -10,12 +10,11 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Content.Projectiles.Rogue;
 using UCA.Content.Projectiles.Rogue.NightmareProj;
-using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
 
 namespace UCA.Content.Items.Weapons.Rogue.Hammer
 {
-    public class NightmareHammer: BaseHammerItem
+    public class NightmareHammer: ThrownHammerItem
     {
         public override int ShootProjID => ModContent.ProjectileType<NightmareHammerProj>();
         public override void ExSSD()
@@ -26,19 +25,35 @@ namespace UCA.Content.Items.Weapons.Rogue.Hammer
         {
             Item.width = 88;
             Item.height = 94;
-            Item.damage = 200;
+            Item.damage = 167;
             Item.useTime = 18;
             //这里的UseTime是有意改的很慢的
             Item.useAnimation = 18;
             Item.shootSpeed = 24f;
             Item.rare = ItemRarityID.Red;
-            Item.UseSound = SoundID.Item103;
+            //这里不会给音效，因为要考虑一些射弹的联动
+            //实际音效会在射弹初始化的时候提供
+            Item.UseSound = null;
             Item.value = Item.buyPrice(gold: 12);
         }
+        public override float StealthDamageMultipler => 0.35f;
         public override void ExModifyTooltips(List<TooltipLine> tooltips)
         {
             if (DownedBossSystem.downedDoG && !Main.LocalPlayer.UCA().CanDisableGuideForGodsHammer)
                 tooltips.QuickAddTooltip($"{Temp.UCALocalPrefix}Weapons.Rogue.{GetType().Name}.ShimmmerTooltip", Color.LightPink);
+        }
+        public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
+        {
+            Texture2D tex = TextureAssets.Item[Type].Value;
+            Vector2 position = Item.position - Main.screenPosition + tex.Size() / 2;
+            Rectangle iFrame = tex.Frame();
+            //为锤子添加描边，并时刻更新大小
+            for (int i = 0; i < 16; i++)
+                spriteBatch.Draw(tex, position + MathHelper.ToRadians(i * 60f).ToRotationVector2() * 2.4f, null, Color.Purple with { A = 0 }, 0f, tex.Size() / 2, scale, 0, 0f);
+            //然后绘制锤子本身。
+            spriteBatch.Draw(tex, position, iFrame, Color.White, 0f, tex.Size() / 2, scale, 0f, 0f);
+            Lighting.AddLight(position, TorchID.UltraBright);
+            return false;
         }
         private static float UpdatePos
         {

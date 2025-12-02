@@ -5,7 +5,7 @@ using UCA.Assets;
 
 namespace UCA.Core.BaseClass
 {
-    public abstract class BaseRogueProj : ModProjectile, ILocalizedModType
+    public abstract class RogueProjClass : ModProjectile, ILocalizedModType
     {
         public override bool IsLoadingEnabled(Mod mod)
         {

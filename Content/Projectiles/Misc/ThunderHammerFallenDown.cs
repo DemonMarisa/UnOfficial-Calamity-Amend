@@ -17,13 +17,13 @@ using UCA.Assets.Sounds;
 using UCA.Content.Items.Weapons.Rogue.Hammer;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.Rogue;
-using UCA.Content.Projectiles.Rogue.ThunderProj;
+using UCA.Content.Projectiles.Rogue.ThunderProj.RightHandHammer;
 using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Misc
 {
-    public class ThunderHammerFallenDown : BaseRogueProj, ILocalizedModType, IPixelatedPrimitiveRenderer
+    public class ThunderHammerFallenDown : RogueProjClass, ILocalizedModType, IPixelatedPrimitiveRenderer
     {
         public override string Texture => ModContent.GetInstance<ThunderHandler>().Texture;
         public ref float CurRotation => ref Projectile.ai[0];

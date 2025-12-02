@@ -11,7 +11,7 @@ using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Rogue.NightmareProj
 {
-    public class DarkEnergy : BaseRogueProj, ILocalizedModType
+    public class DarkEnergy : RogueProjClass, ILocalizedModType
     {
         public override string Texture => UCATextureRegister.InvisibleTexturePath;
         //完全重做这个玩意的AI
@@ -34,7 +34,7 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
         }
         public override void SetStaticDefaults()
         {
-            ProjectileID.Sets.TrailCacheLength[Type] = 16;
+            ProjectileID.Sets.TrailCacheLength[Type] = 24;
             ProjectileID.Sets.TrailingMode[Type] = 2;
         }
         public override void SetDefaults()

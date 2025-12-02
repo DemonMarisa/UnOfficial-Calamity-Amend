@@ -6,6 +6,9 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Content.MetaBalls;
 using UCA.Content.Projectiles.Magic.Ray;
+using UCA.Content.Projectiles.Misc.Test;
+using UCA.Content.Projectiles.Rogue.ThunderProj.RightHandHammer;
+using UCA.Content.UCACooldowns;
 using UCA.Core.Utilities;
 namespace UCA.Content.Items
 { 
@@ -45,12 +48,13 @@ namespace UCA.Content.Items
                 Projectile.NewProjectile(source, position, velocity.RotatedBy(MathHelper.ToRadians(-15) + rotAdd * i) * Main.rand.NextFloat(1f, 2f) * 0.5f, ModContent.ProjectileType<NebulaEnegry>(), damage, knockback, player.whoAmI);
             }
             */
-            Projectile.NewProjectile(source, position, velocity * 0.5f, ModContent.ProjectileType<NebulaCrystal>(), damage, knockback, player.whoAmI);
+            Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<PhantomRay>(), damage, knockback, player.whoAmI);
+            //Projectile.NewProjectile(source, position, velocity * 0.5f, ModContent.ProjectileType<NebulaCrystal>(), damage, knockback, player.whoAmI);
             return false;
         }
         public static void GenUnDeathSign(Vector2 firePos, float speedMult = 1)
         {
-            // Éú³ÉÐÇÐÎ
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             for (int i = 0; i < 145f; i++)
             {
                 float offsetAngle = MathHelper.TwoPi * i / 145f;

@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -17,7 +18,7 @@ using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Rogue.DivineProj
 {
-    public class PhantasmalHammerClone : BaseRogueProj, ILocalizedModType
+    public class PhantasmalHammerClone : RogueProjClass, ILocalizedModType
     {
         //攻击枚举
         private enum AttackStyle
@@ -85,8 +86,20 @@ namespace UCA.Content.Projectiles.Rogue.DivineProj
                 case AttackStyle.DoReverse:
                     IsReverse();
                     break;
+                default:
+                    IsFading();
+                    break;
             }
         }
+
+        private void IsFading()
+        {
+            Projectile.velocity *= 0.84f;
+            Projectile.Opacity -= 0.05f;
+            if (Projectile.velocity.Length() == 0f && Projectile.Opacity <= 0.05f)
+                Projectile.Kill();
+        }
+
         //制作一个小的圆弧运动
         private void IsArcRotating()
         {
@@ -144,7 +157,8 @@ namespace UCA.Content.Projectiles.Rogue.DivineProj
                 //否则切换至第三个状态。
                 AttackType = AttackStyle.DoArcRotating;
                 Projectile.netUpdate = true;
-                Projectile.penetrate = 1;
+                Projectile.penetrate = -1;
+                Projectile.localNPCHitCooldown = -1;
                 AttackTimer = 0f;
             }
         }
@@ -184,6 +198,8 @@ namespace UCA.Content.Projectiles.Rogue.DivineProj
             if (AttackType != AttackStyle.DoReverse)
                 return;
             //命中时的圆环
+            //强转化为不存在的类型
+            AttackType = (AttackStyle)(-1);
             Vector2 dir = Projectile.velocity.SafeNormalize(Vector2.UnitX) * 0.5f;
             for (int i = 0; i < 36; i++)
             {
@@ -194,6 +210,9 @@ namespace UCA.Content.Projectiles.Rogue.DivineProj
                 ShinyOrbParticle shinyOrbParticle = new ShinyOrbParticle(pos, dir2 * 5f, Main.rand.NextBool() ? Color.White : Color.HotPink, 40, 3.5f - Math.Abs(18f - i) / 6f);
                 shinyOrbParticle.Spawn();
             }
+            //这里会给一个爆冲
+            Projectile.velocity *= 1.5f;
+            Projectile.extraUpdates = 0;
             SoundStyle pickSound2 = Utils.SelectRandom(Main.rand, SoundsMenu.Smash_AirHeavy);
             SoundEngine.PlaySound(pickSound2 with { Pitch = Main.rand.NextFloat(0.6f, 0.7f), Volume = 0.7f, MaxInstances = 1 }, target.Center);
         }
@@ -209,7 +228,7 @@ namespace UCA.Content.Projectiles.Rogue.DivineProj
         public Color SetTrailColor(float ratio)
         {
             float velocityOpacityFadeout = Utils.GetLerpValue(2f, 5f, Projectile.velocity.Length(), true);
-            Color c = DivineHammerProj.TrailColor * Projectile.Opacity * (1f - ratio);
+            Color c = DivineHammerProj.TrailColor * Projectile.Opacity * 0.8f * (1f - ratio);
             return c * Utils.GetLerpValue(0.04f, 0.08f, ratio, true) * velocityOpacityFadeout;
         }
         //DrawOffset
@@ -228,9 +247,8 @@ namespace UCA.Content.Projectiles.Rogue.DivineProj
             GameShaders.Misc["CalamityMod:SideStreakTrail"].UseImage1("Images/Misc/Perlin");
             PrimitiveRenderer.RenderTrail(Projectile.oldPos, new(SetProjWidth, SetTrailColor, PrimitiveOffsetFunction, shader: GameShaders.Misc["CalamityMod:SideStreakTrail"]), 51);
             SB.ExitShaderRegion();
-
-            Projectile.QuickDrawBloomEdge(Color.HotPink, rotOffset: -MathHelper.PiOver4);
-            Projectile.QuickDrawWithTrailing(0.7f, Color.GhostWhite, 4, -MathHelper.PiOver4);
+            Projectile.QuickDrawBloomEdge(Color.HotPink * Projectile.Opacity, scale: Projectile.Opacity, rotOffset: -MathHelper.PiOver4);
+            Projectile.QuickDrawWithTrailing(0.7f, Color.GhostWhite * Projectile.Opacity, 4, -MathHelper.PiOver4);
             
             return false;
         }

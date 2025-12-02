@@ -14,7 +14,7 @@ using static UCA.Content.Projectiles.Rogue.BlazingProj.BlazingNamePick;
 
 namespace UCA.Content.Projectiles.Rogue.BlazingProj
 {
-    public class BlazingVolcano : BaseRogueProj
+    public class BlazingVolcano : RogueProjClass
     {
         //写在全局里防止局部多次调用。
         private int InitPhase = 10;
@@ -65,7 +65,7 @@ namespace UCA.Content.Projectiles.Rogue.BlazingProj
                     {
                         Vector2 vel = new Vector2(0f, -Main.rand.NextFloat(14f, 18f)).RotatedBy(Main.rand.NextFloat(-MathHelper.PiOver4 / 3, MathHelper.PiOver4 / 3));
                         Projectile proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), new Vector2(Projectile.Center.X, Projectile.Center.Y - Main.rand.NextFloat(160f, 320f)), vel, ModContent.ProjectileType<BlazingEruption>(), Projectile.damage, Projectile.knockBack);
-                        proj.timeLeft = 300;
+                        proj.timeLeft = 600;
                         proj.ai[0] = 20f;
                     }
                 }

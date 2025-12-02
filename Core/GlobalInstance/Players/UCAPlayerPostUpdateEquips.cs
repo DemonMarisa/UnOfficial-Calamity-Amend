@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Terraria;
 using Terraria.ModLoader;
-using UCA.Core.BaseClass;
+using UCA.Content.Items.Weapons.Rogue;
 using UCA.Core.Utilities;
 
 namespace UCA.Core.GlobalInstance.Players
@@ -48,7 +48,7 @@ namespace UCA.Core.GlobalInstance.Players
             calPlayer.wearingRogueArmor = true;
             calPlayer.stealthStrikeHalfCost = true;
             //锤子常驻10潜伏值，这个效果不再有任何条件制约
-            calPlayer.rogueStealthMax += BaseHammerItem.BaseMaxStealth;
+            calPlayer.rogueStealthMax += ThrownHammerItem.BaseMaxStealth;
             BanChangeArmorsetStealth = true;
             //全体锤子无法生效任何形式的潜伏增伤
             //下方的代码从灾厄那复制

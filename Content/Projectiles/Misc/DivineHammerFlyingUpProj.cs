@@ -18,7 +18,7 @@ using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Misc
 {
-    public class DivineHammerFlyingUpProj : BaseRogueProj, ILocalizedModType
+    public class DivineHammerFlyingUpProj : RogueProjClass, ILocalizedModType
     {
         public override string Texture => ModContent.GetInstance<DivineHammer>().Texture;
         private ref float Timer => ref Projectile.ai[0];

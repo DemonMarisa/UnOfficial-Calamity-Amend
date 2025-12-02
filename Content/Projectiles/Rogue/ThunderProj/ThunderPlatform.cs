@@ -10,8 +10,9 @@ using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Rogue.ThunderProj
 {
-    public class ThunderPlatform : BaseRogueProj
+    public class ThunderPlatform : RogueProjClass
     {
+        public override string Texture => (GetType().Namespace + "." + GetType().Name).Replace(".", "/");
         public int SmashHammerIndex
         {  
            get => (int)Projectile.ai[0];
@@ -48,6 +49,7 @@ namespace UCA.Content.Projectiles.Rogue.ThunderProj
         {
             //此处时刻更新eu避免某些神秘模组的修改
             Projectile.extraUpdates = 0;
+            Main.NewText(Projectile.Center);
             //假平台唯一需要做的事情是判定玩家距离等，过远或者之类的处死。
             if (Owner.dead || KilledSignal == 1)
                 Projectile.Kill();
@@ -58,17 +60,20 @@ namespace UCA.Content.Projectiles.Rogue.ThunderProj
             ShouldKillDraw = true;
             return false;
         }
+        SpriteBatch SB { get => Main.spriteBatch; }
         public override bool PreDraw(ref Color lightColor)
         {
             if (ShouldKillDraw)
                 return false;
-            Texture2D tex = TextureAssets.Projectile[Type].Value;
-            Vector2 scale = new Vector2(1.5f, 1f);
+            Texture2D tex = Projectile.GetTexture();
+            Vector2 scale = new Vector2(1f, 1f);
             Vector2 orig = tex.Size() / 2;
             Vector2 drawPos = Projectile.Center - Main.screenPosition;
-            for (int i = 0; i < 16; i++)
-                Main.spriteBatch.Draw(tex, drawPos + MathHelper.ToRadians(i * 60f).ToRotationVector2() * 2f, null, Color.LightBlue with { A = 0 }, 0f, orig, scale, 0, 0f);
+            SB.End();
+            SB.Begin(SpriteSortMode.Deferred, BlendState.Additive);
             Main.spriteBatch.Draw(tex, drawPos, null, Color.White, 0, orig, scale, 0, 0.1f);
+            SB.End();
+            SB.BeginDefault();
             return false;
         }
     }

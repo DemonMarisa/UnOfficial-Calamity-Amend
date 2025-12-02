@@ -85,9 +85,20 @@ namespace UCA.Core.GlobalInstance.Players
         #endregion
         #region PostUpdate
         // 在PostUpdate的最后调用
+        public int HealAmt = 0;
         public void Reset_PostUpdate()
         {
             ResetRay_PostUpdate();
+            ResetHeal_PostUpdate(); 
+        }
+            //别出去跟别人说我整了个这个
+        public void ResetHeal_PostUpdate()
+        {
+            if (HealAmt > 0)
+            {
+                Player.HealDirect(HealAmt);
+                HealAmt = 0;
+            }
         }
         public void ResetRay_PostUpdate()
         {

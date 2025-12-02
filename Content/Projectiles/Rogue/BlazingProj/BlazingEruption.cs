@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
+using Terraria.ModLoader.Config;
 using UCA.Assets;
 using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
@@ -10,7 +11,7 @@ using static UCA.Content.Projectiles.Rogue.BlazingProj.BlazingNamePick;
 
 namespace UCA.Content.Projectiles.Rogue.BlazingProj
 {
-    public class BlazingEruption : BaseRogueProj
+    public class BlazingEruption : RogueProjClass
     {
         public override string Texture => UCATextureRegister.InvisibleTexturePath;
         public override void SetStaticDefaults()
@@ -27,7 +28,7 @@ namespace UCA.Content.Projectiles.Rogue.BlazingProj
             Projectile.alpha = 0;
             Projectile.penetrate = 1;
             Projectile.tileCollide = true;
-            Projectile.timeLeft = 120;
+            Projectile.timeLeft = 360;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 30;
         }
@@ -35,16 +36,19 @@ namespace UCA.Content.Projectiles.Rogue.BlazingProj
         public override bool? CanDamage() => CanHome;
         public override void AI()
         {
-
             float minScale = 1.9f;
             float maxScale = 2.5f;
             int numDust = 2;
             for (int i = 0; i < numDust; i++)
             {
-                int dust = Dust.NewDust(Projectile.Center, 4, 4, PickTagDust, 0f, -2f, 0, default, Main.rand.NextFloat(minScale, maxScale));
-                Main.dust[dust].noGravity = true;
+                Dust d = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(4f, 4f), PickTagDust, Projectile.velocity * 0.25f);
+                d.noGravity = true;
+                d.scale *= Main.rand.NextFloat(minScale, maxScale);
             }
-
+            StealthAI();
+        }
+        private void StealthAI()
+        {
             ref float Timer = ref Projectile.ai[0];
             Timer++;
             Projectile.rotation = Projectile.velocity.ToRotation();
@@ -60,13 +64,13 @@ namespace UCA.Content.Projectiles.Rogue.BlazingProj
             }
             if (CanHome)
             {
-                if (Timer < 50)
+                if (Timer < 30)
                     Timer++;
                 if (Projectile.GetTargetSafe(out NPC target, 0, true))
-                    Projectile.HomingTarget(target.Center, 1800f, 18f + Timer / 5f, 20f);
+                    Projectile.HomingTarget(target.Center, 1800f, 18f + Timer / 5f, 15f);
                 else
                     Projectile.velocity.Y += 0.18f;
-            }
+            } 
         }
         private short PickTagDust
         {
@@ -81,7 +85,7 @@ namespace UCA.Content.Projectiles.Rogue.BlazingProj
                     NameType.Shizuku => DustID.IceTorch,
                     NameType.Hanna => DustID.JungleTorch,
                     NameType.SerratAntler => DustID.PurpleTorch,
-                    _ => DustID.OrangeTorch
+                    _ => DustID.Torch
                 };
                 return Pick;
             }
@@ -139,30 +143,36 @@ namespace UCA.Content.Projectiles.Rogue.BlazingProj
             {
                 Dust.NewDust(Projectile.position, 4, 4, PickTagDust, Projectile.velocity.X, Projectile.velocity.Y, 0, default, Main.rand.NextFloat(minScale, maxScale));
             }
+            if (Projectile.velocity.X != oldVelocity.X)
+                Projectile.velocity.X = -oldVelocity.X;
+            if (Projectile.velocity.Y != oldVelocity.Y)
+                Projectile.velocity.Y = -oldVelocity.Y;
 
-            Projectile.Kill();
-            return true;
+            return false;
         }
         //抄的地狱飞剑
         //todo:换一个更好的火球贴图，这个现在是个占位符
+        private SpriteBatch SB { get => Main.spriteBatch; }
         public override bool PreDraw(ref Color lightColor)
         {
             PickTagColor(out Color baseColor, out Color targetColor);
             Texture2D tex = UCATextureRegister.Particle_ShinyOrb.Value;
             float scale = 1f;
             //绘制残影
-            for (int i = 0; i < Projectile.oldPos.Length; i++)
+            for (int i = 1; i < 8; i++)
             {
-                Vector2 projCenter = Projectile.Center - Main.screenPosition - Projectile.velocity * i * 0.42f;
+                Vector2 projCenter = Projectile.oldPos[i] + Projectile.Size / 2f - Main.screenPosition;
                 scale *= 0.94f;
-                float radius = (float)i / Projectile.oldPos.Length;
+                float radius = (float)i / 8;
                 Color color = Color.Lerp(baseColor, targetColor, radius) * 0.5f * (1 - radius);
-                Main.spriteBatch.Draw(tex, projCenter , null, color * Projectile.Opacity, Projectile.oldRot[i], tex.Size() / 2f, Projectile.scale * new Vector2(1.0f, scale), SpriteEffects.None, 0f);
+                Vector2 trailScale = Projectile.scale * new Vector2(1.5f, scale) * 1.5f;
+                SB.Draw(tex, projCenter , null, color with { A = 50 } * Projectile.Opacity, Projectile.oldRot[i], tex.Size() / 2f, trailScale, SpriteEffects.None, 0f);
+                SB.Draw(tex, projCenter , null, targetColor  with { A = 50 } * Projectile.Opacity, Projectile.oldRot[i], tex.Size() / 2f, trailScale * 0.40f, SpriteEffects.None, 0f);
             }
             //绘制火球本身
-            Main.EntitySpriteDraw(tex, Projectile.Center - Main.screenPosition, null, baseColor with { A = 100}, Projectile.rotation, tex.Size() / 2f, Projectile.scale, SpriteEffects.None, 0);
-            Main.EntitySpriteDraw(tex, Projectile.Center - Main.screenPosition, null, targetColor with { A = 100}, Projectile.rotation, tex.Size() / 2f, Projectile.scale / 2f, SpriteEffects.None, 0);
-            
+            float projScale = Projectile.scale * 1.5f;
+            SB.Draw(tex, Projectile.Center - Main.screenPosition, null, baseColor with { A = 100 }, Projectile.rotation, tex.Size() / 2f,  projScale , SpriteEffects.None, 0);
+            SB.Draw(tex, Projectile.Center - Main.screenPosition, null, Color.White with { A = 100}, Projectile.rotation, tex.Size() / 2f, projScale /2f, SpriteEffects.None, 0);
             return false;
         }
     }

@@ -11,14 +11,18 @@ using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Rogue.PunishmentProj
 {
-    public class PunishmentStarMounted : BaseRogueProj 
+    public class PunishmentStarMounted : RogueProjClass 
     {
         private ref float MountedX => ref Projectile.localAI[0];
         private ref float MountedY => ref Projectile.localAI[1];
-        public ref float AttackTimer => ref Projectile.UCA().ExtraAI[0];
+        public ref float AttackTimer => ref Projectile.UCA().ExtraAI[1];
+        private bool CanSpawnStar
+        {
+            get => Projectile.UCA().ExtraAI[0] == 1f;
+            set => Projectile.UCA().ExtraAI[0] = value ? 1f : 0f;
+        }
         private ref float AniProgress => ref Projectile.ai[0];
         private ref float MountedIndex => ref Projectile.ai[2];
-        private static int PureStarID => ModContent.ProjectileType<PunishmentStar>();
         private bool ShouldGrowUp = true;
         public override bool ShouldUpdatePosition() => false;
         public override void SetDefaults()
@@ -34,15 +38,21 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
         public override void AI()
         {
             Projectile mountedProj = Main.projectile[(int)MountedIndex];
+            //玩家是否死亡与挂载射弹是否存在
             if (!Owner.dead && mountedProj.active)
                 Projectile.timeLeft = 2;
             //时刻更新射弹位置为原本挂载锤子的中心点
             //没了。
             Projectile.Center = new Vector2(MountedX, MountedY);
             Projectile.rotation += MathHelper.ToRadians(1.2f);
+            //如果挂载弹挂载的锤子没有搜索到任何敌人，不要让其生成星星
+            if (CanSpawnStar)
+                UpdateAnimation();
+        }
+        private void UpdateAnimation()
+        {
             //总控圣光新星挂载射弹的放缩
-            // wtf.
-            if(ShouldGrowUp)
+            if (ShouldGrowUp)
             {
                 float t = AttackTimer / 30f;
                 float progress = EasingHelper.EaseInOutExpo(t);
@@ -69,45 +79,43 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
                     ShouldGrowUp = true;
                 }
             }
-            
         }
         private void CanSpawnHolyStar()
         {
             Projectile.Center.CirclrDust(36, Main.rand.NextFloat(1.2f, 1.8f), DustID.HallowedWeapons, 4, 16f);
             SoundEngine.PlaySound(SoundID.Item82 with { Pitch = 0.8f }, Projectile.Center);
             const int TotalProjCounts = 4;
-            float angleStep = MathHelper.TwoPi / TotalProjCounts;
             float beginAngle = Projectile.rotation;
             for (int i = 0; i < TotalProjCounts; i++)
             {
-                float totalOffset = i * angleStep;
+                float totalOffset = i * MathHelper.TwoPi / TotalProjCounts;
                 Vector2 dir = Vector2.UnitX.RotatedBy(beginAngle + totalOffset);
-                Projectile proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, dir * 8f, PureStarID, (int)(Projectile.damage * 0.80f), Projectile.knockBack, Projectile.owner);
+                Projectile proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, dir * 8f, ModContent.ProjectileType<PunishmentStar>(), (int)(Projectile.damage * 0.80f), Projectile.knockBack, Projectile.owner);
                 //标记ai2为1f，让这个射弹在发起追踪前进行一段圆弧运动
                 proj.ai[2] = 1f;
             }
             Projectile.netUpdate = true;
         }
+        SpriteBatch SB { get => Main.spriteBatch; }
         public override bool PreDraw(ref Color lightColor)
         {
-            Vector2 backgroundScale = new Vector2(1.0f, 1.0f);
-            Vector2 bloomScale = new Vector2(0.5f, 0.5f);
+            //无法生成神圣新星的话，不绘制下方的所有东西
+            if (!CanSpawnStar)
+                return false;
+
             //这里的放缩会被lerp进行一次总控。
-            Vector2 dynamicBackgroundScale = Vector2.Lerp(Vector2.Zero, backgroundScale, AniProgress) *Projectile.scale * 1.1f;
-            Vector2 dynamicBloomScale = Vector2.Lerp(Vector2.Zero, bloomScale, AniProgress) *Projectile.scale * 1.1f;
+            Vector2 dynamicBackgroundScale = Vector2.Lerp(Vector2.Zero, new Vector2(1.0f,1.0f), AniProgress) * Projectile.scale * 1.1f;
+            Vector2 dynamicBloomScale = Vector2.Lerp(Vector2.Zero, new Vector2(0.5f,0.5f), AniProgress) * Projectile.scale * 1.1f;
+            Vector2 ori = UCATextureRegister.Misc_HRStarTexture.Size() / 2;
             //最后我们实际绘制他。
-            //前提是我们需要重置他的绘制批次。
-            Texture2D projTex = UCATextureRegister.Misc_HRStarTexture.Value;
-            Vector2 drawPos = Projectile.Center - Main.screenPosition;
+            SB.End();
+            SB.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            SB.Draw(UCATextureRegister.Misc_HRStarTexture.Value, Projectile.Center - Main.screenPosition, null, Color.Gold, Projectile.rotation, ori, dynamicBackgroundScale, SpriteEffects.None, 0.1f);
+            SB.Draw(UCATextureRegister.Misc_HRStarTexture.Value, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, ori, dynamicBloomScale, SpriteEffects.None, 0.1f);
 
-            Main.spriteBatch.Draw(projTex, drawPos, null, Color.Gold, Projectile.rotation, projTex.Size() / 2, dynamicBackgroundScale, SpriteEffects.None, 0.1f);
-            Main.spriteBatch.Draw(projTex, drawPos, null, Color.White, Projectile.rotation, projTex.Size() / 2, dynamicBloomScale, SpriteEffects.None, 0.1f);
-
-            Main.spriteBatch.End();
-            Main.spriteBatch.BeginDefault();
+            SB.End();
+            SB.BeginDefault();
             return false;
         }
     }

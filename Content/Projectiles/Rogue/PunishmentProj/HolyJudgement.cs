@@ -4,15 +4,15 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using UCA.Assets;
+using UCA.Assets.Effects;
 using UCA.Assets.Sounds;
 using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Rogue.PunishmentProj
 {
-    public class HolyJudgement : BaseRogueProj 
+    public class HolyJudgement : RogueProjClass 
     {
-        private int DrawCount = 0;
         private ref float Counter => ref Projectile.ai[0];
         private float OriginalSpeed => Projectile.ai[1];
         private ref float Rotation => ref Projectile.ai[2];
@@ -47,7 +47,7 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
             Lighting.AddLight(Projectile.Center, TorchID.White);
             Counter++;
             //让这个东西绕着转一会……
-            Rotation += MathHelper.ToRadians(2);
+            Rotation += MathHelper.ToRadians(1.5f);
             //增加这个……转角。
             float curRot = InitVec + Rotation;
             //最后算速度。和一些别的。
@@ -55,7 +55,7 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
             //转角处理。
             Projectile.rotation = Projectile.velocity.ToRotation();
             //维持悬挂让他跟随敌对单位
-            Projectile.Center = new Vector2(MountedX, MountedY);
+            Projectile.Center = Vector2.Lerp(Projectile.Center, new Vector2(MountedX, MountedY), 0.1f);
             if (Counter > 60)
             {
                 opc -= 1f / 20f;
@@ -67,32 +67,32 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
         SpriteBatch SB { get => Main.spriteBatch; }
         public override bool PreDraw(ref Color lightColor)
         {
-
-            DrawCount++;
-            SB.End();
-            SB.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.AnisotropicClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
             //贴图。
-            Texture2D warn = UCATextureRegister.Trail_VShapeWithTail.Value;
-            Vector2 ori = warn.Size() / 2 * new Vector2(0, 1);
+            Texture2D warn = UCATextureRegister.Trail_ManaStreak.Value;
             Vector2 drawPos = Projectile.Center - Main.screenPosition;
-            //底部颜色
-            Color backGroundColor = Color.Yellow * opc;
-            //辉光颜色
-            Color bloomColor = (DrawCount / 2 % 2 is 0 ? Color.White : Color.Yellow) * opc;
+            int laserLengthScale = 35;
             //基础大小设定
-            Vector2 baseScale = Projectile.scale * 1.46f * new Vector2(1, opc);
-            //底部大小
-            Vector2 backScale = baseScale * new Vector2(10, 1.2f);
-            //辉光大小
-            Vector2 bloomScale = baseScale * new Vector2(10, 1f);
-            //实际绘制。
-            SB.Draw(warn, drawPos, null, backGroundColor, Projectile.rotation, ori, backScale, SpriteEffects.None, 0);
-            SB.Draw(warn, drawPos, null, bloomColor, Projectile.rotation, ori, bloomScale, SpriteEffects.None, 0);
-
+            Vector2 baseScale = Projectile.scale * 0.32f * new Vector2(1, opc);
+            DrawLaser(warn, drawPos, Color.Gold * opc, baseScale * new Vector2(laserLengthScale, 1.2f));
+            DrawLaser(warn, drawPos, Color.Yellow * opc, baseScale * new Vector2(laserLengthScale, 0.8f));
+            DrawLaser(warn, drawPos, Color.White * opc, baseScale * new Vector2(laserLengthScale, 0.4f));
             SB.End();
             SB.BeginDefault();
-
             return false;
+        }
+        private void DrawLaser(Texture2D warn, Vector2 drawPos, Color drawColor, Vector2 scale)
+        {
+            Vector2 ori = warn.Size() / 2 * new Vector2(0, 1);
+            SB.End();
+            SB.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.AnisotropicClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            UCAShaderRegister.TerrarRayLaser.Parameters["LaserTextureSize"].SetValue(UCATextureRegister.Trail_ManaStreak.Size());
+            UCAShaderRegister.TerrarRayLaser.Parameters["targetSize"].SetValue(new Vector2(120, UCATextureRegister.Trail_ManaStreak.Height()));
+            UCAShaderRegister.TerrarRayLaser.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly * -50);
+            UCAShaderRegister.TerrarRayLaser.Parameters["uColor"].SetValue(drawColor.ToVector4() *opc);
+            UCAShaderRegister.TerrarRayLaser.Parameters["uFadeoutLength"].SetValue(0.4f);
+            UCAShaderRegister.TerrarRayLaser.Parameters["uFadeinLength"].SetValue(0f);
+            UCAShaderRegister.TerrarRayLaser.CurrentTechnique.Passes[0].Apply();
+            SB.Draw(warn, drawPos, null, drawColor, Projectile.rotation, ori, scale, SpriteEffects.None, 0);
         }
     }
 }

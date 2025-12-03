@@ -1,18 +1,13 @@
 using CalamityMod;
-using CalamityMod.Buffs.DamageOverTime;
-using CalamityMod.Buffs.StatDebuffs;
-using CalamityMod.Projectiles.BaseProjectiles;
 using LAP.Core.ParticleSystem;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets.Sounds;
-using UCA.Content.Items.Weapons.Rogue;
+using UCA.Content.Items.Weapons.Rogue.Hammer;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.Rogue.PunishmentProj;
 using UCA.Core.Utilities;
@@ -189,7 +184,7 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
             sparks.localAI[0] = xDist;
             sparks.localAI[1] = yDist;
         }
-
+         
         private void DrawTrailingDust()
         {
             if (Stealth && Main.rand.NextBool(2) && AttackType == DoType.IsStealth)

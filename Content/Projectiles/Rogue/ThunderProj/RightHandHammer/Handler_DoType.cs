@@ -5,8 +5,7 @@ using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.ModLoader;
-using UCA.Content.Items.Weapons.Rogue;
-using UCA.Content.Projectiles.Rogue.ThunderProj.RightHandHammer;
+using UCA.Content.Items.Weapons.Rogue.Hammer;
 using UCA.Core.BaseClass;
 
 namespace UCA.Content.Projectiles.Rogue.ThunderProj.RightHandHammer

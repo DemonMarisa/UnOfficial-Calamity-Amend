@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using LAP.Content.Configs;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using System;
@@ -41,7 +42,7 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
         }
         public void GenDust()
         {
-            if (UCAConfig.Instance.PerformanceMode)
+            if (LAPConfig.Instance.PerformanceMode)
             {
                 if (LAPUtilities.OutOffScreen(Projectile.Center, 0.3f))
                     return;

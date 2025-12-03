@@ -23,7 +23,6 @@ namespace UCA.Content.Items.Weapons.Rogue.Hammer
         }
         public new string LocalizationCategory => "Weapons.Rogue";
         //先做掉他
-        public override bool IsLoadingEnabled(Mod mod) => false;
         public override void SetDefaults()
         {
             Item.width = Item.height = 132;

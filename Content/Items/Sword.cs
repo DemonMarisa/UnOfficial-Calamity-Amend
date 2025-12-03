@@ -7,6 +7,7 @@ using Terraria.ModLoader;
 using UCA.Content.MetaBalls;
 using UCA.Content.Projectiles.Magic.Ray;
 using UCA.Content.Projectiles.Misc.Test;
+using UCA.Content.Projectiles.Rogue.PunishmentProj;
 using UCA.Content.Projectiles.Rogue.ThunderProj.RightHandHammer;
 using UCA.Content.UCACooldowns;
 using UCA.Core.Utilities;
@@ -48,7 +49,7 @@ namespace UCA.Content.Items
                 Projectile.NewProjectile(source, position, velocity.RotatedBy(MathHelper.ToRadians(-15) + rotAdd * i) * Main.rand.NextFloat(1f, 2f) * 0.5f, ModContent.ProjectileType<NebulaEnegry>(), damage, knockback, player.whoAmI);
             }
             */
-            Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<PhantomRay>(), damage, knockback, player.whoAmI);
+            Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<PunishmentHammerLock>(), damage, knockback, player.whoAmI);
             //Projectile.NewProjectile(source, position, velocity * 0.5f, ModContent.ProjectileType<NebulaCrystal>(), damage, knockback, player.whoAmI);
             return false;
         }

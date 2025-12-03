@@ -7,7 +7,7 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets.Sounds;
-using UCA.Content.Items.Weapons.Rogue;
+using UCA.Content.Items.Weapons.Rogue.Hammer;
 using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
 
@@ -50,6 +50,7 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
         }
         public override void AI()
         {
+            Main.NewText("AI");
             UpdateMountedStarProj();
             //追踪敌人，与其他
             if (Projectile.GetTargetSafe(out NPC target, TargetIndex, true, 1000f))

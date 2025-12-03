@@ -6,7 +6,7 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets.Sounds;
-using UCA.Content.Items.Weapons.Rogue;
+using UCA.Content.Items.Weapons.Rogue.Hammer;
 using UCA.Core.GlobalInstance.Players;
 using UCA.Core.GlobalInstance.Projectiles;
 using UCA.Core.Utilities;
@@ -199,8 +199,6 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
             }
         }
         #endregion
-
-
     }
     /// <summary>
     /// 基础回旋镖的相关数据

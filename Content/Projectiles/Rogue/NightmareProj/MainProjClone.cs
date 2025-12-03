@@ -85,7 +85,7 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
 
             if (FlareCounts < 3)
                 FlareCounts++;
-            
+
             int flareDamage = (int)(Projectile.damage / 2 * Math.Log(1 + FlareCounts));
             for (int i = 0; i < FlareCounts; i++)
                 NightmareArrowDrop(target, flareDamage);
@@ -94,7 +94,6 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
             Projectile.localNPCHitCooldown -= 5 * Projectile.extraUpdates;
             if (Projectile.localNPCHitCooldown < leastHitCD)
                 Projectile.localNPCHitCooldown = leastHitCD;
-
         }
         private void NightmareArrowDrop(NPC target, int flareDamage)
         {

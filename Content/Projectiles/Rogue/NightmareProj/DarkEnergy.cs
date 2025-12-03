@@ -68,7 +68,6 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
         }
         private void DoSpawned()
         {
-            //生成逻辑。
             AttackTimer += 1;
             float progress = AttackTimer / 20f;
             Projectile.scale = MathHelper.Lerp(0f, 1f, progress).ToClamp();

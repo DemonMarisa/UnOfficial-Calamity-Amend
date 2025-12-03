@@ -19,6 +19,7 @@ namespace UCA.Content.Items.Weapons.Rogue.Hammer
     {
         public override bool IsLoadingEnabled(Mod mod)
         {
+            //这里维持return false，因为大锤子没有制作完成
             return false;
         }
         public new string LocalizationCategory => "Weapons.Rogue";

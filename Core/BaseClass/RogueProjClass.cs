@@ -7,10 +7,6 @@ namespace UCA.Core.BaseClass
 {
     public abstract class RogueProjClass : ModProjectile, ILocalizedModType
     {
-        public override bool IsLoadingEnabled(Mod mod)
-        {
-            return false;
-        }
         public new string LocalizationCategory => "Projectiles.Rogue";
         public override string Texture => UCATextureRegister.InvisibleTexturePath;
         public Player Owner => Main.player[Projectile.owner];

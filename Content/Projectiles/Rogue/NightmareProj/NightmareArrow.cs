@@ -1,5 +1,4 @@
 ﻿using CalamityMod.Graphics.Primitives;
-using LAP.Core.Graphics.Primitives.Trail;
 using LAP.Core.ParticleSystem;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
@@ -9,11 +8,9 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
-using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Sounds;
 using UCA.Content.Particiles;
-using UCA.Content.Projectiles.Rogue;
 using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
 
@@ -173,7 +170,8 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
             if (AttackTimer < 25f)
                 return;
 
-            SoundEngine.PlaySound(SoundsMenu.SwordHit with { MaxInstances = 3 }, Projectile.Center);
+            SoundStyle pick = Utils.SelectRandom(Main.rand, SoundsMenu.Hammer_Shoot);
+            SoundEngine.PlaySound(SoundsMenu.SwordHit with { Volume = 0.8f, Pitch = 0.5f, MaxInstances = 3 }, Projectile.Center);
             AttackType = DoType.IsChasing;
             AttackTimer = 0;
             Projectile.netUpdate = true;

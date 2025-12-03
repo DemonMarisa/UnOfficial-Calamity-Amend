@@ -31,7 +31,7 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
         {
             Projectile.width = Projectile.height = 66;
             Projectile.extraUpdates = 0;
-            Projectile.timeLeft = 1200;
+            Projectile.timeLeft = 300;
             Projectile.penetrate = -1;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 20;
@@ -45,7 +45,6 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
         public override void OnKill(int timeLeft)
         {
             Owner.Calamity().rogueStealth = Owner.Calamity().rogueStealthMax;
-            base.OnKill(timeLeft);
         }
         public override void AI()
         {
@@ -69,6 +68,7 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
                 //超出屏幕范围，做掉锤子
                 if (LAPUtilities.OutOffScreen(Projectile.Center, 1.2f))
                     Projectile.Kill();
+                DrawFireDust();
             }
             else
             {
@@ -80,12 +80,23 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
                 }
                 else
                 {
-                    //锁定当前的生存时间避免处死
+                    //锁定当前的生存时间避免处死，这里只有在玩家发起攻击的时候才会消耗生命值
+                    //至于其他情况，无所谓，我故意的
                     Projectile.timeLeft = CurrentTimeLeft;
                 }
                 //无论如何，更新仆从的运动状态
                 UpdateMinionIdleState();
             }
+        }
+        private void DrawFireDust()
+        {
+            //速度为零的情况下，降低火焰生成
+            if (Projectile.velocity == Vector2.Zero && Main.rand.NextBool())
+                return;
+            //在这里绘制火焰粒子
+            Vector2 fireVelocity = Projectile.velocity.SafeNormalize(Vector2.Zero);
+            Color Firecolor = LAPUtilities.LerpColor(Color.Black, Color.DarkViolet);
+            new Fire(Projectile.Center, fireVelocity * 4.5f, Firecolor, 90, Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.25f).SpawnToPriorityNonPreMult(); 
         }
         private void ShootLaserIfNeed()
         {
@@ -115,12 +126,7 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
         }
         private void DrawTrailingDust()
         {
-            if (Projectile.velocity != Vector2.Zero)
-            {
-                Vector2 fireVelocity = Projectile.velocity.SafeNormalize(Vector2.Zero);
-                Color Firecolor = LAPUtilities.LerpColor(Color.Black, Color.DarkViolet);
-                new Fire(Projectile.Center, fireVelocity * 4.5f, Firecolor, 90, Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.25f).SpawnToPriorityNonPreMult();
-            }
+            
             Timer += 1;
             //正弦波频率
             float freq = 0.15f;
@@ -169,14 +175,12 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
             //递增的值越大，锤子的摆动幅度越大
             Oscillation += 0.025f;
             //基本的挂机状态，此处使用了正弦曲线来让锤子常规上下偏移
-            //一定程度上为了可读性，这里用了表达式
             float anchorX = Owner.MountedCenter.X - Owner.direction * 88f * (!switchAnchorPosToOverHead).ToInt();
             float anchorY = Owner.MountedCenter.Y - (offset + 60f * (MathF.Sin(Oscillation) / 9f));
             Vector2 anchorPos = new(anchorX, anchorY);
             //实际更新位置
             Projectile.Center = Vector2.Lerp(Projectile.Center, anchorPos, 0.15f);
             //计算锤子需要的朝向。
-            //这里的计算比较绝活但总体来说应该能看得懂
             //这里会依据玩家是否按下左键来使朝向取反，即按住左键的时候，锤头朝向指针，其他情况下，锤柄朝向玩家
             float angleToWhat = ((center - Projectile.Center) * switchAnchorPosToOverHead.ToDirectionInt()).SafeNormalize(Vector2.One).ToRotation();
             //最后使用lerp来让锤子朝向得到修改。
@@ -196,7 +200,6 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
             //实际更新位置
             Projectile.Center = Vector2.Lerp(Projectile.Center, anchorPos, 0.1f);
             //计算锤子需要的朝向。
-            //这里的计算比较绝活但总体来说应该能看得懂
             //这里会依据玩家是否按下左键来使朝向取反，即按住左键的时候，锤头朝向指针，其他情况下，锤柄朝向玩家
             float angleToWhat = ((center - Projectile.Center)).SafeNormalize(Vector2.One).ToRotation();
             //最后使用lerp来让锤子朝向得到修改。

@@ -438,5 +438,6 @@ namespace UCA.Content.Projectiles.Rogue
             //返回这个NPC实例
             return acceptableTarget != null;
         }
+        public static Projectile ToProj(this int ProjIDInstance) => Main.projectile[ProjIDInstance];
     }
 }

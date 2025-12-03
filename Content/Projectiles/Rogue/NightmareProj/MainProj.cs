@@ -13,7 +13,7 @@ using UCA.Content.Projectiles.Rogue.PunishmentProj;
 using UCA.Core.Utilities;
 namespace UCA.Content.Projectiles.Rogue.NightmareProj
 {
-    public class NightmareHammerProj: ThrownHammerProj, ILocalizedModType
+    public class NightmareHammerProj: ThrownHammerProj
     {
         internal ref bool Update => ref Projectile.netUpdate;
         public static readonly SoundStyle UseSound = new("CalamityMod/Sounds/Item/PwnagehammerSound") { MaxInstances = 0,Pitch = 0.35f, Volume = 0.35f };
@@ -86,7 +86,7 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
             //如果超出了玩家屏幕范围，且玩家仍然没有仆从锤，生成仆从锤
             if (LAPUtilities.OutOffScreen(Projectile.Center, 1.2f) && !Owner.HasProj<NightmareHammerMinion>())
             {
-                Projectile proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<NightmareHammerMinion>(), Projectile.damage, 0f, Owner.whoAmI);
+                Projectile proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<NightmareHammerMinion>(), Projectile.damage, 0f, Projectile.owner);
                 proj.Calamity().stealthStrike = true;
                 SoundEngine.PlaySound(SoundsMenu.Mana_Toss, Owner.Center);
                 //而后，杀死射弹。
@@ -138,10 +138,8 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
         {
             SoundEngine.PlaySound(SoundID.Item88, Projectile.Center);
             target.AddBuff(BuffID.ShadowFlame, 360);
-            //移除普通攻击的梦魇之箭生成
             if (!Stealth && Projectile.numHits % 2 == 0)
                 NightmareArrowDrop(target, Projectile.damage / 2);
-            //处于潜伏回击时，击中敌人传入这个单位
             if (AttackType != DoType.IsStealth)
                 return;
 
@@ -149,12 +147,12 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
             //优先生成挂载射弹
             if (!Owner.HasProj<NightmareHammerProjClone>())
             {
-                Projectile proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<NightmareHammerProjClone>(), Projectile.damage, 0f, Owner.whoAmI);
+                Projectile proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<NightmareHammerProjClone>(), Projectile.damage, 0f, Projectile.owner);
                 proj.Calamity().stealthStrike = true;
             }
             else if (!Owner.HasProj<NightmareHammerMinion>())
             {
-                Projectile hangingProj = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<NightmareHammerMinion>(), Projectile.damage, Projectile.knockBack, Owner.whoAmI);
+                Projectile hangingProj = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<NightmareHammerMinion>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
                 hangingProj.Calamity().stealthStrike = true;
                 SoundEngine.PlaySound(SoundsMenu.Mana_Toss, Projectile.Center);
             }
@@ -174,15 +172,11 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
             float xDist = Main.rand.NextFloat(10f, 100f) * Main.rand.NextBool().ToDirectionInt();
             float yDist = Main.rand.NextFloat(800f, 1000f);
             Vector2 srcPos = target.Center + new Vector2(xDist, -yDist);
-            if (Projectile.owner != Main.myPlayer)
-                return;
-
             //在滞留所有的射弹
-            Projectile sparks = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), srcPos, Vector2.Zero, ModContent.ProjectileType<NightmareArrow>(), flareDamage, 1.1f, Owner.whoAmI);
-            sparks.Calamity().stealthStrike = true;
-            sparks.ai[2] = target.whoAmI;
-            sparks.localAI[0] = xDist;
-            sparks.localAI[1] = yDist;
+            int spark = Projectile.NewProjectile(Projectile.GetSource_FromThis(), srcPos, Vector2.Zero, ModContent.ProjectileType<NightmareArrow>(), flareDamage, 1.1f, Projectile.owner);
+            spark.ToProj().ai[2] = target.whoAmI;
+            spark.ToProj().localAI[0] = xDist;
+            spark.ToProj().localAI[1] = yDist;
         }
          
         private void DrawTrailingDust()

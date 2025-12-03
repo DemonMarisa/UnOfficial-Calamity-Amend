@@ -110,6 +110,7 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
                     GeneralParticleHandler.SpawnParticle(glowOrbParticle);
                 }
             }
+            Main.NewText("Kill");
         }
         private void UpdateMountedStarProj()
         {
@@ -151,6 +152,7 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
             SoundStyle pickSound2 = Utils.SelectRandom(Main.rand, SoundsMenu.Smash_AirHeavy);
             SoundEngine.PlaySound(pickSound2 with { Pitch = Main.rand.NextFloat(0.6f, 0.7f), Volume = 0.7f, MaxInstances = 1 }, target.Center);
         }
+
         public override bool PreDraw(ref Color lightColor)
         {
             Projectile.QuickDrawBloomEdge(rotOffset: +MathHelper.PiOver4);

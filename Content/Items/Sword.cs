@@ -55,17 +55,12 @@ namespace UCA.Content.Items
         }
         public static void GenUnDeathSign(Vector2 firePos, float speedMult = 1)
         {
-            // ��������
             for (int i = 0; i < 145f; i++)
             {
                 float offsetAngle = MathHelper.TwoPi * i / 145f;
-
-                // Parametric equations for an asteroid.
                 float unitOffsetX = (float)Math.Pow(Math.Cos(offsetAngle), 5D) * 1.5f;
                 float unitOffsetY = (float)Math.Pow(Math.Sin(offsetAngle), 5D);
-
                 Vector2 puffDustVelocity = new Vector2(unitOffsetX, unitOffsetY) * 7f * speedMult;
-
                 CosmicMetaBall.SpawnCircleParticle(firePos, puffDustVelocity, 0.13f, 90);
             }
         }

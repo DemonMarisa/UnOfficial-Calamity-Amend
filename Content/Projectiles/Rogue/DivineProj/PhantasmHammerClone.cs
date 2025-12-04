@@ -176,10 +176,6 @@ namespace UCA.Content.Projectiles.Rogue.DivineProj
                 SoundEngine.PlaySound(SoundID.Item4 with { Volume = 1f, Pitch = 0.8f }, Owner.Center);
             }
         }
-        public override void OnKill(int timeLeft)
-        {
-            //Owner.Calamity().rogueStealth += Owner.Calamity().rogueStealthMax / 2;
-        }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             //从灾厄抄写的锤子特效

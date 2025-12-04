@@ -42,9 +42,10 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
         }
-        public override void OnKill(int timeLeft)
+        public override bool PreKill(int timeLeft)
         {
             Owner.Calamity().rogueStealth = Owner.Calamity().rogueStealthMax;
+            return true;
         }
         public override void AI()
         {
@@ -55,7 +56,7 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
             //锤子生命值即将结束的时候，让锤子本身直接去撞击距离最近的敌人
             if (Projectile.timeLeft < 200 && !IsReadyToDead)
             {
-                SoundEngine.PlaySound(SoundsMenu.Mana_Toss with { MaxInstances = 0}, Projectile.Center);
+                SoundEngine.PlaySound(SoundsMenu.Mana_Toss with { MaxInstances = 0 }, Projectile.Center);
                 IsReadyToDead = true;
                 ShootTimer = 0;
             }

@@ -32,16 +32,6 @@ namespace UCA.Core.GlobalInstance.Players
             }
 
         }
-        /*
-        public override void ModifyHitByProjectile(Projectile proj, ref Player.HurtModifiers modifiers)
-        {
-        }
-
-        public override bool FreeDodge(Player.HurtInfo info)
-        {
-            return base.FreeDodge(info);
-        }
-        */
         public override bool ConsumableDodge(Player.HurtInfo info)
         {
             if (Player.HasCooldown(ShadowBotlStaffDodge.ID))

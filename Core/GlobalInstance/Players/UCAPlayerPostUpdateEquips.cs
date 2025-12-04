@@ -50,5 +50,9 @@ namespace UCA.Core.GlobalInstance.Players
             Player.DisabelStealthDamageBoost();
         }
         #endregion
+        public void Reset_PostUpdateEquips()
+        {
+            BanChangeArmorsetStealth = false;
+        }
     }
 }

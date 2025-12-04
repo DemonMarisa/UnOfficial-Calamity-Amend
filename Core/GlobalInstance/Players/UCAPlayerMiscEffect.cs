@@ -1,11 +1,4 @@
-﻿using CalamityMod;
-using LAP.Core.GlobalInstance.Players;
-using System.Linq;
-using Terraria;
-using Terraria.ModLoader;
-using UCA.Core.BaseClass;
-using UCA.Core.List;
-using UCA.Core.Utilities;
+﻿using Terraria.ModLoader;
 
 namespace UCA.Core.GlobalInstance.Players
 {
@@ -19,6 +12,11 @@ namespace UCA.Core.GlobalInstance.Players
             AddElementalBoost();
             AddShadowBoltStaffBoost();
             Reset_PostUpdateMiscEffects();
+        }
+        public void Reset_PostUpdateMiscEffects()
+        {
+            ShouldHandleHammerStealth = false;
+            StealthToMaxHPBonus = false;
         }
     }
 }

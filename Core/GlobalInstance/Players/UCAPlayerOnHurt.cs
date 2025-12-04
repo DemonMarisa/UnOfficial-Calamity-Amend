@@ -32,16 +32,6 @@ namespace UCA.Core.GlobalInstance.Players
             }
 
         }
-        /*
-        public override void ModifyHitByProjectile(Projectile proj, ref Player.HurtModifiers modifiers)
-        {
-        }
-
-        public override bool FreeDodge(Player.HurtInfo info)
-        {
-            return base.FreeDodge(info);
-        }
-        */
         public override bool ConsumableDodge(Player.HurtInfo info)
         {
             if (Player.HasCooldown(ShadowBotlStaffDodge.ID))
@@ -59,7 +49,7 @@ namespace UCA.Core.GlobalInstance.Players
                 new CrossGlow(firpos, Vector2.Zero, Color.DarkViolet, 60, 1f, 0.7f, true).Spawn();
                 return true;
             }
-            return base.ConsumableDodge(info);
+            return false;
         }
     }
 }

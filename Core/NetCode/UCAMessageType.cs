@@ -8,9 +8,5 @@ namespace UCA.Core.NetCode
 {
     public partial class UCANetCode
     {
-        public enum MessageType : byte
-        {
-            SyncWeaponSkill
-        }
     }
 }

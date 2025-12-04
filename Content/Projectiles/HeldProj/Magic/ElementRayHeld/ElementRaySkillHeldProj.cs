@@ -90,12 +90,16 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 HandleBeginAni();
                 if (animationHelper.AniProgress[AnimationState.Begin] >= animationHelper.MaxAniProgress[AnimationState.Begin])
                 {
-                    animationHelper.Auxfloat[AnimationState.Begin]++;
-                    if (ElementalRayUI.BeginFadeOut || CanPlayerEnd != 0)
-                    {
+                    if (CanPlayerEnd != 0)
                         animationHelper.HasFinish[AnimationState.Begin] = true;
-                        CanPlayerEnd++;
-                        Projectile.netUpdate = true;
+                    if (Projectile.owner == Main.myPlayer)
+                    {
+                        if (ElementalRayUI.BeginFadeOut || CanPlayerEnd != 0)
+                        {
+                            animationHelper.HasFinish[AnimationState.Begin] = true;
+                            CanPlayerEnd++;
+                            Projectile.netUpdate = true;
+                        }
                     }
                 }
             }
@@ -103,7 +107,10 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             {
                 animationHelper.UpDateAni(AnimationState.End, 25);
                 HandleEndAni();
-                ElementalRayUI.BeginFadeOut = true;
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    ElementalRayUI.BeginFadeOut = true;
+                }
             }
             else if (animationHelper.HasFinish[AnimationState.End])
             {

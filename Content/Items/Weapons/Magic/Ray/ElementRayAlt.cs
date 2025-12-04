@@ -4,10 +4,7 @@ using CalamityMod.Items.Weapons.Magic;
 using LAP.Core.Enums;
 using LAP.Core.Keybind;
 using LAP.Core.Utilities;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Xna.Framework;
-using Mono.Cecil;
-using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
@@ -19,13 +16,9 @@ using UCA.Common.Misc;
 using UCA.Content.GUI;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld;
-using UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld;
 using UCA.Content.Projectiles.Rogue;
 using UCA.Core.BaseClass;
-using UCA.Core.Enums;
-using UCA.Core.Keybinds;
 using UCA.Core.Utilities;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace UCA.Content.Items.Weapons.Magic.Ray
 {
@@ -149,10 +142,8 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
                     ElementalRayUI.BeginFadeOut = false;
                     ElementalRayUI.Active = true;
                 }
-
                 if (player.ownedProjectileCounts[ModContent.ProjectileType<ElementRaySkillHeldProj>()] > 0)
                     return;
-
                 Projectile.NewProjectile(Item.GetSource_FromThis(), player.Center, Vector2.Zero, ModContent.ProjectileType<ElementRaySkillHeldProj>(), 0, 0, player.whoAmI, player.UCA().ElementalRayStates);
             }
         }
@@ -187,7 +178,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            tooltips.IntegrateHotkey(LAPKeybind.WeaponSkillHotKey);
+            LAPUtilities.IntegrateHotkey(tooltips, LAPKeybind.WeaponSkillHotKey);
             Player player = Main.LocalPlayer;
             string MiscTooltip = LocalizedPath.ElementalRayMiscTooltip;
             //先获取原本的tooltip值，因为下方会把tooltip全部复写
@@ -195,47 +186,39 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             if (player.UCA().ElementalRayStates == ElementalRayState.Misc)
             {
                 MiscTooltip = LocalizedPath.ElementalRayMiscTooltip;
-                ReplaceTooltipToNeedState(tooltips, MiscTooltip, $"CalamityMod/{nameof(GalacticaSingularity)}", (int)(CombinedSkillManaCost * player.manaCost));
+                ReplaceTooltipToNeedState(tooltips, MiscTooltip, $"CalamityMod/{nameof(GalacticaSingularity)}");
             }
 
             if (player.UCA().ElementalRayStates == ElementalRayState.Solar)
             {
                 MiscTooltip = LocalizedPath.ElementalRaySolorTooltip;
-                ReplaceTooltipToNeedState(tooltips, MiscTooltip, ItemID.FragmentSolar.ToString(), (int)(SolarSkillManaCost* player.manaCost));
+                ReplaceTooltipToNeedState(tooltips, MiscTooltip, ItemID.FragmentSolar.ToString());
             }
 
             if (player.UCA().ElementalRayStates == ElementalRayState.Nebula)
             {
                 MiscTooltip = LocalizedPath.ElementalRayNebulaTooltip;
-                ReplaceTooltipToNeedState(tooltips, MiscTooltip, ItemID.FragmentNebula.ToString(), (int)(NeublaSkillManaCost * player.manaCost));
+                ReplaceTooltipToNeedState(tooltips, MiscTooltip, ItemID.FragmentNebula.ToString());
             }
 
             if (player.UCA().ElementalRayStates == ElementalRayState.StarDust)
             {
                 MiscTooltip = LocalizedPath.ElementalRayStarDustTooltip;
-                ReplaceTooltipToNeedState(tooltips, MiscTooltip, ItemID.FragmentStardust.ToString(), (int)(StardustSkillManaCost * player.manaCost));
+                ReplaceTooltipToNeedState(tooltips, MiscTooltip, ItemID.FragmentStardust.ToString());
             }
 
             if (player.UCA().ElementalRayStates == ElementalRayState.Vortex)
             {
                 MiscTooltip = LocalizedPath.ElementalRayVortexrTooltip;
-                ReplaceTooltipToNeedState(tooltips, MiscTooltip, ItemID.FragmentVortex.ToString(), (int)(VortexSkillManaCost * player.manaCost));
+                ReplaceTooltipToNeedState(tooltips, MiscTooltip, ItemID.FragmentVortex.ToString());
             }
-            //最后，直接使用add的方式添加原本的tooltip内容
-            //上方使用的替换tooltip方法保留了Tooltip0的lineName，因此这里直接用的这个名字
-            int kbIndex = tooltips.FindIndex(line => line.Name == "Tooltip0");
-            tooltips.Insert(kbIndex, new TooltipLine(Mod, "OriginalTooltip", originalTooltipValue));
-
         }
-        public static void ReplaceTooltipToNeedState(List<TooltipLine> tooltips, string path, string signal, int spendMana)
+        public static void ReplaceTooltipToNeedState(List<TooltipLine> tooltips, string miscTooltip, string signal)
         {
             //将Signal转化为需要进行插值的物品名
             string signalItem = $"[i:{signal}]";
-            //获取武器战技快捷键的提示文本
-            string weaponSkillHotKeyTextValue = CalamityUtils.TooltipHotkeyString(LAPKeybind.WeaponSkillHotKey);
-            //使用封装的Tooltip方法，做掉元素射线原本的tooltip
-            //这里需要控制传参的情况，因为上面的signal被视作一个参数
-            tooltips.ReplaceAllTooltip(path, Color.White, signalItem, spendMana, weaponSkillHotKeyTextValue);
+            LAPUtilities.FindAndReplace(tooltips, "[UCAElementRayReplaceKey]", miscTooltip);
+            LAPUtilities.FindAndReplace(tooltips, "[ItemIconKey]", signalItem);
         }
         public override void AddRecipes()
         {

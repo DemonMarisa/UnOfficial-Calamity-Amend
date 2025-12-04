@@ -63,55 +63,11 @@ namespace UCA.Core.GlobalInstance.Players
         #endregion
         #region 重置锤子
         // 大幅简化，相关判定直接移动到物品中
-        //为禁用潜伏条增伤的武器提供生命上限转模
-        public bool StealthToMaxHPBonus = false;
         public void RogueHammerReset()
         {
             _anyHammerAttacking = false;
-            
         }
         #endregion
-        #endregion
-        #region ResetPostUpdateMiscEffects
-        // 在PostUpdateMiscEffects的最后调用
-        // 在这里写是因为HoldItem的调用在MiscEffect后，PostUpdate前，为了保证HoldItem中更新的字段可以正常取到，所以在这里重置
-        public void Reset_PostUpdateMiscEffects()
-        {
-            ShouldHandleHammerStealth = false;
-            StealthToMaxHPBonus = false;
-        }
-        public void Reset_PostUpdateEquips()
-        {
-            BanChangeArmorsetStealth = false;
-        }
-        #endregion
-        #region PostUpdate
-        // 在PostUpdate的最后调用
-        public int HealAmt = 0;
-        public void Reset_PostUpdate()
-        {
-            ResetRay_PostUpdate();
-            ResetHeal_PostUpdate(); 
-        }
-            //别出去跟别人说我整了个这个
-        public void ResetHeal_PostUpdate()
-        {
-            if (HealAmt > 0)
-            {
-                Player.HealDirect(HealAmt);
-                HealAmt = 0;
-            }
-        }
-        public void ResetRay_PostUpdate()
-        {
-            HeldNightShield = false;
-            WeakHeldNightShield = false;
-            if (TerraRestore)
-            {
-                Player.Heal(Player.statLifeMax2 / 4);
-                TerraRestore = false;
-            }
-        }
         #endregion
     }
 }

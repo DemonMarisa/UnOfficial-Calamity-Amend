@@ -42,6 +42,8 @@ namespace UCA.Core.GlobalInstance.Players
         public bool CanDisableGuideForGodsHammer;
         public bool CanDisableGuideForGrandHammer;
         public bool ShouldGiveSpareGodsHammer;
+        //为禁用潜伏条增伤的武器提供生命上限转模
+        public bool StealthToMaxHPBonus = false;
         #endregion
     }
 }

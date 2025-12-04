@@ -58,58 +58,55 @@ ElementRayAlt: {
 		Fires a pure elemental beam.
 		Right Click to use the special ability base on current mode.
 		Different modes grant different attack styles and special abilities.
+		Pressing [KEY] to switch attack mode
+		[UCAElementRayReplaceKey]
 		'''
 }
 
 ElementRayMisc:
 	'''
-	Pressing {2} to switch attack mode
-	{0}[c/E2E4F4:Combined Mode]
+	[ItemIconKey][c/E2E4F4:Combined Mode]
 	Triggers a Solar explosion and blasts Nebula energy on enemy hit.  
 	Leaves Stardust fragments to attack enemies when the beam disappears.  
 	Launches Vortex Missiles from behind to track enemies.  
-	{0}[c/E2E4F4:Weapon Skill: Resplendent Life]
-	Consumes {1} mana to Raises staff; after a short delay, restores 5% max health and grants 15 HP/s regeneration for 10 seconds.
+	[ItemIconKey][c/E2E4F4:Weapon Skill: Resplendent Life]
+	Consumes [LAPManaCost] mana to Raises staff; after a short delay, restores 5% max health and grants 15 HP/s regeneration for 10 seconds.
 	'''
 ElementRaySolor:
 	'''
-	Pressing {2} to switch attack mode
-	{0}[c/FFA500:Solar Mode]
+	[ItemIconKey][c/FFA500:Solar Mode]
 	Triggers a larger Flare explosion on enemy hit
 	Simultaneously launches a large number of Flare fireballs
-	{0}[c/FFA500:Weapon Skill: Solar Greatsword]
-	Consumes {1} mana to charge. Release Right Click to slash forward. 100 times damage
+	[ItemIconKey][c/FFA500:Weapon Skill: Solar Greatsword]
+	Consumes [LAPManaCost] mana to charge. Release Right Click to slash forward. 100 times damage
 	Damage will decrease based on the number of enemies hit, with a minimum of 10 times damage
 	Grants +30 defense and 15% defense damage reduction for a short time upon hitting an enemy.
 	'''
 ElementRayVortex:
 	'''
-	Pressing {2} to switch attack mode
-	{0}[c/66CDAA:Vortex Mode]
+	[ItemIconKey][c/66CDAA:Vortex Mode]
 	Launches Vortex Missiles from behind to track enemies
-	{1}Fires lightning at the nearest enemy when the beam disappears
-	{0}[c/66CDAA:Weapon Skill: Lighting Storm]
-	Consumes {1} mana to charge. Randomly launches numerous Vortex Missiles around you after chargings
+	Fires lightning at the nearest enemy when the beam disappears
+	[ItemIconKey][c/66CDAA:Weapon Skill: Lighting Storm]
+	Consumes [LAPManaCost] mana to charge. Randomly launches numerous Vortex Missiles around you after chargings
 	Grants 1.1x damage for a short period after use
 	'''
 ElementRayNebula:
 	'''
-	Pressing {2} to switch attack mode
-	{0}[c/FF00FF:Nebula Mode]
+	[ItemIconKey][c/FF00FF:Nebula Mode]
 	Explodes with more Nebula energy on enemy hit
 	Emits Nebula energy from around you to track enemies
-	{0}[c/FF00FF:Weapon Skill: Nebula Crystal Rain]
-	Consumes {1} mana to charge. Launches numerous cosmic crystals forward after a short delay
+	[ItemIconKey][c/FF00FF:Weapon Skill: Nebula Crystal Rain]
+	Consumes [LAPManaCost] mana to charge. Launches numerous cosmic crystals forward after a short delay
 	Hitting an enemy with a crystal grants you a Nebula Boost buff and Spawn healing Projectile
 	'''
 ElementRayStarDust:
 	'''
-	Pressing {2} to switch attack mode
-	{0}[c/FF00FF:Stardust Mode]
+	[ItemIconKey][c/FF00FF:Stardust Mode]
 	Explodes with more Stardust Laser on enemy hit
 	Leaves Stardust fragments to attack enemies when the beam disappears
-	{0}[c/4169E1:Weapon skill: Soul Stream]
-	Consumes {1} mana to charge. Launches a powerful Soul Stream forward after a short delay
+	[ItemIconKey][c/4169E1:Weapon skill: Soul Stream]
+	Consumes [LAPManaCost] mana to charge. Launches a powerful Soul Stream forward after a short delay
 	Halves your mana consumption for a short period after use
 	'''
 

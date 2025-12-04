@@ -1,5 +1,6 @@
 using CalamityMod;
 using Terraria.ModLoader;
+using UCA.Core.Utilities;
 
 namespace UCA.Core.GlobalInstance.Players
 {
@@ -11,14 +12,35 @@ namespace UCA.Core.GlobalInstance.Players
         public int _cacheHeadType = -1;
         public int _cacheBodyType = -1;
         public int _cacheLegsType = -1;
+        // 储存应该恢复多少
+        public int HealAmt = 0;
         public override void PostUpdate()
         {
             Reset_PostUpdate();
         }
-        //为了这个潜伏砖模我单独开了一个方法，你自己去看要放哪吧
-        public override void UpdateEquips()
+        public void Reset_PostUpdate()
         {
-            base.UpdateEquips();
+            ResetRay_PostUpdate();
+            ResetHeal_PostUpdate();
+        }
+        //别出去跟别人说我整了个这个
+        public void ResetHeal_PostUpdate()
+        {
+            if (HealAmt > 0)
+            {
+                Player.HealDirect(HealAmt);
+                HealAmt = 0;
+            }
+        }
+        public void ResetRay_PostUpdate()
+        {
+            HeldNightShield = false;
+            WeakHeldNightShield = false;
+            if (TerraRestore)
+            {
+                Player.Heal(Player.statLifeMax2 / 4);
+                TerraRestore = false;
+            }
         }
     }
 }

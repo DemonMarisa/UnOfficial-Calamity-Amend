@@ -77,12 +77,6 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
             }
 
         }
-        public override bool OnTileCollide(Vector2 oldVelocity)
-        {
-            new CrossGlow(Projectile.Center, Vector2.Zero, Color.Violet, 30, 1f, 0.4f).Spawn();
-            new CrossGlow(Projectile.Center, Vector2.Zero, Color.DarkViolet, 30, 1f, 0.4f).Spawn();
-            return true;
-        }
 
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {

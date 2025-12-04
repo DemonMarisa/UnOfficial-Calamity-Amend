@@ -80,6 +80,7 @@ namespace UCA.Content.Items.Weapons.Rogue.Hammer
             Item.shoot = ShootProjID;
             Item.knockBack = 18f;
             Item.LAP().DrawUCASmallIcon = true;
+            Item.Calamity().devItem = true;
             ExSD();
         }
         

@@ -31,7 +31,7 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
         {
             Projectile.width = Projectile.height = 66;
             Projectile.extraUpdates = 0;
-            Projectile.timeLeft = 300;
+            Projectile.timeLeft = 1500;
             Projectile.penetrate = -1;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 20;

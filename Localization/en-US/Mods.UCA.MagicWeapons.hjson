@@ -6,7 +6,7 @@ CarnageRay: {
 		Fires homing blood orbs around the ray.
 		Right Click: Stabs forward, consuming mana to launch homing blood orbs.
 		Weapon Skill: Blood Great Sword
-		[KEY]: Consumes 200 mana to slash forward, releasing numerous homing blood orbs.
+		[KEY]: Consumes [LAPManaCost] mana to slash forward, releasing numerous homing blood orbs.
 		'''
 }
 
@@ -20,7 +20,7 @@ TerraRay: {
 		Tornadoes fire healing projectiles towards the player and split into more spears upon hitting enemies.  
 		Weapon Skill: Fusang Blessing  
 		Has 3 uses, recovering one use every 45 seconds.  
-		[KEY]: Reduces movement speed and grants 75% defense damage reduction. Summons tornadoes at your position and up to 4 nearby enemies after charging.  
+		[KEY]: Consumes [LAPManaCost] mana Reduces movement speed and grants 75% defense damage reduction. Summons tornadoes at your position and up to 4 nearby enemies after charging.  
 		[KEY] + Up: If uses remain, restores 30% max health after charging and grants a 30-second buff:
 		+10 HP/s life regen, 10% defense damage reduction, 15% damage reduction, +30 defense.
 		"In the name of the sol,may we walk the path of Tao"
@@ -34,7 +34,7 @@ PlasmaRodAlt: {
 		Fires a plasma beam that splits into 8 homing beams on impact.
 		Right Click: Launches an exploding shadow fireball.
 		Weapon Skill : Magic Sword
-		[KEY]: Consumes 20 mana to slash forward.
+		[KEY]: Consumes [LAPManaCost] mana to slash forward.
 		'''
 }
 
@@ -47,7 +47,7 @@ NightsRayAlt: {
 		Right Click: Expands a shield that consumes mana, deflects projectiles, and absorbs up to 400 damage.
 		Provides damage reduction and defense. (Effectiveness decreases when mana is zero)
 		Weapon Skill : Nights Blessing
-		[KEY]: Consumes 200 mana. Grants a 30-second comprehensive attack and defense buff, and fully restores the shield.
+		[KEY]: Consumes [LAPManaCost] mana. Grants a 30-second comprehensive attack and defense buff, and fully restores the shield.
 		'''
 }
 
@@ -70,14 +70,14 @@ ElementRayMisc:
 	Leaves Stardust fragments to attack enemies when the beam disappears.  
 	Launches Vortex Missiles from behind to track enemies.  
 	Current Skill: Resplendent Life  
-	Consumes 100 mana to Raises staff; after a short delay, restores 5% max health and grants 15 HP/s regeneration for 10 seconds.
+	Consumes [LAPManaCost] mana to Raises staff; after a short delay, restores 5% max health and grants 15 HP/s regeneration for 10 seconds.
 	'''
 ElementRaySolor:
 	'''
 	[c/FFA500:Triggers a larger Flare explosion on enemy hit.]
 	[c/FFA500:Simultaneously launches a large number of Flare fireballs.]
 	[c/FFA500:Current combat skill: Solor Greatsword.]
-	[c/FFA500:Consumes 200 mana to charge. Release Right Click to slash forward. 100 times damage]
+	[c/FFA500:Consumes [LAPManaCost] mana to charge. Release Right Click to slash forward. 100 times damage]
 	[c/FFA500:Damage will decrease based on the number of enemies hit, with a minimum of 10 times damage]
 	[c/FFA500:Grants +30 defense and 15% defense damage reduction for a short time upon hitting an enemy.]
 	'''
@@ -86,7 +86,7 @@ ElementRayVortex:
 	[c/66CDAA:Launches Vortex Missiles from behind to track enemies.]
 	[c/66CDAA:Fires lightning at the nearest enemy when the beam disappears.]
 	[c/66CDAA:Current battle skill: Lighting Storm]
-	[c/66CDAA:Consumes 200 mana to charge. Randomly launches numerous Vortex Missiles around you after charging.]
+	[c/66CDAA:Consumes [LAPManaCost] mana to charge. Randomly launches numerous Vortex Missiles around you after charging.]
 	[c/66CDAA:Grants 1.1x damage for a short period after use.]
 	'''
 ElementRayNebula:
@@ -94,7 +94,7 @@ ElementRayNebula:
 	[c/FF00FF:Explodes with more Nebula energy on enemy hit.  ]
 	[c/FF00FF:Emits Nebula energy from around you to track enemies.  ]
 	[c/FF00FF:Current Skill: Nebula Crystal Rain ]
-	[c/FF00FF:Consumes 200 mana to charge. Launches numerous cosmic crystals forward after a short delay.  ]
+	[c/FF00FF:Consumes [LAPManaCost] mana to charge. Launches numerous cosmic crystals forward after a short delay.  ]
 	[c/FF00FF:Hitting an enemy with a crystal grants you a Nebula Boost buff and Spawn healing Projectile.]
 	'''
 ElementRayStarDust:
@@ -102,7 +102,7 @@ ElementRayStarDust:
 	[c/4169E1:Explodes with more Stardust Laser on enemy hit. ]
 	[c/4169E1:Leaves Stardust fragments to attack enemies when the beam disappears.  ]
 	[c/4169E1:Current skill: Soul Stream]
-	[c/4169E1:Consumes 350 mana to charge. Launches a powerful Soul Stream forward after a short delay.]
+	[c/4169E1:Consumes [LAPManaCost] mana to charge. Launches a powerful Soul Stream forward after a short delay.]
 	[c/4169E1:Halves your mana consumption (x0.5) for a short period after use.]
 	'''
 
@@ -116,7 +116,7 @@ ShadowBoltStaffAlt: {
 		Weapon Skill: Shadow of the SoulPress
 		the [KEY] key to summon eight shadows around the player after a brief charge.
 		the player can dodge one attack within the next 30 seconds.
-		The dodge grants 180 frames of invincibility.
+		The dodge grants [LAPManaCost] frames of invincibility.
 		The skill has a 30 second cooldown.
 		'''
 }
@@ -128,7 +128,7 @@ SoulPiercerAlt: {
 		Casts a Cosmic ray that summons extra rays and spawn orbs that heal you
 		Right click: Swings the staff, summoning Cosmic Slash at the cursor and inflict 20s Marked for Death debuffs
 		Weapon Skill: Soul Greatsword
-		Consumes 300 mana to slash forward.
+		Consumes [LAPManaCost] mana to slash forward.
 		During charging and slashing, grant 50% damage reduction
 		Hitting an enemy will grant you 30 immunity frames 
 		'''

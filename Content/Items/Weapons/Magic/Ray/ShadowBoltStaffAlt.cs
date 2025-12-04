@@ -53,6 +53,8 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             Item.LAP().UseCICalStatInflation = true;
             Item.LAP().UseCustomWeaponSkill = true;
             Item.LAP().WeaponTier = AllWeaponTier.PostPolterghast;
+
+            Item.LAP().WeaponSkillManaCost = 200;
         }
         public override bool AltFunctionUse(Player player)
         {
@@ -79,7 +81,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
                 if (player.HasCooldown(ShadowBotlStaffCount.ID))
                     return;
 
-                if (player.CheckMana(player.ActiveItem(), (int)(200 * player.manaCost), true, false))
+                if (player.CheckMana(player.ActiveItem(), Item.LAP().WeaponSkillRealManaCost, true, false))
                 {
                     float kb = player.GetWeaponKnockback(Item);
                     int Damage = player.GetWeaponDamage(Item);

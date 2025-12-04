@@ -56,6 +56,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             Item.LAP().UseWeaponSkill = true;
             Item.LAP().UseCustomWeaponSkill = true;
             Item.LAP().DrawUCASmallIcon = true;
+            Item.LAP().WeaponSkillManaCost = 200;
         }
         public override bool CanUseItem(Player player)
         {
@@ -84,7 +85,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
         public override void WeaponSkill(Player player)
         {
             if (player.ownedProjectileCounts[ModContent.ProjectileType<NightRaySkillProj>()] < 1 && player.ownedProjectileCounts[ModContent.ProjectileType<NightRayHeldProj>()] < 1 && player.ownedProjectileCounts[ModContent.ProjectileType<NightRayHeldProjMelee>()] < 1)
-                if (!player.HasCooldown(NightBoost.ID) && player.CheckMana(player.ActiveItem(), (int)(200 * player.manaCost), true, false))
+                if (!player.HasCooldown(NightBoost.ID) && player.CheckMana(player.ActiveItem(), Item.LAP().WeaponSkillRealManaCost, true, false))
                     Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, Vector2.Zero, ModContent.ProjectileType<NightRaySkillProj>(), 0, 0, player.whoAmI);
         }
 

@@ -188,7 +188,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
 
             if (Projectile.LAP().OnceHitEffect)
                 ScreenShakeSystem.AddScreenShakes(Projectile.Center, -250 * -Owner.direction, 40, Projectile.rotation + MathHelper.PiOver2, 0.5f, true, 1000);
-            Owner.AddCooldown(SolorShield.ID, 600);
+            Owner.AddCooldown(SolorShield.ID, 1200);
             SoundEngine.PlaySound(SoundsMenu.RiseBlast, Projectile.Center);
             SoundEngine.PlaySound(SoundsMenu.CarnageSkillMeleeHit, Projectile.Center);
             HitCount++;

@@ -50,6 +50,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             Item.LAP().UseWeaponSkill = true;
             Item.LAP().DrawUCASmallIcon = true;
             Item.LAP().UseCustomWeaponSkill = true;
+            Item.LAP().WeaponSkillManaCost = 200;
         }
         public override bool AltFunctionUse(Player player)
         {
@@ -75,14 +76,14 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            tooltips.IntegrateHotkey(LAPKeybind.WeaponSkillHotKey);
-            tooltips.IntegrateHotkey(LAPKeybind.WeaponSkillHotKey);
+            // 因为调用了两次，所以额外插入一次
+            LAPUtilities.IntegrateHotkey(tooltips, LAPKeybind.WeaponSkillHotKey);
         }
         public override void WeaponSkill(Player player)
         {
             if (player.ownedProjectileCounts[ModContent.ProjectileType<TerraRayHeldProj>()] < 1 && player.ownedProjectileCounts[ModContent.ProjectileType<TerraRayHeldProjSpecial>()] < 1 && player.ownedProjectileCounts[ModContent.ProjectileType<TerraRayHeldProjSkill>()] < 1)
             {
-                if (player.CheckMana(player.ActiveItem(), (int)(200 * player.manaCost), true, false))
+                if (player.CheckMana(player.ActiveItem(), Item.LAP().WeaponSkillRealManaCost, true, false))
                 {
                     float kb = player.GetWeaponKnockback(Item);
                     int Damage = player.GetWeaponDamage(Item);

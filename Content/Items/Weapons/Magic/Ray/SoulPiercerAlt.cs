@@ -53,7 +53,8 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             Item.LAP().UseCustomWeaponSkill = true;
 
             Item.LAP().WeaponTier = AllWeaponTier.PostDOG;
-            Item.LAP().UseCICalStatInflation = true; 
+            Item.LAP().UseCICalStatInflation = true;
+            Item.LAP().WeaponSkillManaCost = 300;
         }
         public override bool AltFunctionUse(Player player)
         {
@@ -78,7 +79,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
         {
             if (!player.HasProj<SoulPiercerHeldProj>() && !player.HasProj<SoulPiercerSpecialHeldProj>() && !player.HasProj<SoulPiercerSkillHeldProj>())
             {
-                if (player.CheckMana(player.ActiveItem(), (int)(300 * player.manaCost), true, false))
+                if (player.CheckMana(player.ActiveItem(), Item.LAP().WeaponSkillRealManaCost, true, false))
                 {
                     float kb = player.GetWeaponKnockback(Item);
                     int Damage = player.GetWeaponDamage(Item);

@@ -64,6 +64,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             Item.LAP().UseCustomStatInflationMult = true;
             Item.LAP().UseCustomWeaponSkill = true;
             Item.LAP().StatInflationMult = 1f;
+            Item.LAP().WeaponSkillManaCost = 200;
         }
         public override bool CanUseItem( Player player)
         {
@@ -104,27 +105,27 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
         {
             if (player.UCA().ElementalRayStates == ElementalRayState.Misc)
             {
-                if (player.CheckMana(player.ActiveItem(), (int)(40 * player.manaCost), true, false))
+                if (player.CheckMana(player.ActiveItem(), Item.LAP().WeaponSkillRealManaCost, true, false))
                     return true;
             }
             if (player.UCA().ElementalRayStates == ElementalRayState.Solar)
             {
-                if (player.CheckMana(player.ActiveItem(), (int)(190 * player.manaCost), true, false))
+                if (player.CheckMana(player.ActiveItem(), Item.LAP().WeaponSkillRealManaCost, true, false))
                     return true;
             }
             if (player.UCA().ElementalRayStates == ElementalRayState.Nebula)
             {
-                if (player.CheckMana(player.ActiveItem(), (int)(190 * player.manaCost), true, false))
+                if (player.CheckMana(player.ActiveItem(), Item.LAP().WeaponSkillRealManaCost, true, false))
                     return true;
             }
             if (player.UCA().ElementalRayStates == ElementalRayState.StarDust)
             {
-                if (player.CheckMana(player.ActiveItem(), (int)(349 * player.manaCost), true, false))
+                if (player.CheckMana(player.ActiveItem(), Item.LAP().WeaponSkillRealManaCost, true, false))
                     return true;
             }
             if (player.UCA().ElementalRayStates == ElementalRayState.Vortex)
             {
-                if (player.CheckMana(player.ActiveItem(), (int)(190 * player.manaCost), true, false))
+                if (player.CheckMana(player.ActiveItem(), Item.LAP().WeaponSkillRealManaCost, true, false))
                     return true;
             }
             return false;
@@ -151,29 +152,34 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
         {
             if (player.UCA().ElementalRayStates == ElementalRayState.Misc)
             {
+                Item.LAP().WeaponSkillManaCost = 40;
                 TextureAssets.Item[Type] = UCATextureRegister.ElementalRayMisc;
             }
             if (player.UCA().ElementalRayStates == ElementalRayState.Solar)
             {
+                Item.LAP().WeaponSkillManaCost = 190;
                 TextureAssets.Item[Type] = UCATextureRegister.ElementalRaySolor;
             }
             if (player.UCA().ElementalRayStates == ElementalRayState.Nebula)
             {
+                Item.LAP().WeaponSkillManaCost = 190;
                 TextureAssets.Item[Type] = UCATextureRegister.ElementalRayNebula;
             }
             if (player.UCA().ElementalRayStates == ElementalRayState.StarDust)
             {
+                Item.LAP().WeaponSkillManaCost = 340;
                 TextureAssets.Item[Type] = UCATextureRegister.ElementalRayStarDust;
             }
             if (player.UCA().ElementalRayStates == ElementalRayState.Vortex)
             {
+                Item.LAP().WeaponSkillManaCost = 190;
                 TextureAssets.Item[Type] = UCATextureRegister.ElementalRayVortex;
             }
         }
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            tooltips.IntegrateHotkey(LAPKeybind.WeaponSkillHotKey);
+            LAPUtilities.IntegrateHotkey(tooltips, LAPKeybind.WeaponSkillHotKey);
 
             Player player = Main.LocalPlayer;
 
@@ -194,7 +200,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             if (player.UCA().ElementalRayStates == ElementalRayState.Vortex)
                 MiscTooltip = LocalizedPath.ElementalRayVortexrTooltip;
 
-            tooltips.FindAndReplace("[NeedTooltip]", MiscTooltip);
+            LAPUtilities.FindAndReplace(tooltips, "[NeedTooltip]", MiscTooltip);
         }
         public override void AddRecipes()
         {

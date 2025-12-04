@@ -49,6 +49,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             Item.LAP().UseWeaponSkill = true;
             Item.LAP().UseCustomWeaponSkill = true;
             Item.LAP().DrawUCASmallIcon = true;
+            Item.LAP().WeaponSkillManaCost = 20;
         }
         public override bool AltFunctionUse(Player player)
         {
@@ -82,7 +83,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
         {
             if (!player.HasProj<PlasmaRodHeldProj>() && !player.HasProj<PlasmaRodHeldProjBlast>() && !player.HasProj<PlasmaRodSkillProj>())
             {
-                if (player.CheckMana(player.ActiveItem(), (int)(20 * player.manaCost), true, false))
+                if (player.CheckMana(player.ActiveItem(), Item.LAP().WeaponSkillRealManaCost, true, false))
                 {
                     if (PlasmaRodFilp == 1)
                     {
@@ -98,11 +99,6 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
                     LAPUtilities.SendProjSync(Index);
                 }
             }
-        }
-
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            tooltips.IntegrateHotkey(LAPKeybind.WeaponSkillHotKey);
         }
 
         public override void AddRecipes()

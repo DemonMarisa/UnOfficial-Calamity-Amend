@@ -113,7 +113,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 }
                 ScreenShakeSystem.AddScreenShakes(Projectile.Center, 250, 180, Projectile.rotation, 0.1f, true, 1000);
                 SoulStreamIndex = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + offset, Vector2.Zero, ModContent.ProjectileType<SoulStream>(), Projectile.damage * 6, Projectile.knockBack, Projectile.owner, Projectile.whoAmI);
-                Owner.AddCooldown(StarDustBoost.ID,  600);
+                Owner.AddCooldown(StarDustBoost.ID,  1200);
             }
         }
         #endregion

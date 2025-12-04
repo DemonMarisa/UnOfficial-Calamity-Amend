@@ -1,15 +1,19 @@
 ﻿using CalamityMod;
 using CalamityMod.Items.Weapons.Magic;
+using Humanizer;
 using LAP.Core.Keybind;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Common.Misc;
 using UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld;
+using UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld;
+using UCA.Content.UCACooldowns;
 using UCA.Content.UCARecipeGroups;
 using UCA.Core.BaseClass;
 using UCA.Core.Keybinds;
@@ -19,12 +23,12 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
 {
     public class CarnageRay : BaseMagicWeapon
     {
+        public static int SkillCost = 200;
         public override void SetStaticDefaults()
         {
             Item.staff[Item.type] = true;
             Item.ResearchUnlockCount = 1;
         }
-
         public override void SetDefaults()
         {
             Item.damage = 45;
@@ -49,6 +53,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             Item.LAP().UseWeaponSkill = true;
             Item.LAP().UseCustomWeaponSkill = true;
             Item.LAP().DrawUCASmallIcon = true;
+            Item.LAP().WeaponSkillManaCost = 200;
         }
 
         public override bool AltFunctionUse(Player player)
@@ -77,30 +82,19 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            tooltips.IntegrateHotkey(LAPKeybind.WeaponSkillHotKey);
         }
 
-        public override void HoldItem(Player player)
+        public override void WeaponSkill(Player player)
         {
-            if (player.whoAmI != Main.myPlayer)
-                return;
-
-            if (LAPKeybind.WeaponSkillHotKey.JustPressed && !Main.blockMouse)
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<CarnageRaySkillProj>()] < 1 && 
+                player.ownedProjectileCounts[ModContent.ProjectileType<CarnageRayHeldProjMelee>()] < 1 && 
+                player.ownedProjectileCounts[ModContent.ProjectileType<CarnageRayHeldProj>()] < 1)
             {
-                if (Main.playerInventory)
+                if (player.CheckMana(player.ActiveItem(), Item.LAP().WeaponSkillRealManaCost, true, false))
                 {
-                    if (Main.mouseText)
-                        return;
-                }
-                if (player.ownedProjectileCounts[ModContent.ProjectileType<CarnageRaySkillProj>()] < 1 && player.ownedProjectileCounts[ModContent.ProjectileType<CarnageRayHeldProjMelee>()] < 1 && player.ownedProjectileCounts[ModContent.ProjectileType<CarnageRayHeldProj>()] < 1)
-                {
-                    if (player.CheckMana(player.ActiveItem(), (int)(200 * player.manaCost), true, false))
-                    {
-                        float kb = player.GetWeaponKnockback(Item);
-                        int Damage = player.GetWeaponDamage(Item);
-                        int index = Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, Vector2.Zero, ModContent.ProjectileType<CarnageRaySkillProj>(), Damage, kb, player.whoAmI);
-                        NetMessage.SendData(MessageID.SyncProjectile, -1, -1, null, index);
-                    }
+                    float kb = player.GetWeaponKnockback(Item);
+                    int Damage = player.GetWeaponDamage(Item);
+                    Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, Vector2.Zero, ModContent.ProjectileType<CarnageRaySkillProj>(), Damage, kb, player.whoAmI);
                 }
             }
         }

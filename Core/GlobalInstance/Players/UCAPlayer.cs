@@ -1,3 +1,4 @@
+using CalamityMod;
 using Terraria.ModLoader;
 
 namespace UCA.Core.GlobalInstance.Players
@@ -13,6 +14,11 @@ namespace UCA.Core.GlobalInstance.Players
         public override void PostUpdate()
         {
             Reset_PostUpdate();
+        }
+        //为了这个潜伏砖模我单独开了一个方法，你自己去看要放哪吧
+        public override void UpdateEquips()
+        {
+            base.UpdateEquips();
         }
     }
 }

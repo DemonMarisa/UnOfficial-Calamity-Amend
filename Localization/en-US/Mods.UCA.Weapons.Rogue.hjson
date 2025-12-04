@@ -2,7 +2,7 @@ BlazingHammer: {
 	DisplayName: Blazing Anchor
 	Tooltip:
 		'''
-		[c/F0E68C:Previous£º][c/DC143C:Fallen Paladin's Hammer(Rogue)][i:CalamityMod/FallenPaladinsHammer]
+		[c/F0E68C:Previousï¿½ï¿½][c/DC143C:Fallen Paladin's Hammer(Rogue)][i:CalamityMod/FallenPaladinsHammer]
 		Throw a powerful Blazing Hammer that triggers an explosion on impact.
 		Stealth strikes will strike back at the enemy when returning and lock onto them completely.
 		Once latched, the hammer attacks continuously at an extremely high frequency, with each hit triggering an explosion.
@@ -26,7 +26,7 @@ DivineHammer: {
 	DisplayName: Divine Twin
 	Tooltip:
 		'''
-		[c/F0E68C:Previous£º][c/EE82EE:Galaxy Smasher(Rogue)][i:CalamityMod/GalaxySmasher]
+		[c/F0E68C:Previousï¿½ï¿½][c/EE82EE:Galaxy Smasher(Rogue)][i:CalamityMod/GalaxySmasher]
 		Throw a powerful Stellar Hammer that unleashes regular Nebula Rays upon hitting enemies
 		Stealth strikes hurl an ultra-fast Divine Hammer that strikes back at enemies when returning to the player.
 		Upon impacting an enemy, it splits into two sub-hammers, which will latch onto targets after a short delay.
@@ -39,7 +39,7 @@ NightmareHammer: {
 	DisplayName: Meditating Nightmare
 	Tooltip:
 		'''
-		[c/F0E68C:Previous£º][c/87CEEB:Stellar Contempt(Rogue)][i:CalamityMod/StellarContempt]
+		[c/F0E68C:Previousï¿½ï¿½][c/87CEEB:Stellar Contempt(Rogue)][i:CalamityMod/StellarContempt]
 		Throw a powerful Nightmare Hammer that release regular Nightmare Star upon hitting enemies
 		Stealth strikes mounts your target after a delay, continuosly release Meld Energy and Nightmare Star
 		Mounted Nightmare Hammer exists or misses a strike, Nightmare hammer returns and turns into an minion
@@ -54,7 +54,7 @@ PunishmentHammer: {
 	DisplayName: Holy Punishment
 	Tooltip:
 		'''
-		[c/F0E68C:Previous£º][c/FFD700:Pwnagehammer(Rogue)][i:CalamityMod/Pwnagehammer]
+		[c/F0E68C:Previousï¿½ï¿½][c/FFD700:Pwnagehammer(Rogue)][i:CalamityMod/Pwnagehammer]
 		Throw a Judgment Hammer that erupts into a Holy Nova on impact
 		Stealth strikes will strike back after returning and latch onto enemies to deal continuous damage
 		While latched, it releases delayed homing Judgment Stars
@@ -73,10 +73,13 @@ ThunderHammer: {
 
 Hammer_General:
 	'''
+	[c/BA55D3:Special Ability:]
 	Enables stealth strikes, +10 max steath, and resets the stealth bar when switching weapons.
+	Convert your max steath to your max HP bounes
 	No longer gaining any damage bounes from stealth strike
 	Stealth strikes only cost half of your max stealth that won't stack
 	'''
+HoldAltToShow: ""
 
 CrimsonScythe: {
 	DisplayName: Tlipocaz's Scythe - UnOffcial

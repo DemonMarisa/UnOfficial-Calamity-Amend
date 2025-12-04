@@ -85,9 +85,13 @@ namespace UCA.Content.Items.Weapons.Rogue.Hammer
         
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            ExModifyTooltips(tooltips);
-            string path = $"{Temp.UCALocalPrefix}Weapons.Rogue.Hammer_General";
-            tooltips.QuickAddTooltip(path, Color.Yellow);
+            if (Main.keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftAlt))
+                tooltips.ReplaceAllTooltip($"{Temp.UCALocalPrefix}Weapons.Rogue.Hammer_General");
+            else
+            {
+                tooltips.QuickAddTooltip($"{Temp.UCALocalPrefix}HoldAltToShow", Color.Yellow, LineName: "Hammer_Special");
+                ExModifyTooltips(tooltips);
+            }
         }
         public virtual void ExModifyTooltips(List<TooltipLine> tooltips) {}
         public virtual void ExSD() { }
@@ -105,7 +109,10 @@ namespace UCA.Content.Items.Weapons.Rogue.Hammer
         {
             var UCAPlayer = player.UCA();
             UCAPlayer.ShouldHandleHammerStealth = true;
+            UCAPlayer.StealthToMaxHPBonus = true;
+            //在Update内更新这一段
+            int maxHP = (int)(player.Calamity().rogueStealthMax * 100f);
+            player.statLifeMax2 += maxHP;
         }
     }
-
 }

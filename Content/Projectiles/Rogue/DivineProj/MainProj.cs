@@ -263,7 +263,6 @@ namespace UCA.Content.Projectiles.Rogue.DivineProj
             if (Stealth)
             {
                 Projectile.rotation = Projectile.velocity.ToRotation();
-                IsHanging = true;
                 return;
             }
             Projectile.rotation += 0.2f;

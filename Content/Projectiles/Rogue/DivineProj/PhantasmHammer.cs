@@ -248,12 +248,13 @@ namespace UCA.Content.Projectiles.Rogue.DivineProj
             for (int k = 4; k < repeatedCountForAxis - 4; k++)
             {
                 //在外部调用这个以整体对点位进行偏移。
-                //整体扩大一下，因为距离明显过小了
                 float shortAxis = k * 1.7f;
                 float longAxis = (repeatedCountForAxis - k) * 1.7f;
                 for (int j = 0; j < totalParticleCounts; j++)
                 {
+                    //将所有的点位均匀分布
                     float angle = j * (float)(MathHelper.TwoPi / totalParticleCounts);
+                    //而后使用封装的一个自定义方法，为射弹自动分配自己的位置
                     Vector2 edge = spawnPos + GetCertainPointBaseOnVectorCircle(angle, shortAxis, longAxis, baseRot);
                     Color drawColor = Color.Lerp(DivineHammerProj.TrailColor with { A = 75 }, Color.MediumPurple with { A = 75 }, (totalParticleCounts - j) / (float)totalParticleCounts);
                     ShinyOrbParticle orbs = new ShinyOrbParticle(edge, dir * 0.2f, drawColor, 30, Main.rand.NextFloat(0.11f, 0.22f), BlendStateID.Alpha);

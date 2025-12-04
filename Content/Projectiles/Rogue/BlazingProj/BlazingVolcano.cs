@@ -1,4 +1,5 @@
-﻿using LAP.Core.Utilities;
+﻿using CalamityMod;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;
@@ -114,7 +115,10 @@ namespace UCA.Content.Projectiles.Rogue.BlazingProj
                 }
             }
         }
-        
+        public override void OnKill(int timeLeft)
+        {
+            //Owner.Calamity().rogueStealth = Owner.Calamity().rogueStealthMax / 2;
+        }
         private void PickTagDust(out short HigherDust, out short BottemDust)
         {
             NameType pickType = Owner.name.SelectedName();

@@ -139,7 +139,12 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
             SoundEngine.PlaySound(SoundID.Item88, Projectile.Center);
             target.AddBuff(BuffID.ShadowFlame, 360);
             if (!Stealth && Projectile.numHits % 2 == 0)
+            {
                 NightmareArrowDrop(target, Projectile.damage / 2);
+                //有仆从锤时，额外降下一个梦魇之星
+                if (Owner.HasProj<NightmareHammerMinion>())
+                    NightmareArrowDrop(target, Projectile.damage / 2);
+            }
             if (AttackType != DoType.IsStealth)
                 return;
 

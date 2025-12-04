@@ -121,22 +121,6 @@ namespace UCA.Content.Projectiles.Rogue.BlazingProj
             Projectile.QuickDrawWithTrailing(0.5f, Color.White);
             return false;   
         }
-        public void DrawTrailingDust()
-        {
-            PickTagColor(out Color baseColor, out Color targetColor);
-            //故意不采用循环，因为要稍微处理圆弧状态粒子，但是我技术力不够，先放着了
-            Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitX);
-            Vector2 speedValue = direction * 3f;
-            Vector2 spawnPosition = Projectile.Center + direction.RotatedBy(MathHelper.PiOver2) * 8f;
-            Vector2 realVel = speedValue.RotatedBy(MathHelper.PiOver2);
-            ShinyOrbParticle shinyOrbParticle = new ShinyOrbParticle(spawnPosition, realVel, Main.rand.NextBool() ? baseColor : targetColor, 20, 1.2f);
-            shinyOrbParticle.Spawn();
-
-            spawnPosition = Projectile.Center + direction.RotatedBy(-MathHelper.PiOver2) * 8f;
-            realVel = speedValue.RotatedBy(-MathHelper.PiOver2);
-            ShinyOrbParticle shinyOrbParticle2 = new ShinyOrbParticle(spawnPosition, realVel, Main.rand.NextBool() ? baseColor : targetColor, 20, 1.2f);
-            shinyOrbParticle2.Spawn();
-        }
         
         private void DoShooted()
         {
@@ -205,19 +189,37 @@ namespace UCA.Content.Projectiles.Rogue.BlazingProj
             if (Stealth)
                 DrawTrailingDust();
             else
+                DrawNormalDust();
+        }
+        private void DrawNormalDust()
+        {
+            if (Main.rand.NextBool(Projectile.extraUpdates + 1))
             {
-                if (Main.rand.NextBool(Projectile.extraUpdates + 1))
-                {
-                    PickTagColor(out Color baseColor, out Color targetColor);
-                    Vector2 spawnPos = Projectile.Center + Main.rand.NextVector2Circular(Projectile.height / 2, Projectile.width / 2);
-                    Vector2 glowDustVelocity = Projectile.velocity.SafeNormalize(Vector2.UnitX).RotatedBy(Main.rand.NextFloat(-MathHelper.PiOver4 / 4f, MathHelper.PiOver4 / 4f)) * 4f;
-                    Dust d = Dust.NewDustPerfect(spawnPos, PickTagDust, glowDustVelocity);
-                    d.scale *= 1.2f;
-                    d.noGravity = true;
-                    Color glowColor = LAPUtilities.LerpColor(baseColor, targetColor);
-                    new ShinyOrbParticle(spawnPos, glowDustVelocity, glowColor, 40, 0.5f, BlendStateID.Additive, glowCenter: true).Spawn();
-                }
+                PickTagColor(out Color baseColor, out Color targetColor);
+                Vector2 spawnPos = Projectile.Center + Main.rand.NextVector2Circular(Projectile.height / 2, Projectile.width / 2);
+                Vector2 glowDustVelocity = Projectile.velocity.SafeNormalize(Vector2.UnitX).RotatedBy(Main.rand.NextFloat(-MathHelper.PiOver4 / 4f, MathHelper.PiOver4 / 4f)) * 4f;
+                Dust d = Dust.NewDustPerfect(spawnPos, PickTagDust, glowDustVelocity);
+                d.scale *= 1.2f;
+                d.noGravity = true;
+                Color glowColor = LAPUtilities.LerpColor(baseColor, targetColor);
+                new ShinyOrbParticle(spawnPos, glowDustVelocity, glowColor, 40, 0.5f, BlendStateID.Additive, glowCenter: true).Spawn();
             }
+        }
+        public void DrawTrailingDust()
+        {
+            PickTagColor(out Color baseColor, out Color targetColor);
+            //故意不采用循环，因为要稍微处理圆弧状态粒子，但是我技术力不够，先放着了
+            Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitX);
+            Vector2 speedValue = direction * 3f;
+            Vector2 spawnPosition = Projectile.Center + direction.RotatedBy(MathHelper.PiOver2) * 8f;
+            Vector2 realVel = speedValue.RotatedBy(MathHelper.PiOver2);
+            ShinyOrbParticle shinyOrbParticle = new ShinyOrbParticle(spawnPosition, realVel, Main.rand.NextBool() ? baseColor : targetColor, 20, 1.2f);
+            shinyOrbParticle.Spawn();
+
+            spawnPosition = Projectile.Center + direction.RotatedBy(-MathHelper.PiOver2) * 8f;
+            realVel = speedValue.RotatedBy(-MathHelper.PiOver2);
+            ShinyOrbParticle shinyOrbParticle2 = new ShinyOrbParticle(spawnPosition, realVel, Main.rand.NextBool() ? baseColor : targetColor, 20, 1.2f);
+            shinyOrbParticle2.Spawn();
         }
         private short PickTagDust
         {

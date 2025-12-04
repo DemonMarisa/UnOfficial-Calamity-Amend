@@ -1,7 +1,5 @@
-﻿using CalamityMod;
-using Terraria;
+﻿using Terraria;
 using Terraria.ModLoader;
-using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
 
 namespace UCA.Core.GlobalInstance.Players
@@ -65,9 +63,12 @@ namespace UCA.Core.GlobalInstance.Players
         #endregion
         #region 重置锤子
         // 大幅简化，相关判定直接移动到物品中
+        //为禁用潜伏条增伤的武器提供生命上限转模
+        public bool StealthToMaxHPBonus = false;
         public void RogueHammerReset()
         {
             _anyHammerAttacking = false;
+            
         }
         #endregion
         #endregion
@@ -77,6 +78,7 @@ namespace UCA.Core.GlobalInstance.Players
         public void Reset_PostUpdateMiscEffects()
         {
             ShouldHandleHammerStealth = false;
+            StealthToMaxHPBonus = false;
         }
         public void Reset_PostUpdateEquips()
         {

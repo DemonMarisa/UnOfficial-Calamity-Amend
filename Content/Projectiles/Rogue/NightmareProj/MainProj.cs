@@ -101,7 +101,7 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
                 if (Owner.HasProj<NightmareHammerMinion>())
                 {
                     //压制音量，这里由仆从锤的射线声作为主导
-                    SoundEngine.PlaySound(SoundsMenu.Mana_Toss with { Pitch = 0.4f, Volume = 0.2f }, Owner.Center);
+                    SoundEngine.PlaySound(SoundsMenu.Mana_Toss with { Pitch = 0.4f, Volume = 0.2f, MaxInstances = 0 }, Owner.Center);
                 }
                 else
                     SoundEngine.PlaySound(SoundID.Item103, Owner.Center);

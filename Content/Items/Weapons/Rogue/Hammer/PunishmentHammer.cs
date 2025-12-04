@@ -108,10 +108,7 @@ namespace UCA.Content.Items.Weapons.Rogue.Hammer
         }
         public override void HoldItem(Player player)
         {
-            var UCAPlayer = player.UCA();
-            UCAPlayer.ShouldHandleHammerStealth = true;
-            UCAPlayer.StealthToMaxHPBonus = true;
-            //在Update内更新这一段
+            player.UCA().ShouldHandleHammerStealth = true;
             int maxHP = (int)(player.Calamity().rogueStealthMax * 100f);
             player.statLifeMax2 += maxHP;
         }

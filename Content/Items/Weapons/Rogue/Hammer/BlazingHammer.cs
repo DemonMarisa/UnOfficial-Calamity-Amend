@@ -1,8 +1,6 @@
 using CalamityMod.Items.Materials;
-using Microsoft.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using rail;
 using System;
 using Terraria;
 using Terraria.GameContent;
@@ -12,7 +10,6 @@ using Terraria.UI.Chat;
 using UCA.Common.Misc;
 using UCA.Content.Projectiles.Rogue;
 using UCA.Content.Projectiles.Rogue.BlazingProj;
-using UCA.Core.Utilities;
 using static UCA.Content.Projectiles.Rogue.BlazingProj.BlazingNamePick;
 
 namespace UCA.Content.Items.Weapons.Rogue.Hammer

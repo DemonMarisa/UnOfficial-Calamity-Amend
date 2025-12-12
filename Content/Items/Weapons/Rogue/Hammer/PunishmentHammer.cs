@@ -1,7 +1,9 @@
 using CalamityMod;
+using LAP.Core.Keybind;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
@@ -41,6 +43,11 @@ namespace UCA.Content.Items.Weapons.Rogue.Hammer
             spriteBatch.Draw(tex, position, iFrame, Color.White, 0f, tex.Size() / 2, scale, 0f, 0f);
             Lighting.AddLight(position, TorchID.UltraBright);
             return false;
+        }
+        public override void DashSkill(Player player, ref int dashTime, ref int dashChargeTimer)
+        {
+            dashTime = 2;
+            dashChargeTimer = 90;
         }
         public override void AddRecipes()
         {
@@ -109,8 +116,8 @@ namespace UCA.Content.Items.Weapons.Rogue.Hammer
         public override void HoldItem(Player player)
         {
             player.UCA().ShouldHandleHammerStealth = true;
-            int maxHP = (int)(player.Calamity().rogueStealthMax * 100f);
-            player.statLifeMax2 += maxHP;
         }
+
+        public virtual void DashSkill(Player player, ref int dashTime, ref int dashChargeTimer) { }
     }
 }

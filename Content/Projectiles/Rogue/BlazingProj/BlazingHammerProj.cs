@@ -100,7 +100,7 @@ namespace UCA.Content.Projectiles.Rogue.BlazingProj
             if (AttackType == DoType.IsStealth && Projectile.timeLeft < 15 && CanSpawnVolcano)
             {
                 Vector2 center = new Vector2(target.Center.X, target.Center.Y + 30f);
-                Projectile proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), center, Vector2.Zero, ModContent.ProjectileType<BlazingVolcano>(), Projectile.damage * 5, Projectile.knockBack);
+                Projectile proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), center, Vector2.Zero, ModContent.ProjectileType<BlazingVolcano>(), Projectile.damage * 3, Projectile.knockBack);
                 proj.ai[1] = target.whoAmI;
                 CanSpawnVolcano = false;
             }
@@ -109,7 +109,7 @@ namespace UCA.Content.Projectiles.Rogue.BlazingProj
             //fuck you
             if (canFuckYou)
             {
-                Projectile fuckYou = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<FuckYou>(), Projectile.damage / 2, Projectile.knockBack, Owner.whoAmI, 0f, 0.85f + Main.rand.NextFloat() * 1.15f);
+                Projectile fuckYou = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<FuckYou>(), Projectile.damage / 3, Projectile.knockBack, Owner.whoAmI, 0f, 0.85f + Main.rand.NextFloat() * 1.15f);
                 fuckYou.Calamity().stealthStrike = true;
             }
         }

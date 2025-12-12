@@ -61,7 +61,7 @@ namespace UCA.Content.Projectiles.Rogue.DivineProj
             Projectile.friendly = true;
             Projectile.penetrate = -1;
             Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 10;
+            Projectile.localNPCHitCooldown = 8;
             Projectile.extraUpdates = SetUpdate;
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 300;

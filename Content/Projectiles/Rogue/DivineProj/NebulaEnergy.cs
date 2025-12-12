@@ -1,4 +1,3 @@
-using CalamityMod.Graphics.Primitives;
 using LAP.Core.Graphics.Primitives.Trail;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
@@ -9,7 +8,6 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
-using UCA.Content.Particiles;
 using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
 
@@ -60,8 +58,6 @@ namespace UCA.Content.Projectiles.Rogue.DivineProj
             Projectile.extraUpdates = 2;
             Projectile.timeLeft = 500;
             Projectile.friendly = true;
-            if (Projectile.velocity != Vector2.Zero)
-                Projectile.velocity /= Projectile.extraUpdates;
         }
         private float DrawScale = 1f;
         public override void AI()
@@ -109,9 +105,8 @@ namespace UCA.Content.Projectiles.Rogue.DivineProj
 
         private void DoHomingToTarget()
         {
-            //获取敌对单位
             //重新搜索一次单位
-            if (!Projectile.GetTargetSafe(out NPC target, (int)TargetIndex, true))
+            if (!Projectile.GetTargetSafe(out NPC target, (int)TargetIndex, true, 3600))
                 return;
             if (Main.rand.NextBool(3))
                 DrawDust(target.Center);

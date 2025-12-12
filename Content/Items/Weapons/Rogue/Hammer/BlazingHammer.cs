@@ -20,7 +20,7 @@ namespace UCA.Content.Items.Weapons.Rogue.Hammer
         public override void ExSD()
         {
             Item.width = Item.height = 66;
-            Item.damage = 60;
+            Item.damage = 70;
             //这里的ut有意为之
             Item.useTime = 8;
             Item.useAnimation = 8;

@@ -1,5 +1,7 @@
 using CalamityMod;
 using CalamityMod.Items.Materials;
+using LAP.Core.Enums;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -25,7 +27,7 @@ namespace UCA.Content.Items.Weapons.Rogue.Hammer
         {
             Item.width = 88;
             Item.height = 94;
-            Item.damage = 167;
+            Item.damage = 197;
             Item.useTime = 18;
             //这里的UseTime是有意改的很慢的
             Item.useAnimation = 18;
@@ -35,12 +37,15 @@ namespace UCA.Content.Items.Weapons.Rogue.Hammer
             //实际音效会在射弹初始化的时候提供
             Item.UseSound = null;
             Item.value = Item.buyPrice(gold: 12);
+            Item.LAP().UseCICalStatInflation = true;
+            Item.LAP().WeaponTier = AllWeaponTier.PostMoonLord;
+
         }
         public override float StealthDamageMultipler => 0.35f;
         public override void ExModifyTooltips(List<TooltipLine> tooltips)
         {
             if (DownedBossSystem.downedDoG && !Main.LocalPlayer.UCA().CanDisableGuideForGodsHammer)
-                tooltips.QuickAddTooltip($"{Temp.UCALocalPrefix}Weapons.Rogue.{GetType().Name}.ShimmmerTooltip", Color.LightPink);
+                tooltips.QuickAddTooltip($"{Temp.UCALocalPrefix}Weapons.Rogue.{GetType().Name}.ShimmerTooltip", Color.LightPink);
         }
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {

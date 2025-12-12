@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Particles;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -8,6 +9,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets.Sounds;
 using UCA.Content.Items.Weapons.Rogue.Hammer;
+using UCA.Content.Projectiles.Rogue.NightmareProj;
 using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
 
@@ -68,11 +70,26 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
                 Oscillation += 0.025f / 3;
                 //记得清零射弹当前的速度，因为下方实际上使用正弦曲线来精确控制
                 Projectile.velocity *= 0;
-                UpdateIfNoTargetNearby();
+                if (Owner.HasProj<NightmareHammerMinion>())
+                    UpdateIfNoTargetNearbyAndHasNightmareProj();
+                else
+                    UpdateIfNoTargetNearby();
                 CanSpawnHolyPunishment = false;
                 //锁定当前的生存时间避免出现意外处死
                 Projectile.timeLeft = CurrentLifeTime;
             }
+        }
+        private void UpdateIfNoTargetNearbyAndHasNightmareProj()
+        {
+            //基本的挂机状态，此处使用了正弦曲线
+            Vector2 anchorPos = new Vector2(Owner.MountedCenter.X + Owner.direction * 75f, Owner.MountedCenter.Y - 60f * (MathF.Sin(Oscillation) / 9f));
+            //实际更新位置
+            Projectile.Center = Vector2.Lerp(Projectile.Center, anchorPos, 0.1f / Projectile.extraUpdates);
+            //计算锤子需要的朝向。
+            //这里会依据玩家是否按下左键来使朝向取反，即按住左键的时候，锤头朝向指针，其他情况下，锤柄朝向玩家
+            float angleToWhat = (-(Owner.MountedCenter - Projectile.Center)).SafeNormalize(Vector2.One).ToRotation();
+            //最后使用lerp来让锤子朝向得到修改。
+            Projectile.rotation = Projectile.rotation.AngleLerp(angleToWhat, 0.18f);
         }
         private void UpdateIfNoTargetNearby()
         {

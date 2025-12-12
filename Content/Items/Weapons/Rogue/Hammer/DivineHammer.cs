@@ -1,5 +1,7 @@
 using CalamityMod;
 using CalamityMod.Rarities;
+using LAP.Core.Enums;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -22,13 +24,15 @@ namespace UCA.Content.Items.Weapons.Rogue.Hammer
         public override void ExSD()
         {
             Item.width = Item.height = 86;
-            Item.damage = 420;
+            Item.damage = 580;
             Item.useTime = 10;
             Item.useAnimation = 10;
             Item.shootSpeed = 20f;
             Item.rare = ModContent.RarityType<DarkBlue>();
             Item.value = UCAShopValue.RarityDarkBlueBuyPrice;
             Item.consumable = false;
+            Item.LAP().UseCICalStatInflation = true;
+            Item.LAP().WeaponTier = AllWeaponTier.PostDOG;
         }
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {

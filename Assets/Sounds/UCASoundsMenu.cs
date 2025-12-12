@@ -32,6 +32,7 @@ namespace UCA.Assets.Sounds
         public static SoundStyle SwordSwing2 => new($"{MiscSoundRoute}/SwordSwing2") { Volume = 1f, Pitch = Main.rand.NextFloat(0.1f, 0.3f), MaxInstances = 0 };
         public static SoundStyle SwordHit => new($"{MiscSoundRoute}/SwordHit0");
         public static SoundStyle Misc_AngelBlast => new($"{MiscSoundRoute}/{nameof(Misc_AngelBlast)}");
+        public static SoundStyle Misc_GhostDash => new($"{MiscSoundRoute}/{nameof(Misc_GhostDash)}");
         #endregion
     }   
 }

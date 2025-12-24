@@ -20,6 +20,7 @@ using UCA.Core.Enums;
 using LAP.Core.Graphics;
 using UCA.Core.Utilities;
 using LAP.Core.Utilities;
+using LAP.Core.SystemsLoader;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
 {
@@ -122,7 +123,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
                                 player.UCA().TerraRestore = true;
                             }
                         }
-                        Owner.AddCooldown(TerraBoost.ID, CalamityUtils.SecondsToFrames(30));
+                        Owner.AddCD(LAPContent.CDType<TerraBoost>(), CalamityUtils.SecondsToFrames(30));
                     }
                     animationHelper.HasFinish[AnimationState.Middle] = true;
                 }

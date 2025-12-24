@@ -1,21 +1,23 @@
-﻿using CalamityMod.Cooldowns;
+﻿using LAP.Core.LAPUI.CustomCD;
 using Microsoft.Xna.Framework;
-using System;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Localization;
 
 namespace UCA.Content.UCACooldowns
 {
-    public class ShadowBotlStaffCount : CooldownHandler
+    public class ShadowBotlStaffCount : BaseCD
     {
-        public static new string ID => "UCAShadowBotlStaffCountCooldown";
-        public override bool ShouldDisplay => true;
-        public override LocalizedText DisplayName => Language.GetOrRegister($"Mods.UCA.Cooldowns.{ID}");
-        public override string Texture => "UCA/Content/UCACooldowns/ShadowBotlStaffCount";
-        public override string OutlineTexture => "UCA/Content/UCACooldowns/ShadowBotlStaffCount_OutLine";
-        public override string OverlayTexture => "UCA/Content/UCACooldowns/ShadowBotlStaffCount_Overlay";
-        public override Color OutlineColor => Color.Lerp(new Color(148, 0, 211), new Color(141, 112, 219), (float)Math.Sin(Main.GlobalTimeWrappedHourly) * 0.5f + 0.5f);
-        public override Color CooldownStartColor => Color.Purple;
-        public override Color CooldownEndColor => Color.DarkViolet;
+        public override bool DeBuff => true;
+        public override bool Buff => false;
+        public override LocalizedText DisplayName()
+        {
+            return Language.GetOrRegister($"Mods.UCA.Cooldowns.UCAShadowBotlStaffCountCooldown");
+        }
+        public override void PostDraw()
+        {
+            Texture2D texture = CustomCDManger.CDTexture[Type].Value;
+            Main.spriteBatch.Draw(texture, DrawPosition, null, Color.White, 0f, texture.Size() / 2, 1f, SpriteEffects.None, 0f);
+        }
     }
 }

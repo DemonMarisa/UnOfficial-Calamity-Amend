@@ -91,12 +91,13 @@ namespace UCA.Content.Projectiles.Magic.Ray
         public override bool PreDraw(ref Color lightColor)
         {
             LAPUtilities.ReSetToBeginShader(BlendState.Additive);
-            UCAShaderRegister.SolarBlastShader.Parameters["uTime"].SetValue(-Main.GlobalTimeWrappedHourly);
-            UCAShaderRegister.SolarBlastShader.Parameters["uIntensity"].SetValue(0.2f);
-            UCAShaderRegister.SolarBlastShader.Parameters["ubeginColor"].SetValue(Color.Orange.ToVector4() * Opacity);
-            UCAShaderRegister.SolarBlastShader.Parameters["uendColor"].SetValue(Color.OrangeRed.ToVector4() * Opacity);
-            UCAShaderRegister.SolarBlastShader.Parameters["UseColor"].SetValue(true);
-            UCAShaderRegister.SolarBlastShader.CurrentTechnique.Passes[0].Apply();
+            Effect shader = UCAShaderRegister.SolarBlastShader.Value;
+            shader.Parameters["uTime"].SetValue(-Main.GlobalTimeWrappedHourly);
+            shader.Parameters["uIntensity"].SetValue(0.2f);
+            shader.Parameters["ubeginColor"].SetValue(Color.Orange.ToVector4() * Opacity);
+            shader.Parameters["uendColor"].SetValue(Color.OrangeRed.ToVector4() * Opacity);
+            shader.Parameters["UseColor"].SetValue(true);
+            shader.CurrentTechnique.Passes[0].Apply();
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.FireNoise.Value;
             Vector2 DrawPos = Projectile.Center - Main.screenPosition;
             Vector2 orig = new Vector2(UCATextureRegister.ShockWave.Size().X / 2, UCATextureRegister.ShockWave.Size().Y / 2 - 40);
@@ -104,12 +105,12 @@ namespace UCA.Content.Projectiles.Magic.Ray
             if (!LAPConfig.Instance.PerformanceMode)
                 Main.spriteBatch.Draw(UCATextureRegister.ShockWave.Value, DrawPos, null, Color.Orange, 0, orig, Scale * 0.8f, SpriteEffects.None, 0);
 
-            UCAShaderRegister.SolarBlastShader.Parameters["uTime"].SetValue(-Main.GlobalTimeWrappedHourly);
-            UCAShaderRegister.SolarBlastShader.Parameters["uIntensity"].SetValue(0.2f);
-            UCAShaderRegister.SolarBlastShader.Parameters["ubeginColor"].SetValue(Color.OrangeRed.ToVector4() * Opacity);
-            UCAShaderRegister.SolarBlastShader.Parameters["uendColor"].SetValue(Color.OrangeRed.ToVector4() * Opacity);
-            UCAShaderRegister.SolarBlastShader.Parameters["UseColor"].SetValue(true);
-            UCAShaderRegister.SolarBlastShader.CurrentTechnique.Passes[0].Apply();
+            shader.Parameters["uTime"].SetValue(-Main.GlobalTimeWrappedHourly);
+            shader.Parameters["uIntensity"].SetValue(0.2f);
+            shader.Parameters["ubeginColor"].SetValue(Color.OrangeRed.ToVector4() * Opacity);
+            shader.Parameters["uendColor"].SetValue(Color.OrangeRed.ToVector4() * Opacity);
+            shader.Parameters["UseColor"].SetValue(true);
+            shader.CurrentTechnique.Passes[0].Apply();
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.FireNoise.Value;
             Main.spriteBatch.Draw(UCATextureRegister.ShockWave.Value, DrawPos, null, Color.Orange, 0, orig, Scale * 0.6f, SpriteEffects.None, 0);
             if (!LAPConfig.Instance.PerformanceMode)

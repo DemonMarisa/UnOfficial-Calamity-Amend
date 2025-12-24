@@ -15,6 +15,7 @@ using LAP.Core.AnimationHandle;
 using LAP.Core.SpecificEffectManagers;
 using UCA.Core.Utilities;
 using LAP.Core.Utilities;
+using LAP.Core.SystemsLoader;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
 {
@@ -188,7 +189,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
 
             if (Projectile.LAP().OnceHitEffect)
                 ScreenShakeSystem.AddScreenShakes(Projectile.Center, -250 * -Owner.direction, 40, Projectile.rotation + MathHelper.PiOver2, 0.5f, true, 1000);
-            Owner.AddCooldown(SolorShield.ID, 1200);
+            Owner.AddCD(LAPContent.CDType<SolorShield>(), 1200);
             SoundEngine.PlaySound(SoundsMenu.RiseBlast, Projectile.Center);
             SoundEngine.PlaySound(SoundsMenu.CarnageSkillMeleeHit, Projectile.Center);
             HitCount++;

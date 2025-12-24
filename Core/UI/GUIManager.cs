@@ -8,7 +8,6 @@ namespace UCA.Core.UI
 {
     public class GUIManager : ModSystem
     {
-        public bool MouseDown = false;
         public override void UpdateUI(GameTime gameTime)
         {
             if (ElementalRayUI.Active)

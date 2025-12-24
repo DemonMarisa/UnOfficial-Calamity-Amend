@@ -191,13 +191,14 @@ namespace UCA.Content.Projectiles.Magic.Ray
             float TextureHeight = UCATextureRegister.TerrarRayFlow.Height();
             float TextureWidth = UCATextureRegister.TerrarRayFlow.Width();
 
-            UCAShaderRegister.TerrarRayLaser.Parameters["LaserTextureSize"].SetValue(UCATextureRegister.TerrarRayFlow.Size());
-            UCAShaderRegister.TerrarRayLaser.Parameters["targetSize"].SetValue(new Vector2(LaserLength, TextureHeight));
-            UCAShaderRegister.TerrarRayLaser.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly * -50);
-            UCAShaderRegister.TerrarRayLaser.Parameters["uColor"].SetValue(colro.ToVector4() * Opacity);
-            UCAShaderRegister.TerrarRayLaser.Parameters["uFadeoutLength"].SetValue(0.1f);
-            UCAShaderRegister.TerrarRayLaser.Parameters["uFadeinLength"].SetValue(0.1f);
-            UCAShaderRegister.TerrarRayLaser.CurrentTechnique.Passes[0].Apply();
+            Effect shader = UCAShaderRegister.TerrarRayLaser.Value;
+            shader.Parameters["LaserTextureSize"].SetValue(UCATextureRegister.TerrarRayFlow.Size());
+            shader.Parameters["targetSize"].SetValue(new Vector2(LaserLength, TextureHeight));
+            shader.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly * -50);
+            shader.Parameters["uColor"].SetValue(colro.ToVector4() * Opacity);
+            shader.Parameters["uFadeoutLength"].SetValue(0.1f);
+            shader.Parameters["uFadeinLength"].SetValue(0.1f);
+            shader.CurrentTechnique.Passes[0].Apply();
 
             Main.graphics.GraphicsDevice.Textures[0] = UCATextureRegister.TerrarRayFlow.Value;
             Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;

@@ -91,11 +91,12 @@ namespace UCA.Content.DrawNodes
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
 
-            UCAShaderRegister.TerraRayVinesShader.Parameters["progress"].SetValue(Opacity);
-            UCAShaderRegister.TerraRayVinesShader.Parameters["InPutTextureSize"].SetValue(new Vector2(1024, 1024));
-            UCAShaderRegister.TerraRayVinesShader.Parameters["EdgeColor"].SetValue(DrawColor.ToVector4());
-            UCAShaderRegister.TerraRayVinesShader.Parameters["EdgeWidth"].SetValue(0.2f);
-            UCAShaderRegister.TerraRayVinesShader.CurrentTechnique.Passes[0].Apply();
+            Effect shader = UCAShaderRegister.TerraRayVinesShader.Value;
+            shader.Parameters["progress"].SetValue(Opacity);
+            shader.Parameters["InPutTextureSize"].SetValue(new Vector2(1024, 1024));
+            shader.Parameters["EdgeColor"].SetValue(DrawColor.ToVector4());
+            shader.Parameters["EdgeWidth"].SetValue(0.2f);
+            shader.CurrentTechnique.Passes[0].Apply();
 
             List<VertexPositionColorTexture2D> Vertexlist = new List<VertexPositionColorTexture2D>();
             float fadeOut = 0;

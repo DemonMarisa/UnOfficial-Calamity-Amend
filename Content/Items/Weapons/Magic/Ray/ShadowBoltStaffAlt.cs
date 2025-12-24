@@ -2,6 +2,7 @@
 using CalamityMod.Items.Materials;
 using LAP.Core.Enums;
 using LAP.Core.MiscDate;
+using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -78,7 +79,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
         {
             if (!player.HasProj<ShadowBoltStaffSkillHeldProj>() && !player.HasProj<ShadowBoltStaffHeldProj>() && !player.HasProj<ShadowBoltStaffSpecialHeldProj>())
             {
-                if (player.HasCooldown(ShadowBotlStaffCount.ID))
+                if (player.HasCD<ShadowBotlStaffCount>())
                     return;
 
                 if (player.CheckMana(player.ActiveItem(), Item.LAP().WeaponSkillRealManaCost, true, false))

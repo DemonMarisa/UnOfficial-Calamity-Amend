@@ -85,13 +85,14 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
             Vector2 ori = warn.Size() / 2 * new Vector2(0, 1);
             SB.End();
             SB.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.AnisotropicClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-            UCAShaderRegister.TerrarRayLaser.Parameters["LaserTextureSize"].SetValue(UCATextureRegister.Trail_ManaStreak.Size());
-            UCAShaderRegister.TerrarRayLaser.Parameters["targetSize"].SetValue(new Vector2(120, UCATextureRegister.Trail_ManaStreak.Height()));
-            UCAShaderRegister.TerrarRayLaser.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly * -50);
-            UCAShaderRegister.TerrarRayLaser.Parameters["uColor"].SetValue(drawColor.ToVector4() *opc);
-            UCAShaderRegister.TerrarRayLaser.Parameters["uFadeoutLength"].SetValue(0.4f);
-            UCAShaderRegister.TerrarRayLaser.Parameters["uFadeinLength"].SetValue(0f);
-            UCAShaderRegister.TerrarRayLaser.CurrentTechnique.Passes[0].Apply();
+            Effect shader = UCAShaderRegister.TerrarRayLaser.Value;
+            shader.Parameters["LaserTextureSize"].SetValue(UCATextureRegister.Trail_ManaStreak.Size());
+            shader.Parameters["targetSize"].SetValue(new Vector2(120, UCATextureRegister.Trail_ManaStreak.Height()));
+            shader.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly * -50);
+            shader.Parameters["uColor"].SetValue(drawColor.ToVector4() *opc);
+            shader.Parameters["uFadeoutLength"].SetValue(0.4f);
+            shader.Parameters["uFadeinLength"].SetValue(0f);
+            shader.CurrentTechnique.Passes[0].Apply();
             SB.Draw(warn, drawPos, null, drawColor, Projectile.rotation, ori, scale, SpriteEffects.None, 0);
         }
     }

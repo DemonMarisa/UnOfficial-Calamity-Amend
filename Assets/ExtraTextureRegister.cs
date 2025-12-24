@@ -43,7 +43,6 @@ namespace UCA.Assets
         public static Asset<Texture2D> SlashLine02 { get; private set; }
         public static Asset<Texture2D> SlashLine03 { get; private set; }
         public static Asset<Texture2D> SoulGreatSword { get; private set; }
-        public static Asset<Texture2D> SoulGreatSword_Grey { get; private set; }
         public static Asset<Texture2D> HarshNoise { get; private set; }
         public static Asset<Texture2D> OpticalFlaresLine { get; private set; }
         public static Asset<Texture2D> Trail_ManaStreak { get; private set; }
@@ -88,7 +87,6 @@ namespace UCA.Assets
             SlashLine02 = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/SlashLine02");
             SlashLine03 = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/SlashLine03");
             SoulGreatSword = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/SoulGreatSword");
-            SoulGreatSword_Grey = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/SoulGreatSword_Grey");
             HarshNoise = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/HarshNoise");
             OpticalFlaresLine = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/OpticalFlaresLine");
 
@@ -132,7 +130,6 @@ namespace UCA.Assets
             SlashLine02 = null;
             SlashLine03 = null;
             SoulGreatSword = null;
-            SoulGreatSword_Grey = null;
             HarshNoise = null;
             OpticalFlaresLine = null;
 

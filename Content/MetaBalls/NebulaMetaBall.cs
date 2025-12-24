@@ -75,14 +75,12 @@ namespace UCA.Content.MetaBalls
             Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
             Main.graphics.GraphicsDevice.Textures[1] = BgTexture;
-            Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
-
-            UCAShaderRegister.MetaballShader.Parameters["renderTargetSize"].SetValue(AlphaTexture.Size());
-            UCAShaderRegister.MetaballShader.Parameters["bakcGroundSize"].SetValue(BgTexture.Size() / 4);
-            UCAShaderRegister.MetaballShader.Parameters["edgeColor"].SetValue(EdgeColor.ToVector4());
-            UCAShaderRegister.MetaballShader.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly * 4);
-
-            UCAShaderRegister.MetaballShader.CurrentTechnique.Passes[0].Apply();
+            Effect shader = UCAShaderRegister.MetaballShader.Value;
+            shader.Parameters["renderTargetSize"].SetValue(AlphaTexture.Size());
+            shader.Parameters["bakcGroundSize"].SetValue(BgTexture.Size() / 4);
+            shader.Parameters["edgeColor"].SetValue(EdgeColor.ToVector4());
+            shader.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly * 4);
+            shader.CurrentTechnique.Passes[0].Apply();
         }
     }
 }

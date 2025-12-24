@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -98,7 +99,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             if (CurAni == MaxAni)
             {
                 SoundEngine.PlaySound(SoundsMenu.Lighting, Projectile.Center);
-                Owner.AddCooldown(VortexBoost.ID, 600);
+                Owner.AddCD(LAPContent.CDType<VortexBoost>(), 1200);
             }
         }
         #endregion

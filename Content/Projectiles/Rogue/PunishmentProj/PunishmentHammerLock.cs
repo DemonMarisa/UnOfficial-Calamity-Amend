@@ -109,7 +109,6 @@ namespace UCA.Content.Projectiles.Rogue.PunishmentProj
                     GeneralParticleHandler.SpawnParticle(glowOrbParticle);
                 }
             }
-            Main.NewText("Kill");
         }
         private void UpdateMountedStarProj()
         {

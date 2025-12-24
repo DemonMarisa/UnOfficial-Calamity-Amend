@@ -31,14 +31,13 @@ namespace UCA.Content.Particiles.Lightnings
         }
         public override void Update()
         {
-            Opacity = MathHelper.Lerp(1f, 0f, EasingHelper.EaseOutCubic(LifetimeRatio));
+            Opacity = MathHelper.Lerp(1f, 0f, EasingHelper.EaseInCubic(LifetimeRatio));
         }
         public override void Draw(SpriteBatch spriteBatch)
         {
             Texture2D texture = UCATextureRegister.Lightning03.Value;
             Rectangle frame = texture.Frame(2, 2, XFrame, YFrame);
             Vector2 origin = frame.Size() * 0.5f;
-
             spriteBatch.Draw(texture, Position - Main.screenPosition, frame, Color.White * Opacity, Rotation, origin, Scale, SpriteEffects.None, 0f);
             spriteBatch.Draw(texture, Position - Main.screenPosition, frame, DrawColor * Opacity, Rotation, origin, Scale, SpriteEffects.None, 0f);
         }

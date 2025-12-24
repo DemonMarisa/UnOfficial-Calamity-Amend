@@ -95,7 +95,7 @@ namespace UCA.Content.Projectiles.Misc
                 }
                 for (int i = 0; i < 20; i++)
                 {
-                    Color Firecolor = LAPUtilities.LerpColor(Color.Violet, Color.DarkViolet);
+                    Color Firecolor = LAPUtilities.LerpColor(Color.Violet, Color.Purple);
                     new Fire(Projectile.Center, Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.3f, 1f) * 6, Firecolor, 64, Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.3f).Spawn();
                 }
             }

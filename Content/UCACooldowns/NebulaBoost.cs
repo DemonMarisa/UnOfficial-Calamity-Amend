@@ -1,21 +1,40 @@
 ﻿using CalamityMod.Cooldowns;
+using LAP.Core.LAPUI.CustomCD;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Localization;
+using Terraria.ModLoader;
+using UCA.Content.MetaBalls;
+using UCA.Content.Particiles;
 
 namespace UCA.Content.UCACooldowns
 {
-    public class NebulaBoost : CooldownHandler
+    public class NebulaBoost : BaseCD
     {
-        public static new string ID => "UCANebulaBoostCooldown";
-        public override bool ShouldDisplay => true;
-        public override LocalizedText DisplayName => Language.GetOrRegister($"Mods.UCA.Cooldowns.{ID}");
-        public override string Texture => "UCA/Content/UCACooldowns/NebulaBoost";
-        public override string OutlineTexture => "UCA/Content/UCACooldowns/NebulaBoost_OutLine";
-        public override string OverlayTexture => "UCA/Content/UCACooldowns/NebulaBoost_Overlay";
-        public override Color OutlineColor => Color.Lerp(Color.Violet, Color.DarkViolet, (float)Math.Sin(Main.GlobalTimeWrappedHourly) * 0.5f + 0.5f);
-        public override Color CooldownStartColor => Color.Violet;
-        public override Color CooldownEndColor => Color.DarkViolet;
+        public override LocalizedText DisplayName()
+        {
+            return Language.GetOrRegister($"Mods.UCA.Cooldowns.UCANebulaBoostCooldown");
+        }
+        public override void Update(Player player)
+        {
+            if (player.miscCounter % 20 == 0)
+            {
+                player.Heal(5);
+            }
+            player.GetDamage<MagicDamageClass>() += 0.15f;
+            player.GetCritChance<MagicDamageClass>() += 10;
+            if (player.miscCounter % 4 == 0)
+            {
+                NebulaMetaBall.SpawnParticle(player.Center - new Vector2(Main.rand.Next(-25, 25), -player.height / 2), Vector2.UnitY * Main.rand.NextFloat(2, 6f) * -1f, Main.rand.NextFloat(0.1f, 0.15f), 60);
+
+            }
+        }
+        public override void PostDraw()
+        {
+            Texture2D texture = CustomCDManger.CDTexture[Type].Value;
+            Main.spriteBatch.Draw(texture, DrawPosition, null, Color.White, 0f, texture.Size() / 2, 1f, SpriteEffects.None, 0f);
+        }
     }
 }

@@ -7,10 +7,6 @@ namespace UCA.Core.GlobalInstance.Players
         public override void PostUpdateMiscEffects()
         {
             AddNightBoost();
-            AddCarnageBoost();
-            AddTerraBoost();
-            AddElementalBoost();
-            AddShadowBoltStaffBoost();
             Reset_PostUpdateMiscEffects();
         }
         public void Reset_PostUpdateMiscEffects()

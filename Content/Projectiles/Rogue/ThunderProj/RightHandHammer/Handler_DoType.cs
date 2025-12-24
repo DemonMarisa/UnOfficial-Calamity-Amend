@@ -68,7 +68,6 @@ namespace UCA.Content.Projectiles.Rogue.ThunderProj.RightHandHammer
             {
                 Vector2 tpos = target.Center + (Projectile.Center - target.Center).SafeNormalize(Vector2.Zero) * tofs;
                 float dis = Vector2.Distance(Projectile.Center, tpos);
-                Main.NewText(tofs);
                 if (dis > 8)
                     Projectile.velocity += (tpos - Projectile.Center).SafeNormalize(Vector2.Zero) * 1f;
             }

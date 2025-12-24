@@ -70,13 +70,13 @@ namespace UCA.Content.Particiles
         public override void Draw(SpriteBatch spriteBatch)
         {
             LAPUtilities.ReSetToBeginShader();
+            Effect shader = UCAShaderRegister.PolarDistortShaderWithR.Value;
+            shader.Parameters["uWidthMult"].SetValue(1f);
+            shader.Parameters["uRingMult"].SetValue(4f);
+            shader.Parameters["uYTime"].SetValue(Main.GlobalTimeWrappedHourly);
+            shader.CurrentTechnique.Passes[0].Apply();
 
-            UCAShaderRegister.PolarDistortShaderWithR.Parameters["uWidthMult"].SetValue(1f);
-            UCAShaderRegister.PolarDistortShaderWithR.Parameters["uRingMult"].SetValue(4f);
-            UCAShaderRegister.PolarDistortShaderWithR.Parameters["uYTime"].SetValue(Main.GlobalTimeWrappedHourly);
             Main.instance.GraphicsDevice.Textures[1] = UCATextureRegister.BloomRing.Value;
-
-            UCAShaderRegister.PolarDistortShaderWithR.CurrentTechnique.Passes[0].Apply();
 
             Texture2D texture = UCATextureRegister.Aura_01.Value;
             Vector2 orig = texture.Size() / 2;

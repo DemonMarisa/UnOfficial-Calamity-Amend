@@ -1,7 +1,7 @@
 ﻿// 传入的由粒子拼成的通道材质
 sampler InPutTexture : register(s0);
 sampler uDisplacementSampler : register(s1); // 我们的噪声置换图
-float uTime; // 时间变量，用于让火焰动起来
+float uTime; // 时间变量
 float uIntensity; // 扭曲强度
 float4 ubeginColor; // 染色颜色
 float4 uendColor; // 染色颜色
@@ -11,8 +11,6 @@ float Opacity; // 透明度
 float4 SolarBladeFunction(float2 coords : TEXCOORD0) : COLOR0
 {
     // 不能没有颜色就抛弃，因为本质上是每个像素根据偏移坐标去采样原坐标
-    // 让噪声图动起来
-    // 通过加上 uTime 来滚动噪声图的采样坐标
     float2 noiseUV = float2(coords.x, coords.y - uTime * 0.1);
     // 从噪声图中采样，我们只需要一个通道的值（比如 .r 红色通道）
     float displacement = tex2D(uDisplacementSampler, noiseUV).r;

@@ -45,9 +45,9 @@ namespace UCA.Content.Items.Weapons.Rogue.Hammer
         public override bool AltFunctionUse(Player player)
         {
             return false;
-            bool canAltFunction = !player.UCA().CanDisableGuideForGrandHammer && DownedBossSystem.downedExoMechs && DownedBossSystem.downedCalamitas;
-            return true;
-            return canAltFunction;
+            //bool canAltFunction = !player.UCA().CanDisableGuideForGrandHammer && DownedBossSystem.downedExoMechs && DownedBossSystem.downedCalamitas;
+            //return true;
+            //return canAltFunction;
         }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
@@ -67,11 +67,11 @@ namespace UCA.Content.Items.Weapons.Rogue.Hammer
         public override bool ConsumeItem(Player player)
         {
             return false;
-            bool ifCanConsume = DownedBossSystem.downedExoMechs && DownedBossSystem.downedCalamitas;
-            if (!player.UCA().CanDisableGuideForGrandHammer && ifCanConsume && player.controlUseTile)
-                return true;
+            //bool ifCanConsume = DownedBossSystem.downedExoMechs && DownedBossSystem.downedCalamitas;
+            //if (!player.UCA().CanDisableGuideForGrandHammer && ifCanConsume && player.controlUseTile)
+            //    return true;
 
-            return false;
+            //return false;
         }
     }
     public class GodsHammerShimmerIL : ModSystem

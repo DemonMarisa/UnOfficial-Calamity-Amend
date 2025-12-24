@@ -266,7 +266,7 @@ namespace UCA.Content.Projectiles.Rogue.BlazingProj
         }
         private Effect PickShader(Color baseColor, Color tarColor)
         {
-            Effect shader = UCAShaderRegister.VolcanoEruptingShader;
+            Effect shader = UCAShaderRegister.VolcanoEruptingShader.Value;
             shader.Parameters["uBaseColor"].SetValue(baseColor.ToVector4() * 0.3f);
             shader.Parameters["uTargetColor"].SetValue(tarColor.ToVector4() * 0.9f);
             shader.Parameters["uTime"].SetValue(-Main.GlobalTimeWrappedHourly * 45);
@@ -283,7 +283,7 @@ namespace UCA.Content.Projectiles.Rogue.BlazingProj
             Effect shader = PickShader(baseColor,tarColor);
             shader.CurrentTechnique.Passes[0].Apply();
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.MiscNoise02.Value;
-
+            Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointWrap;
             //叠图4次以增强层次感
             int drawCount = 4;
             for (int j = 0; j < drawCount; j++)

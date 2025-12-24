@@ -225,12 +225,12 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
 
             Rectangle frame = UCATextureRegister.CarnageStabs.Frame(19, 1, StabsFrame, 0);
-
-            UCAShaderRegister.EdgeMeltsShader.Parameters["progress"].SetValue(ShaderOpacity);
-            UCAShaderRegister.EdgeMeltsShader.Parameters["InPutTextureSize"].SetValue(frame.Size());
-            UCAShaderRegister.EdgeMeltsShader.Parameters["EdgeColor"].SetValue(Color.Red.ToVector4());
-            UCAShaderRegister.EdgeMeltsShader.Parameters["EdgeWidth"].SetValue(0.01f);
-            UCAShaderRegister.EdgeMeltsShader.CurrentTechnique.Passes[0].Apply();
+            Effect shader = UCAShaderRegister.EdgeMeltsShader.Value;
+            shader.Parameters["progress"].SetValue(ShaderOpacity);
+            shader.Parameters["InPutTextureSize"].SetValue(frame.Size());
+            shader.Parameters["EdgeColor"].SetValue(Color.Red.ToVector4());
+            shader.Parameters["EdgeWidth"].SetValue(0.01f);
+            shader.CurrentTechnique.Passes[0].Apply();
 
             DrawStabs();
 
@@ -262,12 +262,12 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
 
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
-
-            UCAShaderRegister.EdgeMeltsShader.Parameters["progress"].SetValue(ShaderOpacity);
-            UCAShaderRegister.EdgeMeltsShader.Parameters["InPutTextureSize"].SetValue(ModContent.Request<Texture2D>(Texture).Size());
-            UCAShaderRegister.EdgeMeltsShader.Parameters["EdgeColor"].SetValue(Color.Red.ToVector4());
-            UCAShaderRegister.EdgeMeltsShader.Parameters["EdgeWidth"].SetValue(0.01f);
-            UCAShaderRegister.EdgeMeltsShader.CurrentTechnique.Passes[0].Apply();
+            Effect shader = UCAShaderRegister.EdgeMeltsShader.Value;
+            shader.Parameters["progress"].SetValue(ShaderOpacity);
+            shader.Parameters["InPutTextureSize"].SetValue(ModContent.Request<Texture2D>(Texture).Size());
+            shader.Parameters["EdgeColor"].SetValue(Color.Red.ToVector4());
+            shader.Parameters["EdgeWidth"].SetValue(0.01f);
+            shader.CurrentTechnique.Passes[0].Apply();
 
             Texture2D texture = TextureAssets.Projectile[Type].Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;

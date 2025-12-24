@@ -1,73 +1,46 @@
-﻿using CalamityMod;
-using CalamityMod.Cooldowns;
+﻿using LAP.Core.LAPUI.CustomCD;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
+using ReLogic.Graphics;
 using Terraria;
-using Terraria.GameContent;
-using Terraria.Graphics.Shaders;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.UI.Chat;
 using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Core.GlobalInstance.Players;
 using UCA.Core.Utilities;
 
 namespace UCA.Content.UCACooldowns
 {
-    public class TerraRayCount : CooldownHandler
+    public class TerraRayCount : BaseCD
     {
-        public static Color ringColorLerpStart = Color.ForestGreen;
-        public static Color ringColorLerpEnd = Color.LawnGreen;
-        public float AdjustedCompletion()
+        public int TerraRayRestore => Main.LocalPlayer.UCA().TerraRayRestore;
+        public int TerraRayCharge => Main.LocalPlayer.UCA().TerraRayCharge;
+        public override Rectangle OverLayerRec => TerraRayRestore == 3 ? 
+            new Rectangle(0, 0, CDTexture_OverLayer.Width, 0) :
+            new Rectangle(0, 0, CDTexture_OverLayer.Width, 30 + (int)((CDTexture_OverLayer.Height - 30) * (1 - (TerraRayCharge / (float)UCAPlayer.TerraRayChargeCD))));
+        public override LocalizedText DisplayName()
         {
-            Player player = Main.LocalPlayer;
-            if (player.UCA().TerraRayRestore == 3)
-                return 1f;
-            return instance.timeLeft / (float)UCAPlayer.TerraRayChargeCD;
+            return Language.GetOrRegister($"Mods.UCA.Cooldowns.UCATerraRestoreCount");
         }
-
-        public static new string ID => "UCATerraRestoreCount";
-        public override bool CanTickDown => instance.player.HeldItem.type != ModContent.ItemType<TerraRay>() || instance.timeLeft <= 0;
-        public override bool ShouldDisplay => instance.player.HeldItem.type == ModContent.ItemType<TerraRay>();
-        public override LocalizedText DisplayName => Language.GetOrRegister($"Mods.UCA.Cooldowns.{ID}");
-        public override string Texture => "UCA/Content/UCACooldowns/TerraRayCount";
-        public override string OutlineTexture => "UCA/Content/UCACooldowns/TerraRayCount_OutLine";
-        public override string OverlayTexture => "UCA/Content/UCACooldowns/TerraRayCount_Overlay";
-        public override Color OutlineColor => Color.Lerp(ringColorLerpStart, ringColorLerpEnd, (float)Math.Sin(Main.GlobalTimeWrappedHourly) * 0.5f + 0.5f);
-        public override Color CooldownStartColor => Color.Lerp(ringColorLerpStart, ringColorLerpEnd, instance.Completion);
-        public override Color CooldownEndColor => Color.Lerp(ringColorLerpStart, ringColorLerpEnd, instance.Completion);
-        public override bool SavedWithPlayer => false;
-        public override bool PersistsThroughDeath => false;
-        public override void ApplyBarShaders(float opacity)
+        public override void OnSpawn(Player player)
         {
-            // Use the adjusted completion
-            GameShaders.Misc["CalamityMod:CircularBarShader"].UseOpacity(opacity);
-            GameShaders.Misc["CalamityMod:CircularBarShader"].UseSaturation(AdjustedCompletion());
-            GameShaders.Misc["CalamityMod:CircularBarShader"].UseColor(CooldownStartColor);
-            GameShaders.Misc["CalamityMod:CircularBarShader"].UseSecondaryColor(CooldownEndColor);
-            GameShaders.Misc["CalamityMod:CircularBarShader"].Apply();
+            MaxTime = UCAPlayer.MaxTerraRayRestore;
         }
-        public override void DrawExpanded(SpriteBatch spriteBatch, Vector2 position, float opacity, float scale)
+        public override void Update(Player player)
         {
-            base.DrawExpanded(spriteBatch, position, opacity, scale);
-            Player player = Main.LocalPlayer;
-            CalamityUtils.DrawBorderStringEightWay(spriteBatch, FontAssets.MouseText.Value, player.UCA().TerraRayRestore.ToString(), position + new Vector2(-3, 4) * scale, Color.Lerp(ringColorLerpEnd, Color.LightGreen, 1 - instance.Completion), Color.Black, scale);
+            if (player.HeldItem.type == ModContent.ItemType<TerraRay>())
+            {
+                Time = 2;
+                MaxTime = UCAPlayer.MaxTerraRayRestore;
+            }
         }
-        public override void DrawCompact(SpriteBatch spriteBatch, Vector2 position, float opacity, float scale)
+        public override bool PreDrawTime(DynamicSpriteFont MGRFont)
         {
-            Texture2D sprite = ModContent.Request<Texture2D>(Texture).Value;
-            Texture2D outline = ModContent.Request<Texture2D>(OutlineTexture).Value;
-            Texture2D overlay = ModContent.Request<Texture2D>(OverlayTexture).Value;
-            // Draw the outline
-            spriteBatch.Draw(outline, position, null, OutlineColor * opacity, 0, outline.Size() * 0.5f, scale, SpriteEffects.None, 0f);
-            // Draw the icon
-            spriteBatch.Draw(sprite, position, null, Color.White * opacity, 0, sprite.Size() * 0.5f, scale, SpriteEffects.None, 0f);
-            // Draw the small overlay
-            int lostHeight = (int)Math.Ceiling(overlay.Height * AdjustedCompletion());
-            Rectangle crop = new Rectangle(0, lostHeight, overlay.Width, overlay.Height - lostHeight);
-            spriteBatch.Draw(overlay, position + Vector2.UnitY * lostHeight * scale, crop, OutlineColor * opacity * 0.9f, 0, sprite.Size() * 0.5f, scale, SpriteEffects.None, 0f);
-            float Xoffset = instance.timeLeft > 9 ? -10f : -5;
-            CalamityUtils.DrawBorderStringEightWay(spriteBatch, FontAssets.MouseText.Value, instance.timeLeft.ToString(), position + new Vector2(Xoffset, 4) * scale, Color.Lerp(ringColorLerpStart, Color.OrangeRed, 1 - instance.Completion), Color.Black, scale);
+            int thisCdRemin = TerraRayRestore;
+            string Count = $"{thisCdRemin}";
+            Vector2 stringsize = ChatManager.GetStringSize(MGRFont, Count, Vector2.One);
+            ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, MGRFont, Count, DrawPosition + new Vector2(0, 24), Color.White, 0f, stringsize / 2, new Vector2(0.4f));
+            return false;
         }
     }
 }

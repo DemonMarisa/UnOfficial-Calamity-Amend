@@ -1,21 +1,29 @@
 ﻿using CalamityMod.Cooldowns;
+using LAP.Content.Particles;
+using LAP.Core.LAPUI.CustomCD;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.Localization;
+using UCA.Content.Particiles;
 
 namespace UCA.Content.UCACooldowns
 {
-    public class StarDustBoost : CooldownHandler
+    public class StarDustBoost : BaseCD
     {
-        public static new string ID => "UCAStarDustBoostCooldown";
-        public override bool ShouldDisplay => true;
-        public override LocalizedText DisplayName => Language.GetOrRegister($"Mods.UCA.Cooldowns.{ID}");
-        public override string Texture => "UCA/Content/UCACooldowns/StarDustBoost";
-        public override string OutlineTexture => "UCA/Content/UCACooldowns/StarDustBoost_OutLine";
-        public override string OverlayTexture => "UCA/Content/UCACooldowns/StarDustBoost_Overlay";
-        public override Color OutlineColor => Color.Lerp(Color.SkyBlue, Color.DeepSkyBlue, (float)Math.Sin(Main.GlobalTimeWrappedHourly) * 0.5f + 0.5f);
-        public override Color CooldownStartColor => Color.SkyBlue;
-        public override Color CooldownEndColor => Color.DeepSkyBlue;
+        public override LocalizedText DisplayName()
+        {
+            return Language.GetOrRegister($"Mods.UCA.Cooldowns.UCAStarDustBoostCooldown");
+        }
+        public override void Update(Player player)
+        {
+            player.manaCost *= 0.5f;
+            if (player.miscCounter % 5 == 0)
+            {
+                Vector2 GenPos = player.Center + -new Vector2(Main.rand.Next(-25, 25), Main.rand.Next(-35, 35));
+                Color Firecolor = LAPUtilities.LerpColor(Color.SkyBlue, Color.DeepSkyBlue);
+                new StarLine(GenPos, Main.rand.NextFloat(MathHelper.TwoPi), Firecolor, 25, 0.06f, 1f).Spawn();
+            }
+        }
     }
 }

@@ -8,7 +8,6 @@ using Terraria.Audio;
 using UCA.Assets;
 using UCA.Assets.Effects;
 using UCA.Assets.Sounds;
-using UCA.Content.Configs;
 using UCA.Content.Particiles;
 using UCA.Core.Enums;
 
@@ -99,15 +98,11 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         {
             int MaxAni = animationHelper.MaxAniProgress[AnimationState.Begin];
             int CurAni = animationHelper.AniProgress[AnimationState.Begin];
-            // 使用缓动函数让动画更自然
             float easedProgress = EasingHelper.EaseOutCubic(CurAni / (float)MaxAni);
-            // 设置起始与结束角度
             float startAngleOffset = MathHelper.ToRadians(45);
             float endAngleOffset = MathHelper.ToRadians(-145);
-            // 计算基础旋转角度
             float baseRotation = MathHelper.Lerp(startAngleOffset, endAngleOffset, easedProgress);
-            // 根据玩家方向进行镜像处理
-            if (Owner.direction == -1)// 水平镜像
+            if (Owner.direction == -1)
                 baseRotation = baseRotation * Owner.direction;
 
             RelativeOwnerPosRot = baseRotation + ToMouseVector;
@@ -302,10 +297,12 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         #region 绘制耀斑大剑
         public void DrawSolarBlade(Vector2 DrawPos, Vector2 offset, float DrawRot, Vector2 scale)
         {
+            
             if (!LAPConfig.Instance.PerformanceMode)
             {
                 LAPUtilities.ReSetToBeginShader(BlendState.Additive);
                 Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.FireNoise.Value;
+                Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointWrap;
                 // 准备shader
                 if (IsMAGBOLIABlue)
                     PrepareShader(Color.Blue, Color.DeepSkyBlue, 0.08f, false, 0.5f);
@@ -315,6 +312,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 DrawBladeGlowSource(DrawPos + offset.RotatedBy(DrawRot), DrawRot, GlowScale);
                 LAPUtilities.ReSetToEndShader();
             }
+            
             LAPUtilities.ReSetToBeginShader(BlendState.Additive);
             offset.Y = offset.Y + 56;
             if (IsMAGBOLIABlue)
@@ -322,6 +320,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             else
                 PrepareShader(Color.OrangeRed, Color.Orange, 0.15f, true);
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.FireNoise.Value;
+            Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointWrap;
             Vector2 MiddleBladeScale = new Vector2(0.5f * SolarBladeXScale, 1f) * scale;
             DrawMainBladeSource(DrawPos + offset.RotatedBy(DrawRot), DrawRot, MiddleBladeScale);
             LAPUtilities.ReSetToEndShader();
@@ -333,10 +332,12 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 PrepareShader(Color.Red, Color.OrangeRed, 0.15f, true);
             // 设置材质和偏移
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Wood.Value;
+            Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointWrap;
             Vector2 OutSideBladeScale = new Vector2(0.85f * SolarBladeXScale, 1f) * scale;
             DrawMainBladeSource(DrawPos + offset.RotatedBy(DrawRot), DrawRot, OutSideBladeScale);
             // 改一下置换材质
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.FireNoise.Value;
+            Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointWrap;
             Vector2 InSideBladeScale = new Vector2(0.4f * SolarBladeXScale, 0.79f) * scale;
             offset.Y = offset.Y - 64;
             DrawAuxBladeSource(DrawPos + offset.RotatedBy(DrawRot), DrawRot, InSideBladeScale);
@@ -345,13 +346,14 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         public void PrepareShader(Color beginColor, Color endColor, float uIntensity = 0.15f, bool useColor = true, float Opacity = 0.5f)
         {
             Opacity *= 2f;
-            UCAShaderRegister.SolarBladeShader.Parameters["uTime"].SetValue(-Main.GlobalTimeWrappedHourly);
-            UCAShaderRegister.SolarBladeShader.Parameters["uIntensity"].SetValue(uIntensity);
-            UCAShaderRegister.SolarBladeShader.Parameters["ubeginColor"].SetValue(beginColor.ToVector4());
-            UCAShaderRegister.SolarBladeShader.Parameters["uendColor"].SetValue(endColor.ToVector4());
-            UCAShaderRegister.SolarBladeShader.Parameters["UseColor"].SetValue(useColor);
-            UCAShaderRegister.SolarBladeShader.Parameters["Opacity"].SetValue(Opacity);
-            UCAShaderRegister.SolarBladeShader.CurrentTechnique.Passes[0].Apply();
+            Effect shader = UCAShaderRegister.SolarBladeShader.Value;
+            shader.Parameters["uTime"].SetValue(-Main.GlobalTimeWrappedHourly);
+            shader.Parameters["uIntensity"].SetValue(uIntensity);
+            shader.Parameters["ubeginColor"].SetValue(beginColor.ToVector4());
+            shader.Parameters["uendColor"].SetValue(endColor.ToVector4());
+            shader.Parameters["UseColor"].SetValue(useColor);
+            shader.Parameters["Opacity"].SetValue(Opacity);
+            shader.CurrentTechnique.Passes[0].Apply();
         }
         public void DrawMainBladeSource(Vector2 DrawPos, float DrawRot, Vector2 scale)
         {

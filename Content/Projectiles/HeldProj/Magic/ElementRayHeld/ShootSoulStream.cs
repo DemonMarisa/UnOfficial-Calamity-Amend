@@ -16,6 +16,7 @@ using LAP.Core.SpecificEffectManagers;
 using UCA.Core.Utilities;
 using static System.Net.Mime.MediaTypeNames;
 using LAP.Core.Utilities;
+using LAP.Core.SystemsLoader;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
 {
@@ -113,7 +114,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 }
                 ScreenShakeSystem.AddScreenShakes(Projectile.Center, 250, 180, Projectile.rotation, 0.1f, true, 1000);
                 SoulStreamIndex = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + offset, Vector2.Zero, ModContent.ProjectileType<SoulStream>(), Projectile.damage * 6, Projectile.knockBack, Projectile.owner, Projectile.whoAmI);
-                Owner.AddCooldown(StarDustBoost.ID,  1200);
+                Owner.AddCD(LAPContent.CDType<StarDustBoost>(),  1200);
             }
         }
         #endregion
@@ -153,11 +154,12 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         public void DrawBallOutLine()
         {
             LAPUtilities.ReSetToBeginShader(BlendState.Additive);
-            UCAShaderRegister.PolarDistortShader.Parameters["uWidthMult"].SetValue(3f);
-            UCAShaderRegister.PolarDistortShader.Parameters["uRingMult"].SetValue(1f);
-            UCAShaderRegister.PolarDistortShader.Parameters["uYTime"].SetValue(-Main.GlobalTimeWrappedHourly);
+            Effect shader = UCAShaderRegister.PolarDistortShader.Value;
+            shader.Parameters["uWidthMult"].SetValue(3f);
+            shader.Parameters["uRingMult"].SetValue(1f);
+            shader.Parameters["uYTime"].SetValue(-Main.GlobalTimeWrappedHourly);
+            shader.CurrentTechnique.Passes[0].Apply();
             Main.instance.GraphicsDevice.Textures[1] = UCATextureRegister.FusableBall.Value;
-            UCAShaderRegister.PolarDistortShader.CurrentTechnique.Passes[0].Apply();
             float Scale = 1.5f * BallScale;
             Texture2D texture = UCATextureRegister.Aura_01.Value;
             Vector2 orig = texture.Size() / 2;

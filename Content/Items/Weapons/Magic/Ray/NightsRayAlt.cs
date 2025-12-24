@@ -2,6 +2,7 @@
 using CalamityMod.Items.Weapons.Magic;
 using LAP.Core.Enums;
 using LAP.Core.Keybind;
+using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -85,15 +86,14 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
         public override void WeaponSkill(Player player)
         {
             if (player.ownedProjectileCounts[ModContent.ProjectileType<NightRaySkillProj>()] < 1 && player.ownedProjectileCounts[ModContent.ProjectileType<NightRayHeldProj>()] < 1 && player.ownedProjectileCounts[ModContent.ProjectileType<NightRayHeldProjMelee>()] < 1)
-                if (!player.HasCooldown(NightBoost.ID) && player.CheckMana(player.ActiveItem(), Item.LAP().WeaponSkillRealManaCost, true, false))
+                if (!player.HasCD<NightBoost>() && player.CheckMana(player.ActiveItem(), Item.LAP().WeaponSkillRealManaCost, true, false))
                     Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, Vector2.Zero, ModContent.ProjectileType<NightRaySkillProj>(), 0, 0, player.whoAmI);
         }
 
         public override void UpdateHoldItem(Player player)
         {
-            player.AddCooldown(NightShield.ID, UCAPlayer.NightShieldMaxHP);
-            if (player.Calamity().cooldowns.TryGetValue(NightShield.ID, out var Durability))
-                Durability.timeLeft = player.UCA().NightShieldHP;
+            if (!player.HasCD<NightShield>())
+                player.AddCD(LAPContent.CDType<NightShield>(), UCAPlayer.NightShieldMaxHP);
         }
 
         public override void AddRecipes()

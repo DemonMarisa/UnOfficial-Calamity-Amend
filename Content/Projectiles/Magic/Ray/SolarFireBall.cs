@@ -138,11 +138,12 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             float TextureHeight = UCATextureRegister.Tornade_Fire.Height();
             float TextureWidth = UCATextureRegister.Tornade_Fire.Width();
-            UCAShaderRegister.FlowWithAShader.Parameters["FlowTextureSize"].SetValue(UCATextureRegister.Tornade_Fire.Size());
-            UCAShaderRegister.FlowWithAShader.Parameters["targetSize"].SetValue(new Vector2(TextureWidth, TextureHeight));
-            UCAShaderRegister.FlowWithAShader.Parameters["uTime"].SetValue(-Main.GlobalTimeWrappedHourly * Speed);
-            UCAShaderRegister.FlowWithAShader.Parameters["uColor"].SetValue(color.ToVector4() * Opacity);
-            UCAShaderRegister.FlowWithAShader.CurrentTechnique.Passes[0].Apply();
+            Effect shader = UCAShaderRegister.FlowWithAShader.Value;
+            shader.Parameters["FlowTextureSize"].SetValue(UCATextureRegister.Tornade_Fire.Size());
+            shader.Parameters["targetSize"].SetValue(new Vector2(TextureWidth, TextureHeight));
+            shader.Parameters["uTime"].SetValue(-Main.GlobalTimeWrappedHourly * Speed);
+            shader.Parameters["uColor"].SetValue(color.ToVector4() * Opacity);
+            shader.CurrentTechnique.Passes[0].Apply();
 
             Main.instance.GraphicsDevice.Textures[0] = UCATextureRegister.Tornade_Fire.Value;
             Main.instance.GraphicsDevice.Textures[1] = UCATextureRegister.WhiteCircle.Value;
@@ -153,11 +154,11 @@ namespace UCA.Content.Projectiles.Magic.Ray
         public void DrawBallOutLine()
         {
             LAPUtilities.ReSetToBeginShader(BlendState.Additive);
-
-            UCAShaderRegister.PolarDistortShader.Parameters["uWidthMult"].SetValue(2f);
-            UCAShaderRegister.PolarDistortShader.Parameters["uRingMult"].SetValue(1f);
-            UCAShaderRegister.PolarDistortShader.Parameters["uYTime"].SetValue(Main.GlobalTimeWrappedHourly * 0.1f);
-            UCAShaderRegister.PolarDistortShader.CurrentTechnique.Passes[0].Apply();
+            Effect shader = UCAShaderRegister.PolarDistortShader.Value;
+            shader.Parameters["uWidthMult"].SetValue(2f);
+            shader.Parameters["uRingMult"].SetValue(1f);
+            shader.Parameters["uYTime"].SetValue(Main.GlobalTimeWrappedHourly * 0.1f);
+            shader.CurrentTechnique.Passes[0].Apply();
             Main.instance.GraphicsDevice.Textures[1] = UCATextureRegister.BloomShockwave.Value;
             float Scale = 0.2f;
             Texture2D texture = UCATextureRegister.MiscNoise01.Value;

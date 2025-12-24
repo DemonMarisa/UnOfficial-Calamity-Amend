@@ -2,6 +2,7 @@
 using CalamityMod.Buffs.DamageOverTime;
 using LAP.Core.AnimationHandle;
 using LAP.Core.Enums;
+using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -187,8 +188,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ShadowBoltStaffHeld
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + SpawnPos, Vector2.Zero, ModContent.ProjectileType<ShadowPlayer>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 8 * i);
             }
             SoundEngine.PlaySound(SoundsMenu.ShadowBoltStaffSkillrelease, Projectile.Center);
-            Owner.AddCooldown(ShadowBotlStaffDodge.ID, 1800);
-            Owner.AddCooldown(ShadowBotlStaffCount.ID, 1800);
+            Owner.AddCD(LAPContent.CDType<ShadowBotlStaffDodge>(), 1800);
+            Owner.AddCD(LAPContent.CDType<ShadowBotlStaffCount>(), 1800);
         }
         public override bool PreDraw(ref Color lightColor)
         {

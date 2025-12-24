@@ -66,13 +66,14 @@ namespace UCA.Content.Projectiles.Rogue.ThunderProj.RightHandHammer
         public void DrawNebulaTrail(Color trailColor, float height)
         {
             float laserLength = 25;
-            UCAShaderRegister.TerrarRayLaser.Parameters["LaserTextureSize"].SetValue(UCATextureRegister.Trail_ManaStreak.Size());
-            UCAShaderRegister.TerrarRayLaser.Parameters["targetSize"].SetValue(new Vector2(laserLength, UCATextureRegister.Trail_ManaStreak.Height()));
-            UCAShaderRegister.TerrarRayLaser.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly * -50);
-            UCAShaderRegister.TerrarRayLaser.Parameters["uColor"].SetValue(trailColor.ToVector4() * DrawScale);
-            UCAShaderRegister.TerrarRayLaser.Parameters["uFadeoutLength"].SetValue(0.1f);
-            UCAShaderRegister.TerrarRayLaser.Parameters["uFadeinLength"].SetValue(0.05f);
-            UCAShaderRegister.TerrarRayLaser.CurrentTechnique.Passes[0].Apply();
+            Effect shader = UCAShaderRegister.TerrarRayLaser.Value;
+            shader.Parameters["LaserTextureSize"].SetValue(UCATextureRegister.Trail_ManaStreak.Size());
+            shader.Parameters["targetSize"].SetValue(new Vector2(laserLength, UCATextureRegister.Trail_ManaStreak.Height()));
+            shader.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly * -50);
+            shader.Parameters["uColor"].SetValue(trailColor.ToVector4() * DrawScale);
+            shader.Parameters["uFadeoutLength"].SetValue(0.1f);
+            shader.Parameters["uFadeinLength"].SetValue(0.05f);
+            shader.CurrentTechnique.Passes[0].Apply();
 
             //做掉可能存在的零向量
             Projectile.ClearInvaidData(out List<Vector2> validPosition, out List<float> validRot, Projectile.oldPos, Projectile.oldRot);

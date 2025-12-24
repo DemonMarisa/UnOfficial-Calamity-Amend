@@ -82,7 +82,7 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
             DrawTrailingDust();
 
         }
-        float amp2 = 35f;
+        // float amp2 = 35f;
         private void DrawTrailingDust()
         {
             //正弦波频率

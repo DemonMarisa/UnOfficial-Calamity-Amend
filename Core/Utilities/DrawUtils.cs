@@ -20,16 +20,6 @@ namespace UCA.Core.Utilities
                 new MediumGlowBall(SpawnVector, Vector2.Zero, color, 60, 0, 1f, 0.1f, 0).Spawn();
             }
         }
-        public static void ApplySolarBladeShader(Color beginColor, Color endColor, float uIntensity = 0.15f, bool useColor = true, float Opacity = 0.5f)
-        {
-            UCAShaderRegister.SolarBladeShader.Parameters["uTime"].SetValue(-Main.GlobalTimeWrappedHourly);
-            UCAShaderRegister.SolarBladeShader.Parameters["uIntensity"].SetValue(uIntensity);
-            UCAShaderRegister.SolarBladeShader.Parameters["ubeginColor"].SetValue(beginColor.ToVector4());
-            UCAShaderRegister.SolarBladeShader.Parameters["uendColor"].SetValue(endColor.ToVector4());
-            UCAShaderRegister.SolarBladeShader.Parameters["UseColor"].SetValue(useColor);
-            UCAShaderRegister.SolarBladeShader.Parameters["Opacity"].SetValue(Opacity);
-            UCAShaderRegister.SolarBladeShader.CurrentTechnique.Passes[0].Apply();
-        }
         public static void QuickDrawWithTrailing(this Projectile proj, float offset, Color color, float rotFix = 0) => QuickDrawWithTrailing(proj, offset, color, proj.Center, proj.scale, 4, rotFix);
         public static void QuickDrawWithTrailing(this Projectile proj, float offset, Color color, int drawTime, float rotFix = 0) => QuickDrawWithTrailing(proj, offset, color, proj.Center, proj.scale, drawTime, rotFix);
         public static void QuickDrawWithTrailing(this Projectile proj, float offset, Color color, int drawTime, Vector2 drawCenter, float rotFix = 0) => QuickDrawWithTrailing(proj, offset, color, drawCenter, proj.scale, drawTime, rotFix);

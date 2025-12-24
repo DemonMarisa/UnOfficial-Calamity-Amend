@@ -11,15 +11,15 @@ namespace UCA.Content.Projectiles.HealPRoj
         public override int HealAmt => Main.rand.Next(8, 15);
         public override void ExAI()
         {
-            CosmicMetaBall.SpawnCircleParticle(Projectile.Center, Vector2.Zero, 0.1f, 120);
+            CosmicMetaBall.SpawnCircleParticle(Projectile.Center, Vector2.Zero, 0.15f, 30);
         }
 
         public override void ExKill()
         {
             for (int i = 0; i < 10; i++)
             {
-                Vector2 spawnVec = Vector2.UnitX.RotateRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.2f, 0.3f) * 6;
-                CosmicMetaBall.SpawnCircleParticle(Projectile.Center, spawnVec, 0.2f, 45);
+                Vector2 spawnVec = Vector2.UnitX.RotateRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.2f, 0.3f) * 9;
+                CosmicMetaBall.SpawnCircleParticle(Projectile.Center, spawnVec, 0.4f, 45);
             }
         }
     }

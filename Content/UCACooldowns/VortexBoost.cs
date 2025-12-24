@@ -1,21 +1,29 @@
 ﻿using CalamityMod.Cooldowns;
+using LAP.Core.LAPUI.CustomCD;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.Localization;
+using UCA.Content.Particiles;
+using UCA.Content.Particiles.Lightnings;
 
 namespace UCA.Content.UCACooldowns
 {
-    public class VortexBoost : CooldownHandler
+    public class VortexBoost : BaseCD
     {
-        public static new string ID => "UCAVortexBoostCooldown";
-        public override bool ShouldDisplay => true;
-        public override LocalizedText DisplayName => Language.GetOrRegister($"Mods.UCA.Cooldowns.{ID}");
-        public override string Texture => "UCA/Content/UCACooldowns/VortexBoost";
-        public override string OutlineTexture => "UCA/Content/UCACooldowns/VortexBoost_OutLine";
-        public override string OverlayTexture => "UCA/Content/UCACooldowns/VortexBoost_Overlay";
-        public override Color OutlineColor => Color.Lerp(Color.Turquoise, Color.DarkTurquoise, (float)Math.Sin(Main.GlobalTimeWrappedHourly) * 0.5f + 0.5f);
-        public override Color CooldownStartColor => Color.Turquoise;
-        public override Color CooldownEndColor => Color.DarkTurquoise;
+        public override LocalizedText DisplayName()
+        {
+            return Language.GetOrRegister($"Mods.UCA.Cooldowns.UCAVortexBoostCooldown");
+        }
+        public override void Update(Player player)
+        {
+            player.LAP().DamageMult += 0.1f;
+            if (player.miscCounter % 3 == 0)
+            {
+                Vector2 firepos = player.Center + new Vector2(Main.rand.Next(-25, 25), 0);
+                new Lightning03(firepos, Vector2.Zero, Main.rand.NextBool() ? Color.PaleTurquoise : Color.Turquoise, 12, Main.rand.NextFloat(MathHelper.TwoPi), 0.2f).Spawn();
+            }
+        }
     }
 }

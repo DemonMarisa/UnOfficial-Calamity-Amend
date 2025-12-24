@@ -180,14 +180,14 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             float TextureHeight = UCATextureRegister.LaserHighContrast.Height();
             float TextureWidth = UCATextureRegister.LaserHighContrast.Width();
-
-            UCAShaderRegister.StandardFlowShader.Parameters["LaserTextureSize"].SetValue(UCATextureRegister.LaserHighContrast.Size());
-            UCAShaderRegister.StandardFlowShader.Parameters["targetSize"].SetValue(new Vector2(LaserLength, TextureHeight));
-            UCAShaderRegister.StandardFlowShader.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly * Speed + Timeoffset);
-            UCAShaderRegister.StandardFlowShader.Parameters["uColor"].SetValue(colro.ToVector4() * Projectile.Opacity);
-            UCAShaderRegister.StandardFlowShader.Parameters["uFadeoutLength"].SetValue(op);
-            UCAShaderRegister.StandardFlowShader.Parameters["uFadeinLength"].SetValue(op);
-            UCAShaderRegister.StandardFlowShader.CurrentTechnique.Passes[0].Apply();
+            Effect shader = UCAShaderRegister.StandardFlowShader.Value;
+            shader.Parameters["LaserTextureSize"].SetValue(UCATextureRegister.LaserHighContrast.Size());
+            shader.Parameters["targetSize"].SetValue(new Vector2(LaserLength, TextureHeight));
+            shader.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly * Speed + Timeoffset);
+            shader.Parameters["uColor"].SetValue(colro.ToVector4() * Projectile.Opacity);
+            shader.Parameters["uFadeoutLength"].SetValue(op);
+            shader.Parameters["uFadeinLength"].SetValue(op);
+            shader.CurrentTechnique.Passes[0].Apply();
 
             Vector2 orig = new(0, TextureHeight / 2);
             float xScale = LaserLength / TextureWidth;
@@ -197,14 +197,14 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             float TextureHeight = UCATextureRegister.Lightning.Height();
             float TextureWidth = UCATextureRegister.Lightning.Width();
-
-            UCAShaderRegister.StandardFlowShader.Parameters["LaserTextureSize"].SetValue(UCATextureRegister.Lightning.Size());
-            UCAShaderRegister.StandardFlowShader.Parameters["targetSize"].SetValue(new Vector2(LaserLength / 5f, TextureHeight));
-            UCAShaderRegister.StandardFlowShader.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly * Speed + Timeoffset);
-            UCAShaderRegister.StandardFlowShader.Parameters["uColor"].SetValue(colro.ToVector4() * Projectile.Opacity);
-            UCAShaderRegister.StandardFlowShader.Parameters["uFadeoutLength"].SetValue(op);
-            UCAShaderRegister.StandardFlowShader.Parameters["uFadeinLength"].SetValue(op);
-            UCAShaderRegister.StandardFlowShader.CurrentTechnique.Passes[0].Apply();
+            Effect shader = UCAShaderRegister.StandardFlowShader.Value;
+            shader.Parameters["LaserTextureSize"].SetValue(UCATextureRegister.Lightning.Size());
+            shader.Parameters["targetSize"].SetValue(new Vector2(LaserLength / 5f, TextureHeight));
+            shader.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly * Speed + Timeoffset);
+            shader.Parameters["uColor"].SetValue(colro.ToVector4() * Projectile.Opacity);
+            shader.Parameters["uFadeoutLength"].SetValue(op);
+            shader.Parameters["uFadeinLength"].SetValue(op);
+            shader.CurrentTechnique.Passes[0].Apply();
 
             Vector2 orig = new(0, TextureHeight / 2);
             float xScale = LaserLength / TextureWidth;

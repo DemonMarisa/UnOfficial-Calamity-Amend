@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Items.Weapons.Magic;
+using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -101,7 +102,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
 
                 if (AniProgress == 80)
                 {
-                    Owner.AddCooldown(NightBoost.ID, CalamityUtils.SecondsToFrames(30));
+                    Owner.AddCD(LAPContent.CDType<NightBoost>(), CalamityUtils.SecondsToFrames(30));
 
                     for (int i = 0; i < 25; i++)
                     {
@@ -148,12 +149,12 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
 
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
-
-            UCAShaderRegister.EdgeMeltsShader.Parameters["progress"].SetValue(Opacity);
-            UCAShaderRegister.EdgeMeltsShader.Parameters["InPutTextureSize"].SetValue(ModContent.Request<Texture2D>(Texture).Size());
-            UCAShaderRegister.EdgeMeltsShader.Parameters["EdgeColor"].SetValue(Color.DarkViolet.ToVector4());
-            UCAShaderRegister.EdgeMeltsShader.Parameters["EdgeWidth"].SetValue(0.01f);
-            UCAShaderRegister.EdgeMeltsShader.CurrentTechnique.Passes[0].Apply();
+            Effect shader = UCAShaderRegister.EdgeMeltsShader.Value;
+            shader.Parameters["progress"].SetValue(Opacity);
+            shader.Parameters["InPutTextureSize"].SetValue(ModContent.Request<Texture2D>(Texture).Size());
+            shader.Parameters["EdgeColor"].SetValue(Color.DarkViolet.ToVector4());
+            shader.Parameters["EdgeWidth"].SetValue(0.01f);
+            shader.CurrentTechnique.Passes[0].Apply();
             
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             float drawRotation = Projectile.rotation + (Projectile.spriteDirection == -1 ? MathHelper.Pi : 0f);

@@ -1,26 +1,16 @@
-﻿using CalamityMod;
-using CalamityMod.Items.Weapons.Magic;
-using LAP.Core.Utilities;
+﻿using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Terraria;
 using Terraria.GameContent;
-using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.UI.Chat;
 using UCA.Assets;
 using UCA.Content.Items.Weapons.Magic.Ray;
-using UCA.Content.Particiles;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld;
 using UCA.Core.Utilities;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace UCA.Content.GUI
 {

@@ -40,7 +40,7 @@ namespace UCA.Content.Items.Weapons.Rogue.Hammer
         public override void ExModifyTooltips(List<TooltipLine> tooltips)
         {
             if (DownedBossSystem.downedDoG && !Main.LocalPlayer.UCA().CanDisableGuideForGodsHammer)
-                tooltips.QuickAddTooltip($"{Temp.UCALocalPrefix}Weapons.Rogue.{GetType().Name}.ShimmmerTooltip", Color.LightPink);
+                tooltips.QuickAddTooltip($"{Temp.UCALocalPrefix}Weapons.Rogue.{GetType().Name}.ShimmerTooltip", Color.LightPink);
         }
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {

@@ -49,7 +49,6 @@ namespace UCA.Content.Projectiles.Rogue.ThunderProj
         {
             //此处时刻更新eu避免某些神秘模组的修改
             Projectile.extraUpdates = 0;
-            Main.NewText(Projectile.Center);
             //假平台唯一需要做的事情是判定玩家距离等，过远或者之类的处死。
             if (Owner.dead || KilledSignal == 1)
                 Projectile.Kill();

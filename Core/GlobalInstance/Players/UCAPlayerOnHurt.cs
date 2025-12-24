@@ -3,6 +3,7 @@ using CalamityMod.Balancing;
 using CalamityMod.Cooldowns;
 using CalamityMod.Items.Accessories;
 using CalamityMod.Items.Weapons.Magic;
+using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using System;
@@ -34,9 +35,9 @@ namespace UCA.Core.GlobalInstance.Players
         }
         public override bool ConsumableDodge(Player.HurtInfo info)
         {
-            if (Player.HasCooldown(ShadowBotlStaffDodge.ID))
+            if (Player.HasCD<ShadowBotlStaffDodge>())
             {
-                Player.RemoveCooldown(ShadowBotlStaffDodge.ID);
+                Player.RemoveCD<ShadowBotlStaffDodge>();
                 Player.SetImmuneTimeForAllTypes(180);
                 SoundEngine.PlaySound(SoundsMenu.FireBallBlast with { Pitch = -0.5f });
                 Vector2 firpos = Player.Center;

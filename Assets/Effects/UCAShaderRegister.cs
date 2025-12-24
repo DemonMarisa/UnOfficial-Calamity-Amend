@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using LAP.Assets.Effects;
+using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria;
 using Terraria.Graphics.Shaders;
@@ -11,27 +12,26 @@ namespace UCA.Assets.Effects
         // 当未提供特定着色器时，用作基本绘图的默认值。此着色器仅渲染顶点颜色数据，无需修改。
         private const string ShaderPath = "UCA/Assets/Effects/Overlays/";
         internal const string ShaderPrefix = "UCA:";
-        public static Effect MetaballShader;
-        public static Effect EdgeMeltsShader;
-        public static Effect TerraRayVinesShader;
-        public static Effect TerrarRayLaser;
-        public static Effect SolarBladeShader;
-        public static Effect SolarBlastShader;
-        public static Effect StandardFlowShader; 
-        public static Effect FlowWithAShader;
-        public static Effect PolarDistortShader;
-        public static Effect PolarDistortShaderWithR;
-        public static Effect SoulGreatSwordFlowShader;
-
-        public static Effect VolcanoEruptingShader;
+        public static Asset<Effect> MetaballShader { get; private set; }
+        public static Asset<Effect> EdgeMeltsShader { get; private set; }
+        public static Asset<Effect> TerraRayVinesShader { get; private set; }
+        public static Asset<Effect> TerrarRayLaser { get; private set; }
+        public static Asset<Effect> SolarBladeShader { get; private set; }
+        public static Asset<Effect> SolarBlastShader { get; private set; }
+        public static Asset<Effect> StandardFlowShader { get; private set; }
+        public static Asset<Effect> FlowWithAShader { get; private set; }
+        public static Asset<Effect> PolarDistortShader { get; private set; }
+        public static Asset<Effect> PolarDistortShaderWithR { get; private set; }
+        public static Asset<Effect> SoulGreatSwordFlowShader { get; private set; }
+        public static Asset<Effect> VolcanoEruptingShader { get; private set; }
         public override void Load()
         {
             if (Main.dedServ)
                 return;
 
-            static Effect LoadShader(string path)
+            static Asset<Effect> LoadShader(string path)
             {
-                return ModContent.Request<Effect>($"{ShaderPath}{path}", AssetRequestMode.ImmediateLoad).Value;
+                return ModContent.Request<Effect>($"{ShaderPath}{path}");
             }
 
             MetaballShader = LoadShader(nameof(MetaballShader));
@@ -70,10 +70,24 @@ namespace UCA.Assets.Effects
             VolcanoEruptingShader = LoadShader(nameof(VolcanoEruptingShader));
             RegisterMiscShader(VolcanoEruptingShader, "UCA" + nameof(VolcanoEruptingShader), nameof(VolcanoEruptingShader));
         }
-
-        public static void RegisterMiscShader(Effect shader, string passName, string registrationName)
+        public override void Unload()
         {
-            Ref<Effect> shaderPointer = new(shader);
+            MetaballShader = null;
+            EdgeMeltsShader = null;
+            TerraRayVinesShader = null;
+            TerrarRayLaser = null;
+            SolarBladeShader = null;
+            SolarBlastShader = null;
+            StandardFlowShader = null;
+            FlowWithAShader = null;
+            PolarDistortShader = null;
+            PolarDistortShaderWithR = null;
+            SoulGreatSwordFlowShader = null;
+            VolcanoEruptingShader = null;
+        }
+        public static void RegisterMiscShader(Asset<Effect> shader, string passName, string registrationName)
+        {
+            Asset<Effect> shaderPointer = shader;
             MiscShaderData passParamRegistration = new(shaderPointer, passName);
             GameShaders.Misc[$"{ShaderPrefix}{registrationName}"] = passParamRegistration;
         }

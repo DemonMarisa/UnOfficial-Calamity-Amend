@@ -47,6 +47,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
         public float Opacity;
         public float XScale = 0.5f;
         public int Time = 0;
+        public int HitCount;
         public Vector2 SourceOffset => new Vector2(0, 75 * Owner.direction);
         public override void SetStaticDefaults()
         {
@@ -161,7 +162,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
             float easedProgress = animationHelper.GetProgress(AnimationState.Middle);
             if (easedProgress == 0)
                 SoundEngine.PlaySound(SoundsMenu.SoulGreatSwordSwimg with { Volume = 0.6f, Pitch = 0f });
-            float baseRotation = animationHelper.UpDateAngle(-145, 145, Owner.direction, easedProgress);
+            float baseRotation = animationHelper.UpDateAngle(-145, 125, Owner.direction, easedProgress);
             // 确定椭圆的点
             Vector2 TargetPos = new Vector2(SwordLength, 0).BetterRotatedBy(baseRotation, SourceOffset, 1, XScale);
             Projectile.scale = TargetPos.Distance(Vector2.Zero) / (float)SwordLength;
@@ -199,21 +200,33 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
             CanHit = false;
             float easedProgress = EasingHelper.EaseOutCubic(animationHelper.GetProgress(AnimationState.End));
             Opacity = 1 - easedProgress;
-            float baseRotation = animationHelper.UpDateAngle(145, 150, Owner.direction, easedProgress);
+            float baseRotation = animationHelper.UpDateAngle(125, 145, Owner.direction, easedProgress);
             // 确定椭圆的点
             Vector2 TargetPos = new Vector2(SwordLength, 0).BetterRotatedBy(baseRotation, SourceOffset, 1, XScale);
             Projectile.scale = TargetPos.Distance(Vector2.Zero) / (float)SwordLength;
             Projectile.rotation = TargetPos.ToRotation() + TargetRot;
+            if (LAPUtilities.FinalExtraUpdate(Projectile))
+            {
+                Vector2 RealAimPoint = TargetPos.RotatedBy(TargetRot);
+                OldAimPos.Add(RealAimPoint);
+                OldRot.Add(Projectile.rotation);
+                OldScale.Add(Projectile.scale);
+                OldAimPos.RemoveAt(0);
+                OldRot.RemoveAt(0);
+                OldScale.RemoveAt(0);
+            }
         }
         #endregion
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (Projectile.LAP().OnceHitEffect)
             {
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<UseForOnHitNPCProj>(), 0, 0, Projectile.owner, Type);
-                ScreenShakeSystem.AddScreenShakes(Projectile.Center, 4, 25, 0);
+                ScreenShakeSystem.AddScreenShakes(Projectile.Center, 25, 15, 0);
                 Owner.SetImmuneTimeForAllTypes(30);
             }
+            if (HitCount < 5)
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<UseForOnHitNPCProj>(), 0, 0, Projectile.owner, Type);
+            HitCount++;
             target.AddBuff(ModContent.BuffType<MarkedforDeath>(), 1200);
         }
         public override bool PreDraw(ref Color lightColor)
@@ -238,30 +251,56 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
             Vector2 BallrotPoint = new Vector2(0, Ball.Height / 2);
             Vector2 DrawOffset = new Vector2(-60, 0).RotatedBy(Projectile.rotation);
             Main.spriteBatch.Draw(Ball, drawPosition + DrawOffset, null, Color.White * 1f * Opacity, Ballrot, BallrotPoint, Projectile.scale * Main.player[Projectile.owner].gravDir * new Vector2(1.3f, 0.25f), flipSprite, 0f);
-         
+            Vector2 BallDrawOffset2 = new Vector2(75, 0).RotatedBy(Projectile.rotation);
+            Vector2 BallrotPoint2 = Ball.Size() / 2;
+            Main.spriteBatch.Draw(Ball, drawPosition + BallDrawOffset2, null, Color.White * 1f * Opacity, Ballrot + MathHelper.PiOver2, BallrotPoint2, Projectile.scale * Main.player[Projectile.owner].gravDir * new Vector2(1.25f, 1f) * 0.25f, flipSprite, 0f);
             // 画两次流光
-            UCAShaderRegister.SoulGreatSwordFlowShader.Parameters["UVOffset"].SetValue(new Vector2(-Main.GlobalTimeWrappedHourly * Owner.direction, 0));
-            UCAShaderRegister.SoulGreatSwordFlowShader.Parameters["NoiseTextureScale"].SetValue(new Vector2(2f, 1f));
-            UCAShaderRegister.SoulGreatSwordFlowShader.CurrentTechnique.Passes[0].Apply();
-            LAPUtilities.SetTexture(UCATextureRegister.Aura_01.Value, 1);
+            Effect shader = UCAShaderRegister.SoulGreatSwordFlowShader.Value;
+            shader.Parameters["UVOffset"].SetValue(new Vector2(-Main.GlobalTimeWrappedHourly * Owner.direction, 0));
+            shader.Parameters["NoiseTextureScale"].SetValue(new Vector2(2f, 1f));
+            shader.CurrentTechnique.Passes[0].Apply();
+            LAPUtilities.SetTexture(UCATextureRegister.Aura_01.Value, SamplerState.LinearWrap, 1);
             Vector2 DrawOffset2 = new Vector2(-90, 0).RotatedBy(Projectile.rotation);
             Main.spriteBatch.Draw(Ball, drawPosition + DrawOffset2, null, Color.White * 1f * Opacity, Ballrot, BallrotPoint, Projectile.scale * Main.player[Projectile.owner].gravDir * new Vector2(1.8f, 0.4f), flipSprite, 0f);
-            UCAShaderRegister.SoulGreatSwordFlowShader.Parameters["NoiseTextureScale"].SetValue(new Vector2(3f, 1f));
+            shader.Parameters["NoiseTextureScale"].SetValue(new Vector2(1.5f, 0.5f));
             Main.spriteBatch.Draw(Ball, drawPosition + DrawOffset2, null, Color.White * 1f * Opacity, Ballrot, BallrotPoint, Projectile.scale * Main.player[Projectile.owner].gravDir * new Vector2(1.4f, 0.2f), flipSprite, 0f);
            
+            shader.Parameters["UVOffset"].SetValue(new Vector2(Main.GlobalTimeWrappedHourly * Owner.direction, 0));
+            shader.Parameters["NoiseTextureScale"].SetValue(new Vector2(2f, 1f));
+            shader.CurrentTechnique.Passes[0].Apply();
+
+            Vector2 FlowDrawOffset2 = new Vector2(-60, 45 * Projectile.spriteDirection).RotatedBy(Projectile.rotation);
+            SpriteEffects flipSprite2 = Projectile.spriteDirection * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            Main.spriteBatch.Draw(Ball, drawPosition + FlowDrawOffset2, null, Color.Violet * 1f * Opacity, Ballrot, BallrotPoint, Projectile.scale * Main.player[Projectile.owner].gravDir * new Vector2(1.8f, 0.4f) * 0.6f, flipSprite2, 0f);
+            Main.spriteBatch.Draw(Ball, drawPosition + FlowDrawOffset2, null, Color.Purple * 1f * Opacity, Ballrot, BallrotPoint, Projectile.scale * Main.player[Projectile.owner].gravDir * new Vector2(1.4f, 0.2f) * 0.6f, flipSprite2, 0f);
+            
+            if (Projectile.spriteDirection == 1)
+            {
+                shader.Parameters["UVOffset"].SetValue(new Vector2(-Main.GlobalTimeWrappedHourly * Owner.direction, 0));
+                shader.Parameters["NoiseTextureScale"].SetValue(new Vector2(2f, 1f));
+                shader.CurrentTechnique.Passes[0].Apply();
+            }
+
+            FlowDrawOffset2 = new Vector2(-60, -45 * Projectile.spriteDirection).RotatedBy(Projectile.rotation);
+            SpriteEffects flipSprite3 = Projectile.spriteDirection * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipVertically : SpriteEffects.None;
+            Main.spriteBatch.Draw(Ball, drawPosition + FlowDrawOffset2, null, Color.Violet * 1f * Opacity, Ballrot, BallrotPoint, Projectile.scale * Main.player[Projectile.owner].gravDir * new Vector2(1.8f, 0.4f) * 0.6f, flipSprite3, 0f);
+            Main.spriteBatch.Draw(Ball, drawPosition + FlowDrawOffset2, null, Color.Purple * 1f * Opacity, Ballrot, BallrotPoint, Projectile.scale * Main.player[Projectile.owner].gravDir * new Vector2(1.4f, 0.2f) * 0.6f, flipSprite3, 0f);
+
             if (OldAimPos.Count > 2)
             {
                 // 绘制拖尾
                 Vector2 UVOffset = new Vector2(Main.GlobalTimeWrappedHourly * 0.1f, 0);
                 Vector2 TextureScale = new Vector2(0.75f, 1f);
                 LAPUtilities.ApplyTrailShader(UVOffset, TextureScale, 1 - Opacity, TextureScale, Vector2.Zero, true);
-                LAPUtilities.SetTexture(UCATextureRegister.Slash2.Value, 0);
-                LAPUtilities.SetTexture(UCATextureRegister.HarshNoise.Value, 1);
-                LAPUtilities.SetTexture(UCATextureRegister.HarshNoise.Value, 2);
+                LAPUtilities.SetTexture(UCATextureRegister.Slash2.Value, SamplerState.LinearWrap, 0);
+                LAPUtilities.SetTexture(UCATextureRegister.HarshNoise.Value, SamplerState.LinearWrap, 1);
+                LAPUtilities.SetTexture(UCATextureRegister.HarshNoise.Value, SamplerState.LinearWrap, 2);
                 DrawTrail(0.9f, 0.2f);
-                LAPUtilities.SetTexture(UCATextureRegister.Slash.Value, 0);
-                LAPUtilities.SetTexture(UCATextureRegister.HarshNoise.Value, 1);
-                LAPUtilities.SetTexture(UCATextureRegister.HarshNoise.Value, 2);
+                DrawTrail(0.9f, 0.2f);
+                LAPUtilities.SetTexture(UCATextureRegister.Slash.Value, SamplerState.LinearWrap, 0);
+                LAPUtilities.SetTexture(UCATextureRegister.HarshNoise.Value, SamplerState.LinearWrap, 1);
+                LAPUtilities.SetTexture(UCATextureRegister.HarshNoise.Value, SamplerState.LinearWrap, 2);
+                DrawTrail(0.9f, 0.2f);
                 DrawTrail(0.9f, 0.2f);
             }
             LAPUtilities.ReSetToEndShader();

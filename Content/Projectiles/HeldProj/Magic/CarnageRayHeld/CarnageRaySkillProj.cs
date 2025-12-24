@@ -3,6 +3,7 @@ using CalamityMod.Buffs.DamageOverTime;
 using LAP.Content.Configs;
 using LAP.Core.AnimationHandle;
 using LAP.Core.SpecificEffectManagers;
+using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -86,7 +87,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
 
             BeginRot = Owner.GetPlayerToMouseVector2().ToRotation();
 
-            Owner.AddCooldown(CarnageBoost.ID, 600);
+            Owner.AddCD(LAPContent.CDType<CarnageBoost>(), 600);
 
             Projectile.netUpdate = true;
         }
@@ -370,7 +371,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
 
             SoundEngine.PlaySound(SoundsMenu.CarnageSkillMeleeHit, Projectile.Center);
 
-            Owner.AddCooldown(CarnageBoost.ID, 1200);
+            Owner.AddCD(LAPContent.CDType<CarnageBoost>(), 1200);
 
             target.AddBuff(ModContent.BuffType<BurningBlood>(), 600);
         }

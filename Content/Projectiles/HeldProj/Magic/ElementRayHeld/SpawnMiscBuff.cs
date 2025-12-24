@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -105,7 +106,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                     if (player.active && player.Center.Distance(Owner.Center) < 650)
                     {
                         Owner.Heal(Owner.statLifeMax2 / 20);
-                        Owner.AddCooldown(MiscBoost.ID, 1200);
+                        Owner.AddCD(LAPContent.CDType<MiscBoost>(), 1200);
                     }
                 }
                 Vector2 offset = new Vector2(64, 0).RotatedBy(Projectile.rotation);

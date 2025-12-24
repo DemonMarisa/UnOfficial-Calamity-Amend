@@ -14,7 +14,7 @@ namespace UCA.Content.Projectiles.Rogue.ThunderProj.RightHandHammer
     public partial class ThunderHandler: RogueProjClass, IPixelatedPrimitiveRenderer
     {
         #region 特殊攻击模组 - 下砸
-        private int PlatformIndex = -1;
+        // private int PlatformIndex = -1;
         private Vector2 PlatformPos = Vector2.Zero;
         private void UpdateMode_Strike()
         { 

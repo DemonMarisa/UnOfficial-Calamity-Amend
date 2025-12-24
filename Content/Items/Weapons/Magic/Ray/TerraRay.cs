@@ -2,6 +2,7 @@
 using CalamityMod.Items.Materials;
 using CalamityMod.Items.Weapons.Magic;
 using LAP.Core.Keybind;
+using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -99,9 +100,8 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
         }
         public override void UpdateHoldItem(Player player)
         {
-            player.AddCooldown(TerraRayCount.ID, UCAPlayer.MaxTerraRayRestore);
-            if (player.Calamity().cooldowns.TryGetValue(TerraRayCount.ID, out var Durability))
-                Durability.timeLeft = player.UCA().TerraRayCharge;
+            if (!player.HasCD<TerraRayCount>())
+                player.AddCD(LAPContent.CDType<TerraRayCount>(), UCAPlayer.MaxTerraRayRestore);
         }
         public override void AddRecipes()
         {

@@ -56,6 +56,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             Item.LAP().WeaponTier = AllWeaponTier.PostPolterghast;
 
             Item.LAP().WeaponSkillManaCost = 200;
+            Item.LAP().WeaponSkillFocusCost = 25;
         }
         public override bool AltFunctionUse(Player player)
         {
@@ -67,7 +68,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
         }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            if (player.altFunctionUse == 2)
+            if (player.altFunctionUse == 2 && player.CheckFocus(Item.LAP().WeaponSkillRealFocusCost))
             {
                 Projectile.NewProjectile(source, position, Vector2.Zero, ModContent.ProjectileType<ShadowBoltStaffSpecialHeldProj>(), damage, knockback, player.whoAmI);
             }

@@ -1,5 +1,4 @@
 ﻿using CalamityMod;
-using CalamityMod.Graphics.Primitives;
 using LAP.Content.Configs;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
@@ -12,11 +11,8 @@ using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
 using UCA.Assets.Sounds;
-using UCA.Content.Configs;
 using UCA.Content.Particiles;
-using UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld;
 using UCA.Core.BaseClass;
-using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
@@ -42,6 +38,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Projectile.timeLeft = 30;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 45;
+            Projectile.netUpdate = true;
         }
         public override void OnSpawn(IEntitySource source)
         {
@@ -74,7 +71,6 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 }
                 if (!LAPConfig.Instance.PerformanceMode)
                     new CrossGlow(Projectile.Center, Vector2.Zero, Color.Orange, 60, 1f, 0.4f).Spawn();
-                Projectile.netUpdate = true;
             }
 
             Scale = MathHelper.Lerp(0f, 1f, 1 - EasingHelper.EaseInCubic(Projectile.timeLeft / 30f)) * scale;
@@ -99,6 +95,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             shader.Parameters["UseColor"].SetValue(true);
             shader.CurrentTechnique.Passes[0].Apply();
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.FireNoise.Value;
+            Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;
             Vector2 DrawPos = Projectile.Center - Main.screenPosition;
             Vector2 orig = new Vector2(UCATextureRegister.ShockWave.Size().X / 2, UCATextureRegister.ShockWave.Size().Y / 2 - 40);
             Main.spriteBatch.Draw(UCATextureRegister.ShockWave.Value, DrawPos, null, Color.Orange, 0, orig, Scale * 0.8f, SpriteEffects.None, 0);
@@ -112,6 +109,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             shader.Parameters["UseColor"].SetValue(true);
             shader.CurrentTechnique.Passes[0].Apply();
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.FireNoise.Value;
+            Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.LinearWrap;
             Main.spriteBatch.Draw(UCATextureRegister.ShockWave.Value, DrawPos, null, Color.Orange, 0, orig, Scale * 0.6f, SpriteEffects.None, 0);
             if (!LAPConfig.Instance.PerformanceMode)
                 Main.spriteBatch.Draw(UCATextureRegister.ShockWave.Value, DrawPos, null, Color.Orange, 0, orig, Scale * 0.6f, SpriteEffects.None, 0);

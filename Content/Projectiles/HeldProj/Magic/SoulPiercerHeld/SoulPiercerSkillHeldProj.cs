@@ -222,7 +222,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
             if (Projectile.LAP().OnceHitEffect)
             {
                 ScreenShakeSystem.AddScreenShakes(Projectile.Center, 25, 15, 0);
-                Owner.SetImmuneTimeForAllTypes(30);
+                Owner.SetImmuneTimeForAllTypes(40);
             }
             if (HitCount < 5)
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<UseForOnHitNPCProj>(), 0, 0, Projectile.owner, Type);

@@ -8,8 +8,12 @@ namespace UCA.Content.UCACooldowns
 {
     public class ShadowBotlStaffCount : BaseCD
     {
-        public override bool DeBuff => true;
-        public override bool Buff => false;
+        public override void OnRegister()
+        {
+            Buff = false;
+            DeBuff = true;
+            Info = true;
+        }
         public override LocalizedText DisplayName()
         {
             return Language.GetOrRegister($"Mods.UCA.Cooldowns.UCAShadowBotlStaffCountCooldown");

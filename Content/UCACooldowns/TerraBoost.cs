@@ -33,7 +33,7 @@ namespace UCA.Content.UCACooldowns
             }
             if (player.miscCounter % 6 == 0)
             {
-                player.Heal(1);
+                player.NCHeal(1);
             }
         }
     }

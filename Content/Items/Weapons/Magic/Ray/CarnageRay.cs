@@ -2,6 +2,7 @@
 using CalamityMod.Items.Weapons.Magic;
 using Humanizer;
 using LAP.Core.Keybind;
+using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -54,6 +55,9 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             Item.LAP().UseCustomWeaponSkill = true;
             Item.LAP().DrawUCASmallIcon = true;
             Item.LAP().WeaponSkillManaCost = 200;
+            Item.LAP().WeaponSkillFocusCost = 50;
+            Item.LAP().WeaponSkillRealManaCost = 200;
+            Item.LAP().WeaponSkillRealFocusCost = 50;
         }
 
         public override bool AltFunctionUse(Player player)
@@ -90,8 +94,10 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
                 player.ownedProjectileCounts[ModContent.ProjectileType<CarnageRayHeldProjMelee>()] < 1 && 
                 player.ownedProjectileCounts[ModContent.ProjectileType<CarnageRayHeldProj>()] < 1)
             {
-                if (player.CheckMana(player.ActiveItem(), Item.LAP().WeaponSkillRealManaCost, true, false))
+                if (player.CheckFocus(Item.LAP().WeaponSkillRealFocusCost, false) && player.CheckMana(player.ActiveItem(), Item.LAP().WeaponSkillRealManaCost, false))
                 {
+                    player.CheckFocus(Item.LAP().WeaponSkillRealFocusCost, true);
+                    player.CheckMana(player.ActiveItem(), Item.LAP().WeaponSkillRealManaCost, true);
                     float kb = player.GetWeaponKnockback(Item);
                     int Damage = player.GetWeaponDamage(Item);
                     Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, Vector2.Zero, ModContent.ProjectileType<CarnageRaySkillProj>(), Damage, kb, player.whoAmI);

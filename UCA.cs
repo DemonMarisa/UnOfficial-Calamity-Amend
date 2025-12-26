@@ -1,3 +1,4 @@
+using LAP.Core.LAPUI.FocusBar;
 using System.IO;
 using Terraria.ModLoader;
 using UCA.Core.NetCode;
@@ -20,9 +21,10 @@ namespace UCA
         public override void Load()
         {
             Instance = this;
-
             CalamityInheritance = null;
             ModLoader.TryGetMod("CalamityInheritance", out CalamityInheritance);
+
+            FocusBarManger.UseFocus = true;
         }
 
         public override void Unload()

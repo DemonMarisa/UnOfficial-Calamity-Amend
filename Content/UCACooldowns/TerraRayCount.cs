@@ -22,6 +22,11 @@ namespace UCA.Content.UCACooldowns
         {
             return Language.GetOrRegister($"Mods.UCA.Cooldowns.UCATerraRestoreCount");
         }
+        public override void OnRegister()
+        {
+            Buff = false;
+            Info = true;
+        }
         public override void OnSpawn(Player player)
         {
             MaxTime = UCAPlayer.MaxTerraRayRestore;

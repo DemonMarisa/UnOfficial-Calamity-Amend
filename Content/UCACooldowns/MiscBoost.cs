@@ -1,5 +1,6 @@
 ﻿using CalamityMod.Cooldowns;
 using LAP.Core.LAPUI.CustomCD;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -21,7 +22,7 @@ namespace UCA.Content.UCACooldowns
         {
             if (player.miscCounter % 20 == 0)
             {
-                player.Heal(5);
+                player.NCHeal(5);
             }
             if (player.miscCounter % 4 == 0)
             {

@@ -26,6 +26,11 @@ namespace UCA.Content.UCACooldowns
         {
             return Language.GetOrRegister($"Mods.UCA.Cooldowns.UCANightShield");
         }
+        public override void OnRegister()
+        {
+            Buff = false;
+            Info = true;
+        }
         public override void OnSpawn(Player player)
         {
             MaxTime = UCAPlayer.NightShieldMaxHP;

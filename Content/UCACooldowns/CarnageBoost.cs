@@ -1,5 +1,6 @@
 ﻿using CalamityMod.Cooldowns;
 using LAP.Core.LAPUI.CustomCD;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -28,7 +29,7 @@ namespace UCA.Content.UCACooldowns
 
             if (player.miscCounter % 9 == 0)
             {
-                player.Heal(1);
+                player.NCHeal(1);
             }
         }
         public override void PostDraw()

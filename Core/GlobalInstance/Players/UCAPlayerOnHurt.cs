@@ -1,21 +1,12 @@
-﻿using CalamityMod;
-using CalamityMod.Balancing;
-using CalamityMod.Cooldowns;
-using CalamityMod.Items.Accessories;
-using CalamityMod.Items.Weapons.Magic;
-using LAP.Core.SystemsLoader;
+﻿using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.Audio;
-using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.WorldBuilding;
 using UCA.Assets.Sounds;
 using UCA.Content.Particiles;
 using UCA.Content.UCACooldowns;
-using UCA.Core.Utilities;
 
 namespace UCA.Core.GlobalInstance.Players
 {

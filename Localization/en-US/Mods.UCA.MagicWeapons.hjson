@@ -6,7 +6,7 @@ CarnageRay: {
 		Fires homing blood orbs around the ray.
 		Right Click: Stabs forward, consuming mana to launch homing blood orbs.
 		Weapon Skill: Blood Great Sword
-		[KEY]: Consumes [LAPManaCost] mana to slash forward, releasing numerous homing blood orbs.
+		[KEY]: Consumes [LAPManaCost] mana and [LAPFocusCost] focus point to slash forward, releasing numerous homing blood orbs.
 		'''
 }
 
@@ -20,7 +20,7 @@ TerraRay: {
 		Tornadoes fire healing projectiles towards the player and split into more spears upon hitting enemies.  
 		Weapon Skill: Fusang Blessing  
 		Has 3 uses, recovering one use every 45 seconds.  
-		[KEY]: Consumes [LAPManaCost] mana Reduces movement speed and grants 75% defense damage reduction. Summons tornadoes at your position and up to 4 nearby enemies after charging.  
+		[KEY]: Consumes [LAPManaCost] mana and [LAPFocusCost] focus point Reduces movement speed and grants 75% defense damage reduction. Summons tornadoes at your position and up to 4 nearby enemies after charging.  
 		[KEY] + Up: If uses remain, restores 30% max health after charging and grants a 30-second buff:
 		+10 HP/s life regen, 10% defense damage reduction, 15% damage reduction, +30 defense.
 		"In the name of the sol,may we walk the path of Tao"
@@ -34,7 +34,7 @@ PlasmaRodAlt: {
 		Fires a plasma beam that splits into 8 homing beams on impact.
 		Right Click: Launches an exploding shadow fireball.
 		Weapon Skill : Magic Sword
-		[KEY]: Consumes [LAPManaCost] mana to slash forward.
+		[KEY]: Consumes [LAPFocusCost] focus point to slash forward.
 		'''
 }
 
@@ -47,7 +47,7 @@ NightsRayAlt: {
 		Right Click: Expands a shield that consumes mana, deflects projectiles, and absorbs up to 400 damage.
 		Provides damage reduction and defense. (Effectiveness decreases when mana is zero)
 		Weapon Skill : Nights Blessing
-		[KEY]: Consumes [LAPManaCost] mana. Grants a 30-second comprehensive attack and defense buff, and fully restores the shield.
+		[KEY]: Consumes [LAPFocusCost] focus point. Grants a 30-second comprehensive attack and defense buff, and fully restores the shield.
 		'''
 }
 
@@ -116,11 +116,11 @@ ShadowBoltStaffAlt: {
 		'''
 		Fires a pure Shadow Bolt
 		The more enemies travels through the more damage the beam does (15%)
-		Right click:  teleport all shadows to your side
+		Right click: Consumes [LAPFocusCost] focus point teleport all shadows to your side
 		Weapon Skill: Shadow of the SoulPress
-		the [KEY] key to summon eight shadows around the player after a brief charge.
+		the [KEY] key Consumes [LAPManaCost] mana to summon eight shadows around the player after a brief charge.
 		the player can dodge one attack within the next 30 seconds.
-		The dodge grants [LAPManaCost] frames of invincibility.
+		The dodge grants 180 frames of invincibility.
 		The skill has a 30 second cooldown.
 		'''
 }
@@ -134,6 +134,6 @@ SoulPiercerAlt: {
 		Weapon Skill: Soul Greatsword
 		Consumes [LAPManaCost] mana to slash forward.
 		During charging and slashing, grant 50% damage reduction
-		Hitting an enemy will grant you 30 immunity frames 
+		Hitting an enemy will grant you 40 immunity frames 
 		'''
 }

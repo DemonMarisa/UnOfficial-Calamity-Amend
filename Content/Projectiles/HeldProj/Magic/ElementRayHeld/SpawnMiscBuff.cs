@@ -105,7 +105,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 {
                     if (player.active && player.Center.Distance(Owner.Center) < 650)
                     {
-                        Owner.Heal(Owner.statLifeMax2 / 20);
+                        Owner.NCHeal(Owner.statLifeMax2 / 20);
                         Owner.AddCD(LAPContent.CDType<MiscBoost>(), 1200);
                     }
                 }

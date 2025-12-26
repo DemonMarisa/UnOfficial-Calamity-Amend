@@ -52,6 +52,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             Item.LAP().DrawUCASmallIcon = true;
             Item.LAP().UseCustomWeaponSkill = true;
             Item.LAP().WeaponSkillManaCost = 200;
+            Item.LAP().WeaponSkillFocusCost = 100;
         }
         public override bool AltFunctionUse(Player player)
         {
@@ -84,8 +85,10 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
         {
             if (player.ownedProjectileCounts[ModContent.ProjectileType<TerraRayHeldProj>()] < 1 && player.ownedProjectileCounts[ModContent.ProjectileType<TerraRayHeldProjSpecial>()] < 1 && player.ownedProjectileCounts[ModContent.ProjectileType<TerraRayHeldProjSkill>()] < 1)
             {
-                if (player.CheckMana(player.ActiveItem(), Item.LAP().WeaponSkillRealManaCost, true, false))
+                if (player.CheckFocus(Item.LAP().WeaponSkillRealFocusCost, false) && player.CheckMana(player.ActiveItem(), Item.LAP().WeaponSkillRealManaCost, false, false))
                 {
+                    player.CheckFocus(Item.LAP().WeaponSkillRealFocusCost, true);
+                    player.CheckMana(player.ActiveItem(), Item.LAP().WeaponSkillRealManaCost, true, false);
                     float kb = player.GetWeaponKnockback(Item);
                     int Damage = player.GetWeaponDamage(Item);
                     float Projectilai = 0;

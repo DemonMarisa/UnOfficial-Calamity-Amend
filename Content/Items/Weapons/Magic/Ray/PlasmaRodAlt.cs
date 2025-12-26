@@ -1,6 +1,7 @@
 ﻿using CalamityMod;
 using LAP.Core.Keybind;
 using LAP.Core.MiscDate;
+using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -49,7 +50,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             Item.LAP().UseWeaponSkill = true;
             Item.LAP().UseCustomWeaponSkill = true;
             Item.LAP().DrawUCASmallIcon = true;
-            Item.LAP().WeaponSkillManaCost = 20;
+            Item.LAP().WeaponSkillFocusCost = 10;
         }
         public override bool AltFunctionUse(Player player)
         {
@@ -83,7 +84,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
         {
             if (!player.HasProj<PlasmaRodHeldProj>() && !player.HasProj<PlasmaRodHeldProjBlast>() && !player.HasProj<PlasmaRodSkillProj>())
             {
-                if (player.CheckMana(player.ActiveItem(), Item.LAP().WeaponSkillRealManaCost, true, false))
+                if (player.CheckFocus(Item.LAP().WeaponSkillRealFocusCost, true, false))
                 {
                     if (PlasmaRodFilp == 1)
                     {

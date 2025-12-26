@@ -11,13 +11,8 @@ namespace UCA.Core.GlobalInstance.Projectiles
         public override bool InstancePerEntity => true;
 
         public bool HasThroughNightShield = false;
-
         public bool HasThroughNightShieldOverMax = false;
-
         public int DamageDefence = 0;
-        public float[] ExtraAI = new float[100];
-        public int StoredEU = -1;
-        public int TargetIndex;
         public override void AI(Projectile projectile)
         {
         }
@@ -26,9 +21,9 @@ namespace UCA.Core.GlobalInstance.Projectiles
             if (HasThroughNightShield)
             {
                 modifiers.ModifyHurtInfo += ModifyHurtInfo_NightShield;
+                projectile.netUpdate = true;
             }
         }
-
         public void ModifyHurtInfo_NightShield(ref Player.HurtInfo info)
         {
             Player player = Main.player[Main.myPlayer];
@@ -45,7 +40,7 @@ namespace UCA.Core.GlobalInstance.Projectiles
             }
         }
 
-        public override void OnHitNPC(Projectile projectile, Terraria.NPC target, Terraria.NPC.HitInfo hit, int damageDone)
+        public override void OnHitNPC(Projectile projectile, NPC target, NPC.HitInfo hit, int damageDone)
         {
         }
     }

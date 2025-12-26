@@ -2,21 +2,15 @@
 using CalamityMod.Items.Materials;
 using CalamityMod.Tiles.Furniture.CraftingStations;
 using LAP.Core.Enums;
-using LAP.Core.MiscDate;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Common.Misc;
-using UCA.Content.MetaBalls;
-using UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld;
-using UCA.Content.Projectiles.HeldProj.Magic.ShadowBoltStaffHeld;
 using UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld;
 using UCA.Core.BaseClass;
-using UCA.Core.Keybinds;
 
 namespace UCA.Content.Items.Weapons.Magic.Ray
 {
@@ -54,7 +48,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
 
             Item.LAP().WeaponTier = AllWeaponTier.PostDOG;
             Item.LAP().UseCICalStatInflation = true;
-            Item.LAP().WeaponSkillManaCost = 300;
+            Item.LAP().WeaponSkillManaCost = 350;
         }
         public override bool AltFunctionUse(Player player)
         {
@@ -83,7 +77,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
                 {
                     float kb = player.GetWeaponKnockback(Item);
                     int Damage = player.GetWeaponDamage(Item);
-                    Projectile.NewProjectile(player.GetSource_FromThis(), player.Center, Vector2.Zero, ModContent.ProjectileType<SoulPiercerSkillHeldProj>(), Damage * 10, kb, player.whoAmI);
+                    Projectile.NewProjectile(player.GetSource_FromThis(), player.Center, Vector2.Zero, ModContent.ProjectileType<SoulPiercerSkillHeldProj>(), Damage * 10, kb * 100, player.whoAmI);
                 }
             }
         }

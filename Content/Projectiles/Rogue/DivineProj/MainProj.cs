@@ -66,11 +66,9 @@ namespace UCA.Content.Projectiles.Rogue.DivineProj
             Projectile.width = 86;
             Projectile.height = 72;
             Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 15;
+            //4eu, 12 => 3
+            Projectile.localNPCHitCooldown = 12;
             Projectile.extraUpdates = 4;
-        }
-        public override void OnSpawn(IEntitySource source)
-        {
         }
         public override void AI()
         {

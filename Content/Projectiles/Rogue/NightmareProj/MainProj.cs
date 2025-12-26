@@ -84,9 +84,9 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
                 Projectile.HomingNPCBetter(target, 24f, 20f, 1);
 
             //如果超出了玩家屏幕范围，且玩家仍然没有仆从锤，生成仆从锤
-            if (LAPUtilities.OutOffScreen(Projectile.Center, 1.2f) && !Owner.HasProj<NightmareHammerMinion>())
+            if (LAPUtilities.OutOffScreen(Projectile.Center, 1.2f) && !Owner.HasProj<NightmareHammerMinion>(out int projID))
             {
-                Projectile proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<NightmareHammerMinion>(), Projectile.damage, 0f, Projectile.owner);
+                Projectile proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, projID, Projectile.damage, 0f, Projectile.owner);
                 proj.Calamity().stealthStrike = true;
                 SoundEngine.PlaySound(SoundsMenu.Mana_Toss, Owner.Center);
                 //而后，杀死射弹。
@@ -150,14 +150,14 @@ namespace UCA.Content.Projectiles.Rogue.NightmareProj
 
             SoundEngine.PlaySound(UseSound, Projectile.Center);
             //优先生成挂载射弹
-            if (!Owner.HasProj<NightmareHammerProjClone>())
+            if (!Owner.HasProj<NightmareHammerProjClone>(out int projID))
             {
-                Projectile proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<NightmareHammerProjClone>(), Projectile.damage, 0f, Projectile.owner);
+                Projectile proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, projID, Projectile.damage, 0f, Projectile.owner);
                 proj.Calamity().stealthStrike = true;
             }
-            else if (!Owner.HasProj<NightmareHammerMinion>())
+            else if (!Owner.HasProj<NightmareHammerMinion>(out int minionID))
             {
-                Projectile hangingProj = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<NightmareHammerMinion>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                Projectile hangingProj = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, minionID, Projectile.damage, Projectile.knockBack, Projectile.owner);
                 hangingProj.Calamity().stealthStrike = true;
                 SoundEngine.PlaySound(SoundsMenu.Mana_Toss, Projectile.Center);
             }

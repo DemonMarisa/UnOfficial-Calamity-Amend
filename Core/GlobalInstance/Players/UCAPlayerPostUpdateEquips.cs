@@ -45,6 +45,8 @@ namespace UCA.Core.GlobalInstance.Players
             //锤子常驻10潜伏值，这个效果不再有任何条件制约
             calPlayer.rogueStealthMax += ThrownHammerItem.BaseMaxStealth;
             BanChangeArmorsetStealth = true;
+            Player.statLifeMax2 += (int)(calPlayer.rogueStealthMax * 100f);
+            Player.lifeRegen += (int)(calPlayer.rogueStealthMax * 10f);
             //全体锤子无法生效任何形式的潜伏增伤
             //下方的代码从灾厄那复制
             Player.DisabelStealthDamageBoost();

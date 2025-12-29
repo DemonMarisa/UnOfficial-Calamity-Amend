@@ -9,10 +9,9 @@ using UCA.Content.Particiles;
 using UCA.Content.Projectiles.HealPRoj;
 using LAP.Core.AnimationHandle;
 using UCA.Core.BaseClass;
-using UCA.Core.Enums;
-using LAP.Core.Graphics;
 using UCA.Core.Utilities;
 using LAP.Core.Utilities;
+using LAP.Core.Enums;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
@@ -79,9 +78,9 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 {
                     Color color = Color.Lerp(Color.DarkGreen, Color.LightGreen, Main.rand.NextFloat(0, 1f));
                     Vector2 pos = Projectile.position + new Vector2(Main.rand.Next(0, Projectile.width), Projectile.height);
-                    new TerraTree(pos, -Vector2.UnitY.RotatedBy(MathHelper.PiOver4 * filps) * Main.rand.NextFloat(1, 2), color, 0, DrawLayer.AfterDust, Main.rand.NextFloat(12, 15), -1, Main.rand.NextFloat(9, 18f)).Spawn();
+                    new TerraTree(pos, -Vector2.UnitY.RotatedBy(MathHelper.PiOver4 * filps) * Main.rand.NextFloat(1, 2), color, 0, DrawLayer.AfterDusts, Main.rand.NextFloat(12, 15), -1, Main.rand.NextFloat(9, 18f)).Spawn();
                     Vector2 pos2 = Projectile.position + new Vector2(Main.rand.Next(0, Projectile.width), Projectile.height);
-                    new TerraTree(pos2, -Vector2.UnitY.RotatedBy(-MathHelper.PiOver4 * filps) * Main.rand.NextFloat(1, 2), Color.SaddleBrown, 0, DrawLayer.AfterDust, Main.rand.NextFloat(12, 17), 1, Main.rand.NextFloat(11, 22)).Spawn();
+                    new TerraTree(pos2, -Vector2.UnitY.RotatedBy(-MathHelper.PiOver4 * filps) * Main.rand.NextFloat(1, 2), Color.SaddleBrown, 0, DrawLayer.AfterDusts, Main.rand.NextFloat(12, 17), 1, Main.rand.NextFloat(11, 22)).Spawn();
                 }
 
                 for (int i = 0; i < 2; i++)
@@ -128,7 +127,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
                 Vector2 firVec = Vector2.UnitX.RotatedBy(rot * i).RotatedByRandom(MathHelper.TwoPi);
                 Color color = Main.rand.NextBool() ? Color.ForestGreen : Color.SaddleBrown;
-                new TerraTree(firPos, firVec * Main.rand.NextFloat(0.8f, 1.4f), color, 0, DrawLayer.BeforeDust, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
+                new TerraTree(firPos, firVec * Main.rand.NextFloat(0.8f, 1.4f), color, 0, DrawLayer.BeforeDusts, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
             }
         }
         public override void OnKill(int timeLeft)

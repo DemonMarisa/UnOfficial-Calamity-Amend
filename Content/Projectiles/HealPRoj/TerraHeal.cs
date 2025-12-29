@@ -10,6 +10,7 @@ using LAP.Core.BaseClass;
 using LAP.Core.Graphics;
 using UCA.Core.Utilities;
 using LAP.Core.Utilities;
+using LAP.Core.Enums;
 
 namespace UCA.Content.Projectiles.HealPRoj
 {
@@ -31,8 +32,8 @@ namespace UCA.Content.Projectiles.HealPRoj
         {
             float XScale = Main.rand.NextFloat(6, 12);
             float Height = Main.rand.NextFloat(4, 10);
-            Vine.Add(new TerraLanceVine(Projectile.Center, Projectile.velocity, Color.ForestGreen, DrawLayer.BeforeDust, 3000, XScale, 1, Height));
-            Vine.Add(new TerraLanceVine(Projectile.Center, Projectile.velocity, Color.LightGreen, DrawLayer.AfterDust, 3000, XScale, -1, Height));
+            Vine.Add(new TerraLanceVine(Projectile.Center, Projectile.velocity, Color.ForestGreen, DrawLayer.BeforeDusts, 3000, XScale, 1, Height));
+            Vine.Add(new TerraLanceVine(Projectile.Center, Projectile.velocity, Color.LightGreen, DrawLayer.AfterDusts, 3000, XScale, -1, Height));
         }
         public override void ExAI()
         {
@@ -97,7 +98,7 @@ namespace UCA.Content.Projectiles.HealPRoj
 
                 Vector2 firVec = Vector2.UnitX.RotatedBy(rot * i).RotatedByRandom(MathHelper.TwoPi);
                 Color color = Main.rand.NextBool() ? Color.ForestGreen : Color.SaddleBrown;
-                new TerraTree(firPos, firVec * Main.rand.NextFloat(0.8f, 1.4f), color, 0, DrawLayer.BeforeDust, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
+                new TerraTree(firPos, firVec * Main.rand.NextFloat(0.8f, 1.4f), color, 0, DrawLayer.BeforeDusts, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
             }
             for (int i = 0; i < 5; i++)
             {

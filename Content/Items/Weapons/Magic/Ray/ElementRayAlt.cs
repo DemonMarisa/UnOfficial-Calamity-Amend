@@ -16,7 +16,6 @@ using UCA.Common.Misc;
 using UCA.Content.GUI;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld;
-using UCA.Content.Projectiles.Rogue;
 using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
 
@@ -181,8 +180,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             LAPUtilities.IntegrateHotkey(tooltips, LAPKeybind.WeaponSkillHotKey);
             Player player = Main.LocalPlayer;
             string MiscTooltip = LocalizedPath.ElementalRayMiscTooltip;
-            //先获取原本的tooltip值，因为下方会把tooltip全部复写
-            string originalTooltipValue = $"Mods.UCA.MagicWeapons.{GetType().Name}.Tooltip".ToLangValue();
+
             if (player.UCA().ElementalRayStates == ElementalRayState.Misc)
             {
                 MiscTooltip = LocalizedPath.ElementalRayMiscTooltip;

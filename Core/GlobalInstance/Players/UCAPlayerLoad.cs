@@ -7,11 +7,9 @@ namespace UCA.Core.GlobalInstance.Players
     {
         public override void LoadData(TagCompound tag)
         {
-            HammerTagLoad(tag);
         }
         public override void SaveData(TagCompound tag)
         {
-            HammerTagSave(tag);
         }
         public override void Load()
         {
@@ -21,20 +19,6 @@ namespace UCA.Core.GlobalInstance.Players
         }
         public override void OnEnterWorld()
         {
-        }
-        //存储。
-        private void HammerTagSave(TagCompound tag)
-        {
-            tag.Add(nameof(CanDisableGuideForGodsHammer), CanDisableGuideForGodsHammer);
-            tag.Add(nameof(CanDisableGuideForGrandHammer), CanDisableGuideForGrandHammer);
-            tag.Add(nameof(ShouldGiveSpareGodsHammer), ShouldGiveSpareGodsHammer);
-        }
-
-        private void HammerTagLoad(TagCompound tag)
-        {
-            CanDisableGuideForGodsHammer = tag.GetBool(nameof(CanDisableGuideForGodsHammer));
-            CanDisableGuideForGrandHammer = tag.GetBool(nameof(CanDisableGuideForGrandHammer));
-            ShouldGiveSpareGodsHammer = tag.GetBool(nameof(ShouldGiveSpareGodsHammer));
         }
     }
 }

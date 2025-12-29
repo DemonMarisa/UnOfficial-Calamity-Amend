@@ -1,5 +1,4 @@
-﻿using CalamityMod.Graphics.Primitives;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
@@ -13,25 +12,21 @@ using UCA.Content.Particiles;
 using UCA.Core.BaseClass;
 using LAP.Core.Graphics.Primitives.Trail;
 using LAP.Core.Utilities;
+using LAP.Core.Graphics.PixelatedRender;
+using LAP.Core.Enums;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
-    public class PlasmaPrimarySpark : BaseMagicProj, IPixelatedPrimitiveRenderer
+    public class PlasmaPrimarySpark : BaseMagicProj, IPixelatedRenderer
     {
-        public PixelationPrimitiveLayer LayerToRenderTo => PixelationPrimitiveLayer.AfterPlayers;
+        public DrawLayer LayerToRenderTo => DrawLayer.BeforePlayer;
         public Player Owner => Main.player[Projectile.owner];
         public override string Texture => UCATextureRegister.InvisibleTexturePath;
-
         public NPC Target = null;
-
         public float DrawRot = 0;
-
         public bool FadeOut = false;
-
         public int FadeOutCount = 60;
-
         public float VelocityLength = 0;
-
         public override void SetStaticDefaults()
         {
             // 保存旧朝向与旧位置
@@ -92,13 +87,13 @@ namespace UCA.Content.Projectiles.Magic.Ray
             }
         }
 
-        public void RenderPixelatedPrimitives(SpriteBatch spriteBatch, PixelationPrimitiveLayer layer)
+        public void RenderPixelated(SpriteBatch spriteBatch)
         {
             Vector2 HalfProj = new Vector2(Projectile.width / 2, Projectile.height / 2);
             List<TrailDrawDate> trailDrawDate = [];
             List<TrailDrawDate> SecondtrailDrawDate = [];
             List<TrailDrawDate> ThirdtrailDrawDate = [];
-            DrawSetting drawSetting = new(UCATextureRegister.HoodTrail.Value, false, true);
+            DrawSetting drawSetting = new(UCATextureRegister.HoodTrail.Value, false, false);
 
             for (int i = 0; i < Projectile.oldPos.Length; i++)
             {
@@ -106,13 +101,13 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 {
                     Vector2 DrawPos = Projectile.oldPos[i] - Main.screenPosition + HalfProj - new Vector2(-18, 0).RotatedBy(Projectile.oldRot[i]);
 
-                    TrailDrawDate TrailDrawDate = new(DrawPos, new Color(208, 0, 255, 0), new Vector2(0, 12), Projectile.oldRot[i]);
+                    TrailDrawDate TrailDrawDate = new(DrawPos, new Color(208, 0, 255, 0), new Vector2(0, 24), Projectile.oldRot[i]);
                     trailDrawDate.Add(TrailDrawDate);
 
-                    TrailDrawDate TrailDrawDate2 = new(DrawPos, new Color(255, 255, 255, 0), new Vector2(0, 4), Projectile.oldRot[i]);
+                    TrailDrawDate TrailDrawDate2 = new(DrawPos, new Color(255, 255, 255, 0), new Vector2(0, 8), Projectile.oldRot[i]);
                     SecondtrailDrawDate.Add(TrailDrawDate2);
 
-                    TrailDrawDate TrailDrawDate3 = new(DrawPos, new Color(186, 50, 205, 0), new Vector2(0, 20), Projectile.oldRot[i]);
+                    TrailDrawDate TrailDrawDate3 = new(DrawPos, new Color(186, 50, 205, 0), new Vector2(0, 40), Projectile.oldRot[i]);
                     ThirdtrailDrawDate.Add(TrailDrawDate3);
                 }
             }
@@ -123,13 +118,14 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
             Vector2 DrawTexPos = Projectile.Center - Main.screenPosition;
             Texture2D texture = UCATextureRegister.GlowBall.Value;
-            spriteBatch.Draw(texture, DrawTexPos / 2, null, new Color(0, 0, 0, 255), 0, texture.Size() / 2, Projectile.scale * 0.3f, SpriteEffects.None, 0);
-            spriteBatch.Draw(UCATextureRegister.BallSoft.Value, DrawTexPos / 2, null, new Color(148, 0, 255, 0), 0, UCATextureRegister.BallSoft.Size() / 2, Projectile.scale * 0.4f, SpriteEffects.None, 0);
-            spriteBatch.Draw(UCATextureRegister.Spirit.Value, DrawTexPos / 2, null, new Color(255, 255, 255, 0), Main.GlobalTimeWrappedHourly * 2, UCATextureRegister.Spirit.Size() / 2, Projectile.scale * 0.2f, SpriteEffects.None, 0);
+            spriteBatch.Draw(texture, DrawTexPos, null, new Color(0, 0, 0, 255), 0, texture.Size() / 2, Projectile.scale * 0.6f, SpriteEffects.None, 0);
+            spriteBatch.Draw(UCATextureRegister.BallSoft.Value, DrawTexPos, null, new Color(148, 0, 255, 0), 0, UCATextureRegister.BallSoft.Size() / 2, Projectile.scale * 0.8f, SpriteEffects.None, 0);
+            spriteBatch.Draw(UCATextureRegister.Spirit.Value, DrawTexPos, null, new Color(255, 255, 255, 0), Main.GlobalTimeWrappedHourly * 2, UCATextureRegister.Spirit.Size() / 2, Projectile.scale * 0.4f, SpriteEffects.None, 0);
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
+            PixelatedRenderManger.BeginDrawProj = true;
             return false;
         }
 

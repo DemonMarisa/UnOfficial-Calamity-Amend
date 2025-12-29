@@ -16,11 +16,10 @@ using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
 using UCA.Content.UCACooldowns;
 using LAP.Core.AnimationHandle;
-using UCA.Core.Enums;
-using LAP.Core.Graphics;
 using UCA.Core.Utilities;
 using LAP.Core.Utilities;
 using LAP.Core.SystemsLoader;
+using LAP.Core.Enums;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
 {
@@ -137,7 +136,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
 
                     Vector2 firVec = Vector2.UnitX.RotatedBy(rot * i).RotatedByRandom(MathHelper.TwoPi);
                     Color color = Main.rand.NextBool() ? Color.ForestGreen : Color.SaddleBrown;
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(1.6f, 6.4f), color, 0, DrawLayer.BeforeDust, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(1.6f, 6.4f), color, 0, DrawLayer.BeforeDusts, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
                 }
             }
             else if (!animationHelper.HasFinish[AnimationState.End])

@@ -1,16 +1,13 @@
-﻿using CalamityMod.Graphics.Primitives;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
-using LAP.Core.Graphics;
 using LAP.Core.Graphics.DrawNode;
 using LAP.Core.Graphics.Primitives.Trail;
-using UCA.Core.Utilities;
+using LAP.Core.Enums;
 
 namespace UCA.Content.DrawNodes
 {
@@ -29,9 +26,6 @@ namespace UCA.Content.DrawNodes
             Filp = filp;
             Height = height;
         }
-        public DynamicVertexBuffer VertexBuffer;
-        public short VerticesIndex;
-
         public List<Vector2> OldPos = [];
         public List<float> OldRot = [];
         public Vector2 oldDustPos;

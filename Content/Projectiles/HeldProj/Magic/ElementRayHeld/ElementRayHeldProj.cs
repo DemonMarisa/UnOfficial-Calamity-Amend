@@ -1,8 +1,5 @@
-﻿using CalamityMod;
-using CalamityMod.Items.Weapons.Magic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Mono.Cecil;
 using System;
 using Terraria;
 using Terraria.Audio;
@@ -15,8 +12,8 @@ using UCA.Content.Particiles;
 using UCA.Content.Projectiles.Magic.Ray;
 using LAP.Core.BaseClass;
 using UCA.Core.Utilities;
-using static System.Net.Mime.MediaTypeNames;
 using LAP.Core.Utilities;
+using UCA.Content.Items.Weapons.Magic.Ray;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
 {
@@ -34,7 +31,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         // 日耀模式下会发射散射火球，击中敌人，玩家背后发射火球
         // 星云模式下会在周围发射星云，击中敌人发射额外星云
         // 星璇模式下会在玩家背后发射更多导弹，分裂改为发射闪电
-        public override LocalizedText DisplayName => CalamityUtils.GetItemName<ElementalRay>();
+        public override LocalizedText DisplayName => LAPUtilities.GetItemName<ElementRayAlt>();
         public Vector2 RotVector => new Vector2(8 * Owner.direction, 7).BetterRotatedBy(Owner.GetPlayerToMouseVector2().ToRotation(), default, 0.5f, 1f);
 
         public override Vector2 RotPoint => TextureAssets.Projectile[Type].Size() / 2;

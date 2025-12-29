@@ -1,8 +1,6 @@
-﻿using CalamityMod;
-using CalamityMod.Graphics.Primitives;
-using CalamityMod.Items.Weapons.Magic;
-using LAP.Content.Configs;
+﻿using LAP.Content.Configs;
 using LAP.Core.AnimationHandle;
+using LAP.Core.Enums;
 using LAP.Core.SpecificEffectManagers;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
@@ -16,18 +14,16 @@ using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
 using UCA.Assets.Sounds;
-using UCA.Content.Configs;
+using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Particiles;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.Misc;
-using UCA.Core.Enums;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
 {
-    public class PlasmaRodSkillProj : ModProjectile, ILocalizedModType, IPixelatedPrimitiveRenderer
+    public class PlasmaRodSkillProj : ModProjectile, ILocalizedModType
     {
-        public PixelationPrimitiveLayer layer = PixelationPrimitiveLayer.AfterProjectiles;
-        public override LocalizedText DisplayName => CalamityUtils.GetItemName<PlasmaRod>();
+        public override LocalizedText DisplayName => LAPUtilities.GetItemName<PlasmaRodAlt>();
         public override string Texture => $"{ItemPath.MagicRayWeaponsPath}" + "PlasmaRodAlt";
 
         public AnimationHelper animationHelper = new AnimationHelper(3);
@@ -194,10 +190,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
                 Color DrawColor = Color.Lerp(Color.Violet, Color.DarkViolet, Main.rand.NextFloat());
                 new TrailGlowBall(BeginPos, -fireVel, DrawColor, Main.rand.Next(45, 90), 0.1f, true).Spawn();
             }
-        }
-
-        public void RenderPixelatedPrimitives(SpriteBatch spriteBatch, PixelationPrimitiveLayer layer)
-        {
         }
 
         public override bool PreDraw(ref Color lightColor)

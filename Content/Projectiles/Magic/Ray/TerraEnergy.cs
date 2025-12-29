@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using Terraria;
@@ -8,17 +7,14 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.WorldBuilding;
 using UCA.Assets;
 using UCA.Assets.Effects;
 using UCA.Assets.Sounds;
 using UCA.Content.DrawNodes;
 using UCA.Content.Particiles;
 using UCA.Core.BaseClass;
-using LAP.Core.Graphics;
-using LAP.Core.Graphics.Primitives.Trail;
-using UCA.Core.Utilities;
 using LAP.Core.Utilities;
+using LAP.Core.Enums;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
@@ -138,7 +134,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
                     Vector2 firVec = Vector2.UnitX.RotatedBy(rot * i).RotatedByRandom(MathHelper.TwoPi);
                     Color color = Main.rand.NextBool() ? Color.DarkGreen : Color.SaddleBrown;
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(0.3f, 0.6f), color, 0, DrawLayer.BeforeDust, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(0.3f, 0.6f), color, 0, DrawLayer.BeforeDusts, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
                 }
                 for (int i = 0; i < 5; i++)
                 {

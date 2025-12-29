@@ -13,6 +13,7 @@ using UCA.Core.BaseClass;
 using LAP.Core.Graphics;
 using UCA.Core.Utilities;
 using LAP.Core.Utilities;
+using LAP.Core.Enums;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
@@ -142,28 +143,28 @@ namespace UCA.Content.Projectiles.Magic.Ray
             {
                 if (WeaponStates == ElementalRayState.Solar)
                 {
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.OrangeRed, 0, DrawLayer.AfterDust, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.Orange, 0, DrawLayer.AfterDust, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.OrangeRed, 0, DrawLayer.AfterDusts, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.Orange, 0, DrawLayer.AfterDusts, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
                 }
                 else if (WeaponStates == ElementalRayState.Nebula)
                 {
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.Violet, 0, DrawLayer.AfterDust, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.BlueViolet, 0, DrawLayer.AfterDust, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.Violet, 0, DrawLayer.AfterDusts, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.BlueViolet, 0, DrawLayer.AfterDusts, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
                 }
                 else if (WeaponStates == ElementalRayState.Vortex)
                 {
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.Turquoise, 0, DrawLayer.AfterDust, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.DarkTurquoise, 0, DrawLayer.AfterDust, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.Turquoise, 0, DrawLayer.AfterDusts, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.DarkTurquoise, 0, DrawLayer.AfterDusts, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
                 }
                 else if (WeaponStates == ElementalRayState.StarDust)
                 {
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.SkyBlue, 0, DrawLayer.AfterDust, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.DeepSkyBlue, 0, DrawLayer.AfterDust, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.SkyBlue, 0, DrawLayer.AfterDusts, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.DeepSkyBlue, 0, DrawLayer.AfterDusts, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
                 }
                 else
                 {
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.White, 0, DrawLayer.AfterDust, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.GhostWhite, 0, DrawLayer.AfterDust, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.White, 0, DrawLayer.AfterDusts, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.GhostWhite, 0, DrawLayer.AfterDusts, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
                 }
             }
             #endregion

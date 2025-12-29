@@ -1,6 +1,11 @@
 ﻿using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
+using CalamityMod.Enums;
 using CalamityMod.Graphics.Primitives;
+using LAP.Core.BaseClass;
+using LAP.Core.Enums;
+using LAP.Core.Graphics.PixelatedRender;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -18,17 +23,15 @@ using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
-using LAP.Core.BaseClass;
 using UCA.Core.Utilities;
-using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
 {
-    public class CarnageRayHeldProjMelee : BaseHeldProj, IPixelatedPrimitiveRenderer
+    public class CarnageRayHeldProjMelee : BaseHeldProj, IPixelatedRenderer
     {
-        public PixelationPrimitiveLayer LayerToRenderTo => PixelationPrimitiveLayer.AfterPlayers;
+        public DrawLayer LayerToRenderTo => DrawLayer.BeforeDusts;
         public int YOffset = 7;
-        public override LocalizedText DisplayName => CalamityUtils.GetItemName<CarnageRay>();
+        public override LocalizedText DisplayName => LAPUtilities.GetItemName<CarnageRay>();
         public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/CarnageRayHeld/CarnageRayHeldProj";
         public Vector2 RotVector => new Vector2((12 + XOffset) * Owner.direction, YOffset).BetterRotatedBy(Owner.GetPlayerToMouseVector2().ToRotation());
 
@@ -210,19 +213,18 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
         {
             Projectile.Kill();
         }
-        void IPixelatedPrimitiveRenderer.RenderPixelatedPrimitives(SpriteBatch spriteBatch, PixelationPrimitiveLayer layer)
+        public void RenderPixelated(SpriteBatch spriteBatch)
         {
             if (StabsFrame > 19)
                 return;
-            
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null);
 
             Main.graphics.GraphicsDevice.Textures[0] = UCATextureRegister.CarnageStabs.Value;
-            Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
+            Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointWrap;
 
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
-            Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
+            Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointWrap;
 
             Rectangle frame = UCATextureRegister.CarnageStabs.Frame(19, 1, StabsFrame, 0);
             Effect shader = UCAShaderRegister.EdgeMeltsShader.Value;
@@ -233,10 +235,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
             shader.CurrentTechnique.Passes[0].Apply();
 
             DrawStabs();
-
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null);
-        
         }
         public void DrawStabs()
         {
@@ -249,11 +249,12 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
 
             SpriteEffects flipSprite = Owner.direction * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
-            Main.spriteBatch.Draw(texture, drawPosition / 2, frame, Color.White, drawRotation, origin, Projectile.scale * Main.player[Projectile.owner].gravDir * 0.5f * 0.15f, flipSprite, default);
+            Main.spriteBatch.Draw(texture, drawPosition, frame, Color.White, drawRotation, origin, Projectile.scale * Main.player[Projectile.owner].gravDir * 0.15f, flipSprite, default);
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
+            PixelatedRenderManger.BeginDrawProj = true;
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
 
@@ -342,6 +343,11 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
             }
 
             target.AddBuff(ModContent.BuffType<BurningBlood>(), 600);
+        }
+
+        public void RenderPixelatedPrimitives(SpriteBatch spriteBatch, GeneralDrawLayer layer)
+        {
+            throw new NotImplementedException();
         }
     }
 }

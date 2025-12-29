@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
-using CalamityMod.Graphics.Primitives;
+using LAP.Core.Enums;
+using LAP.Core.Graphics.PixelatedRender;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,9 +13,9 @@ using UCA.Core.BaseClass;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
-    public class PlasmaBlast : BaseMagicProj, IPixelatedPrimitiveRenderer
+    public class PlasmaBlast : BaseMagicProj, IPixelatedRenderer
     {
-        public PixelationPrimitiveLayer Layer = PixelationPrimitiveLayer.AfterPlayers;
+        public DrawLayer Layer = DrawLayer.BeforePlayer;
         public override string Texture => UCATextureRegister.InvisibleTexturePath;
 
         public float Scale = 0f;
@@ -48,6 +49,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
         public override void AI()
         {
+            PixelatedRenderManger.BeginDrawProj = true;
             if (Projectile.LAP().FirstFrame)
             {
                 Rot = Main.rand.NextFloat(0, MathHelper.TwoPi);
@@ -60,7 +62,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 Opacity = MathHelper.Lerp(1f, 0f, 1 -  EasingHelper.EaseInCubic(Projectile.timeLeft / 15f));
         }
 
-        public void RenderPixelatedPrimitives(SpriteBatch spriteBatch, PixelationPrimitiveLayer layer)
+        public void RenderPixelated(SpriteBatch spriteBatch)
         {
             Vector2 DrawPos = Projectile.Center - Main.screenPosition;
 
@@ -73,11 +75,15 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Color color = new(255, 0, 255, 0);
             color = color * Opacity;
 
-            spriteBatch.Draw(UCATextureRegister.Ring04.Value, DrawPos / 2, null, SecondColor, Rot, UCATextureRegister.Ring04.Size() / 2, Scale * 0.6f, SpriteEffects.None, 0);
-            spriteBatch.Draw(UCATextureRegister.Ring04.Value, DrawPos / 2, null, color, Rot2, UCATextureRegister.Ring04.Size() / 2, Scale * 0.5f, SpriteEffects.None, 0);
-            spriteBatch.Draw(UCATextureRegister.Ring04.Value, DrawPos / 2, null, ThirdColor, Rot3, UCATextureRegister.Ring04.Size() / 2, Scale * 0.7f, SpriteEffects.None, 0);
+            spriteBatch.Draw(UCATextureRegister.Ring04.Value, DrawPos , null, SecondColor, Rot, UCATextureRegister.Ring04.Size() / 2, Scale * 1.2f, SpriteEffects.None, 0);
+            spriteBatch.Draw(UCATextureRegister.Ring04.Value, DrawPos , null, color, Rot2, UCATextureRegister.Ring04.Size() / 2, Scale, SpriteEffects.None, 0);
+            spriteBatch.Draw(UCATextureRegister.Ring04.Value, DrawPos , null, ThirdColor, Rot3, UCATextureRegister.Ring04.Size() / 2, Scale * 1.4f, SpriteEffects.None, 0);
         }
-
+        public override bool PreDraw(ref Color lightColor)
+        {
+            PixelatedRenderManger.BeginDrawProj = true;
+            return false;
+        }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(BuffID.ShadowFlame, 180); 

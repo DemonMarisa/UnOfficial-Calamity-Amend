@@ -1,8 +1,12 @@
 ﻿using CalamityMod;
+using CalamityMod.Enums;
 using CalamityMod.Graphics.Primitives;
 using CalamityMod.Items.Weapons.Magic;
 using CalamityMod.Particles;
 using LAP.Core.BaseClass;
+using LAP.Core.Enums;
+using LAP.Core.Graphics.PixelatedRender;
+using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -26,10 +30,9 @@ using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
 {
-    public class NightRayHeldProjMelee : BaseHeldProj, IPixelatedPrimitiveRenderer
+    public class NightRayHeldProjMelee : BaseHeldProj, IPixelatedRenderer
     {
-        public PixelationPrimitiveLayer LayerToRenderTo => PixelationPrimitiveLayer.AfterPlayers;
-
+        public DrawLayer drawLayer = DrawLayer.BeforeDusts;
         public override LocalizedText DisplayName => CalamityUtils.GetItemName<NightsRay>();
         public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/NightRatHeld/NightRayHeldProj";
         public Vector2 RotVector => new Vector2(12 * Owner.direction, 7).BetterRotatedBy(Owner.GetPlayerToMouseVector2().ToRotation(), default, 0.5f, 1f);
@@ -89,15 +92,14 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
         #region 主AI
         public override void HoldoutAI()
         {
+            PixelatedRenderManger.BeginDrawProj = true;
             if (AniProgress < InToAni)
                 return;
-
             if (Owner.UCA().NightShieldHP != UCAPlayer.NightShieldMaxHP && Owner.miscCounter % 4 == 0)
             {
                 if (CanGiveBoost = Owner.CheckMana(Owner.ActiveItem(), 1, true, false))
                     Owner.UCA().NightShieldHP += 2;
             }
-
             if (CanGiveBoost)
             {
                 Owner.UCA().HeldNightShield = true;
@@ -107,15 +109,13 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
                 Owner.UCA().HeldNightShield = true;
                 Owner.UCA().WeakHeldNightShield = true;
             }
-
             // 护盾效果
             ProtectPlayer();
             UpdateChargeDust();
-
         }
-
         public override void ExtraHoldoutAI()
         {
+            PixelatedRenderManger.BeginDrawProj = true;
             if (AniProgress < InToAni)
                 return;
 
@@ -184,6 +184,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
         #endregion
         public override void InDel()
         {
+            PixelatedRenderManger.BeginDrawProj = true;
             if (DelTimer > 0)
                 DelTimer--;
 
@@ -193,6 +194,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
         #region 常驻AI
         public override void PostAI()
         {
+            PixelatedRenderManger.BeginDrawProj = true;
             float baseRotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
             float directionVerticality = MathF.Abs(Projectile.velocity.X);
             Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, baseRotation + Owner.direction * directionVerticality * 1.5f);
@@ -246,49 +248,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
 
             return false;
-        }
-
-        void IPixelatedPrimitiveRenderer.RenderPixelatedPrimitives(SpriteBatch spriteBatch, PixelationPrimitiveLayer layer)
-        {
-            float OpacityOffset = MathHelper.Lerp(1f, 0f, Owner.UCA().NightShieldHP / (float)UCAPlayer.NightShieldMaxHP);
-
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null);
-            
-            Main.graphics.GraphicsDevice.Textures[0] = UCATextureRegister.NightRayShield.Value;
-            Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
-
-            Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
-            Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
-            Effect shader = UCAShaderRegister.EdgeMeltsShader.Value;
-            shader.Parameters["progress"].SetValue(ShaderOpacity + OpacityOffset * 0.5f);
-            shader.Parameters["InPutTextureSize"].SetValue(ModContent.Request<Texture2D>(Texture).Size());
-            shader.Parameters["EdgeColor"].SetValue(Color.DarkViolet.ToVector4());
-            shader.Parameters["EdgeWidth"].SetValue(0.01f);
-            shader.CurrentTechnique.Passes[0].Apply();
-
-            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            Vector2 ShieledPos = drawPosition + new Vector2(60, 0).RotatedBy(Projectile.rotation);
-            float drawRotation = Projectile.rotation + (Owner.direction == -1 ? MathHelper.Pi : 0f) + RotOffset * Owner.direction;
-
-            SpriteEffects flipSprite = Owner.direction * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-
-            Main.spriteBatch.Draw(UCATextureRegister.NightRayShield.Value, ShieledPos / 2, null, new Color(255, 0, 255, 255), drawRotation + MathHelper.PiOver4 * Owner.direction,
-                UCATextureRegister.NightRayShield.Size() / 2, new Vector2(XScale, 1) * Projectile.scale * Main.player[Projectile.owner].gravDir * 0.175f, flipSprite, default);
-
-            Main.spriteBatch.Draw(UCATextureRegister.NightRayShield.Value, ShieledPos / 2, null, new Color(255, 0, 255, 155), drawRotation + MathHelper.PiOver4 * Owner.direction,
-                UCATextureRegister.NightRayShield.Size() / 2, new Vector2(XScale, 1) * Projectile.scale * Main.player[Projectile.owner].gravDir * 0.2f, flipSprite, default);
-
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null);
-
-            Vector2 SpreadLinePos = drawPosition + FireOffset;
-
-            Main.spriteBatch.Draw(UCATextureRegister.SpreadLine.Value, SpreadLinePos / 2, null, new Color(185, 0, 204, 255) * (1 - ShaderOpacity), drawRotation + MathHelper.PiOver4 * Owner.direction,
-                UCATextureRegister.SpreadLine.Size() / 2, new Vector2(XScale * 1.2f * (1 - OpacityOffset * 0.7f), 1) * Projectile.scale * Main.player[Projectile.owner].gravDir * 0.175f, flipSprite, default);
-
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null);
         }
         #endregion
         #region 护盾碰撞
@@ -408,5 +367,34 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
             }
         }
         #endregion
+        void IPixelatedRenderer.RenderPixelated(SpriteBatch spriteBatch)
+        {
+            PixelatedRenderManger.BeginDrawProj = true;
+            float OpacityOffset = MathHelper.Lerp(1f, 0f, Owner.UCA().NightShieldHP / (float)UCAPlayer.NightShieldMaxHP);
+            LAPContent.ReSetToBeginShader_Pixel(BlendState.AlphaBlend);
+            Main.graphics.GraphicsDevice.Textures[0] = UCATextureRegister.NightRayShield.Value;
+            Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
+            Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
+            Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
+            Effect shader = UCAShaderRegister.EdgeMeltsShader.Value;
+            shader.Parameters["progress"].SetValue(ShaderOpacity + OpacityOffset * 0.5f);
+            shader.Parameters["InPutTextureSize"].SetValue(ModContent.Request<Texture2D>(Texture).Size());
+            shader.Parameters["EdgeColor"].SetValue(Color.DarkViolet.ToVector4());
+            shader.Parameters["EdgeWidth"].SetValue(0.01f);
+            shader.CurrentTechnique.Passes[0].Apply();
+            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+            Vector2 ShieledPos = drawPosition + new Vector2(60, 0).RotatedBy(Projectile.rotation);
+            float drawRotation = Projectile.rotation + (Owner.direction == -1 ? MathHelper.Pi : 0f) + RotOffset * Owner.direction;
+            SpriteEffects flipSprite = Owner.direction * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            Main.spriteBatch.Draw(UCATextureRegister.NightRayShield.Value, ShieledPos, null, new Color(255, 0, 255, 255), drawRotation + MathHelper.PiOver4 * Owner.direction,
+                UCATextureRegister.NightRayShield.Size() / 2, new Vector2(XScale, 1) * Projectile.scale * Main.player[Projectile.owner].gravDir * 0.35f, flipSprite, default);
+            Main.spriteBatch.Draw(UCATextureRegister.NightRayShield.Value, ShieledPos, null, new Color(255, 0, 255, 155), drawRotation + MathHelper.PiOver4 * Owner.direction,
+                UCATextureRegister.NightRayShield.Size() / 2, new Vector2(XScale, 1) * Projectile.scale * Main.player[Projectile.owner].gravDir * 0.4f, flipSprite, default);  
+            LAPContent.ReSetToBeginShader_Pixel(BlendState.Additive);
+            Vector2 SpreadLinePos = drawPosition + FireOffset;
+            Main.spriteBatch.Draw(UCATextureRegister.SpreadLine.Value, SpreadLinePos, null, new Color(185, 0, 204, 255) * (1 - ShaderOpacity), drawRotation + MathHelper.PiOver4 * Owner.direction,
+                UCATextureRegister.SpreadLine.Size() / 2, new Vector2(XScale * 1.2f * (1 - OpacityOffset * 0.7f), 1) * Projectile.scale * Main.player[Projectile.owner].gravDir * 0.35f, flipSprite, default);
+            LAPContent.ReSetToEndShader_Pixel();
+        }
     }
 }

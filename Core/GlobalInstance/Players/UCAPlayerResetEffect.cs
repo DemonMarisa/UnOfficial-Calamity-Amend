@@ -10,7 +10,6 @@ namespace UCA.Core.GlobalInstance.Players
         public override void ResetEffects()
         {
             ResetRay();
-            RogueHammerReset(); 
         }
         #region 射线
         public void ResetRay()
@@ -59,13 +58,6 @@ namespace UCA.Core.GlobalInstance.Players
             // 控制免伤
             if (TerraRayUseSkillCount > 0)
                 TerraRayUseSkillCount--;
-        }
-        #endregion
-        #region 重置锤子
-        // 大幅简化，相关判定直接移动到物品中
-        public void RogueHammerReset()
-        {
-            _anyHammerAttacking = false;
         }
         #endregion
         #endregion

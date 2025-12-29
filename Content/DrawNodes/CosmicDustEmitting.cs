@@ -29,7 +29,6 @@ namespace UCA.Content.DrawNodes
         {
             Rotation = MathHelper.Lerp(0, -MathHelper.Pi * Filp, LifetimeRatio);
             LengthOffset = MathHelper.Lerp(150, 0, LifetimeRatio);
-
             CosmicMetaBall.SpawnCircleParticle(Position + PositionOffset.RotatedBy(Rotation), Vector2.Zero, 0.25f, 20);
             CosmicMetaBall.SpawnCircleParticle(Position + PositionOffset2.RotatedBy(Rotation), Vector2.Zero, 0.25f, 20);
         }

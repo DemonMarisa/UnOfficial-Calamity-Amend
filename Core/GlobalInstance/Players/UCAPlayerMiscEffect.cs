@@ -12,8 +12,6 @@ namespace UCA.Core.GlobalInstance.Players
         }
         public void Reset_PostUpdateMiscEffects()
         {
-            ShouldHandleHammerStealth = false;
-            StealthToMaxHPBonus = false;
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using CalamityMod;
 using LAP.Core.AnimationHandle;
 using LAP.Core.BaseClass;
-using LAP.Core.Graphics;
+using LAP.Core.Enums;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -18,8 +18,6 @@ using UCA.Content.DrawNodes;
 using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.Magic.Ray;
-using UCA.Core.Enums;
-using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
 {
@@ -150,7 +148,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
 
                 Vector2 firVec = Vector2.UnitX.RotatedBy(rot * i);
                 Color color = Main.rand.NextBool() ? Color.DarkGreen : Color.SaddleBrown;
-                new TerraTree(firPos, firVec * Main.rand.NextFloat(0.3f, 0.6f), color, 0, DrawLayer.BeforeDust, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
+                new TerraTree(firPos, firVec * Main.rand.NextFloat(0.3f, 0.6f), color, 0, DrawLayer.BeforeDusts, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
             }
             #region 生成环形粒子
             for (int i = 0; i < 30; i++)

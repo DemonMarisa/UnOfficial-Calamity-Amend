@@ -1,5 +1,7 @@
-﻿using CalamityMod;
-using CalamityMod.Items.Weapons.Magic;
+﻿using LAP.Core.AnimationHandle;
+using LAP.Core.SpecificEffectManagers;
+using LAP.Core.SystemsLoader;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using System;
 using System.IO;
@@ -8,20 +10,17 @@ using Terraria.Audio;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets.Sounds;
+using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
 using UCA.Content.UCACooldowns;
-using LAP.Core.AnimationHandle;
-using LAP.Core.SpecificEffectManagers;
 using UCA.Core.Utilities;
-using LAP.Core.Utilities;
-using LAP.Core.SystemsLoader;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
 {
     public partial class ElementRaySpecialHeldProj : ModProjectile, ILocalizedModType
     {
-        public override LocalizedText DisplayName => CalamityUtils.GetItemName<ElementalRay>();
+        public override LocalizedText DisplayName => LAPUtilities.GetItemName<ElementRayAlt>();
         public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/ElementRayHeld/ElementRayHeldProj";
         public Player Owner => Main.player[Projectile.owner];
         public ref float WeaponStates => ref Projectile.ai[0];

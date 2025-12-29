@@ -1,4 +1,4 @@
-using CalamityMod;
+using Terraria;
 using Terraria.ModLoader;
 using UCA.Core.Utilities;
 
@@ -14,6 +14,7 @@ namespace UCA.Core.GlobalInstance.Players
         public int _cacheLegsType = -1;
         // 储存应该恢复多少
         public int HealAmt = 0;
+
         public override void PostUpdate()
         {
             Reset_PostUpdate();

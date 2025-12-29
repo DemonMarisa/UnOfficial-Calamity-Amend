@@ -1,4 +1,6 @@
-﻿using Terraria;
+using System;
+using System.Threading;
+using Terraria;
 using Terraria.ModLoader;
 
 namespace UCA.Core.GlobalInstance.Players
@@ -9,7 +11,10 @@ namespace UCA.Core.GlobalInstance.Players
         {
             AddNightBoost();
             Reset_PostUpdateMiscEffects();
+            UpdateTimer();
         }
+
+        
         public void Reset_PostUpdateMiscEffects()
         {
             ShouldHandleHammerStealth = false;

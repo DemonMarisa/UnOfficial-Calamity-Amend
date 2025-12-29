@@ -38,6 +38,9 @@ namespace UCA.Core.GlobalInstance.Players
             {
                 Player.Calamity().rogueStealth = 0f;
                 _cacheHammer = heldType;
+                //切换后需要重置幽灵冲刺所有的属性，除了进程
+                GhostDash_Time = 0;
+                GhostDash_ChargeTime = 0;
             }
             //所有锤子启用潜伏条，潜伏值减半
             calPlayer.wearingRogueArmor = true;

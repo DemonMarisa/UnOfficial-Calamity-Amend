@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using CalamityMod;
+using Terraria;
 using Terraria.ModLoader;
 using UCA.Core.Utilities;
 

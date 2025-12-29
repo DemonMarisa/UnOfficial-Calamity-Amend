@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<!-- Import tModLoader mod properties -->
 	<Import Project="..\tModLoader.targets" />
@@ -22,7 +22,7 @@
 	    <HintPath>..\..\ModReader\CalamityMod\CalamityMod.dll</HintPath>
 	  </Reference>
 	  <Reference Include="LAP">
-	    <HintPath>..\LAP\bin\Release\net8.0\LAP.dll</HintPath>
+	    <HintPath>..\LAP\bin\Debug\net8.0\LAP.dll</HintPath>
 	  </Reference>
 	</ItemGroup>
 	<ItemGroup>

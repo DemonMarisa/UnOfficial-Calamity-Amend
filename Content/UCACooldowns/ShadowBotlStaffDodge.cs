@@ -1,9 +1,7 @@
-﻿using CalamityMod.Cooldowns;
-using LAP.Core.LAPUI.CustomCD;
+﻿using LAP.Core.LAPUI.CustomCD;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.Localization;
 using UCA.Content.Particiles;

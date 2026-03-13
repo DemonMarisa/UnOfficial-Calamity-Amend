@@ -1,7 +1,7 @@
-﻿using CalamityMod;
-using CalamityMod.Items.Materials;
-using CalamityMod.Tiles.Furniture.CraftingStations;
+﻿using LAP.Common.CalamityModCross;
+using LAP.Common.Utilities;
 using LAP.Core.Enums;
+using LAP.Core.LAPSource;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -32,7 +32,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
             Item.knockBack = 3.25f;
-            Item.value = UCAShopValue.RarityBlueBuyPrice;
+            Item.value = UCAShopValue.RarityDarkBlueBuyPrice;
             Item.rare = ItemRarityID.Blue;
             Item.UseSound = null;
             Item.autoReuse = true;
@@ -45,6 +45,9 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             Item.LAP().UseWeaponSkill = true;
             Item.LAP().DrawUCASmallIcon = true;
             Item.LAP().UseCustomWeaponSkill = true;
+
+            Item.LAP().SkillShoot = ProjectileType<SoulPiercerSkillHeldProj>();
+            Item.LAP().SkillShootSpeed = 0;
 
             Item.LAP().WeaponTier = AllWeaponTier.PostDOG;
             Item.LAP().UseCICalStatInflation = true;
@@ -69,16 +72,11 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
                 Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI);
             return false;
         }
-        public override void WeaponSkill(Player player)
+        public override void WeaponSkill(Player player, EntitySource_ItemUse_WeaponSkill source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             if (!player.HasProj<SoulPiercerHeldProj>() && !player.HasProj<SoulPiercerSpecialHeldProj>() && !player.HasProj<SoulPiercerSkillHeldProj>())
             {
-                if (player.CheckMana(player.ActiveItem(), Item.LAP().WeaponSkillRealManaCost, true, false))
-                {
-                    float kb = player.GetWeaponKnockback(Item);
-                    int Damage = player.GetWeaponDamage(Item);
-                    Projectile.NewProjectile(player.GetSource_FromThis(), player.Center, Vector2.Zero, ModContent.ProjectileType<SoulPiercerSkillHeldProj>(), Damage * 10, kb * 100, player.whoAmI);
-                }
+                Projectile.NewProjectile(source, position, velocity, type, damage * 10, knockback * 100, player.whoAmI);
             }
         }
 
@@ -88,10 +86,13 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
 
         public override void AddRecipes()
         {
-            CreateRecipe().
-                AddIngredient<CosmiliteBar>(12).
-                AddTile<CosmicAnvil>().
-                Register();
+            if (ModCrossUtils.HasCalamityMod())
+            {
+                CreateRecipe().
+                    AddIngredient(CalMaterialsID.CosmiliteBarID, 12).
+                    AddTile(CalTileID.CosmicAnvilID).
+                    Register();
+            }
         }
     }
 }

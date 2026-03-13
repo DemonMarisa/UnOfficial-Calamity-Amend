@@ -1,7 +1,5 @@
-﻿using CalamityMod;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Mono.Cecil;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ModLoader;
@@ -11,10 +9,8 @@ using UCA.Assets.Sounds;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.Magic.Ray;
 using UCA.Content.UCACooldowns;
-using UCA.Core.Enums;
+using LAP.Core.Enums;
 using LAP.Core.SpecificEffectManagers;
-using UCA.Core.Utilities;
-using static System.Net.Mime.MediaTypeNames;
 using LAP.Core.Utilities;
 using LAP.Core.SystemsLoader;
 
@@ -37,8 +33,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             animationHelper.MaxAniProgress[AnimationState.Begin] = 120;
             animationHelper.MaxAniProgress[AnimationState.Middle] = 5;
             animationHelper.MaxAniProgress[AnimationState.End] = 120;
-            SoundEngine.PlaySound(SoundsMenu.MAGNOLIASPRelease);
-            SoundEngine.PlaySound(SoundsMenu.SoulStreamCharge);
+            SoundEngine.PlaySound(SoundsMenu.MAGNOLIASPRelease, Projectile.Center);
+            SoundEngine.PlaySound(SoundsMenu.SoulStreamCharge, Projectile.Center);
         }
 
         public void UpdateStarDustStream()
@@ -113,7 +109,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                     new MediumGlowBall(Projectile.Center + offset + Owner.velocity * 6, RandomColor, 120, 0.4f, Main.rand.NextFloat(4f, 12f)).Spawn();
                 }
                 ScreenShakeSystem.AddScreenShakes(Projectile.Center, 250, 180, Projectile.rotation, 0.1f, true, 1000);
-                SoulStreamIndex = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + offset, Vector2.Zero, ModContent.ProjectileType<SoulStream>(), Projectile.damage * 6, Projectile.knockBack, Projectile.owner, Projectile.whoAmI);
+                SoulStreamIndex = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + offset, Vector2.Zero, ProjectileType<SoulStream>(), Projectile.damage * 6, Projectile.knockBack, Projectile.owner, Projectile.whoAmI);
+                Main.projectile[SoulStreamIndex].LAP().isWeaponSkillProj = true;
                 Owner.AddCD(LAPContent.CDType<StarDustBoost>(),  1200);
             }
         }

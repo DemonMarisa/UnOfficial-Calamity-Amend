@@ -1,24 +1,20 @@
-﻿using CalamityMod;
+﻿
 using LAP.Content.Configs;
-using LAP.Core.Graphics.Primitives.Trail;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
-using UCA.Assets;
-using UCA.Content.Configs;
 using UCA.Content.Particiles;
 using UCA.Content.Particiles.Lightnings;
 using UCA.Core.BaseClass;
-using UCA.Core.Utilities;
+using LAP.Assets.TextureRegister;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
     public class VortexLightning : BaseMagicProj
     {
-        public override string Texture => UCATextureRegister.InvisibleTexturePath;
+        public override string Texture => LAPTextureRegister.InvisibleTexturePath;
         public bool CanHit = true;
         public int MaxLife = 75;
         public Vector2 TargetVelocity;
@@ -94,7 +90,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override void OnKill(int timeLeft)
         {
-            Projectile.ExpandHitboxBy((float)7);
+            Projectile.Resize(150, 150);
             Projectile.Damage();
             if (!LAPConfig.Instance.PerformanceMode)
             {

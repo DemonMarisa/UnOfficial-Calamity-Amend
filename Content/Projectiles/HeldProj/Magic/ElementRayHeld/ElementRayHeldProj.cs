@@ -1,4 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LAP.Core.BaseClass.Legacys;
+using LAP.Core.SystemsLoader;
+using LAP.Core.Utilities;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -8,12 +11,10 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Sounds;
+using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.Magic.Ray;
-using LAP.Core.BaseClass;
 using UCA.Core.Utilities;
-using LAP.Core.Utilities;
-using UCA.Content.Items.Weapons.Magic.Ray;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
 {
@@ -49,6 +50,10 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         public ref float LightShootTime => ref Projectile.ai[0];
         public ref float LightShootCount => ref Projectile.ai[1];
         public Vector2 OldSpawnPos;
+        public override void SetStaticDefaults()
+        {
+            Projectile.AddHeldProj();
+        }
         public override void SetDefaults()
         {
             Projectile.width = 74;
@@ -91,7 +96,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 }
 
                 // 后坐力
-                Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.15f;
+                Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.15f * Owner.direction;
                 MainFragmentOffset *= 1.2f;
                 AuxFragmentOffset *= 1.2f;
                 FilpAuxFragmentOffset *= 1.2f;
@@ -209,14 +214,14 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         }
         public override bool PreDraw(ref Color lightColor)
         {
-            DrawBaseElementalRay();
-            FilpDrawAuxFragments(1);
-            DrawMainFragments();
-            DrawAuxFragments(1);
+            DrawBaseElementalRay(lightColor);
+            FilpDrawAuxFragments(1, lightColor);
+            DrawMainFragments(lightColor);
+            DrawAuxFragments(1, lightColor);
             return false;
         }
         #region 绘制
-        public void DrawBaseElementalRay()
+        public void DrawBaseElementalRay(Color lightColor)
         {
             Texture2D texture = UCATextureRegister.ElementalRayBase.Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
@@ -224,10 +229,10 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             Vector2 rotationPoint = texture.Size() / 2f;
             SpriteEffects flipSprite = Projectile.spriteDirection * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             // spriteBatch会自动把textures0设置为当前使用的材质，所以需要你手动改一下
-            Main.spriteBatch.Draw(texture, drawPosition, null, Color.White, drawRotation, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, null, lightColor, drawRotation, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
         }
 
-        public void DrawMainFragments()
+        public void DrawMainFragments(Color lightColor)
         {
             Texture2D texture = UCATextureRegister.MainElementalFragments.Value;
             Vector2 drawPosition = Projectile.Center + MainFragmentOffset - Main.screenPosition ;
@@ -236,9 +241,9 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             Vector2 origin = frame.Size() * 0.5f;
             SpriteEffects flipSprite = Projectile.spriteDirection * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             // spriteBatch会自动把textures0设置为当前使用的材质，所以需要你手动改一下
-            Main.spriteBatch.Draw(texture, drawPosition, frame, Color.White, drawRotation, origin, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, frame, lightColor, drawRotation, origin, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
         }
-        public void DrawAuxFragments(int Filp)
+        public void DrawAuxFragments(int Filp, Color lightColor)
         {
             Texture2D texture = UCATextureRegister.AuxElementalFragments.Value;
             Vector2 drawPosition = Projectile.Center + AuxFragmentOffset - Main.screenPosition;
@@ -256,10 +261,10 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             Vector2 origin = frame.Size() * 0.5f;
             SpriteEffects flipSprite = SpriteEffects.FlipVertically;
             // spriteBatch会自动把textures0设置为当前使用的材质，所以需要你手动改一下
-            Main.spriteBatch.Draw(texture, drawPosition, frame, Color.White, drawRotation, origin, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, frame, lightColor, drawRotation, origin, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
         }
 
-        public void FilpDrawAuxFragments(int Filp)
+        public void FilpDrawAuxFragments(int Filp, Color lightColor)
         {
             Texture2D texture = UCATextureRegister.AuxElementalFragments.Value;
             Vector2 drawPosition = Projectile.Center + FilpAuxFragmentOffset - Main.screenPosition;
@@ -277,7 +282,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             Vector2 origin = frame.Size() * 0.5f;
             SpriteEffects flipSprite = SpriteEffects.None;
             // spriteBatch会自动把textures0设置为当前使用的材质，所以需要你手动改一下
-            Main.spriteBatch.Draw(texture, drawPosition, frame, Color.White, drawRotation, origin, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, frame, lightColor, drawRotation, origin, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
         }
         #endregion
     }

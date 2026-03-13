@@ -1,9 +1,6 @@
-﻿using CalamityMod.Projectiles.Melee;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria.ModLoader;
-using UCA.Content.Particiles;
-using static CalamityMod.Skies.ExoMechsSky;
 
 namespace UCA.Assets
 {

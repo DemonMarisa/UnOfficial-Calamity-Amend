@@ -7,18 +7,18 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets;
-using UCA.Content.Configs;
 using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld;
 using UCA.Core.BaseClass;
-using UCA.Core.Utilities;
+using LAP.Assets.TextureRegister;
+using LAP.Core.SystemsLoader;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
     public class SoulStream : BaseMagicProj
     {
-        public override string Texture => UCATextureRegister.InvisibleTexturePath;
+        public override string Texture => LAPTextureRegister.InvisibleTexturePath;
         public int MaxLife = 240;
         public ref float FollowProj => ref Projectile.ai[0];
         public bool FadeEnd => Projectile.ai[1] != 0;
@@ -35,6 +35,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             ProjectileID.Sets.TrailingMode[Type] = 2;
             // 一共爆粗20个数据
             ProjectileID.Sets.TrailCacheLength[Type] = 20;
+            Projectile.AddHeldProj();
         }
         public override void SetDefaults()
         {

@@ -24,6 +24,7 @@ namespace UCA.Content.UCACooldowns
         }
         public override void OnRegister()
         {
+            DeBuff = false;
             Buff = false;
             Info = true;
         }

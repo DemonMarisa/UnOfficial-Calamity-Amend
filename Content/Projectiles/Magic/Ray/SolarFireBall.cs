@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using LAP.Content.Configs;
+﻿using LAP.Content.Configs;
 using LAP.Core.Graphics.Primitives.Trail;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
@@ -10,16 +9,15 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
-using UCA.Content.Configs;
 using UCA.Content.Particiles;
 using UCA.Core.BaseClass;
-using UCA.Core.Utilities;
+using LAP.Assets.TextureRegister;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
     public class SolarFireBall : BaseMagicProj
     {
-        public override string Texture => UCATextureRegister.InvisibleTexturePath;
+        public override string Texture => LAPTextureRegister.InvisibleTexturePath;
         public int MaxLife = 240;
         public float DustCount = 5f;
         public int Time;
@@ -77,7 +75,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 timeleft = Main.rand.Next(10, 20);
             new Fire(Projectile.Center, firVel, DrawColor, timeleft, Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.2f).Spawn();
 
-            CalamityUtils.HomeInOnNPC(Projectile, true, 2500f, 12f, 100f);
+            Projectile.HomeInNPC(2500f, 24, 100f);
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
@@ -121,13 +119,12 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             Vector2 HalfProj = new Vector2(Projectile.width / 2, Projectile.height / 2);
             List<TrailDrawDate> trailDrawDate = [];
-            DrawSetting drawSetting = new(UCATextureRegister.Slash_Wrap.Value, false, false);
+            DrawSetting drawSetting = new(UCATextureRegister.Slash_Wrap.Value);
             for (int i = 0; i < Projectile.oldPos.Length; i++)
             {
                 if (Projectile.oldPos[i] != Vector2.Zero)
                 {
                     Vector2 DrawPos = Projectile.oldPos[i] - Main.screenPosition + HalfProj + new Vector2(24, 0).RotatedBy(Projectile.rotation);
-
                     TrailDrawDate TrailDrawDate = new(DrawPos, drawColor, new Vector2(0, height), Projectile.oldRot[i]);
                     trailDrawDate.Add(TrailDrawDate);
                 }

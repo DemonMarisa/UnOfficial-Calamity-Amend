@@ -11,10 +11,7 @@ namespace UCA.Core.GlobalInstance.Players
         {
             AddNightBoost();
             Reset_PostUpdateMiscEffects();
-            UpdateTimer();
         }
-
-        
         public void Reset_PostUpdateMiscEffects()
         {
         }

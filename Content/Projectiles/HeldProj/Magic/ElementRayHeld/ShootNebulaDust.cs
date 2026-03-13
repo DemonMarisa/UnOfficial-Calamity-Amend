@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 using UCA.Assets.Sounds;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.Magic.Ray;
-using UCA.Core.Enums;
+using LAP.Core.Enums;
 using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
@@ -112,10 +112,14 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 SoundEngine.PlaySound(sound, Projectile.Center);
                 Vector2 firoffset = new Vector2(64, 0).RotatedBy(Projectile.rotation);
                 Vector2 velocity = new Vector2(12, 0).RotatedBy(Projectile.rotation);
-                for (int i = 0; i < 11; i++)
+                if (Projectile.IsLocalPlayer())
                 {
-                    float rotAdd = MathHelper.ToRadians(3);
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + firoffset, velocity.RotatedBy(MathHelper.ToRadians(-15) + rotAdd * i) * Main.rand.NextFloat(1f, 2f), ModContent.ProjectileType<NebulaCrystal>(), Projectile.damage * 4, Projectile.knockBack, Projectile.owner, 1);
+                    for (int i = 0; i < 11; i++)
+                    {
+                        float rotAdd = MathHelper.ToRadians(3);
+                        int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + firoffset, velocity.RotatedBy(MathHelper.ToRadians(-15) + rotAdd * i) * Main.rand.NextFloat(1f, 2f), ModContent.ProjectileType<NebulaCrystal>(), Projectile.damage * 4, Projectile.knockBack, Projectile.owner, 1);
+                        Main.projectile[p].LAP().isWeaponSkillProj = true;
+                    }
                 }
                 for (int i = 0; i < 45; i++)
                 {
@@ -136,7 +140,10 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 Vector2 firvel = Main.player[Projectile.owner].GetPlayerToMouseVector2() * 9;
                 firvel = firvel.RotatedBy(MathHelper.PiOver2 * i + MathHelper.PiOver4);
                 if (Projectile.owner == Main.myPlayer)
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + firePos, firvel, ModContent.ProjectileType<NebulaEnergy>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                {
+                    int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + firePos, firvel, ProjectileType<NebulaEnergy>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                    Main.projectile[p].LAP().isWeaponSkillProj = true;
+                } 
             }
         }
         #endregion

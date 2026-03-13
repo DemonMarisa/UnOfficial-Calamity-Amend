@@ -1,31 +1,33 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LAP.Assets.TextureRegister;
+using LAP.Core.SystemsLoader;
+using LAP.Core.Utilities;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
-using Terraria.Map;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Sounds;
 using UCA.Content.DrawNodes;
 using UCA.Content.Particiles;
 using UCA.Core.BaseClass;
-using LAP.Core.Graphics;
-using UCA.Core.Utilities;
-using LAP.Core.Utilities;
-using LAP.Core.Enums;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
     public class TerraMatrix : BaseMagicProj
     {
-        public override string Texture => UCATextureRegister.InvisibleTexturePath;
+        public override string Texture => LAPTextureRegister.InvisibleTexturePath;
         public int StaffBeginAni = 75;
         public int MaxTime = 180;
         public float Height;
         public bool BeginFade = false;
         public SpriteEffects filp = SpriteEffects.None;
         public Player Owner => Main.player[Projectile.owner];
+        public override void SetStaticDefaults()
+        {
+            Projectile.AddHeldProj();
+        }
         public override void SetDefaults()
         {
             Projectile.width = 128;
@@ -104,10 +106,10 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 {
                     Color color = Color.Lerp(Color.DarkGreen, Color.LightGreen, Main.rand.NextFloat(0, 1f));
                     Vector2 pos = Projectile.position + new Vector2(Main.rand.Next(0, Projectile.width), Projectile.height / 2);
-                    new TerraTree(pos, -Vector2.UnitY.RotatedBy(MathHelper.PiOver4 * 0.5f * (Main.rand.NextBool() ? -1 : 1)) * Main.rand.NextFloat(0.6f, 1.4f), color, 0, DrawLayer.AfterDusts, Main.rand.NextFloat(12, 15), (Main.rand.NextBool() ? -1 : 1), Main.rand.NextFloat(9, 18f)).Spawn();
+                    new TerraTree(pos, -Vector2.UnitY.RotatedBy(MathHelper.PiOver4 * 0.5f * (Main.rand.NextBool() ? -1 : 1)) * Main.rand.NextFloat(0.6f, 1.4f), color, 0, Main.rand.NextFloat(12, 15), (Main.rand.NextBool() ? -1 : 1), Main.rand.NextFloat(9, 18f)).Spawn();
 
                     Vector2 pos2 = Projectile.position + new Vector2(Main.rand.Next(0, Projectile.width), Projectile.height / 2);
-                    new TerraTree(pos2, -Vector2.UnitY.RotatedBy(MathHelper.PiOver4 * 0.5f * (Main.rand.NextBool() ? -1 : 1)) * Main.rand.NextFloat(0.6f, 1.4f), Color.SaddleBrown, 0, DrawLayer.AfterDusts, Main.rand.NextFloat(12, 15), (Main.rand.NextBool() ? -1 : 1), Main.rand.NextFloat(9, 18f)).Spawn();
+                    new TerraTree(pos2, -Vector2.UnitY.RotatedBy(MathHelper.PiOver4 * 0.5f * (Main.rand.NextBool() ? -1 : 1)) * Main.rand.NextFloat(0.6f, 1.4f), Color.SaddleBrown, 0, Main.rand.NextFloat(12, 15), (Main.rand.NextBool() ? -1 : 1), Main.rand.NextFloat(9, 18f)).Spawn();
                 }
                 if (Projectile.timeLeft % 5 == 0)
                     SoundEngine.PlaySound(SoundsMenu.TerraTreeBreak, Projectile.Center);

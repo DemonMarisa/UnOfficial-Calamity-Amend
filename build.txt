@@ -1,7 +1,7 @@
 displayName = UnOfficial Calamity Amend
-author = DemonMarisa
-version = 0.0.0.14
+author = DemonLilies
+version = 0.0.0.23
 hideCode = false
 hideResources = false
-modReferences = CalamityMod, LAP
-sortAfter = CalamityOverhaul
+weakReferences = CalamityMod
+modReferences = LAP

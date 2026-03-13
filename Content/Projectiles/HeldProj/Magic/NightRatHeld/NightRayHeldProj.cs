@@ -1,7 +1,5 @@
-﻿using CalamityMod;
-using CalamityMod.Items.Weapons.Magic;
-using LAP.Content.Configs;
-using LAP.Core.BaseClass;
+﻿using LAP.Content.Configs;
+using LAP.Core.BaseClass.Legacys;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -13,18 +11,16 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
-using UCA.Content.Configs;
 using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.Magic.Ray;
-using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
 {
     public class NightRayHeldProj : BaseHeldProj
     {
-        public override LocalizedText DisplayName => CalamityUtils.GetItemName<NightsRay>();
+        public override LocalizedText DisplayName => LAPUtilities.GetItemName<NightsRayAlt>();
         public Vector2 RotVector => new Vector2(12 * Owner.direction, 7).BetterRotatedBy(Owner.GetPlayerToMouseVector2().ToRotation(), default, 0.5f, 1f);
         public override Vector2 RotPoint => TextureAssets.Projectile[Type].Size() / 2;
         public override Vector2 Posffset => new Vector2(RotVector.X, RotVector.Y) * Owner.direction;
@@ -93,7 +89,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
                     CrossFire();
                     NightsRayAlt.UseCount = 0;
                 }
-                Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.06f;
+                Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.06f * Owner.direction;
                 Projectile.ai[2] = 0;
             }
             if (Projectile.ai[1] > Owner.HeldItem.useTime / 2)
@@ -139,7 +135,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
 
         public void CrossFire()
         {
-            NPC npc = Projectile.FindClosestTarget(1500, false);
+            NPC npc = LAPUtilities.FindClosestTarget(Projectile.Center,1500, false);
             float RandomOffset = Main.rand.NextFloat(0, MathHelper.TwoPi);
 
             if (npc is not null)
@@ -231,19 +227,16 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
 
-            Main.graphics.GraphicsDevice.Textures[0] = ModContent.Request<Texture2D>(Texture).Value;
+            Texture2D texture = TextureAssets.Projectile[Type].Value;
+
+            Main.graphics.GraphicsDevice.Textures[0] = texture;
             Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
-            Effect shader = UCAShaderRegister.EdgeMeltsShader.Value;
-            shader.Parameters["progress"].SetValue(ShaderOpacity);
-            shader.Parameters["InPutTextureSize"].SetValue(ModContent.Request<Texture2D>(Texture).Size());
-            shader.Parameters["EdgeColor"].SetValue(Color.DarkViolet.ToVector4());
-            shader.Parameters["EdgeWidth"].SetValue(0.01f);
-            shader.CurrentTechnique.Passes[0].Apply();
 
-            Texture2D texture = TextureAssets.Projectile[Type].Value;
+            LAPUtilities.FastApplyEdgeMeltsShader(ShaderOpacity, texture.Size(), Color.DarkViolet, 0.01f, 0);
+
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             float drawRotation = Projectile.rotation + (Owner.direction == -1 ? MathHelper.Pi : 0f) + RotOffset * Owner.direction;
 
@@ -251,7 +244,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
 
             SpriteEffects flipSprite = Owner.direction * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
-            Main.spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(lightColor), drawRotation, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, default);
+            Main.spriteBatch.Draw(texture, drawPosition, null, lightColor, drawRotation, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, default);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);

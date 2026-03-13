@@ -1,14 +1,11 @@
-﻿using CalamityMod;
-using LAP.Core.BaseClass;
+﻿using LAP.Core.BaseClass.Projectiles;
 using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Content.UCACooldowns;
-using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HealPRoj
 {

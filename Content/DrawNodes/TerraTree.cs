@@ -1,39 +1,39 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LAP.Assets.TextureRegister;
+using LAP.Core.Enums;
+using LAP.Core.Graphics.DrawNode;
+using LAP.Core.Graphics.Primitives.Trail;
+using LAP.Core.ParticleSystem;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
 using UCA.Assets;
 using UCA.Assets.Effects;
-using LAP.Core.Graphics.DrawNode;
-using LAP.Core.Graphics.Primitives.Trail;
-using LAP.Core.Enums;
 
 namespace UCA.Content.DrawNodes
 {
     public class TerraTree : DrawNode
     {
-        public TerraTree(Vector2 position, Vector2 velocity, Color color, float Rot, DrawLayer layer)
+        public override int BlendState => BlendStateID.Additive;
+        public TerraTree(Vector2 position, Vector2 velocity, Color color, float Rot)
         {
             Position = position;
             Velocity = velocity;
             DrawColor = color;
             Rotation = Rot;
-            Layer = layer;
 
             XScale = Main.rand.NextFloat(2, 5);
             Filp = Main.rand.NextBool() ? 1 : -1;
             Height = Main.rand.NextFloat(9, 18f);
         }
-
-        public TerraTree(Vector2 position, Vector2 velocity, Color color, float Rot, DrawLayer layer, float Xscale, int filp, float height)
+        public TerraTree(Vector2 position, Vector2 velocity, Color color, float Rot, float Xscale, int filp, float height)
         {
             Position = position;
             Velocity = velocity;
             DrawColor = color;
             Rotation = Rot;
             Filp = filp;
-            Layer = layer;
 
             XScale = Xscale;
             Filp = filp;
@@ -43,7 +43,7 @@ namespace UCA.Content.DrawNodes
         public List<float> OldRot = [];
         public Vector2 oldDustPos;
         public Vector2 DustPos;
-
+        public override DrawLayer Layer => DrawLayer.AfterDusts;
         public float XScale;
         public int Filp;
         public float Height;
@@ -61,13 +61,15 @@ namespace UCA.Content.DrawNodes
         {
             if (!CanAdd)
             {
-                Opacity = MathHelper.Lerp(Opacity, 1f, 0.01f);
-                if (Opacity > 0.95f)
-                    Time = Lifetime;
+                Time = 2;
+                ExtraUpdate = 0;
+                Opacity = MathHelper.Lerp(Opacity, 0f, 0.08f);
+                if (Opacity < 0.02f)
+                    Kill();
                 return;
             }
 
-            Opacity = MathHelper.Lerp(Opacity, 0.2f, 0.08f);
+            Opacity = MathHelper.Lerp(Opacity, 1f, 0.08f);
 
             if (Time > TotalPoint)
                 CanAdd = false;
@@ -101,20 +103,13 @@ namespace UCA.Content.DrawNodes
         }
         public override void Draw(SpriteBatch sb)
         {
-            sb.End();
-            sb.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
-            
-            Main.graphics.GraphicsDevice.Textures[0] = UCATextureRegister.Wood.Value;
-            Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
-
-            Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
-            Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
+            Main.graphics.GraphicsDevice.Textures[0] = LAPTextureRegister.Wood.Value;
+            Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointWrap;
 
             Effect shader = UCAShaderRegister.TerraRayVinesShader.Value;
             shader.Parameters["progress"].SetValue(Opacity);
-            shader.Parameters["InPutTextureSize"].SetValue(new Vector2(1024, 1024));
-            shader.Parameters["EdgeColor"].SetValue(DrawColor.ToVector4());
-            shader.Parameters["EdgeWidth"].SetValue(0.2f);
+            shader.Parameters["UVMult"].SetValue(new Vector2(0.2f, 0.5f));
+            shader.Parameters["UVAdd"].SetValue(new Vector2(Main.GlobalTimeWrappedHourly * 0.01f, 1));
             shader.CurrentTechnique.Passes[0].Apply();
             
             List<VertexPositionColorTexture2D> Vertexlist = new List<VertexPositionColorTexture2D>();
@@ -134,16 +129,12 @@ namespace UCA.Content.DrawNodes
                 float progress = (float)i / OldPos.Count;
                 // 绘制位置
                 Vector2 DrawPos = OldPos[i] - Main.screenPosition;
-                Vertexlist.Add(new VertexPositionColorTexture2D(DrawPos - new Vector2(0, 3 * YScale).RotatedBy(OldRot[i]), DrawColor, new Vector3(progress, 0, 0)));
-                Vertexlist.Add(new VertexPositionColorTexture2D(DrawPos + new Vector2(0, 3 * YScale).RotatedBy(OldRot[i]), DrawColor, new Vector3(progress, 1, 0)));
+                Vertexlist.Add(new VertexPositionColorTexture2D(DrawPos - new Vector2(0, 2 * YScale).RotatedBy(OldRot[i]), DrawColor * 0.8f, new Vector3(progress, 0, 0)));
+                Vertexlist.Add(new VertexPositionColorTexture2D(DrawPos + new Vector2(0, 2 * YScale).RotatedBy(OldRot[i]), DrawColor * 0.8f, new Vector3(progress, 1, 0)));
             }
             VertexPositionColorTexture2D[] VertexArray = Vertexlist.ToArray();
             
             Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, VertexArray, 0, Vertexlist.Count - 2);
-
-            sb.End();
-            sb.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
         }
-
     }
 }

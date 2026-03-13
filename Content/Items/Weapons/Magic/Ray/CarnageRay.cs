@@ -1,24 +1,15 @@
-﻿using CalamityMod;
-using CalamityMod.Items.Weapons.Magic;
-using Humanizer;
-using LAP.Core.Keybind;
+﻿using LAP.Core.LAPSource;
 using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Common.Misc;
 using UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld;
-using UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld;
-using UCA.Content.UCACooldowns;
-using UCA.Content.UCARecipeGroups;
 using UCA.Core.BaseClass;
-using UCA.Core.Keybinds;
-using UCA.Core.Utilities;
 
 namespace UCA.Content.Items.Weapons.Magic.Ray
 {
@@ -42,8 +33,8 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
             Item.knockBack = 3.25f;
-            Item.value = UCAShopValue.RarityLightRedBuyPrice;
-            Item.rare = ItemRarityID.LightRed;
+            Item.value = UCAShopValue.RarityOrangeBuyPrice;
+            Item.rare = ItemRarityID.Orange;
             Item.UseSound = null;
             Item.autoReuse = true;
             Item.shoot = ModContent.ProjectileType<CarnageRayHeldProj>();
@@ -58,8 +49,8 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             Item.LAP().WeaponSkillFocusCost = 50;
             Item.LAP().WeaponSkillRealManaCost = 200;
             Item.LAP().WeaponSkillRealFocusCost = 50;
+            Item.LAP().SkillShoot = ProjectileType<CarnageRaySkillProj>();
         }
-
         public override bool AltFunctionUse(Player player)
         {
             return true;
@@ -88,20 +79,11 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
         {
         }
 
-        public override void WeaponSkill(Player player)
+        public override void WeaponSkill(Player player, EntitySource_ItemUse_WeaponSkill source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<CarnageRaySkillProj>()] < 1 && 
-                player.ownedProjectileCounts[ModContent.ProjectileType<CarnageRayHeldProjMelee>()] < 1 && 
-                player.ownedProjectileCounts[ModContent.ProjectileType<CarnageRayHeldProj>()] < 1)
+            if (!player.HasProj<CarnageRaySkillProj>() && !player.HasProj<CarnageRayHeldProjMelee>() && !player.HasProj<CarnageRayHeldProj>())
             {
-                if (player.CheckFocus(Item.LAP().WeaponSkillRealFocusCost, false) && player.CheckMana(player.ActiveItem(), Item.LAP().WeaponSkillRealManaCost, false))
-                {
-                    player.CheckFocus(Item.LAP().WeaponSkillRealFocusCost, true);
-                    player.CheckMana(player.ActiveItem(), Item.LAP().WeaponSkillRealManaCost, true);
-                    float kb = player.GetWeaponKnockback(Item);
-                    int Damage = player.GetWeaponDamage(Item);
-                    Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, Vector2.Zero, ModContent.ProjectileType<CarnageRaySkillProj>(), Damage, kb, player.whoAmI);
-                }
+                Projectile.NewProjectile(source, position, Vector2.Zero, type, damage, knockback, player.whoAmI);
             }
         }
 
@@ -110,7 +92,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             CreateRecipe().
                 AddIngredient(ItemID.CrimsonRod).
                 AddIngredient(ItemID.MagicMissile).
-                AddRecipeGroup(UCARecipeGroup.PlasmaRodGroup).
+                AddIngredient<PlasmaRodAlt>().
                 AddIngredient(ItemID.ThunderStaff).
                 AddTile(TileID.DemonAltar).
                 Register();

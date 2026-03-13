@@ -1,4 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LAP.Assets.TextureRegister;
+using LAP.Core.Enums;
+using LAP.Core.SystemsLoader;
+using LAP.Core.Utilities;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
@@ -10,16 +14,12 @@ using UCA.Content.DrawNodes;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld;
 using UCA.Core.BaseClass;
-using LAP.Core.Graphics;
-using UCA.Core.Utilities;
-using LAP.Core.Utilities;
-using LAP.Core.Enums;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
     public class ElementalLaser : BaseMagicProj
     {
-        public override string Texture => UCATextureRegister.InvisibleTexturePath;
+        public override string Texture => LAPTextureRegister.InvisibleTexturePath;
         public float Opacity = 0f;
         public int MaxLife = 75;
         public float LaserLength = 0;
@@ -31,6 +31,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 4400;
+            Projectile.AddProtectedProj();
         }
         public override void SetDefaults()
         {
@@ -84,7 +85,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             if (WeaponStates == ElementalRayState.StarDust)
             {
                 FirePos.Add(Projectile.Center);
-                NPC npc = Projectile.FindClosestTarget(1500, false);
+                NPC npc = LAPUtilities.FindClosestTarget(Projectile.Center, 1500, true);
                 if (npc != null)
                 {
                     Vector2 ToNPCVel = (npc.Center - EndPos).SafeNormalize(Projectile.rotation.ToRotationVector2());
@@ -143,28 +144,28 @@ namespace UCA.Content.Projectiles.Magic.Ray
             {
                 if (WeaponStates == ElementalRayState.Solar)
                 {
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.OrangeRed, 0, DrawLayer.AfterDusts, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.Orange, 0, DrawLayer.AfterDusts, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.OrangeRed, 0, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.Orange, 0, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
                 }
                 else if (WeaponStates == ElementalRayState.Nebula)
                 {
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.Violet, 0, DrawLayer.AfterDusts, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.BlueViolet, 0, DrawLayer.AfterDusts, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.Violet, 0, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.BlueViolet, 0, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
                 }
                 else if (WeaponStates == ElementalRayState.Vortex)
                 {
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.Turquoise, 0, DrawLayer.AfterDusts, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.DarkTurquoise, 0, DrawLayer.AfterDusts, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.Turquoise, 0, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.DarkTurquoise, 0, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
                 }
                 else if (WeaponStates == ElementalRayState.StarDust)
                 {
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.SkyBlue, 0, DrawLayer.AfterDusts, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.DeepSkyBlue, 0, DrawLayer.AfterDusts, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.SkyBlue, 0, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.DeepSkyBlue, 0, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
                 }
                 else
                 {
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.White, 0, DrawLayer.AfterDusts, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.GhostWhite, 0, DrawLayer.AfterDusts, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.White, 0, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.GhostWhite, 0, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
                 }
             }
             #endregion
@@ -183,7 +184,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 {
                     if (WeaponStates == ElementalRayState.StarDust)
                     {
-                        NPC npc = Projectile.FindClosestTarget(1500, false);
+                        NPC npc = LAPUtilities.FindClosestTarget(Projectile.Center, 1500, true);
                         if (npc != null)
                         {
                             Vector2 ToNPCVel = (npc.Center - EndPos).SafeNormalize(Projectile.rotation.ToRotationVector2());
@@ -219,7 +220,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
             for (int i = 0; i < FirePos.Count; i++)
             {
-                NPC npc = Projectile.FindClosestTarget(1500, false);
+                NPC npc = LAPUtilities.FindClosestTarget(Projectile.Center, 1500, true);
                 for (int j = 0; j < 20; j++)
                 {
                     Color RandomColor;

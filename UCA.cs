@@ -1,3 +1,4 @@
+global using static Terraria.ModLoader.ModContent;
 using LAP.Core.LAPUI.FocusBar;
 using System.IO;
 using Terraria.ModLoader;

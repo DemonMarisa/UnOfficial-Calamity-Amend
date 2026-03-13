@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using LAP.Content.Configs;
+﻿using LAP.Content.Configs;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -43,12 +42,6 @@ namespace UCA.Content.Projectiles.Magic.Ray
         public override void OnSpawn(IEntitySource source)
         {
         }
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-        {
-            float scale = 1 + AllScale;
-            return CalamityUtils.CircularHitboxCollision(Projectile.Center, 150 * scale, targetHitbox);
-        }
-
         public override void AI()
         {
             float scale = 1 + AllScale;

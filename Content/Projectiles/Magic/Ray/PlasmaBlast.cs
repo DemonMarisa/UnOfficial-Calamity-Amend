@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using LAP.Core.Enums;
+﻿using LAP.Core.Enums;
 using LAP.Core.Graphics.PixelatedRender;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
@@ -10,13 +9,15 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Core.BaseClass;
+using LAP.Assets.TextureRegister;
+using LAP.Core.SystemsLoader;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
     public class PlasmaBlast : BaseMagicProj, IPixelatedRenderer
     {
         public DrawLayer Layer = DrawLayer.BeforePlayer;
-        public override string Texture => UCATextureRegister.InvisibleTexturePath;
+        public override string Texture => LAPTextureRegister.InvisibleTexturePath;
 
         public float Scale = 0f;
 
@@ -25,6 +26,10 @@ namespace UCA.Content.Projectiles.Magic.Ray
         public float Rot = 0;
         public float Rot2 = 0;
         public float Rot3 = 0;
+        public override void SetStaticDefaults()
+        {
+            Projectile.AddProtectedProj();
+        }
         public override void SetDefaults()
         {
             Projectile.width = 200;
@@ -44,7 +49,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            return CalamityUtils.CircularHitboxCollision(Projectile.Center, 110, targetHitbox);
+            return LAPUtilities.CircularHitboxCollision(Projectile.Center, 110, targetHitbox);
         }
 
         public override void AI()

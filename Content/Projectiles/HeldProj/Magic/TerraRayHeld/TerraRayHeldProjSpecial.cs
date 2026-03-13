@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -22,7 +21,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
 {
     public class TerraRayHeldProjSpecial : ModProjectile, ILocalizedModType
     {
-        public override LocalizedText DisplayName => CalamityUtils.GetItemName<TerraRay>();
+        public override LocalizedText DisplayName => LAPUtilities.GetItemName<TerraRay>();
         public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/TerraRayHeld/TerraRayHeldProj";
         public AnimationHelper animationHelper = new AnimationHelper(4);
         public int OwnerDir = 0;
@@ -261,12 +260,12 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
 
                 Vector2 firVec = Vector2.UnitX.RotatedBy(rot * i);
                 Color color = Main.rand.NextBool() ? Color.DarkGreen : Color.SaddleBrown;
-                new TerraTree(firPos, firVec * Main.rand.NextFloat(0.3f, 0.6f), color, 0, DrawLayer.BeforeDusts, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
+                new TerraTree(firPos, firVec * Main.rand.NextFloat(0.3f, 0.6f), color, 0, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
             }
             #region 生成环形粒子
-            for (int i = 0; i < 30; i++)
+            for (int i = 0; i < 20; i++)
             {
-                float offset = MathHelper.TwoPi / 30;
+                float offset = MathHelper.TwoPi / 20;
                 Color RandomColor = Color.Lerp(Color.LightGreen, Color.ForestGreen, Main.rand.NextFloat(0, 1));
                 Vector2 firVel = Vector2.UnitX.BetterRotatedBy(offset * i, default, 0.75f, 1f);
                 new MediumGlowBall(firPos, firVel.RotatedBy(RotOffset + MathHelper.PiOver2) * 1.5f, RandomColor, 60, 0, 1, 0.2f, 0).Spawn();
@@ -307,7 +306,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
             int Damage = (int)(Projectile.damage * 2);
             if (fromMouse)
             {
-                NPC target = Projectile.FindClosestTarget(250, genPos);
+                NPC target = LAPUtilities.FindClosestTarget(Projectile.Center, 1500, true);
                 if (target is not null)
                     genPos = target.Center;
                 SoundEngine.PlaySound(SoundsMenu.NightRayHit, Projectile.Center);
@@ -367,7 +366,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
             Vector2 rotationPoint = texture.Size() / 2f;
             SpriteEffects flipSprite = Projectile.spriteDirection * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             // spriteBatch会自动把textures0设置为当前使用的材质，所以需要你手动改一下
-            Main.spriteBatch.Draw(texture, drawPosition, null, Color.White, drawRotation, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, null, lightColor, drawRotation, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
             return false;

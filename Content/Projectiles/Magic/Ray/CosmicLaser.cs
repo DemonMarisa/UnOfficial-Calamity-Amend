@@ -1,6 +1,8 @@
-﻿using LAP.Content.Configs;
+﻿using LAP.Assets.TextureRegister;
+using LAP.Content.Configs;
 using LAP.Core.AnimationHandle;
 using LAP.Core.Enums;
+using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -11,7 +13,6 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
-using UCA.Content.Configs;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.HealPRoj;
@@ -21,7 +22,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
 {
     public class CosmicLaser : BaseMagicProj
     {
-        public override string Texture => UCATextureRegister.InvisibleTexturePath;
+        public override string Texture => LAPTextureRegister.InvisibleTexturePath;
         public int Time;
         public int MaxTime = 45;
         public int LaserLength = 2200;
@@ -29,6 +30,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 4400;
+            Projectile.AddProtectedProj();
         }
         public override void SetDefaults()
         {
@@ -155,7 +157,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 }
                 Vector2 SpawnPos = target.Center + new Vector2(target.width, 0).RotatedByRandom(MathHelper.TwoPi);
                 Vector2 ProjVel = LAPUtilities.GetVector2(target.Center, SpawnPos) * 9;
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), SpawnPos, ProjVel, ModContent.ProjectileType<CosmicHeal>(), 0, Projectile.knockBack, Projectile.owner);
+                Projectile.Owner().SpawnLifeStealProj(target, Projectile.GetSource_FromThis(), ProjectileType<CosmicHeal>(), SpawnPos, ProjVel);
             }
         }
         public override void OnKill(int timeLeft)

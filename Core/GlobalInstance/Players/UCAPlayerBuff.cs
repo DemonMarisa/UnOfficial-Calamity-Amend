@@ -1,11 +1,6 @@
-﻿using CalamityMod;
-using LAP.Core.Utilities;
-using Microsoft.Xna.Framework;
+﻿using LAP.Core.Utilities;
 using Terraria;
 using Terraria.ModLoader;
-using UCA.Content.MetaBalls;
-using UCA.Content.Particiles;
-using UCA.Content.UCACooldowns;
 
 namespace UCA.Core.GlobalInstance.Players
 {

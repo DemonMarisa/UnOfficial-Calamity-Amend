@@ -5,9 +5,4 @@ UCAConfig: {
 		Label: Turn On Corner
 		Tooltip: All modified weapons will have a corner mark indicating the change.
 	}
-
-	PerformanceMode: {
-		Label: Performance Mode
-		Tooltip: Turning this on will reduce most visual effects.
-	}
 }

@@ -4,12 +4,3 @@ Items: {
 		// Tooltip: ""
 	}
 }
-
-HoldAltToShow: 按住左Alt以查看武器特殊功能
-
-HealProj: {
-	// CarnageHeal.DisplayName: Carnage Heal
-	// CosmicHeal.DisplayName: Cosmic Heal
-	// NebulaHeal.DisplayName: Nebula Heal
-	// TerraHeal.DisplayName: Terra Heal
-}

@@ -1,11 +1,10 @@
-﻿using CalamityMod;
-using CalamityMod.Items.Materials;
+﻿using LAP.Common.CalamityModCross;
+using LAP.Common.Utilities;
 using LAP.Core.Enums;
-using LAP.Core.MiscDate;
+using LAP.Core.LAPSource;
 using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -14,9 +13,6 @@ using UCA.Common.Misc;
 using UCA.Content.Projectiles.HeldProj.Magic.ShadowBoltStaffHeld;
 using UCA.Content.UCACooldowns;
 using UCA.Core.BaseClass;
-using UCA.Core.Enums;
-using UCA.Core.Keybinds;
-using UCA.Core.Utilities;
 
 namespace UCA.Content.Items.Weapons.Magic.Ray
 {
@@ -38,7 +34,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
             Item.knockBack = 3.25f;
-            Item.value = UCAShopValue.RarityBlueBuyPrice;
+            Item.value = UCAShopValue.RarityTurquoiseBuyPrice;
             Item.rare = ItemRarityID.Blue;
             Item.UseSound = null;
             Item.autoReuse = true;
@@ -55,8 +51,10 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             Item.LAP().UseCustomWeaponSkill = true;
             Item.LAP().WeaponTier = AllWeaponTier.PostPolterghast;
 
-            Item.LAP().WeaponSkillManaCost = 200;
-            Item.LAP().WeaponSkillFocusCost = 25;
+            Item.LAP().WeaponSkillFocusCost = 250;
+
+            Item.LAP().SkillShoot = ProjectileType<ShadowBoltStaffSkillHeldProj>();
+            Item.LAP().SkillShootSpeed = 0;
         }
         public override bool AltFunctionUse(Player player)
         {
@@ -68,7 +66,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
         }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            if (player.altFunctionUse == 2 && player.CheckFocus(Item.LAP().WeaponSkillRealFocusCost))
+            if (player.altFunctionUse == 2 && player.CheckMana((int)(200 * player.manaCost), true))
             {
                 Projectile.NewProjectile(source, position, Vector2.Zero, ModContent.ProjectileType<ShadowBoltStaffSpecialHeldProj>(), damage, knockback, player.whoAmI);
             }
@@ -76,19 +74,12 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
                 Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI);
             return false;
         }
-        public override void WeaponSkill(Player player)
+        public override bool CanUseWeaponSkill(Player player) => !player.HasCD<ShadowBotlStaffCount>();
+        public override void WeaponSkill(Player player, EntitySource_ItemUse_WeaponSkill source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             if (!player.HasProj<ShadowBoltStaffSkillHeldProj>() && !player.HasProj<ShadowBoltStaffHeldProj>() && !player.HasProj<ShadowBoltStaffSpecialHeldProj>())
             {
-                if (player.HasCD<ShadowBotlStaffCount>())
-                    return;
-
-                if (player.CheckMana(player.ActiveItem(), Item.LAP().WeaponSkillRealManaCost, true, false))
-                {
-                    float kb = player.GetWeaponKnockback(Item);
-                    int Damage = player.GetWeaponDamage(Item);
-                    Projectile.NewProjectile(player.GetSource_FromThis(), player.Center, Vector2.Zero, ModContent.ProjectileType<ShadowBoltStaffSkillHeldProj>(), Damage, kb, player.whoAmI);
-                }
+                Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI);
             }
         }
 
@@ -98,12 +89,23 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
 
         public override void AddRecipes()
         {
-            CreateRecipe().
-                AddIngredient(ItemID.ShadowbeamStaff).
-                AddIngredient<ArmoredShell>(3).
-                AddIngredient<RuinousSoul>(2).
-                AddTile(TileID.LunarCraftingStation).
-                Register();
+            if (ModCrossUtils.HasCalamityMod())
+            {
+                CreateRecipe().
+                    AddIngredient(ItemID.ShadowbeamStaff).
+                    AddIngredient(CalMaterialsID.ArmoredShellID, 3).
+                    AddIngredient(CalMaterialsID.RuinousSoulID, 2).
+                    AddTile(TileID.LunarCraftingStation).
+                    Register();
+            }
+            else
+            {
+                CreateRecipe().
+                    AddIngredient(ItemID.ShadowbeamStaff).
+                    AddIngredient(ItemID.LunarBar, 12).
+                    AddTile(TileID.LunarCraftingStation).
+                    Register();
+            }
         }
     }
 }

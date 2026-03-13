@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using LAP.Core.SystemsLoader;
+﻿using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Terraria;

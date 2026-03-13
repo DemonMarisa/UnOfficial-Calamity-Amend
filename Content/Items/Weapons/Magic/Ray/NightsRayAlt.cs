@@ -1,27 +1,17 @@
-﻿using CalamityMod;
-using CalamityMod.Items.Weapons.Magic;
-using LAP.Core.Enums;
-using LAP.Core.Keybind;
+﻿using LAP.Core.LAPSource;
 using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
-using System.Reflection;
 using Terraria;
 using Terraria.DataStructures;
-using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Common.Misc;
-using UCA.Content.Paths;
+using UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld;
 using UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld;
 using UCA.Content.UCACooldowns;
-using UCA.Content.UCARecipeGroups;
 using UCA.Core.BaseClass;
 using UCA.Core.GlobalInstance.Players;
-using UCA.Core.Keybinds;
-using UCA.Core.Utilities;
 
 namespace UCA.Content.Items.Weapons.Magic.Ray
 {
@@ -45,11 +35,11 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
             Item.knockBack = 3.25f;
-            Item.value = UCAShopValue.RarityLightRedBuyPrice;
-            Item.rare = ItemRarityID.LightRed;
+            Item.value = UCAShopValue.RarityOrangeBuyPrice;
+            Item.rare = ItemRarityID.Orange;
             Item.UseSound = null;
             Item.autoReuse = true;
-            Item.shoot = ModContent.ProjectileType<NightRayHeldProj>();
+            Item.shoot = ProjectileType<NightRayHeldProj>();
             Item.shootSpeed = 6f;
 
             Item.noUseGraphic = true;
@@ -58,6 +48,9 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             Item.LAP().UseCustomWeaponSkill = true;
             Item.LAP().DrawUCASmallIcon = true;
             Item.LAP().WeaponSkillFocusCost = 50;
+            Item.LAP().WeaponSkillRealFocusCost = 50;
+            Item.LAP().SkillShoot = ProjectileType<NightRaySkillProj>();
+            Item.LAP().SkillShootSpeed = 0;
         }
         public override bool CanUseItem(Player player)
         {
@@ -82,20 +75,18 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             }
             return false;
         }
-
-        public override void WeaponSkill(Player player)
+        public override bool CanUseWeaponSkill(Player player) => !player.HasCD<NightBoost>();
+        public override void WeaponSkill(Player player, EntitySource_ItemUse_WeaponSkill source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<NightRaySkillProj>()] < 1 && player.ownedProjectileCounts[ModContent.ProjectileType<NightRayHeldProj>()] < 1 && player.ownedProjectileCounts[ModContent.ProjectileType<NightRayHeldProjMelee>()] < 1)
-                if (!player.HasCD<NightBoost>() && player.CheckFocus(Item.LAP().WeaponSkillRealFocusCost))
-                {
-                    Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, Vector2.Zero, ModContent.ProjectileType<NightRaySkillProj>(), 0, 0, player.whoAmI);
-                }
+            if (!player.HasProj<NightRaySkillProj>() && !player.HasProj<NightRayHeldProj>() && !player.HasProj<NightRayHeldProjMelee>())
+            {
+                Projectile.NewProjectileDirect(source, position, velocity, type, 0, 0, player.whoAmI);
+            }
         }
-
         public override void UpdateHoldItem(Player player)
         {
             if (!player.HasCD<NightShield>())
-                player.AddCD(LAPContent.CDType<NightShield>(), UCAPlayer.NightShieldMaxHP);
+                player.AddCD(LAPContent.CDType<NightShield>(), UCAPlayer.NightShieldMaxHP, false);
         }
 
         public override void AddRecipes()
@@ -103,7 +94,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             CreateRecipe().
                 AddIngredient(ItemID.Vilethorn).
                 AddIngredient(ItemID.MagicMissile).
-                AddRecipeGroup(UCARecipeGroup.PlasmaRodGroup).
+                AddIngredient<PlasmaRodAlt>().
                 AddIngredient(ItemID.ThunderStaff).
                 AddTile(TileID.DemonAltar).
                 Register();

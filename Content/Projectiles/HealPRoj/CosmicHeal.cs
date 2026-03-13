@@ -1,5 +1,4 @@
-﻿using LAP.Core.BaseClass;
-using LAP.Core.Utilities;
+﻿using LAP.Core.BaseClass.Projectiles;
 using Microsoft.Xna.Framework;
 using Terraria;
 using UCA.Content.MetaBalls;

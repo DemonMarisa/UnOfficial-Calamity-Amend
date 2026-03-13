@@ -1,10 +1,9 @@
-﻿using CalamityMod.Buffs.DamageOverTime;
+﻿using LAP.Assets.TextureRegister;
 using LAP.Content.Configs;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
-using UCA.Assets;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.HealPRoj;
@@ -14,7 +13,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
 {
     public class CarnageBall : BaseMagicProj
     {
-        public override string Texture => UCATextureRegister.InvisibleTexturePath;
+        public override string Texture => LAPTextureRegister.InvisibleTexturePath;
 
         public NPC HomeInTarget = null;
 
@@ -63,7 +62,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Projectile.rotation = Projectile.velocity.ToRotation();
             if (HomeInTarget is null)
             {
-                HomeInTarget = Projectile.FindClosestTarget(1500, true, true);
+                HomeInTarget = LAPUtilities.FindClosestTarget(Projectile.Center, 1500, true);
                 Projectile.velocity *= 0.97f;
             }
             else
@@ -123,9 +122,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             }
 
             if (CanSpawnHeal)
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * 3f, ModContent.ProjectileType<CarnageHeal>(), 0, Projectile.knockBack, Projectile.owner, 1);
-           
-            target.AddBuff(ModContent.BuffType<BurningBlood>(), 60);
+                Projectile.Owner().SpawnLifeStealProj(target, Projectile.GetSource_FromThis(), ProjectileType<CarnageHeal>(), Projectile.Center, Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * 3f);
         }
     }
 }

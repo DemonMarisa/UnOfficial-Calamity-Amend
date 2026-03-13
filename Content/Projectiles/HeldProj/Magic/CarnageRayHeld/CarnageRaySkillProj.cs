@@ -1,43 +1,34 @@
-﻿using CalamityMod;
-using CalamityMod.Buffs.DamageOverTime;
-using LAP.Content.Configs;
+﻿using LAP.Content.Configs;
 using LAP.Core.AnimationHandle;
+using LAP.Core.Enums;
 using LAP.Core.SpecificEffectManagers;
 using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoMod.Core.Utils;
 using System;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
-using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using Terraria.ModLoader.IO;
 using UCA.Assets;
 using UCA.Assets.Sounds;
-using UCA.Content.Configs;
 using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
-using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
 using UCA.Content.Projectiles.Misc;
 using UCA.Content.UCACooldowns;
-using UCA.Core.Enums;
-using UCA.Core.GlobalInstance.NPCs;
-using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
 {
     public class CarnageRaySkillProj : ModProjectile, ILocalizedModType
     {
-        public override LocalizedText DisplayName => CalamityUtils.GetItemName<CarnageRay>();
+        public override LocalizedText DisplayName => LAPUtilities.GetItemName<CarnageRay>();
         public Player Owner => Main.player[Projectile.owner];
-        public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/CarnageRayHeld/CarnageRayHeldProj";
+        public override string Texture => GetInstance<CarnageRayHeldProj>().Texture;
 
         public float Opacity = 1f; // 1f是完全透明
 
@@ -51,6 +42,11 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
 
         public bool Canhit = false;
         public int RotFilp = 1;
+        public override void SetStaticDefaults()
+        {
+            Projectile.AddHeldProj();
+            Projectile.AddToSkillProj();
+        }
         public override void SetDefaults()
         {
             Projectile.width = 5;
@@ -63,6 +59,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 45;
             Projectile.netImportant = true;
+            Projectile.LAP().isWeaponSkillProj = true;
         }
         public override void SendExtraAI(BinaryWriter writer)
         {
@@ -117,7 +114,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
             Projectile.timeLeft = 2;
 
             Projectile.netUpdate = true;
-
+            Owner.SetUseFocus(2);
             AllAI();
 
            if (!animationHelper.HasFinish[AnimationState.Middle])
@@ -305,6 +302,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
             int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + Vector2.UnitX.RotatedBy(Projectile.rotation) * Main.rand.Next(LengthOffset, HitBoxLength),
                 Projectile.velocity.SafeNormalize(Vector2.UnitX).RotatedBy(MathHelper.PiOver2 * Owner.direction) * 12f, ModContent.ProjectileType<CarnageBall>(), Projectile.damage / 2, Projectile.knockBack, Projectile.owner, 1);
             Main.projectile[p].tileCollide = false;
+            Main.projectile[p].LAP().isWeaponSkillProj = true;
         }
 
         public void RandomSpawnProj()
@@ -313,6 +311,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
             int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + Vector2.UnitX.RotatedBy(Projectile.rotation) * Main.rand.Next(LengthOffset, HitBoxLength),
                 Projectile.velocity.SafeNormalize(Vector2.UnitX).RotatedByRandom(MathHelper.TwoPi) * 4f, ModContent.ProjectileType<CarnageBall>(), Projectile.damage / 2, Projectile.knockBack, Projectile.owner, 1);
             Main.projectile[p].tileCollide = false;
+            Main.projectile[p].LAP().isWeaponSkillProj = true;
         }
         #endregion
         #region 处理结束动画
@@ -349,7 +348,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
             SpriteEffects flipSprite = Projectile.spriteDirection * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
             // spriteBatch会自动把textures0设置为当前使用的材质，所以需要你手动改一下
-            Main.spriteBatch.Draw(ModContent.Request<Texture2D>(Texture).Value, drawPosition, null, Color.White, drawRotation - MathHelper.PiOver4, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
+            Main.spriteBatch.Draw(ModContent.Request<Texture2D>(Texture).Value, drawPosition, null, lightColor, drawRotation - MathHelper.PiOver4, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
@@ -372,8 +371,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
             SoundEngine.PlaySound(SoundsMenu.CarnageSkillMeleeHit, Projectile.Center);
 
             Owner.AddCD(LAPContent.CDType<CarnageBoost>(), 1200);
-
-            target.AddBuff(ModContent.BuffType<BurningBlood>(), 600);
         }
     }
 }

@@ -1,14 +1,8 @@
-﻿using CalamityMod;
-using CalamityMod.Cooldowns;
-using LAP.Core.LAPUI.CustomCD;
-using LAP.Core.Utilities;
+﻿using LAP.Core.LAPUI.CustomCD;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
-using System;
 using Terraria;
-using Terraria.GameContent;
-using Terraria.Graphics.Shaders;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.UI.Chat;

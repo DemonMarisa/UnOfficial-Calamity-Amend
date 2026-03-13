@@ -28,6 +28,8 @@ namespace UCA.Core.GlobalInstance.Players
         public static int MaxShadowPlayer = 12;
         // 灵魂穿透者
         public int SoulPiercerSGSUse = 0;
+        // 风暴管束者
+        public bool KingOfStorm;
         #endregion
     }
 }

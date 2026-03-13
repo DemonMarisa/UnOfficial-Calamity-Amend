@@ -4,18 +4,19 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using UCA.Assets;
-using UCA.Content.Configs;
 using UCA.Content.Particiles;
 using UCA.Core.BaseClass;
+using LAP.Assets.TextureRegister;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
     public class ShadowBeam : BaseMagicProj
     {
-        public override string Texture => UCATextureRegister.InvisibleTexturePath;
+        public override string Texture => LAPTextureRegister.InvisibleTexturePath;
         public Vector2 OldCollidePos = Vector2.Zero;
         public int HitCount = 0;
+        public int BoundDelt = 70;
+        public bool CanBound = true;
         public override void SetDefaults()
         {
             Projectile.width = 16;
@@ -29,13 +30,19 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Projectile.extraUpdates = 50;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 10;
-
         }
         public override void AI()
         {
             FirstFrame();
             Projectile.rotation = Projectile.velocity.ToRotation();
             GenDust();
+            if (BoundDelt > 0)
+                BoundDelt--;
+            if (Projectile.penetrate > 0 && CanBound && BoundDelt <= 0)
+            {
+                Bound();
+                CanBound = false;
+            }
         }
         public void GenDust()
         {
@@ -75,7 +82,6 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            Projectile.damage = (int)(Projectile.damage * 1.15f);
             Projectile.penetrate--;
             if (Projectile.penetrate <= 0)
                 Projectile.Kill();
@@ -108,13 +114,34 @@ namespace UCA.Content.Projectiles.Magic.Ray
             HitCount++;
             return false;
         }
-
+        public void Bound()
+        {
+            new CrossGlow(Projectile.Center, Vector2.Zero, Color.Violet, 30, 1f, 0.4f).Spawn();
+            new CrossGlow(Projectile.Center, Vector2.Zero, Color.DarkViolet, 30, 1f, 0.4f).Spawn();
+            for (int i = 0; i < 10; i++)
+            {
+                Color Firecolor = LAPUtilities.LerpColor(Color.Black, Color.DarkViolet);
+                new Fire(Projectile.Center, Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.2f, 1.2f) * 4, Firecolor, 90, Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.3f).SpawnToPriorityNonPreMult();
+            }
+            float length = Projectile.velocity.Length();
+            NPC npc = LAPUtilities.FindClosestTarget(Projectile.Center, 3000, true);
+            if (npc is not null)
+            {
+                Vector2 vel = LAPUtilities.GetVector2(Projectile.Center, npc.Center);
+                Projectile.velocity = vel * length;
+            }
+            else
+            {
+                Vector2 vel = LAPUtilities.GetVector2(Projectile.Center, Main.player[Projectile.owner].LocalMouseWorld());
+                Projectile.velocity = vel * length;
+            }
+        }
 
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             if (HitCount > 12)
                 HitCount = 12;
-            modifiers.SourceDamage *= 1 + 0.15f * HitCount;
+            modifiers.SourceDamage *= 1 + 0.3f * HitCount;
             HitCount++;
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)

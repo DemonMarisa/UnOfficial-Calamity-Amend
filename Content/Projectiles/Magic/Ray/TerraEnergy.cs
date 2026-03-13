@@ -14,13 +14,13 @@ using UCA.Content.DrawNodes;
 using UCA.Content.Particiles;
 using UCA.Core.BaseClass;
 using LAP.Core.Utilities;
-using LAP.Core.Enums;
+using LAP.Assets.TextureRegister;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
     public class TerraEnergy : BaseMagicProj
     {
-        public override string Texture => UCATextureRegister.InvisibleTexturePath;
+        public override string Texture => LAPTextureRegister.InvisibleTexturePath;
         public int MaxTime = 360;
         public int FadeOut = 0;
         public int MaxFade = 30;
@@ -58,10 +58,6 @@ namespace UCA.Content.Projectiles.Magic.Ray
             inToFadeOut = reader.ReadBoolean();
             Projectile.ai[0] = reader.ReadSingle();
         }
-        public override void OnSpawn(IEntitySource source)
-        {
-        }
-
         public override void AI()
         {
             if (Projectile.LAP().FirstFrame)
@@ -134,7 +130,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
                     Vector2 firVec = Vector2.UnitX.RotatedBy(rot * i).RotatedByRandom(MathHelper.TwoPi);
                     Color color = Main.rand.NextBool() ? Color.DarkGreen : Color.SaddleBrown;
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(0.3f, 0.6f), color, 0, DrawLayer.BeforeDusts, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(0.3f, 0.6f), color, 0, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
                 }
                 for (int i = 0; i < 5; i++)
                 {

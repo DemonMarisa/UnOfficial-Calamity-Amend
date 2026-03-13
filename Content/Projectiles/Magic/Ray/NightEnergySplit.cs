@@ -6,19 +6,17 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using UCA.Assets;
 using UCA.Assets.Sounds;
-using UCA.Content.Configs;
 using UCA.Content.MetaBalls;
 using UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld;
 using UCA.Core.BaseClass;
-using UCA.Core.Utilities;
+using LAP.Assets.TextureRegister;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
     public class NightEnergySplit : BaseMagicProj
     {
-        public override string Texture => UCATextureRegister.InvisibleTexturePath;
+        public override string Texture => LAPTextureRegister.InvisibleTexturePath;
 
         public float ScaleMult = 0.6f;
 

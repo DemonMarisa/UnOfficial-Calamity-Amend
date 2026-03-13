@@ -1,3 +1,4 @@
+using LAP.Core.Utilities;
 using Terraria;
 using Terraria.ModLoader;
 using UCA.Core.Utilities;
@@ -25,7 +26,7 @@ namespace UCA.Core.GlobalInstance.Players
             WeakHeldNightShield = false;
             if (TerraRestore)
             {
-                Player.Heal(Player.statLifeMax2 / 4);
+                Player.NCHeal(Player.statLifeMax2 / 4);
                 TerraRestore = false;
             }
         }

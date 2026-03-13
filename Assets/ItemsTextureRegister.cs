@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using LAP.Assets.TextureRegister;
+using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria.ModLoader;
 
@@ -19,22 +20,23 @@ namespace UCA.Assets
         public static Asset<Texture2D> ShadowBoltStaffLong { get; private set; }
         public static Asset<Texture2D> ShadowBoltStaffOrb { get; private set; }
         public static Asset<Texture2D> ShadowBoltStaffOverLay { get; private set; }
-        public void LoadWeaponsTexture()
+        public static void LoadWeaponsTexture()
         {
-            MainElementalFragments = ModContent.Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/MainElementalFragments");
-            AuxElementalFragments = ModContent.Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/AuxElementalFragments");
-            ElementalRayBase = ModContent.Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/ElementalRayBase");
-            ElementalRayNebula = ModContent.Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/ElementalRayNebula");
-            ElementalRayMisc = ModContent.Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/ElementalRayMisc");
-            ElementalRaySolor = ModContent.Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/ElementalRaySolor");
-            ElementalRayStarDust = ModContent.Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/ElementalRayStarDust");
-            ElementalRayVortex = ModContent.Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/ElementalRayVortex");
-            ElementalRayOutLine = ModContent.Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/ElementalRayOutLine");
-            ShadowBoltStaffLong = ModContent.Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/ShadowBoltStaffLong");
-            ShadowBoltStaffOrb = ModContent.Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/ShadowBoltStaffOrb");
-            ShadowBoltStaffOverLay = ModContent.Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/ShadowBoltStaffOverLay");
+            MainElementalFragments = Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/MainElementalFragments");
+            AuxElementalFragments = Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/AuxElementalFragments");
+            ElementalRayBase = Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/ElementalRayBase");
+            ElementalRayNebula = Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/ElementalRayNebula");
+            ElementalRayMisc = Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/ElementalRayMisc");
+            ElementalRaySolor = Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/ElementalRaySolor");
+            ElementalRayStarDust = Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/ElementalRayStarDust");
+            ElementalRayVortex = Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/ElementalRayVortex");
+            ElementalRayOutLine = Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/ElementalRayOutLine");
+            ShadowBoltStaffLong = Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/ShadowBoltStaffLong");
+            ShadowBoltStaffOrb = Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/ShadowBoltStaffOrb");
+            ShadowBoltStaffOverLay = Request<Texture2D>($"{MagicWeaponsTexturePath}/Ray/ShadowBoltStaffOverLay");
+            LoadMeleeWeaponsTexture();
         }
-        public void UnLoadWeaponsTexture()
+        public static void UnLoadWeaponsTexture()
         {
             MainElementalFragments = null;
             AuxElementalFragments = null;
@@ -48,6 +50,7 @@ namespace UCA.Assets
             ShadowBoltStaffLong = null;
             ShadowBoltStaffOrb = null;
             ShadowBoltStaffOverLay = null;
+            UnLoadMeleeWeaponsTexture();
         }
     }
 }

@@ -68,19 +68,6 @@ namespace UCA.Content.MetaBalls
                 }
             }
         }
-
-        public override void PrepareShader()
-        {
-            Main.graphics.GraphicsDevice.Textures[0] = AlphaTexture;
-            Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
-
-            Main.graphics.GraphicsDevice.Textures[1] = BgTexture;
-            Effect shader = UCAShaderRegister.MetaballShader.Value;
-            shader.Parameters["renderTargetSize"].SetValue(AlphaTexture.Size());
-            shader.Parameters["bakcGroundSize"].SetValue(BgTexture.Size() / 4);
-            shader.Parameters["edgeColor"].SetValue(EdgeColor.ToVector4());
-            shader.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly * 4);
-            shader.CurrentTechnique.Passes[0].Apply();
-        }
+        public override float BGTimeMult => 4;
     }
 }

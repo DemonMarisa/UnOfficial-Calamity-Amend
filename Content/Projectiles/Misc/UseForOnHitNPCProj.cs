@@ -1,10 +1,9 @@
-﻿using CalamityMod;
+﻿using LAP.Assets.TextureRegister;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using UCA.Assets;
 using UCA.Content.Items;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
@@ -19,9 +18,9 @@ namespace UCA.Content.Projectiles.Misc
     // 反正不用重新弄一套系统了
     public class UseForOnHitNPCProj : ModProjectile, ILocalizedModType
     {
-        public override LocalizedText DisplayName => CalamityUtils.GetItemName<Sword>();
+        public override LocalizedText DisplayName => LAPUtilities.GetItemName<Sword>();
         public int ID => (int)Projectile.ai[0];
-        public override string Texture => UCATextureRegister.InvisibleTexturePath;
+        public override string Texture => LAPTextureRegister.InvisibleTexturePath;
         public Player Owner => Main.player[Projectile.owner];
         public override void SetDefaults()
         {

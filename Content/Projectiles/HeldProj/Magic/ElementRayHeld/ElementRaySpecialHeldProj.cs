@@ -38,6 +38,10 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         public float BeginRot = 0;
         public bool UseSlowRot = false;
         public int HitCount = 0;
+        public override void SetStaticDefaults()
+        {
+            Projectile.AddHeldProj();
+        }
         public override void SetDefaults()
         {
             Projectile.width = 74;
@@ -198,25 +202,25 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             if (WeaponStates == ElementalRayState.StarDust && CanDraw)
             {
                 DrawChargeBall();
-                DrawBaseElementalRay();
-                FilpDrawAuxFragments();
-                DrawMainFragments();
-                DrawAuxFragments();
+                DrawBaseElementalRay(lightColor);
+                FilpDrawAuxFragments(lightColor);
+                DrawMainFragments(lightColor);
+                DrawAuxFragments(lightColor);
                 return false;
             }
             if (WeaponStates == ElementalRayState.Solar && CanDraw)
             {
                 DrawSolar();
-                DrawBaseElementalRay();
-                FilpDrawAuxFragments();
-                DrawMainFragments();
-                DrawAuxFragments();
+                DrawBaseElementalRay(lightColor);
+                FilpDrawAuxFragments(lightColor);
+                DrawMainFragments(lightColor);
+                DrawAuxFragments(lightColor);
                 return false;
             }
-            DrawBaseElementalRay();
-            FilpDrawAuxFragments();
-            DrawMainFragments();
-            DrawAuxFragments();
+            DrawBaseElementalRay(lightColor);
+            FilpDrawAuxFragments(lightColor);
+            DrawMainFragments(lightColor);
+            DrawAuxFragments(lightColor);
             return false;
         }
         public void DrawSolar()

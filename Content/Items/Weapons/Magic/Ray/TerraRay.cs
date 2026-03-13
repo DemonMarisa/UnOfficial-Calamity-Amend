@@ -1,7 +1,7 @@
-﻿using CalamityMod;
-using CalamityMod.Items.Materials;
-using CalamityMod.Items.Weapons.Magic;
+﻿using LAP.Common.CalamityModCross;
+using LAP.Common.Utilities;
 using LAP.Core.Keybind;
+using LAP.Core.LAPSource;
 using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
@@ -11,12 +11,13 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Common.Misc;
+using UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld;
 using UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld;
 using UCA.Content.UCACooldowns;
 using UCA.Core.BaseClass;
 using UCA.Core.GlobalInstance.Players;
-using UCA.Core.Keybinds;
 using UCA.Core.Utilities;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace UCA.Content.Items.Weapons.Magic.Ray
 {
@@ -43,7 +44,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             Item.rare = ItemRarityID.LightRed;
             Item.UseSound = null;
             Item.autoReuse = true;
-            Item.shoot = ModContent.ProjectileType<TerraRayHeldProj>();
+            Item.shoot = ProjectileType<TerraRayHeldProj>();
             Item.shootSpeed = 6f;
 
             Item.noUseGraphic = true;
@@ -53,6 +54,9 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             Item.LAP().UseCustomWeaponSkill = true;
             Item.LAP().WeaponSkillManaCost = 200;
             Item.LAP().WeaponSkillFocusCost = 100;
+
+            Item.LAP().SkillShoot = ProjectileType<TerraRayHeldProjSkill>();
+            Item.LAP().SkillShootSpeed = 0;
         }
         public override bool AltFunctionUse(Player player)
         {
@@ -81,24 +85,17 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             // 因为调用了两次，所以额外插入一次
             LAPUtilities.IntegrateHotkey(tooltips, LAPKeybind.WeaponSkillHotKey);
         }
-        public override void WeaponSkill(Player player)
+        public override void WeaponSkill(Player player, EntitySource_ItemUse_WeaponSkill source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<TerraRayHeldProj>()] < 1 && player.ownedProjectileCounts[ModContent.ProjectileType<TerraRayHeldProjSpecial>()] < 1 && player.ownedProjectileCounts[ModContent.ProjectileType<TerraRayHeldProjSkill>()] < 1)
+            if (!player.HasProj<TerraRayHeldProj>() && !player.HasProj<TerraRayHeldProjSpecial>() && !player.HasProj<TerraRayHeldProjSkill>())
             {
-                if (player.CheckFocus(Item.LAP().WeaponSkillRealFocusCost, false) && player.CheckMana(player.ActiveItem(), Item.LAP().WeaponSkillRealManaCost, false, false))
+                float Projectilai = 0;
+                if (player.UCA().TerraRayRestore > 0 && player.controlUp)
                 {
-                    player.CheckFocus(Item.LAP().WeaponSkillRealFocusCost, true);
-                    player.CheckMana(player.ActiveItem(), Item.LAP().WeaponSkillRealManaCost, true, false);
-                    float kb = player.GetWeaponKnockback(Item);
-                    int Damage = player.GetWeaponDamage(Item);
-                    float Projectilai = 0;
-                    if (player.UCA().TerraRayRestore > 0 && player.controlUp)
-                    {
-                        Projectilai = 1f;
-                        player.UCA().TerraRayRestore--;
-                    }
-                    Projectile.NewProjectileDirect(player.GetSource_ItemUse(Item), player.Center, Vector2.Zero, ModContent.ProjectileType<TerraRayHeldProjSkill>(), Damage, kb, player.whoAmI, Projectilai);
+                    Projectilai = 1f;
+                    player.UCA().TerraRayRestore--;
                 }
+                Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, player.whoAmI, Projectilai);
             }
         }
         public override void UpdateHoldItem(Player player)
@@ -108,21 +105,33 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
         }
         public override void AddRecipes()
         {
-            CreateRecipe().
-                AddIngredient(ModContent.ItemType<ValkyrieRay>()).
-                AddIngredient(ModContent.ItemType<CarnageRay>()).
-                AddIngredient(ItemID.BrokenHeroSword).
-                AddIngredient(ModContent.ItemType<LivingShard>(), 12).
-                AddTile(TileID.DemonAltar).
-                Register();
+            if (ModCrossUtils.HasCalamityMod())
+            {
+                CreateRecipe().
+                    AddIngredient(CalWeaponID.ValkyrieRayID).
+                    AddIngredient(ItemType<CarnageRay>()).
+                    AddIngredient(ItemID.BrokenHeroSword).
+                    AddIngredient(CalMaterialsID.LivingShardID, 12).
+                    AddTile(TileID.DemonAltar).
+                    Register();
 
-            CreateRecipe().
-                AddIngredient(ModContent.ItemType<ValkyrieRay>()).
-                AddIngredient(ModContent.ItemType<NightsRay>()).
-                AddIngredient(ItemID.BrokenHeroSword).
-                AddIngredient(ModContent.ItemType<LivingShard>(),12).
-                AddTile(TileID.DemonAltar).
-                Register();
+                CreateRecipe().
+                    AddIngredient(CalWeaponID.ValkyrieRayID).
+                    AddIngredient(ItemType<NightsRayAlt>()).
+                    AddIngredient(ItemID.BrokenHeroSword).
+                    AddIngredient(CalMaterialsID.LivingShardID, 12).
+                    AddTile(TileID.DemonAltar).
+                    Register();
+            }
+            else
+            {
+                CreateRecipe().
+                    AddIngredient(ItemType<CarnageRay>()).
+                    AddIngredient(ItemType<NightsRayAlt>()).
+                    AddIngredient(ItemID.BrokenHeroSword).
+                    AddTile(TileID.DemonAltar).
+                    Register();
+            }
         }
     }
 }

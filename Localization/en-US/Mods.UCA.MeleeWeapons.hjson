@@ -1,0 +1,19 @@
+StormRulerAlt: {
+	DisplayName: Tooltip: Storm Ruler
+	Tooltip:
+		'''
+		Greatsword with a broken blade,
+		also known as the Giantslayer for the residual strength
+		of storm that brings giants to their knees.
+
+		Yhorm the Giant once held two of these,
+		but gave one to the humans who doubted him,
+		and left the other to a dear friend before
+		facing his fate as a Lord of Cinder.
+
+		Weapon Skill: Storm King
+		[KEY]: Assume stance to imbue sword with storm.
+		Consumes [LAPFocusCost] focus point Enhanced weapon skill damage
+		Most effective when facing giants.
+		'''
+}

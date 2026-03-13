@@ -28,7 +28,7 @@ namespace UCA.Content.MetaBalls
                     Scale *= 0.96f;
             }
         }
-
+        public override float BGTimeMult => 4;
         public override Color EdgeColor => Color.Red;
         public static List<BloodParticle> Particles = [];
         public override Texture2D BgTexture => UCATextureRegister.CarnageBackGround.Value;
@@ -74,22 +74,6 @@ namespace UCA.Content.MetaBalls
                     Main.spriteBatch.Draw(UCATextureRegister.BloodStain.Value, Particles[i].Center - Main.screenPosition, null, Color.White, Particles[i].Rot, UCATextureRegister.BloodStain.Size() / 2, Particles[i].Scale, SpriteEffects.None, 0f);
                 }
             }
-        }
-
-        public override void PrepareShader()
-        {
-            Main.graphics.GraphicsDevice.Textures[0] = AlphaTexture;
-            Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
-
-            Main.graphics.GraphicsDevice.Textures[1] = BgTexture;
-            Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
-
-            Effect shader = UCAShaderRegister.MetaballShader.Value;
-            shader.Parameters["renderTargetSize"].SetValue(AlphaTexture.Size());
-            shader.Parameters["bakcGroundSize"].SetValue(BgTexture.Size());
-            shader.Parameters["edgeColor"].SetValue(EdgeColor.ToVector4());
-            shader.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly * 4);
-            shader.CurrentTechnique.Passes[0].Apply();
         }
     }
 }

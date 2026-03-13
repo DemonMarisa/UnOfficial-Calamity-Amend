@@ -1,10 +1,8 @@
-﻿using CalamityMod;
-using LAP.Core.Keybind;
+﻿using LAP.Core.LAPSource;
 using LAP.Core.MiscDate;
 using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -12,8 +10,7 @@ using Terraria.ModLoader;
 using UCA.Common.Misc;
 using UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld;
 using UCA.Core.BaseClass;
-using UCA.Core.Keybinds;
-using UCA.Core.Utilities;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace UCA.Content.Items.Weapons.Magic.Ray
 {
@@ -51,6 +48,8 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             Item.LAP().UseCustomWeaponSkill = true;
             Item.LAP().DrawUCASmallIcon = true;
             Item.LAP().WeaponSkillFocusCost = 10;
+            Item.LAP().SkillShoot = ProjectileType<PlasmaRodSkillProj>();
+            Item.LAP().SkillShootSpeed = 10;
         }
         public override bool AltFunctionUse(Player player)
         {
@@ -80,25 +79,15 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             return false;
         }
 
-        public override void WeaponSkill(Player player)
+        public override void WeaponSkill(Player player, EntitySource_ItemUse_WeaponSkill source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             if (!player.HasProj<PlasmaRodHeldProj>() && !player.HasProj<PlasmaRodHeldProjBlast>() && !player.HasProj<PlasmaRodSkillProj>())
             {
-                if (player.CheckFocus(Item.LAP().WeaponSkillRealFocusCost, true, false))
-                {
-                    if (PlasmaRodFilp == 1)
-                    {
-                        PlasmaRodFilp = -1;
-                    }
-                    else
-                    {
-                        PlasmaRodFilp = 1;
-                    }
-                    float kb = player.GetWeaponKnockback(Item);
-                    int Damage = player.GetWeaponDamage(Item);
-                    int Index = Projectile.NewProjectile(player.GetSource_FromThis(), player.Center, Vector2.Zero, ModContent.ProjectileType<PlasmaRodSkillProj>(), Damage * 10, kb, player.whoAmI, PlasmaRodFilp);
-                    LAPUtilities.SendProjSync(Index);
-                }
+                if (PlasmaRodFilp == 1)
+                    PlasmaRodFilp = -1;
+                else
+                    PlasmaRodFilp = 1;
+                Projectile.NewProjectile(source, position, velocity, type, damage * 10, knockback, player.whoAmI, PlasmaRodFilp);
             }
         }
 

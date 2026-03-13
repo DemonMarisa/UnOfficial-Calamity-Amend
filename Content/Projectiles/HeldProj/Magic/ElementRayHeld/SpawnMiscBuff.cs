@@ -1,16 +1,12 @@
-﻿using CalamityMod;
-using LAP.Core.SystemsLoader;
+﻿using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
-using Terraria.ModLoader;
 using UCA.Assets.Sounds;
 using UCA.Content.Particiles;
-using UCA.Content.Projectiles.Magic.Ray;
 using UCA.Content.UCACooldowns;
-using UCA.Core.Enums;
-using UCA.Core.Utilities;
+using LAP.Core.Enums;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
 {

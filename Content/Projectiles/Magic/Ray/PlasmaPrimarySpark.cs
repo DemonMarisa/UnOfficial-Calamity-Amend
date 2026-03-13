@@ -1,4 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LAP.Assets.TextureRegister;
+using LAP.Core.Enums;
+using LAP.Core.Graphics.PixelatedRender;
+using LAP.Core.Graphics.Primitives.Trail;
+using LAP.Core.SystemsLoader;
+using LAP.Core.Utilities;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
@@ -6,14 +12,11 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.WorldBuilding;
 using UCA.Assets;
 using UCA.Assets.Sounds;
 using UCA.Content.Particiles;
 using UCA.Core.BaseClass;
-using LAP.Core.Graphics.Primitives.Trail;
-using LAP.Core.Utilities;
-using LAP.Core.Graphics.PixelatedRender;
-using LAP.Core.Enums;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
@@ -21,7 +24,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
     {
         public DrawLayer LayerToRenderTo => DrawLayer.BeforePlayer;
         public Player Owner => Main.player[Projectile.owner];
-        public override string Texture => UCATextureRegister.InvisibleTexturePath;
+        public override string Texture => LAPTextureRegister.InvisibleTexturePath;
         public NPC Target = null;
         public float DrawRot = 0;
         public bool FadeOut = false;
@@ -32,7 +35,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             // 保存旧朝向与旧位置
             ProjectileID.Sets.TrailingMode[Type] = 2;
             // 一共爆粗20个数据
-            ProjectileID.Sets.TrailCacheLength[Type] = 15;
+            ProjectileID.Sets.TrailCacheLength[Type] = 20;
         }
 
         public override void SetDefaults()
@@ -77,7 +80,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public void TrackTarget()
         {
-            Target = Projectile.FindClosestTarget(2000, false, false);
+            Target = LAPUtilities.FindClosestTarget(Projectile.Center, 1500, false);
             if (Target is not null)
             {
                 Vector2 home = Target.Center - Projectile.Center;
@@ -89,17 +92,23 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
         public void RenderPixelated(SpriteBatch spriteBatch)
         {
+            Vector2 DrawTexPos = Projectile.Center - Main.screenPosition;
+            Texture2D texture = UCATextureRegister.GlowBall.Value;
+            spriteBatch.Draw(texture, DrawTexPos, null, new Color(0, 0, 0, 255), 0, texture.Size() / 2, Projectile.scale * 0.6f, SpriteEffects.None, 0);
+
+            LAPContent.ReSetToBeginShader_Pixel(BlendState.AlphaBlend);
+
             Vector2 HalfProj = new Vector2(Projectile.width / 2, Projectile.height / 2);
             List<TrailDrawDate> trailDrawDate = [];
             List<TrailDrawDate> SecondtrailDrawDate = [];
             List<TrailDrawDate> ThirdtrailDrawDate = [];
-            DrawSetting drawSetting = new(UCATextureRegister.HoodTrail.Value, false, false);
+            DrawSetting drawSetting = new(UCATextureRegister.HoodTrail.Value);
 
             for (int i = 0; i < Projectile.oldPos.Length; i++)
             {
                 if (Projectile.oldPos[i] != Vector2.Zero)
                 {
-                    Vector2 DrawPos = Projectile.oldPos[i] - Main.screenPosition + HalfProj - new Vector2(-18, 0).RotatedBy(Projectile.oldRot[i]);
+                    Vector2 DrawPos = Projectile.oldPos[i] - Main.screenPosition + HalfProj - new Vector2(-12, 0).RotatedBy(Projectile.oldRot[i]);
 
                     TrailDrawDate TrailDrawDate = new(DrawPos, new Color(208, 0, 255, 0), new Vector2(0, 24), Projectile.oldRot[i]);
                     trailDrawDate.Add(TrailDrawDate);
@@ -115,10 +124,8 @@ namespace UCA.Content.Projectiles.Magic.Ray
             TrailRender.RenderTrail(trailDrawDate.ToArray(), drawSetting);
             TrailRender.RenderTrail(SecondtrailDrawDate.ToArray(), drawSetting);
             TrailRender.RenderTrail(ThirdtrailDrawDate.ToArray(), drawSetting);
-
-            Vector2 DrawTexPos = Projectile.Center - Main.screenPosition;
-            Texture2D texture = UCATextureRegister.GlowBall.Value;
-            spriteBatch.Draw(texture, DrawTexPos, null, new Color(0, 0, 0, 255), 0, texture.Size() / 2, Projectile.scale * 0.6f, SpriteEffects.None, 0);
+            LAPContent.ReSetToEndShader_Pixel();
+            
             spriteBatch.Draw(UCATextureRegister.BallSoft.Value, DrawTexPos, null, new Color(148, 0, 255, 0), 0, UCATextureRegister.BallSoft.Size() / 2, Projectile.scale * 0.8f, SpriteEffects.None, 0);
             spriteBatch.Draw(UCATextureRegister.Spirit.Value, DrawTexPos, null, new Color(255, 255, 255, 0), Main.GlobalTimeWrappedHourly * 2, UCATextureRegister.Spirit.Size() / 2, Projectile.scale * 0.4f, SpriteEffects.None, 0);
         }
@@ -138,7 +145,8 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 new MediumGlowBall(Projectile.Center + Projectile.velocity.ToRotation().ToRotationVector2() * 12f, Projectile.velocity.RotatedBy(offset * i), RandomColor, 180, 0, 1, 0.2f, Main.rand.NextFloat(3f, 5f)).Spawn();
             }
             SoundEngine.PlaySound(SoundsMenu.PlasmaBlastBomb, Projectile.Center);
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<PlasmaBlast>(), Projectile.damage / 2, Projectile.knockBack, Projectile.owner);
+            if (LAPUtilities.IsLocalPlayer(Projectile.owner))
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ProjectileType<PlasmaBlast>(), Projectile.damage / 2, Projectile.knockBack, Projectile.owner);
         }
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)

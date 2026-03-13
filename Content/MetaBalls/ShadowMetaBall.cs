@@ -5,6 +5,7 @@ using Terraria;
 using UCA.Assets;
 using UCA.Assets.Effects;
 using LAP.Core.MetaBallsSystem;
+using LAP.Assets.TextureRegister;
 
 namespace UCA.Content.MetaBalls
 {
@@ -25,7 +26,7 @@ namespace UCA.Content.MetaBalls
         }
         public override Color EdgeColor => new Color(147, 0, 255, 255);
         public static List<ShadownParticle> Particles = [];
-        public override Texture2D BgTexture => UCATextureRegister.ShadowNebulaBackGround.Value;
+        public override Texture2D BgTexture => LAPTextureRegister.ShadowNebula.Value;
         public static void SpawnParticle(Vector2 position, Vector2 velocity, float size) => Particles.Add(new(position, velocity, size));
         public override bool Active()
         {
@@ -63,21 +64,6 @@ namespace UCA.Content.MetaBalls
                 }
             }
         }
-
-        public override void PrepareShader()
-        {
-            Main.graphics.GraphicsDevice.Textures[0] = AlphaTexture;
-            Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
-
-            Main.graphics.GraphicsDevice.Textures[1] = BgTexture;
-            Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
-
-            Effect shader = UCAShaderRegister.MetaballShader.Value;
-            shader.Parameters["renderTargetSize"].SetValue(AlphaTexture.Size());
-            shader.Parameters["bakcGroundSize"].SetValue(BgTexture.Size() / 4);
-            shader.Parameters["edgeColor"].SetValue(EdgeColor.ToVector4());
-            shader.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly * 4);
-            shader.CurrentTechnique.Passes[0].Apply();
-        }
+        public override float BGTimeMult => 4;
     }
 }

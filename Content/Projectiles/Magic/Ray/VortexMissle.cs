@@ -1,10 +1,7 @@
-﻿using CalamityMod;
-using CalamityMod.Particles;
-using LAP.Content.Configs;
+﻿using LAP.Content.Configs;
 using LAP.Core.Graphics.Primitives.Trail;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
-using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
@@ -12,18 +9,16 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Sounds;
-using UCA.Content.Configs;
 using UCA.Content.Particiles;
 using UCA.Content.Particiles.Lightnings;
-using UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld;
 using UCA.Core.BaseClass;
-using UCA.Core.Utilities;
+using LAP.Assets.TextureRegister;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
     public class VortexMissle : BaseMagicProj
     {
-        public override string Texture => UCATextureRegister.InvisibleTexturePath;
+        public override string Texture => LAPTextureRegister.InvisibleTexturePath;
         public bool CanHit = true;
         public int MaxLife = 270;
         public Vector2 TargetVelocity;
@@ -128,7 +123,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 }
             }
 
-            NPC target = Projectile.FindClosestTarget(1500);
+            NPC target = LAPUtilities.FindClosestTarget(Projectile.Center, 1500, true);
             if (target is not null)
             {
                 Vector2 home = (target.Center - Projectile.Center).SafeNormalize(Vector2.UnitY);
@@ -139,7 +134,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override void OnKill(int timeLeft)
         {
-            Projectile.ExpandHitboxBy((float)7);
+            Projectile.Resize(150, 150);
             Projectile.Damage();
             if (!LAPUtilities.OutOffScreen(Projectile.Center))
             {
@@ -194,7 +189,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             Vector2 HalfProj = new Vector2(Projectile.width / 2, Projectile.height / 2);
             List<TrailDrawDate> trailDrawDate = [];
-            DrawSetting drawSetting = new(UCATextureRegister.Thrust02.Value, false, false);
+            DrawSetting drawSetting = new(UCATextureRegister.Thrust02.Value);
             for (int i = 0; i < Projectile.oldPos.Length; i++)
             {
                 if (Projectile.oldPos[i] != Vector2.Zero)

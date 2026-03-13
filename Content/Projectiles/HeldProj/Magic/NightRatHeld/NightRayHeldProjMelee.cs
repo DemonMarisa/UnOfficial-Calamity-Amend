@@ -1,9 +1,5 @@
-﻿using CalamityMod;
-using CalamityMod.Enums;
-using CalamityMod.Graphics.Primitives;
-using CalamityMod.Items.Weapons.Magic;
-using CalamityMod.Particles;
-using LAP.Core.BaseClass;
+﻿using LAP.Content.Particles.CalParticiles;
+using LAP.Core.BaseClass.Legacys;
 using LAP.Core.Enums;
 using LAP.Core.Graphics.PixelatedRender;
 using LAP.Core.SystemsLoader;
@@ -33,7 +29,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
     public class NightRayHeldProjMelee : BaseHeldProj, IPixelatedRenderer
     {
         public DrawLayer drawLayer = DrawLayer.BeforeDusts;
-        public override LocalizedText DisplayName => CalamityUtils.GetItemName<NightsRay>();
+        public override LocalizedText DisplayName => LAPUtilities.GetItemName<NightsRayAlt>();
         public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/NightRatHeld/NightRayHeldProj";
         public Vector2 RotVector => new Vector2(12 * Owner.direction, 7).BetterRotatedBy(Owner.GetPlayerToMouseVector2().ToRotation(), default, 0.5f, 1f);
 
@@ -156,7 +152,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
                             break;
                         }
                     }
-                    NPC npc = Projectile.FindClosestTarget(1500, false);
+                    NPC npc = LAPUtilities.FindClosestTarget(Projectile.Center,1500, false);
                     if (npc != null)
                     {
                         float DistanceToNPC = Vector2.Distance(SpawnPos, npc.Center);
@@ -177,14 +173,13 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
                         }
                     }
                 }
-                Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.12f;
+                Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.12f * Owner.direction;
                 UseDelay = Owner.HeldItem.useTime * 2;
             }
         }
         #endregion
         public override void InDel()
         {
-            PixelatedRenderManger.BeginDrawProj = true;
             if (DelTimer > 0)
                 DelTimer--;
 
@@ -218,21 +213,19 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
         #region 绘制
         public override bool ExtraPreDraw(ref Color lightColor)
         {
+            PixelatedRenderManger.BeginDrawProj = true;
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
 
-            Main.graphics.GraphicsDevice.Textures[0] = ModContent.Request<Texture2D>(Texture).Value;
+            Texture2D Weapontexture = TextureAssets.Projectile[Type].Value;
+
+            Main.graphics.GraphicsDevice.Textures[0] = Weapontexture;
             Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
 
-            Effect shader = UCAShaderRegister.EdgeMeltsShader.Value;
-            shader.Parameters["progress"].SetValue(ShaderOpacity);
-            shader.Parameters["InPutTextureSize"].SetValue(ModContent.Request<Texture2D>(Texture).Size());
-            shader.Parameters["EdgeColor"].SetValue(Color.DarkViolet.ToVector4());
-            shader.Parameters["EdgeWidth"].SetValue(0.01f);
-            shader.CurrentTechnique.Passes[0].Apply();
+            LAPUtilities.FastApplyEdgeMeltsShader(ShaderOpacity, Weapontexture.Size(), Color.DarkViolet, 0.01f, 0);
 
             Texture2D texture = TextureAssets.Projectile[Type].Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
@@ -278,20 +271,15 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
 
                 if (collidingWithForcefield && movingTowardsForcefield)
                 {
-                    Vector2 impactPoint = Projectile.Center + Projectile.SafeDirectionTo(projectile.Center) * 75f;
+                    Vector2 impactPoint = Projectile.Center + LAPUtilities.GetVector2(Projectile.Center, projectile.Center) * 75f;
 
                     float bloomScaleFactor = Main.rand.NextFloat(0.6f, 0.95f) * 0.4f;
 
                     for (int i = 0; i < 3; i++)
                     {
-                        StrongBloom bloom = new(impactPoint, Vector2.Zero, Color.DeepPink, bloomScaleFactor * 0.56f, 9);
-                        GeneralParticleHandler.SpawnParticle(bloom);
-                        
-                        StrongBloom glow = new(impactPoint, Vector2.Zero, Color.MediumPurple * 0.6f, bloomScaleFactor * 0.95f, 12);
-                        GeneralParticleHandler.SpawnParticle(glow);
-
-                        StrongBloom outerGlow = new(impactPoint, Vector2.Zero, Color.White * 0.35f, bloomScaleFactor * 1.5f, 14);
-                        GeneralParticleHandler.SpawnParticle(outerGlow);
+                        new StrongBloom(impactPoint, Vector2.Zero, Color.DeepPink, bloomScaleFactor * 0.56f, 9).Spawn();
+                        new StrongBloom(impactPoint, Vector2.Zero, Color.MediumPurple * 0.6f, bloomScaleFactor * 0.95f, 12).Spawn();
+                        new StrongBloom(impactPoint, Vector2.Zero, Color.White * 0.35f, bloomScaleFactor * 1.5f, 14).Spawn();
                     }
                     Vector2 TangentVector = (impactPoint - (Projectile.Center + FireOffset)).RotatedBy(MathHelper.PiOver2);
                     for (int i = 0; i < 10; i++)
@@ -331,7 +319,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
                     }
 
                     SoundEngine.PlaySound(SoundsMenu.NightShieldHit, impactPoint);
-                    projectile.Calamity().DealsDefenseDamage = false;
 
                     projectile.UCA().HasThroughNightShield = true;
                     projectile.netSpam = 0;
@@ -371,17 +358,19 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
         {
             PixelatedRenderManger.BeginDrawProj = true;
             float OpacityOffset = MathHelper.Lerp(1f, 0f, Owner.UCA().NightShieldHP / (float)UCAPlayer.NightShieldMaxHP);
+
             LAPContent.ReSetToBeginShader_Pixel(BlendState.AlphaBlend);
+
             Main.graphics.GraphicsDevice.Textures[0] = UCATextureRegister.NightRayShield.Value;
             Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
+
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
-            Effect shader = UCAShaderRegister.EdgeMeltsShader.Value;
-            shader.Parameters["progress"].SetValue(ShaderOpacity + OpacityOffset * 0.5f);
-            shader.Parameters["InPutTextureSize"].SetValue(ModContent.Request<Texture2D>(Texture).Size());
-            shader.Parameters["EdgeColor"].SetValue(Color.DarkViolet.ToVector4());
-            shader.Parameters["EdgeWidth"].SetValue(0.01f);
-            shader.CurrentTechnique.Passes[0].Apply();
+
+            Texture2D Weapontexture = TextureAssets.Projectile[Type].Value;
+
+            LAPUtilities.FastApplyEdgeMeltsShader(ShaderOpacity + OpacityOffset * 0.5f, Weapontexture.Size(), Color.DarkViolet, 0.01f, 0);
+
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Vector2 ShieledPos = drawPosition + new Vector2(60, 0).RotatedBy(Projectile.rotation);
             float drawRotation = Projectile.rotation + (Owner.direction == -1 ? MathHelper.Pi : 0f) + RotOffset * Owner.direction;

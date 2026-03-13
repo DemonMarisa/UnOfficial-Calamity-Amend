@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using Terraria;
+﻿using Terraria;
 using Terraria.ModLoader;
 using UCA.Core.GlobalInstance.Players;
 using UCA.Core.Utilities;
@@ -31,7 +30,6 @@ namespace UCA.Core.GlobalInstance.Projectiles
             if (!HasThroughNightShieldOverMax)
             {
                 info.Damage = 0;
-                player.Calamity().freeDodgeFromShieldAbsorption = true; 
             }
             else
             {

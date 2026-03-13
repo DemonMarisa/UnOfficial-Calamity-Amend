@@ -5,9 +5,4 @@ UCAConfig: {
 		Label: 开启角标
 		Tooltip: 所有改动过的武器都会有一个角标标出
 	}
-
-	PerformanceMode: {
-		Label: 性能模式
-		Tooltip: 开启后会降低大部分视觉效果
-	}
 }

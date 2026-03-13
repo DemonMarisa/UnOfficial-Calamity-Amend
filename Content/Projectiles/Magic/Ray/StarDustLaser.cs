@@ -1,4 +1,5 @@
 ﻿using LAP.Content.Configs;
+using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -32,6 +33,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 4400;
+            Projectile.AddProtectedProj();
         }
         public override void SetDefaults()
         {

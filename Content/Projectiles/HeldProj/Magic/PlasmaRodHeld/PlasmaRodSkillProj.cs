@@ -2,6 +2,7 @@
 using LAP.Core.AnimationHandle;
 using LAP.Core.Enums;
 using LAP.Core.SpecificEffectManagers;
+using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -39,6 +40,11 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
 
         public bool CanHit = false;
         public int Filp => (int)Projectile.ai[0];
+        public override void SetStaticDefaults()
+        {
+            Projectile.AddHeldProj();
+            Projectile.AddToSkillProj();
+        }
         public override void SetDefaults()
         {
             Projectile.width = 5;
@@ -83,6 +89,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
         }
         public override void AI()
         {
+            Owner.SetUseFocus(2);
             Projectile.netUpdate = true;
             if (Projectile.LAP().FirstFrame)
             {
@@ -206,7 +213,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
             SpriteEffects flipSprite = Projectile.spriteDirection * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
             // spriteBatch会自动把textures0设置为当前使用的材质，所以需要你手动改一下
-            Main.spriteBatch.Draw(texture, drawPosition, null, Color.White, drawRotation - MathHelper.PiOver4, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, null, lightColor, drawRotation - MathHelper.PiOver4, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
             return false;
         }
         public void DrawBlade()

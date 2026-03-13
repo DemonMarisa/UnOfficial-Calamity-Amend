@@ -1,30 +1,24 @@
-﻿using CalamityMod;
-using CalamityMod.Buffs.DamageOverTime;
-using CalamityMod.Items.Weapons.Magic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets.Sounds;
 using UCA.Content.Particiles;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
-using UCA.Content.UCACooldowns;
 using LAP.Core.AnimationHandle;
-using UCA.Core.Enums;
-using UCA.Core.Utilities;
 using LAP.Core.Utilities;
+using LAP.Core.Enums;
+using UCA.Content.Items.Weapons.Magic.Ray;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
 {
     public class PlasmaRodHeldProjBlast : ModProjectile, ILocalizedModType
     {
-        public override LocalizedText DisplayName => CalamityUtils.GetItemName<PlasmaRod>();
+        public override LocalizedText DisplayName => LAPUtilities.GetItemName<PlasmaRodAlt>();
         public override string Texture => $"{ItemPath.MagicRayWeaponsPath}" + "PlasmaRodAlt";
 
         public AnimationHelper animationHelper = new AnimationHelper(3);
@@ -47,16 +41,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 45;
         }
-
-        #region 注册数据
-        public override void OnSpawn(IEntitySource source)
-        {
-            animationHelper.MaxAniProgress[AnimationState.Begin] = 30;
-            animationHelper.MaxAniProgress[AnimationState.End] = 10;
-
-            BeginRot = Owner.GetPlayerToMouseVector2().ToRotation();
-        }
-        #endregion
         public override void SendExtraAI(BinaryWriter writer)
         {
             writer.Write(animationHelper.MaxAniProgress[AnimationState.Begin]);
@@ -72,7 +56,12 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
         public override void AI()
         {
             if (Projectile.LAP().FirstFrame)
+            {
+                animationHelper.MaxAniProgress[AnimationState.Begin] = 30;
+                animationHelper.MaxAniProgress[AnimationState.End] = 10;
+                BeginRot = Owner.GetPlayerToMouseVector2().ToRotation();
                 OwnerDir = Owner.LocalMouseWorld().X > Owner.Center.X ? 1 : -1;
+            }
 
             Owner.itemTime = 2;
             Owner.itemAnimation = 2;
@@ -103,14 +92,14 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
 
                 HandleBeginAni();
 
-                if (animationHelper.AniProgress[AnimationState.Begin] == animationHelper.MaxAniProgress[AnimationState.Begin])
+                if (animationHelper.AniProgress[AnimationState.Begin] >= animationHelper.MaxAniProgress[AnimationState.Begin])
                     animationHelper.HasFinish[AnimationState.Begin] = true;
             }
             else if (!animationHelper.HasFinish[AnimationState.End])
             {
                 animationHelper.AniProgress[AnimationState.End]++;
 
-                if (animationHelper.AniProgress[AnimationState.End] == animationHelper.MaxAniProgress[AnimationState.End])
+                if (animationHelper.AniProgress[AnimationState.End] >= animationHelper.MaxAniProgress[AnimationState.End])
                     animationHelper.HasFinish[AnimationState.End] = true;
             }
             else
@@ -179,7 +168,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
             SpriteEffects flipSprite = Projectile.spriteDirection * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
             // spriteBatch会自动把textures0设置为当前使用的材质，所以需要你手动改一下
-            Main.spriteBatch.Draw(texture, drawPosition, null, Color.White, drawRotation - MathHelper.PiOver4, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, null, lightColor, drawRotation - MathHelper.PiOver4, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
             return false;
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)

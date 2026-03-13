@@ -5,6 +5,8 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Content.MetaBalls;
+using UCA.Content.Projectiles.HeldProj.Melee.StormRuler;
+using UCA.Content.Projectiles.Magic.Ray;
 using UCA.Core.Utilities;
 namespace UCA.Content.Items
 { 
@@ -44,7 +46,7 @@ namespace UCA.Content.Items
                 Projectile.NewProjectile(source, position, velocity.RotatedBy(MathHelper.ToRadians(-15) + rotAdd * i) * Main.rand.NextFloat(1f, 2f) * 0.5f, ModContent.ProjectileType<NebulaEnegry>(), damage, knockback, player.whoAmI);
             }
             */
-            //Projectile.NewProjectile(source, position, velocity * 0.5f, ModContent.ProjectileType<NebulaCrystal>(), damage, knockback, player.whoAmI);
+            Projectile.NewProjectile(source, position, velocity * 0.5f, ModContent.ProjectileType<StormRulerHeldSkillProj>(), damage, knockback, player.whoAmI);
             return false;
         }
         public static void GenUnDeathSign(Vector2 firePos, float speedMult = 1)

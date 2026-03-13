@@ -1,9 +1,4 @@
-﻿using CalamityMod.Items.Materials;
-using CalamityMod.Items.Weapons.Magic;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using UCA.Content.Items.Weapons.Magic.Ray;
+﻿using Terraria.ModLoader;
 
 namespace UCA.Core.GlobalInstance.Items
 {
@@ -16,12 +11,6 @@ namespace UCA.Core.GlobalInstance.Items
 
         public static void AddTerraRecipes()
         {
-            Recipe.Create(ModContent.ItemType<Photosynthesis>()).
-                AddIngredient(ModContent.ItemType<ValkyrieRay>()).
-                AddIngredient(ModContent.ItemType<CarnageRay>()).
-                AddIngredient(ModContent.ItemType<LivingShard>(), 12).
-                AddTile(TileID.MythrilAnvil).
-                Register();
         }
     }
 }

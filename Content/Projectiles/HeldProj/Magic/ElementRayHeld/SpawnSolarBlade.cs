@@ -1,4 +1,6 @@
-﻿using LAP.Content.Configs;
+﻿using LAP.Assets.TextureRegister;
+using LAP.Content.Configs;
+using LAP.Core.Enums;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,7 +11,6 @@ using UCA.Assets;
 using UCA.Assets.Effects;
 using UCA.Assets.Sounds;
 using UCA.Content.Particiles;
-using UCA.Core.Enums;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
 {
@@ -331,7 +332,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             else
                 PrepareShader(Color.Red, Color.OrangeRed, 0.15f, true);
             // 设置材质和偏移
-            Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Wood.Value;
+            Main.graphics.GraphicsDevice.Textures[1] = LAPTextureRegister.Wood.Value;
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointWrap;
             Vector2 OutSideBladeScale = new Vector2(0.85f * SolarBladeXScale, 1f) * scale;
             DrawMainBladeSource(DrawPos + offset.RotatedBy(DrawRot), DrawRot, OutSideBladeScale);

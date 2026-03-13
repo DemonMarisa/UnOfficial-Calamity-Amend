@@ -8,20 +8,20 @@ using Terraria.Audio;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Sounds;
-using UCA.Content.Configs;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.HealPRoj;
 using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
+using LAP.Assets.TextureRegister;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
     public class NebulaCrystal : BaseMagicProj
     {
-        public override string Texture => UCATextureRegister.InvisibleTexturePath;
+        public override string Texture => LAPTextureRegister.InvisibleTexturePath;
         public bool CanHit = true;
-        public float DustCount = 5f;
+        public float DustCount = 3f;
         public int MaxLife = 90;
         public int Filp;
         public float Vel;
@@ -76,14 +76,14 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 }
                 Vector2 offset = Main.rand.NextVector2Circular(6, 6);
                 if (!LAPConfig.Instance.PerformanceMode)
-                    new Fire(Projectile.Center + offset, Projectile.velocity * 0.3f, Color.Violet, 30, Main.rand.NextFloat(MathHelper.TwoPi), 1, 0.2f).Spawn();
+                    new Fire(Projectile.Center + offset, Projectile.velocity * 0.3f, Color.Violet, 10, Main.rand.NextFloat(MathHelper.TwoPi), 1, 0.2f).Spawn();
                 else
-                    new Fire(Projectile.Center + offset, Projectile.velocity * 0.3f, Color.Violet, 15, Main.rand.NextFloat(MathHelper.TwoPi), 1, 0.2f).Spawn();
+                    new Fire(Projectile.Center + offset, Projectile.velocity * 0.3f, Color.Violet, 5, Main.rand.NextFloat(MathHelper.TwoPi), 1, 0.2f).Spawn();
             }
 
             if (Projectile.timeLeft % 15 == 0)
             {
-                if (LAPUtilities.OutOffScreen(Projectile.Center, 0.5f))
+                if (LAPUtilities.OutOffScreen(Projectile.Center, 0.2f))
                     return;
 
                 if (Projectile.velocity.Length() > 1)
@@ -127,7 +127,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 Projectile.ai[1]++;
                 Projectile.netUpdate = true;
 
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * 3f, ModContent.ProjectileType<NebulaHeal>(), 0, 0, Projectile.owner, 1);
+                Projectile.Owner().SpawnLifeStealProj(target, Projectile.GetSource_FromThis(), ProjectileType<NebulaHeal>(), Projectile.Center, Vector2.Zero);
                 return;
             }
         }

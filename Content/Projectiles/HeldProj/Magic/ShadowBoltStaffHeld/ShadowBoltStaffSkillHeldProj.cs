@@ -1,39 +1,37 @@
-﻿using CalamityMod;
-using CalamityMod.Buffs.DamageOverTime;
-using LAP.Core.AnimationHandle;
+﻿using LAP.Core.AnimationHandle;
 using LAP.Core.Enums;
 using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.Audio;
-using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Sounds;
 using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Particiles;
-using UCA.Content.Paths;
-using UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld;
 using UCA.Content.Projectiles.Magic.Ray;
 using UCA.Content.UCACooldowns;
-using UCA.Core.GlobalInstance.Players;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.ShadowBoltStaffHeld
 {
     public class ShadowBoltStaffSkillHeldProj : ModProjectile, ILocalizedModType
     {
-        public override LocalizedText DisplayName => CalamityUtils.GetItemName<ShadowBoltStaffAlt>();
-        public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/ShadowBoltStaffHeld/ShadowBoltStaffHeldProj";
+        public override LocalizedText DisplayName => LAPUtilities.GetItemName<ShadowBoltStaffAlt>();
+        public override string Texture => GetInstance<ShadowBoltStaffHeldProj>().Texture;
         public Player Owner => Main.player[Projectile.owner];
         public AnimationHelper animationHelper = new AnimationHelper(3);
         public BasePartInfo ShadowOrb;
         public float Opacity = 1f;
         public Vector2 ProjCenterOffset = Vector2.Zero;
         public float BeginRot = 0;
+        public override void SetStaticDefaults()
+        {
+            Projectile.AddHeldProj();
+            Projectile.AddToSkillProj();
+        }
         public override void SetDefaults()
         {
             Projectile.width = 66;
@@ -51,6 +49,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ShadowBoltStaffHeld
         }
         public override void AI()
         {
+            Owner.SetUseFocus(2);
             if (Projectile.LAP().FirstFrame)
             {
                 SoundEngine.PlaySound(SoundsMenu.MAGNOLIASPRelease, Projectile.Center);
@@ -185,7 +184,11 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ShadowBoltStaffHeld
             {
                 float X = Main.rand.Next(300, 500);
                 Vector2 SpawnPos = new Vector2(X, 0).RotatedByRandom(MathHelper.TwoPi);
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + SpawnPos, Vector2.Zero, ModContent.ProjectileType<ShadowPlayer>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 8 * i);
+                if (LAPUtilities.IsLocalPlayer(Projectile.owner))
+                {
+                    int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + SpawnPos, Vector2.Zero, ProjectileType<ShadowPlayer>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 8 * i);
+                    Main.projectile[p].LAP().isWeaponSkillProj = true;
+                }
             }
             SoundEngine.PlaySound(SoundsMenu.ShadowBoltStaffSkillrelease, Projectile.Center);
             Owner.AddCD(LAPContent.CDType<ShadowBotlStaffDodge>(), 1800);
@@ -193,32 +196,27 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ShadowBoltStaffHeld
         }
         public override bool PreDraw(ref Color lightColor)
         {
-            LAPUtilities.ReSetToBeginShader(BlendState.NonPremultiplied);
-            Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
-            Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
-            LAPUtilities.FastApplyEdgeMeltsShader(Opacity, ModContent.Request<Texture2D>(Texture).Size(), Color.DarkViolet, 0.01f, 0);
-            DrawBaseStaff();
-            DrawOrb();
-            LAPUtilities.ReSetToEndShader();
+            DrawBaseStaff(lightColor);
+            DrawOrb(lightColor);
             return false;
         }
-        public void DrawBaseStaff()
+        public void DrawBaseStaff(Color lightColor)
         {
             Texture2D DrawTexture = UCATextureRegister.ShadowBoltStaffLong.Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             float drawRotation = Projectile.rotation + (Projectile.spriteDirection == -1 ? MathHelper.Pi : 0f + MathHelper.PiOver4 * (Projectile.spriteDirection + 1));
             Vector2 rotationPoint = DrawTexture.Size() / 2f;
             SpriteEffects flipSprite = Projectile.spriteDirection * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            Main.spriteBatch.Draw(DrawTexture, drawPosition, null, Color.White, drawRotation - MathHelper.PiOver4, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
+            Main.spriteBatch.Draw(DrawTexture, drawPosition, null, lightColor, drawRotation - MathHelper.PiOver4, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
         }
-        public void DrawOrb()
+        public void DrawOrb(Color lightColor)
         {
             Texture2D DrawTexture = ShadowOrb.Texture;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition + ShadowOrb.Position;
             Vector2 rotationPoint = DrawTexture.Size() / 2f;
             SpriteEffects flipSprite = Projectile.spriteDirection * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             // spriteBatch会自动把textures0设置为当前使用的材质，所以需要你手动改一下
-            Main.spriteBatch.Draw(DrawTexture, drawPosition, null, Color.White, 0, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
+            Main.spriteBatch.Draw(DrawTexture, drawPosition, null, lightColor, 0, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
         }
     }
 }

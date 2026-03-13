@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using LAP.Content.Configs;
+﻿using LAP.Content.Configs;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -7,17 +6,16 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
 using UCA.Assets;
-using UCA.Content.Configs;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Core.BaseClass;
-using UCA.Core.Utilities;
+using LAP.Assets.TextureRegister;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
     public class NebulaEnergy : BaseMagicProj
     {
-        public override string Texture => UCATextureRegister.InvisibleTexturePath;
+        public override string Texture => LAPTextureRegister.InvisibleTexturePath;
         public bool CanHit = true;
         public int MaxLife = 360;
         public float DustCount = 5f;
@@ -62,7 +60,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                     Color RandomColor = Color.Lerp(Color.Violet, Color.Purple, Main.rand.NextFloat(0, 1));
                     new MediumGlowBall(Projectile.Center, RandomColor, 60, 0.2f, Main.rand.NextFloat(1.6f, 2f)).Spawn();
                 }
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 5; i++)
                 {
                     Vector2 spawnVec = Vector2.UnitX.RotateRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.2f, 0.3f) * 12;
                     NebulaMetaBall.SpawnParticle(Projectile.Center, spawnVec, 0.2f, 45);
@@ -72,7 +70,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 Vel = Projectile.velocity.Length();
             }
             Time++;
-            if (!LAPUtilities.OutOffScreen(Projectile.Center))
+            if (!LAPUtilities.OutOffScreen(Projectile.Center, 0.5f))
             {
                 for (int i = 0; i < DustCount; i++)
                 {
@@ -88,13 +86,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                     }
                     SpawnPos = Projectile.Center + Vector2.UnitX.RotatedBy(Time * 0.1f * Filp) * 10;
 
-                    for (int i = 0; i < 3; i++)
-                    {
-                        Vector2 finalPos = Vector2.Lerp(OldPos2, SpawnPos, i / 3f);
-                        NebulaMetaBall.SpawnParticle(finalPos, Vector2.Zero, 0.05f, 45);
-                    }
                     OldPos = SpawnPos;
-                    OldPos2 = SpawnPos;
                 }
             }
 
@@ -112,7 +104,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
             if (PlayerHitEffect)
             {
-                for (int i = 0; i < 15; i++)
+                for (int i = 0; i < 5; i++)
                 {
                     Vector2 spawnVec = Projectile.velocity.RotateRandom(MathHelper.PiOver4 * 0.5f) * Main.rand.NextFloat(0.2f, 1f);
                     NebulaMetaBall.SpawnParticle(Projectile.Center, spawnVec, 0.2f, 45);
@@ -122,7 +114,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
             if (!CanHomeIn)
                 return;
-            NPC target = Projectile.FindClosestTarget(2500);
+            NPC target = LAPUtilities.FindClosestTarget(Projectile.Center, 2500, true);
             if (target is not null)
             {
                 Projectile.HomingTarget(target.Center, 2500, 12f, 70f);

@@ -1,7 +1,4 @@
-﻿using CalamityMod;
-using Terraria;
-using Terraria.ModLoader;
-using UCA.Core.Utilities;
+﻿using Terraria.ModLoader;
 
 namespace UCA.Core.GlobalInstance.Players
 {

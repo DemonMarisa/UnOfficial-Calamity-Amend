@@ -8,18 +8,19 @@ using UCA.Assets.Effects;
 using LAP.Core.Graphics.DrawNode;
 using LAP.Core.Graphics.Primitives.Trail;
 using LAP.Core.Enums;
+using LAP.Assets.TextureRegister;
+using LAP.Core.AnimationHandle;
 
 namespace UCA.Content.DrawNodes
 {
     public class TerraLanceVine : DrawNode
     {
-        public TerraLanceVine(Vector2 position, Vector2 velocity, Color color, DrawLayer layer, int lifetime, float Xscale, int filp, float height)
+        public TerraLanceVine(Vector2 position, Vector2 velocity, Color color, int lifetime, float Xscale, int filp, float height)
         {
             Position = position;
             Velocity = velocity;
             DrawColor = color;
             Filp = filp;
-            Layer = layer;
             Lifetime = lifetime;
 
             XScale = Xscale;
@@ -84,22 +85,18 @@ namespace UCA.Content.DrawNodes
             if (firstFrame)
                 return;
 
-            Main.graphics.GraphicsDevice.Textures[0] = UCATextureRegister.Wood.Value;
-            Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
-
-            Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
-            Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
+            Main.graphics.GraphicsDevice.Textures[0] = LAPTextureRegister.Wood.Value;
+            Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointWrap;
 
             Effect shader = UCAShaderRegister.TerraRayVinesShader.Value;
-            shader.Parameters["progress"].SetValue(0.4f);
-            shader.Parameters["InPutTextureSize"].SetValue(new Vector2(1024, 1024));
-            shader.Parameters["EdgeColor"].SetValue(DrawColor.ToVector4());
-            shader.Parameters["EdgeWidth"].SetValue(0.2f);
+            shader.Parameters["progress"].SetValue(Opacity);
+            shader.Parameters["UVMult"].SetValue(new Vector2(100, 0.5f));
+            shader.Parameters["UVAdd"].SetValue(new Vector2(1, 1));
             shader.CurrentTechnique.Passes[0].Apply();
 
             List<VertexPositionColorTexture2D> Vertexlist = new List<VertexPositionColorTexture2D>();
             float fadeOut = 0;
-            for (int i = 0; i < OldPos.Count; i++)
+            for (int i = 0; i < OldPos.Count; i ++)
             {
                 // 淡入
                 float YScale = i / 15f;
@@ -114,12 +111,10 @@ namespace UCA.Content.DrawNodes
                 float progress = (float)i / OldPos.Count;
                 // 绘制位置
                 Vector2 DrawPos = OldPos[i] - Main.screenPosition;
-                Vertexlist.Add(new VertexPositionColorTexture2D(DrawPos - new Vector2(0, 3 * YScale).RotatedBy(OldRot[i]), DrawColor, new Vector3(progress, 0, 0)));
-                Vertexlist.Add(new VertexPositionColorTexture2D(DrawPos + new Vector2(0, 3 * YScale).RotatedBy(OldRot[i]), DrawColor, new Vector3(progress, 1, 0)));
+                Vertexlist.Add(new VertexPositionColorTexture2D(DrawPos - new Vector2(0, 1f * YScale).RotatedBy(OldRot[i]), DrawColor * 0.7f, new Vector3(progress, 0, 0)));
+                Vertexlist.Add(new VertexPositionColorTexture2D(DrawPos + new Vector2(0, 1f * YScale).RotatedBy(OldRot[i]), DrawColor * 0.7f, new Vector3(progress, 1, 0)));
             }
-            VertexPositionColorTexture2D[] VertexArray = Vertexlist.ToArray();
-            Main.graphics.GraphicsDevice.Textures[0] = UCATextureRegister.Wood.Value;
-            Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, VertexArray, 0, Vertexlist.Count - 2);
+            Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, Vertexlist.ToArray(), 0, Vertexlist.Count - 2);
         }
     }
 }

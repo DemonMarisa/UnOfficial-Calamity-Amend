@@ -12,8 +12,6 @@ namespace UCA.Assets.Effects
         // 当未提供特定着色器时，用作基本绘图的默认值。此着色器仅渲染顶点颜色数据，无需修改。
         private const string ShaderPath = "UCA/Assets/Effects/Overlays/";
         internal const string ShaderPrefix = "UCA:";
-        public static Asset<Effect> MetaballShader { get; private set; }
-        public static Asset<Effect> EdgeMeltsShader { get; private set; }
         public static Asset<Effect> TerraRayVinesShader { get; private set; }
         public static Asset<Effect> TerrarRayLaser { get; private set; }
         public static Asset<Effect> SolarBladeShader { get; private set; }
@@ -23,7 +21,6 @@ namespace UCA.Assets.Effects
         public static Asset<Effect> PolarDistortShader { get; private set; }
         public static Asset<Effect> PolarDistortShaderWithR { get; private set; }
         public static Asset<Effect> SoulGreatSwordFlowShader { get; private set; }
-        public static Asset<Effect> VolcanoEruptingShader { get; private set; }
         public override void Load()
         {
             if (Main.dedServ)
@@ -34,14 +31,8 @@ namespace UCA.Assets.Effects
                 return ModContent.Request<Effect>($"{ShaderPath}{path}");
             }
 
-            MetaballShader = LoadShader(nameof(MetaballShader));
-            RegisterMiscShader(MetaballShader, "UCAMetalBallPass", nameof(MetaballShader));
-
-            EdgeMeltsShader = LoadShader("EdgeMeltsShader");
-            RegisterMiscShader(EdgeMeltsShader, "UCAEdgeMeltsPass", nameof(EdgeMeltsShader));
-
             TerraRayVinesShader = LoadShader("TerraRayVinesShader");
-            RegisterMiscShader(TerraRayVinesShader, "UCATerraRayVinesPass", nameof(TerraRayVinesShader));
+            RegisterMiscShader(TerraRayVinesShader, "Pass0", nameof(TerraRayVinesShader));
 
             TerrarRayLaser = LoadShader("TerrarRayLaser");
             RegisterMiscShader(TerrarRayLaser, "UCATerrarRayLaserPass", nameof(TerrarRayLaser));
@@ -66,14 +57,9 @@ namespace UCA.Assets.Effects
 
             SoulGreatSwordFlowShader = LoadShader("SoulGreatSwordFlowShader");
             RegisterMiscShader(SoulGreatSwordFlowShader, "UCASGSShaderPass", nameof(SoulGreatSwordFlowShader));
-
-            VolcanoEruptingShader = LoadShader(nameof(VolcanoEruptingShader));
-            RegisterMiscShader(VolcanoEruptingShader, "UCA" + nameof(VolcanoEruptingShader), nameof(VolcanoEruptingShader));
         }
         public override void Unload()
         {
-            MetaballShader = null;
-            EdgeMeltsShader = null;
             TerraRayVinesShader = null;
             TerrarRayLaser = null;
             SolarBladeShader = null;
@@ -83,7 +69,6 @@ namespace UCA.Assets.Effects
             PolarDistortShader = null;
             PolarDistortShaderWithR = null;
             SoulGreatSwordFlowShader = null;
-            VolcanoEruptingShader = null;
         }
         public static void RegisterMiscShader(Asset<Effect> shader, string passName, string registrationName)
         {

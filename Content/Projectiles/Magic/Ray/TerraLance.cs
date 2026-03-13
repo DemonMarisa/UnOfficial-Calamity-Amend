@@ -1,7 +1,4 @@
-﻿using CalamityMod;
-using LAP.Content.Configs;
-using LAP.Core.Enums;
-using LAP.Core.Graphics;
+﻿using LAP.Content.Configs;
 using LAP.Core.Graphics.Primitives.Trail;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
@@ -15,18 +12,17 @@ using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
 using UCA.Assets.Sounds;
-using UCA.Content.Configs;
 using UCA.Content.DrawNodes;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld;
 using UCA.Core.BaseClass;
-using UCA.Core.Utilities;
+using LAP.Assets.TextureRegister;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
     public class TerraLance : BaseMagicProj
     {
-        public override string Texture => UCATextureRegister.InvisibleTexturePath;
+        public override string Texture => LAPTextureRegister.InvisibleTexturePath;
         public int MaxLife = 240;
         public float LaserLength = 0;
         public float Opacity = 0;
@@ -41,6 +37,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             // 一共保存25个数据
             ProjectileID.Sets.TrailCacheLength[Type] = 25;
         }
+
         public override void SetDefaults()
         {
             Projectile.width = 24;
@@ -78,14 +75,14 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 SoundEngine.PlaySound(SoundsMenu.TerraLanceShoot, Projectile.Center);
                 float XScale = Main.rand.NextFloat(6, 12);
                 float Height = Main.rand.NextFloat(2, 6);
-                Vine.Add(new TerraLanceVine(Projectile.Center, Projectile.velocity, Color.ForestGreen, DrawLayer.BeforeDusts, MaxLife, XScale, 1, Height));
+                Vine.Add(new TerraLanceVine(Projectile.Center, Projectile.velocity, Color.ForestGreen, MaxLife, XScale, 1, Height));
                 if (!LAPConfig.Instance.PerformanceMode)
-                    Vine.Add(new TerraLanceVine(Projectile.Center, Projectile.velocity, Color.LightGreen, DrawLayer.AfterDusts, MaxLife, XScale, -1, Height));
+                    Vine.Add(new TerraLanceVine(Projectile.Center, Projectile.velocity, Color.LightGreen, MaxLife, XScale, -1, Height));
                 float XScale2 = Main.rand.NextFloat(12, 18);
                 float Height2 = Main.rand.NextFloat(3, 11);
-                Vine.Add(new TerraLanceVine(Projectile.Center, Projectile.velocity, Color.DarkGreen, DrawLayer.BeforeDusts, MaxLife, XScale2, 1, Height2));
+                Vine.Add(new TerraLanceVine(Projectile.Center, Projectile.velocity, Color.DarkGreen, MaxLife, XScale2, 1, Height2));
                 if (!LAPConfig.Instance.PerformanceMode)
-                    Vine.Add(new TerraLanceVine(Projectile.Center, Projectile.velocity, Color.SaddleBrown, DrawLayer.AfterDusts, MaxLife, XScale2, -1, Height2));
+                    Vine.Add(new TerraLanceVine(Projectile.Center, Projectile.velocity, Color.SaddleBrown, MaxLife, XScale2, -1, Height2));
                 if (Projectile.ai[0] != 0)
                 {
                     TerraRayHeldProj.GenStar(Projectile.Center, MathHelper.PiOver2+ Projectile.rotation);
@@ -99,7 +96,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 Projectile.velocity *= 0.94f;
             }
             else
-                CalamityUtils.HomeInOnNPC(Projectile, true, 1500, 12, 35);
+                Projectile.HomeInNPC(1500, 24, 35);
 
             if (Projectile.ai[1] != 0)
             {

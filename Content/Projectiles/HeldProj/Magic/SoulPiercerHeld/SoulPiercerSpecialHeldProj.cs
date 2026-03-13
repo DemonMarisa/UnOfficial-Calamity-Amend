@@ -1,17 +1,13 @@
-﻿using CalamityMod;
-using CalamityMod.Buffs.StatDebuffs;
-using LAP.Core.AnimationHandle;
+﻿using LAP.Core.AnimationHandle;
 using LAP.Core.Enums;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using UCA.Assets;
 using UCA.Assets.Sounds;
 using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.MetaBalls;
@@ -23,7 +19,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
 {
     public class SoulPiercerSpecialHeldProj : ModProjectile, ILocalizedModType
     {
-        public override LocalizedText DisplayName => CalamityUtils.GetItemName<SoulPiercerAlt>();
+        public override LocalizedText DisplayName => LAPUtilities.GetItemName<SoulPiercerAlt>();
         public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/SoulPiercerHeld/SoulPiercerHeldProj";
         public Player Owner => Main.player[Projectile.owner];
         public AnimationHelper animationHelper = new AnimationHelper(3);
@@ -45,8 +41,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
             {
                 if (Filp != -1 && Filp != 1)
                     Filp = 1;
-                SoundEngine.PlaySound(SoundsMenu.MAGNOLIASPRelease);
-                SoundEngine.PlaySound(SoundsMenu.MagicStaffCharge);
+                SoundEngine.PlaySound(SoundsMenu.MAGNOLIASPRelease, Projectile.Center);
+                SoundEngine.PlaySound(SoundsMenu.MagicStaffCharge, Projectile.Center);
                 animationHelper.MaxAniProgress[AnimationState.Begin] = 30;
                 animationHelper.MaxAniProgress[AnimationState.End] = 7;
                 TargetRot = Owner.GetPlayerToMouseVector2().ToRotation();
@@ -109,7 +105,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
                     Vector2 FirePoint2 = Projectile.Center + new Vector2(-250 * Owner.direction, -300);
                     Vector2 FireVel2 = LAPUtilities.GetVector2(FirePoint2, Owner.LocalMouseWorld());
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), FirePoint2, FireVel2, ModContent.ProjectileType<CosmicSlash>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
-                    AddDeathMark();
+                    // AddDeathMark();
                     for (int i = 0; i < 50; i++)
                     {
                         Vector2 spawnVec = Vector2.UnitX.RotateRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.7f, 1f) * 24;
@@ -130,7 +126,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
             {
                 if (Projectile.owner == Main.myPlayer)
                 {
-                    NPC npc = Projectile.FindClosestTarget(250, Owner.LocalMouseWorld());
+                    NPC npc = LAPUtilities.FindClosestTarget(Owner.LocalMouseWorld(), 250, false);
                     Vector2 FirePoint;
                     Vector2 FireVel;
                     if (npc is not null)
@@ -151,17 +147,17 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
                     CosmicMetaBall.SpawnLozengeParticle(firpos, Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.3f, 1f) * 18, 0.4f, 60);
             }
         }
-        public void AddDeathMark()
-        {
-            foreach(NPC npc in Main.ActiveNPCs)
-            {
-                if (!npc.active)
-                    continue;
-                if (npc.Distance(Owner.LocalMouseWorld()) > 200)
-                    continue;
-                npc.AddBuff(ModContent.BuffType<MarkedforDeath>(), 900);
-            }
-        }
+        //public void AddDeathMark()
+        //{
+        //    foreach(NPC npc in Main.ActiveNPCs)
+        //    {
+        //        if (!npc.active)
+        //            continue;
+        //        if (npc.Distance(Owner.LocalMouseWorld()) > 200)
+        //            continue;
+        //        npc.AddBuff(ModContent.BuffType<MarkedforDeath>(), 900);
+        //    }
+        //}
         #endregion
         public override void OnKill(int timeLeft)
         {

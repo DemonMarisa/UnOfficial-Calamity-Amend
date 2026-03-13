@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using LAP.Core.SystemsLoader;
+﻿using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -9,8 +8,7 @@ using UCA.Assets.Sounds;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.Magic.Ray;
 using UCA.Content.UCACooldowns;
-using UCA.Core.Enums;
-using UCA.Core.Utilities;
+using LAP.Core.Enums;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
 {
@@ -119,7 +117,11 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 new FollowProjCrossGlow(Owner.Center, Color.Turquoise, LifeTime, 0.4f, Projectile.whoAmI, offset).Spawn();
                 Vector2 firoffset = new Vector2(64, 0).RotatedBy(Projectile.rotation);
                 Vector2 velocity = new Vector2(12, 0).RotatedBy(Projectile.rotation);
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + firoffset, velocity.RotatedByRandom(MathHelper.TwoPi), ModContent.ProjectileType<VortexMissle>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner);
+                if (Projectile.IsLocalPlayer())
+                {
+                    int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + firoffset, velocity.RotatedByRandom(MathHelper.TwoPi), ProjectileType<VortexMissle>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner);
+                    Main.projectile[p].LAP().isWeaponSkillProj = true;
+                }
             }
 
             CurAni++;
@@ -127,7 +129,11 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             {
                 Vector2 firoffset = new Vector2(64, 0).RotatedBy(Projectile.rotation);
                 Vector2 velocity = new Vector2(12, 0).RotatedBy(Projectile.rotation);
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + firoffset, velocity.RotatedByRandom(MathHelper.TwoPi), ModContent.ProjectileType<VortexMissle>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner, 1);
+                if (Projectile.IsLocalPlayer())
+                {
+                    int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + firoffset, velocity.RotatedByRandom(MathHelper.TwoPi), ProjectileType<VortexMissle>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner, 1);
+                    Main.projectile[p].LAP().isWeaponSkillProj = true;
+                }
                 ShootVortexLighting();
                 CurAni = 1;
             }
@@ -136,13 +142,14 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         public void ShootVortexLighting()
         {
             Vector2 SpawnPos = Owner.Center + new Vector2(Main.rand.Next(100, 200), 0).RotatedByRandom(MathHelper.TwoPi);
-            NPC npc = Projectile.FindClosestTarget(1500, false);
+            NPC npc = LAPUtilities.FindClosestTarget(Projectile.Center, 1500, false);
             if (npc != null)
             {
                 Vector2 ToNPCVel = (npc.Center - SpawnPos).SafeNormalize(Projectile.rotation.ToRotationVector2());
                 if (Projectile.owner == Main.myPlayer)
                 {
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), SpawnPos, ToNPCVel * 18, ModContent.ProjectileType<VortexLightning>(), Projectile.damage, Projectile.knockBack, Owner.whoAmI, 0.5f);
+                    int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), SpawnPos, ToNPCVel * 18, ModContent.ProjectileType<VortexLightning>(), Projectile.damage, Projectile.knockBack, Owner.whoAmI, 0.5f);
+                    Main.projectile[p].LAP().isWeaponSkillProj = true;
                 }
             }
             else
@@ -151,8 +158,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 {
                     Vector2 firePos = -Projectile.velocity.RotateRandom(MathHelper.TwoPi) * Main.rand.Next(250, 350);
                     Vector2 firvel = Projectile.velocity.RotateRandom(MathHelper.TwoPi) * 18;
-                    if (Projectile.owner == Main.myPlayer)
-                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + firePos, firvel, ModContent.ProjectileType<VortexLightning>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                    int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + firePos, firvel, ModContent.ProjectileType<VortexLightning>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                    Main.projectile[p].LAP().isWeaponSkillProj = true;
                 }
             }
         }

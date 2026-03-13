@@ -14,15 +14,11 @@
 	  <None Remove="Assets\ExtraTextures\SolarBladeGlowMask\**" />
 	</ItemGroup>
 	<ItemGroup>
-	  <AdditionalFiles Remove="Assets\Effects\Overlays\EdgeMeltsShader.fx" />
 	  <AdditionalFiles Remove="Assets\Effects\Overlays\TerraRayVinesShader.fx" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Reference Include="CalamityMod">
-	    <HintPath>..\..\ModReader\CalamityMod\CalamityMod.dll</HintPath>
-	  </Reference>
 	  <Reference Include="LAP">
-	    <HintPath>..\LAP\bin\Debug\net8.0\LAP.dll</HintPath>
+	    <HintPath>..\LAP\bin\Release\net8.0\LAP.dll</HintPath>
 	  </Reference>
 	</ItemGroup>
 	<ItemGroup>
@@ -33,6 +29,7 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="Content\ItemOverride\Magic\" />
+	  <Folder Include="Content\Projectiles\Misc\Test\" />
 	</ItemGroup>
 
 	<!-- References -->

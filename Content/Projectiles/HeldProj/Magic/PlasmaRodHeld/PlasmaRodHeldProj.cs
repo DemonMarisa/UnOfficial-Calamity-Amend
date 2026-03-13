@@ -1,6 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.Items.Weapons.Magic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -11,15 +9,16 @@ using UCA.Assets.Sounds;
 using UCA.Content.Particiles;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
-using LAP.Core.BaseClass;
 using LAP.Core.Utilities;
+using LAP.Core.BaseClass.Legacys;
+using UCA.Content.Items.Weapons.Magic.Ray;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
 {
     public class PlasmaRodHeldProj : BaseHeldProj
     {
         public override string Texture => $"{ItemPath.MagicRayWeaponsPath}" + "PlasmaRodAlt";
-        public override LocalizedText DisplayName => CalamityUtils.GetItemName<PlasmaRod>();
+        public override LocalizedText DisplayName => LAPUtilities.GetItemName<PlasmaRodAlt>();
 
         public override Vector2 RotPoint => Owner.direction == -1 ? new Vector2(TextureAssets.Projectile[Type].Size().X, TextureAssets.Projectile[Type].Size().Y) : new Vector2(0, TextureAssets.Projectile[Type].Size().Y);
 
@@ -77,7 +76,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
             }
             if (Projectile.owner == Main.myPlayer)
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + FireOffset, Projectile.velocity * 2f, ModContent.ProjectileType<PlasmaSpark>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
-            Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.1f;
+            Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.1f * Owner.direction;
         }
 
         public override void OnKill(int timeLeft)

@@ -1,8 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.Items.Weapons.Magic;
-using CalamityMod.Projectiles.Magic;
-using LAP.Core.AnimationHandle;
-using LAP.Core.BaseClass;
+﻿using LAP.Core.BaseClass.Legacys;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,17 +8,15 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using UCA.Assets;
 using UCA.Assets.Sounds;
 using UCA.Content.Items.Weapons.Magic.Ray;
-using UCA.Content.Particiles;
 using UCA.Content.Projectiles.Magic.Ray;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
 {
     public class SoulPiercerHeldProj : BaseHeldProj
     {
-        public override LocalizedText DisplayName => CalamityUtils.GetItemName<SoulPiercer>();
+        public override LocalizedText DisplayName => LAPUtilities.GetItemName<SoulPiercerAlt>();
         public Vector2 RotVector => new Vector2(12 * Owner.direction, 7).BetterRotatedBy(Owner.GetPlayerToMouseVector2().ToRotation(), default, 0.5f, 1f);
         public override Vector2 RotPoint => TextureAssets.Projectile[Type].Size() / 2;
         public override Vector2 Posffset => new Vector2(RotVector.X, RotVector.Y) * Owner.direction;
@@ -64,7 +58,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
             Vector2 FireOffset = new Vector2(48, 0).RotatedBy(Projectile.rotation);
             if (Projectile.owner == Main.myPlayer)
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + FireOffset, Projectile.velocity, ModContent.ProjectileType<CosmicLaser>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
-            Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.1f;
+            Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.1f * Owner.direction;
         }
         public override bool CanDel()
         {

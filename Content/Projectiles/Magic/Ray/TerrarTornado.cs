@@ -12,12 +12,13 @@ using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
 using LAP.Core.Utilities;
 using LAP.Core.Enums;
+using LAP.Assets.TextureRegister;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
     public class TerrarTornado : BaseMagicProj
     {
-        public override string Texture => UCATextureRegister.InvisibleTexturePath;
+        public override string Texture => LAPTextureRegister.InvisibleTexturePath;
         public int FrameX;
         public int FrameY;
         public int MaxTime = 128;
@@ -78,9 +79,9 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 {
                     Color color = Color.Lerp(Color.DarkGreen, Color.LightGreen, Main.rand.NextFloat(0, 1f));
                     Vector2 pos = Projectile.position + new Vector2(Main.rand.Next(0, Projectile.width), Projectile.height);
-                    new TerraTree(pos, -Vector2.UnitY.RotatedBy(MathHelper.PiOver4 * filps) * Main.rand.NextFloat(1, 2), color, 0, DrawLayer.AfterDusts, Main.rand.NextFloat(12, 15), -1, Main.rand.NextFloat(9, 18f)).Spawn();
+                    new TerraTree(pos, -Vector2.UnitY.RotatedBy(MathHelper.PiOver4 * filps) * Main.rand.NextFloat(1, 2), color, 0, Main.rand.NextFloat(12, 15), -1, Main.rand.NextFloat(9, 18f)).Spawn();
                     Vector2 pos2 = Projectile.position + new Vector2(Main.rand.Next(0, Projectile.width), Projectile.height);
-                    new TerraTree(pos2, -Vector2.UnitY.RotatedBy(-MathHelper.PiOver4 * filps) * Main.rand.NextFloat(1, 2), Color.SaddleBrown, 0, DrawLayer.AfterDusts, Main.rand.NextFloat(12, 17), 1, Main.rand.NextFloat(11, 22)).Spawn();
+                    new TerraTree(pos2, -Vector2.UnitY.RotatedBy(-MathHelper.PiOver4 * filps) * Main.rand.NextFloat(1, 2), Color.SaddleBrown, 0, Main.rand.NextFloat(12, 17), 1, Main.rand.NextFloat(11, 22)).Spawn();
                 }
 
                 for (int i = 0; i < 2; i++)
@@ -90,7 +91,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                     new Butterfly(pos, Vector2.Zero, RandomColor, 120, 0, 1, 0.2f, Main.rand.NextFloat(2f, 4f)).Spawn();
                 }
             }
-            Target = Projectile.FindClosestTarget(1500);
+            Target = LAPUtilities.FindClosestTarget(Projectile.Center, 1500, true);
             if (Target is not null)
             {
                 ShootLance();
@@ -113,7 +114,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             if (CanShootHealLance)
             {
                 player.UCA().TerraRayHealCD = 5;
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, player.GetPlayerToMouseVector2().RotatedByRandom(MathHelper.TwoPi) * -6f, ModContent.ProjectileType<TerraHeal>(), 0, 0, Projectile.owner);
+                Projectile.Owner().SpawnLifeStealProj(target, Projectile.GetSource_FromThis(), ProjectileType<TerraHeal>(), target.Center, player.GetPlayerToMouseVector2().RotatedByRandom(MathHelper.TwoPi) * -6f);
             }
             if (!Projectile.LAP().OnceHitEffect)
                 return;
@@ -127,7 +128,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
                 Vector2 firVec = Vector2.UnitX.RotatedBy(rot * i).RotatedByRandom(MathHelper.TwoPi);
                 Color color = Main.rand.NextBool() ? Color.ForestGreen : Color.SaddleBrown;
-                new TerraTree(firPos, firVec * Main.rand.NextFloat(0.8f, 1.4f), color, 0, DrawLayer.BeforeDusts, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
+                new TerraTree(firPos, firVec * Main.rand.NextFloat(0.8f, 1.4f), color, 0, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
             }
         }
         public override void OnKill(int timeLeft)
@@ -188,6 +189,8 @@ namespace UCA.Content.Projectiles.Magic.Ray
         #region 更新射弹发射
         public void ShootLance()
         {
+            if (!LAPUtilities.IsLocalPlayer(Projectile.owner))
+                return;
             if (!CanShootLance)
                 return;
             Projectile.ai[0]--;
@@ -195,7 +198,9 @@ namespace UCA.Content.Projectiles.Magic.Ray
             {
                 Vector2 shootVel = LAPUtilities.GetVector2(Projectile.Center, Target.Center).SafeNormalize(Vector2.UnitX).RotatedByRandom(MathHelper.PiOver4);
                 Projectile.ai[0] = 64;
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + Main.rand.NextVector2Circular(64, 32), shootVel * 6, ModContent.ProjectileType<TerraLance>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                Projectile p = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center + Main.rand.NextVector2Circular(64, 32), shootVel * 6, ProjectileType<TerraLance>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                if (Projectile.LAP().isWeaponSkillProj)
+                    p.LAP().isWeaponSkillProj = true;
             }
         }
         #endregion

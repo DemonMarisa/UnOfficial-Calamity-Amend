@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using Terraria;
 using UCA.Assets;
 using LAP.Core.ParticleSystem;
-using UCA.Core.Utilities;
 using LAP.Core.Utilities;
 
 namespace UCA.Content.Particiles
@@ -34,10 +33,6 @@ namespace UCA.Content.Particiles
             BeginScale = scale;
             UseSlowDown = useSlowDown;
         }
-        public override void OnSpawn()
-        {
-        }
-
         public override void Update()
         {
             Scale = MathHelper.Lerp(BeginScale, 0f, EasingHelper.EaseOutCubic(LifetimeRatio));
@@ -45,7 +40,10 @@ namespace UCA.Content.Particiles
             OldPos.Add(Position);
             if (OldPos.Count > 8)
                 OldPos.RemoveAt(0);
-
+            Position = Position + Velocity;
+            OldPos.Add(Position);
+            if (OldPos.Count > 8)
+                OldPos.RemoveAt(0);
             Position = Position + Velocity;
             OldPos.Add(Position);
             if (OldPos.Count > 8)

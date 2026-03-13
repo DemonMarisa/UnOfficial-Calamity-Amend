@@ -1,4 +1,6 @@
-﻿using CalamityMod;
+﻿using LAP.Core.BaseClass.Legacys;
+using LAP.Core.SystemsLoader;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -12,17 +14,13 @@ using UCA.Assets;
 using UCA.Assets.Effects;
 using UCA.Assets.Sounds;
 using UCA.Content.Items.Weapons.Magic.Ray;
-using UCA.Content.Particiles;
 using UCA.Content.Projectiles.Magic.Ray;
-using LAP.Core.BaseClass;
-using UCA.Core.Utilities;
-using LAP.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
 {
     public class CarnageRayHeldProj : BaseHeldProj
     {
-        public override LocalizedText DisplayName => CalamityUtils.GetItemName<CarnageRay>();
+        public override LocalizedText DisplayName => LAPUtilities.GetItemName<CarnageRay>();
         public Vector2 RotVector => new Vector2(16 * Owner.direction, 7).BetterRotatedBy(Owner.GetPlayerToMouseVector2().ToRotation(), default, 0.5f, 1f);
 
         public override Vector2 RotPoint => TextureAssets.Projectile[Type].Size() / 2;
@@ -39,7 +37,10 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
         public int MaxAni = 10;
 
         public int AniProgress = 0;
-
+        public override void SetStaticDefaults()
+        {
+            Projectile.AddHeldProj();
+        }
         public override void SetDefaults()
         {
             Projectile.width = 66;
@@ -83,7 +84,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
 
                 SoundEngine.PlaySound(SoundsMenu.NightRayHeavyAttack, Projectile.Center);
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), firePos, Projectile.rotation.ToRotationVector2() * 3, ModContent.ProjectileType<CarnageEnergy>(), Projectile.damage, Projectile.knockBack, Owner.whoAmI, 1);
-                Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.06f;
+                Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.06f * Owner.direction;
 
                 UseDelay = Owner.HeldItem.useTime;
             }
@@ -129,20 +130,16 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
 
-            Main.graphics.GraphicsDevice.Textures[0] = ModContent.Request<Texture2D>(Texture).Value;
+            Texture2D Weapontexture = TextureAssets.Projectile[Type].Value;
+
+            Main.graphics.GraphicsDevice.Textures[0] = Weapontexture;
             Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
 
-            Effect shader = UCAShaderRegister.EdgeMeltsShader.Value;
-            shader.Parameters["progress"].SetValue(ShaderOpacity);
-            shader.Parameters["InPutTextureSize"].SetValue(ModContent.Request<Texture2D>(Texture).Size());
-            shader.Parameters["EdgeColor"].SetValue(Color.Red.ToVector4());
-            shader.Parameters["EdgeWidth"].SetValue(0.01f);
-            shader.CurrentTechnique.Passes[0].Apply();
+            LAPUtilities.FastApplyEdgeMeltsShader(ShaderOpacity, Weapontexture.Size(), Color.Red, 0.01f, 0);
 
-            Texture2D texture = TextureAssets.Projectile[Type].Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             float drawRotation = Projectile.rotation + (Owner.direction == -1 ? MathHelper.Pi : 0f) + RotOffset * Owner.direction;
 
@@ -150,7 +147,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
 
             SpriteEffects flipSprite = Owner.direction * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
-            Main.spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(lightColor), drawRotation, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, default);
+            Main.spriteBatch.Draw(Weapontexture, drawPosition, null, lightColor, drawRotation, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, default);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);

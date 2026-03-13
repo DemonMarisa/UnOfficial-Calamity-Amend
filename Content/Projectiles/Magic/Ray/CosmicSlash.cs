@@ -1,15 +1,14 @@
-﻿using LAP.Core.SpecificEffectManagers;
+﻿using LAP.Assets.TextureRegister;
+using LAP.Core.SpecificEffectManagers;
+using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
-using Terraria.ID;
 using Terraria.ModLoader;
-using UCA.Assets;
 using UCA.Assets.Sounds;
-using UCA.Content.Configs;
 using UCA.Content.DrawNodes;
 using UCA.Content.MetaBalls;
 using UCA.Content.Projectiles.Misc;
@@ -19,12 +18,17 @@ namespace UCA.Content.Projectiles.Magic.Ray
 {
     public class CosmicSlash : BaseMagicProj
     {
-        public override string Texture => UCATextureRegister.InvisibleTexturePath;
+        public override string Texture => LAPTextureRegister.InvisibleTexturePath;
+        public bool SpawnSlash;
         public int Time;
         public int MaxTime = 60;
         public int LaserLength;
         public Vector2 BeginPos;
         public Vector2 EndPos;
+        public override void SetStaticDefaults()
+        {
+            Projectile.AddProtectedProj();
+        }
         public override void SetDefaults()
         {
             Projectile.width = 18;
@@ -55,7 +59,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 FirstFrame();
             }
             Time++;
-            if (Time > 6)
+            if (Time > 6 && !SpawnSlash)
             {
                 for (int i = 0; i < 260; i++)
                 {
@@ -71,7 +75,8 @@ namespace UCA.Content.Projectiles.Magic.Ray
                     Vector2 spawnVec =- Projectile.velocity * Main.rand.NextFloat(0.1f, 1.1f) * 18f + new Vector2(0, Main.rand.NextFloat(-0.2f, 0.2f));
                     CosmicMetaBall.SpawnLozengeParticle(SpawnPos, spawnVec, 1, 45);
                 }
-                Projectile.Kill();
+                SpawnSlash = true;
+                Projectile.timeLeft = 5;
             }
         }
         public void FirstFrame()

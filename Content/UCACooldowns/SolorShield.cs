@@ -1,13 +1,10 @@
-﻿using CalamityMod.Cooldowns;
-using LAP.Core.LAPUI.CustomCD;
+﻿using LAP.Core.LAPUI.CustomCD;
 using LAP.Core.ParticleSystem;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.Localization;
-using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 
 namespace UCA.Content.UCACooldowns

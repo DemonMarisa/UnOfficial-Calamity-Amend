@@ -1,18 +1,15 @@
-﻿using CalamityMod;
-using CalamityMod.Buffs.StatDebuffs;
-using LAP.Assets.Effects;
-using LAP.Content.Configs;
+﻿using LAP.Content.Configs;
 using LAP.Core.AnimationHandle;
+using LAP.Core.Enums;
 using LAP.Core.Graphics.Primitives.Trail;
 using LAP.Core.SpecificEffectManagers;
+using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.Localization;
@@ -20,19 +17,17 @@ using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
 using UCA.Assets.Sounds;
-using UCA.Content.Configs;
 using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Particiles;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.Misc;
-using UCA.Core.Enums;
 using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
 {
     public class SoulPiercerSkillHeldProj : ModProjectile, ILocalizedModType
     {
-        public override LocalizedText DisplayName => CalamityUtils.GetItemName<SoulPiercerAlt>();
+        public override LocalizedText DisplayName => LAPUtilities.GetItemName<SoulPiercerAlt>();
         public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/SoulPiercerHeld/SoulPiercerHeldProj";
         public Player Owner => Main.player[Projectile.owner];
         public bool CanHit;
@@ -54,6 +49,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
             // 保存旧朝向与旧位置
             ProjectileID.Sets.TrailingMode[Type] = 2;
             ProjectileID.Sets.TrailCacheLength[Type] = 120;
+            Projectile.AddToSkillProj();
         }
         public override void SetDefaults()
         {
@@ -82,11 +78,12 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
         }
         public override void AI()
         {
+            Owner.SetUseFocus(2);
             Time++;
             if (Projectile.LAP().FirstFrame)
             {
-                SoundEngine.PlaySound(SoundsMenu.MAGNOLIASPRelease);
-                SoundEngine.PlaySound(SoundsMenu.MagicStaffCharge);
+                SoundEngine.PlaySound(SoundsMenu.MAGNOLIASPRelease, Projectile.Center);
+                SoundEngine.PlaySound(SoundsMenu.MagicStaffCharge, Projectile.Center);
                 animationHelper.MaxAniProgress[AnimationState.Begin] = 30; 
                 animationHelper.MaxAniProgress[AnimationState.Middle] = 50;
                 animationHelper.MaxAniProgress[AnimationState.End] = 300;
@@ -227,7 +224,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
             if (HitCount < 5)
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<UseForOnHitNPCProj>(), 0, 0, Projectile.owner, Type);
             HitCount++;
-            target.AddBuff(ModContent.BuffType<MarkedforDeath>(), 1200);
         }
         public override bool PreDraw(ref Color lightColor)
         {

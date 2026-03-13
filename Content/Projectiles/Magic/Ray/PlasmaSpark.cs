@@ -7,6 +7,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.WorldBuilding;
 using UCA.Assets;
 using UCA.Assets.Sounds;
 using UCA.Content.Configs;
@@ -79,17 +80,16 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 {
                     if (LAPConfig.Instance.PerformanceMode)
                     {
-                        Color RandomColor = Color.Lerp(Color.Violet, Color.Purple, Main.rand.NextFloat(0, 1));
-                        new MediumGlowBall(Projectile.Center, -Projectile.velocity, RandomColor, 180, 0, 1, 0.12f, Main.rand.NextFloat(0.2f, 0.5f)).Spawn();
-
+                        if (Projectile.timeLeft % 2 == 0)
+                        {
+                            Color RandomColor = Color.Lerp(Color.Violet, Color.Purple, Main.rand.NextFloat(0, 1));
+                            new MediumGlowBall(Projectile.Center, -Projectile.velocity, RandomColor, 180, 0, 1, 0.12f, Main.rand.NextFloat(0.2f, 0.5f)).Spawn();
+                        }
                     }
                     else
                     {
-                        for (int i = 0; i < 2; i++)
-                        {
-                            Color RandomColor = Color.Lerp(Color.Violet, Color.Purple, Main.rand.NextFloat(0, 1));
-                            new MediumGlowBall(Projectile.Center + Projectile.velocity / 2 * i, -Projectile.velocity, RandomColor, 180, 0, 1, 0.12f, Main.rand.NextFloat(0.2f, 0.5f)).Spawn();
-                        }
+                        Color RandomColor = Color.Lerp(Color.Violet, Color.Purple, Main.rand.NextFloat(0, 1));
+                        new MediumGlowBall(Projectile.Center + Projectile.velocity, -Projectile.velocity, RandomColor, 180, 0, 1, 0.12f, Main.rand.NextFloat(0.2f, 0.5f)).Spawn();
                     }
                 }
                 else
@@ -108,7 +108,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             if (Target is null)
             {
-                Target = Projectile.FindClosestTarget(600, false, false);
+                Target = LAPUtilities.FindClosestTarget(Projectile.Center, 600, false);
                 Projectile.velocity *= 0.97f;
             }
             else

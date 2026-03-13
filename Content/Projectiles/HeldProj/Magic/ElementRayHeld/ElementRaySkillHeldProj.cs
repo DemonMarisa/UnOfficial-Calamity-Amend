@@ -1,6 +1,6 @@
-﻿using CalamityMod;
-using CalamityMod.Items.Weapons.Magic;
-using LAP.Core.AnimationHandle;
+﻿using LAP.Core.AnimationHandle;
+using LAP.Core.Enums;
+using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -15,7 +15,6 @@ using UCA.Content.GUI;
 using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Particiles;
 using UCA.Content.Paths;
-using UCA.Core.Enums;
 using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
@@ -30,7 +29,12 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         public AnimationHelper animationHelper = new AnimationHelper(10);
         public float OffsetToOwnerLength;
         public ref float WeaponStates => ref Projectile.ai[0];
-        public ref float CanPlayerEnd => ref Projectile.ai[1];
+        public ref float CanPlayerEnd => ref Projectile.ai[1]; 
+        public override void SetStaticDefaults()
+        {
+            Projectile.AddHeldProj();
+            Projectile.AddToSkillProj();
+        }
         public override void SetDefaults()
         {
             Projectile.width = 74;
@@ -54,6 +58,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         }
         public override void AI()
         {
+            Owner.SetUseFocus(2);
             Initialize();
             ToMouseVector = Utils.AngleLerp(ToMouseVector, Owner.GetPlayerToMouseVector2().ToRotation(), 0.2f);
             Owner.itemTime = 2;
@@ -173,10 +178,10 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         }
         public override bool PreDraw(ref Color lightColor)
         {
-            DrawBaseElementalRay();
-            DrawMainFragments();
-            DrawAuxFragments();
-            FilpDrawAuxFragments();
+            DrawBaseElementalRay(lightColor);
+            DrawMainFragments(lightColor);
+            DrawAuxFragments(lightColor);
+            FilpDrawAuxFragments(lightColor);
             return false;
         }
 
@@ -201,7 +206,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             FilpAuxFragmentOffset = Vector2.Lerp(FilpAuxFragmentOffset, SecondFragtargetPos, 0.2f);
         }
         #region 绘制
-        public void DrawBaseElementalRay()
+        public void DrawBaseElementalRay(Color lightColor)
         {
             Texture2D texture = UCATextureRegister.ElementalRayBase.Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
@@ -209,10 +214,10 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             Vector2 rotationPoint = texture.Size() / 2f;
             SpriteEffects flipSprite = Projectile.spriteDirection * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             // spriteBatch会自动把textures0设置为当前使用的材质，所以需要你手动改一下
-            Main.spriteBatch.Draw(texture, drawPosition, null, Color.White, drawRotation, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, null, lightColor, drawRotation, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
         }
 
-        public void DrawMainFragments()
+        public void DrawMainFragments(Color lightColor)
         {
             Texture2D texture = UCATextureRegister.MainElementalFragments.Value;
             Vector2 drawPosition = Projectile.Center + MainFragmentOffset - Main.screenPosition;
@@ -220,9 +225,9 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             Vector2 origin = frame.Size() * 0.5f;
             SpriteEffects flipSprite = Projectile.spriteDirection * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             float drawRotation = Projectile.rotation + (Projectile.spriteDirection == -1 ? MathHelper.PiOver2 + MathHelper.PiOver4 : MathHelper.PiOver4);
-            Main.spriteBatch.Draw(texture, drawPosition, frame, Color.White, drawRotation, origin, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, frame, lightColor, drawRotation, origin, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
         }
-        public void DrawAuxFragments()
+        public void DrawAuxFragments(Color lightColor)
         {
             Texture2D texture = UCATextureRegister.AuxElementalFragments.Value;
             Vector2 drawPosition = Projectile.Center + AuxFragmentOffset - Main.screenPosition;
@@ -240,10 +245,10 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             Vector2 origin = frame.Size() * 0.5f;
             SpriteEffects flipSprite = SpriteEffects.FlipVertically;
             // spriteBatch会自动把textures0设置为当前使用的材质，所以需要你手动改一下
-            Main.spriteBatch.Draw(texture, drawPosition, frame, Color.White, drawRotation, origin, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, frame, lightColor, drawRotation, origin, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
         }
 
-        public void FilpDrawAuxFragments()
+        public void FilpDrawAuxFragments(Color lightColor)
         {
             Texture2D texture = UCATextureRegister.AuxElementalFragments.Value;
             Vector2 drawPosition = Projectile.Center + FilpAuxFragmentOffset - Main.screenPosition;
@@ -261,7 +266,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             Vector2 origin = frame.Size() * 0.5f;
             SpriteEffects flipSprite = SpriteEffects.None;
             // spriteBatch会自动把textures0设置为当前使用的材质，所以需要你手动改一下
-            Main.spriteBatch.Draw(texture, drawPosition, frame, Color.White, drawRotation, origin, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, frame, lightColor, drawRotation, origin, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
         }
         #endregion
     }

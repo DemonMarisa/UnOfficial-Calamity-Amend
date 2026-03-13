@@ -1,6 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.Items.Weapons.Magic;
-using LAP.Core.SystemsLoader;
+﻿using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,14 +6,15 @@ using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
 using UCA.Assets.Sounds;
+using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
-using UCA.Content.Paths;
 using UCA.Content.UCACooldowns;
 using UCA.Core.GlobalInstance.Players;
 using UCA.Core.Utilities;
@@ -24,10 +23,10 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
 {
     public class NightRaySkillProj : ModProjectile, ILocalizedModType
     {
-        public override LocalizedText DisplayName => CalamityUtils.GetItemName<NightsRay>();
+        public override LocalizedText DisplayName => LAPUtilities.GetItemName<NightsRayAlt>();
 
         public Player Owner => Main.player[Projectile.owner];
-        public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/NightRatHeld/NightRayHeldProj";
+        public override string Texture => GetInstance<NightRayHeldProj>().Texture;
 
         public Vector2 BeginPos => Owner.Center + new Vector2(45 * Owner.direction, -10);
         public Vector2 MedPos => Owner.Center + new Vector2(45 * Owner.direction, -35);
@@ -39,7 +38,11 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
         public float OwnervelocityMult = 1;
 
         public float Opacity = 1;
-
+        public override void SetStaticDefaults()
+        {
+            Projectile.AddHeldProj();
+            Projectile.AddToSkillProj();
+        }
         public override void SetDefaults()
         {
             Projectile.width = 60;
@@ -65,7 +68,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
             float TargetRot = (Owner.Center - Projectile.Center).ToRotation() + MathHelper.PiOver2;
             Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, TargetRot + Owner.direction * 0.1f * 1.5f);
             Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, TargetRot + Owner.direction * -0.1f * 1.2f);
-
+            Owner.SetUseFocus(2);
             // 基础信息
             Projectile.velocity = Vector2.Zero;
             AniProgress++;
@@ -102,21 +105,31 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
 
                 if (AniProgress == 80)
                 {
-                    Owner.AddCD(LAPContent.CDType<NightBoost>(), CalamityUtils.SecondsToFrames(30));
-
-                    for (int i = 0; i < 25; i++)
+                    foreach (Player playere in Main.ActivePlayers)
                     {
-                        ShadowMetaBall.SpawnParticle(Owner.Center - new Vector2(0, -Owner.height / 2) + new Vector2(Main.rand.Next(-10, 10), Main.rand.Next(-2, 2)), Vector2.UnitX  * i * 0.3f, Main.rand.NextFloat(0.1f, 0.15f));
+                        if (playere.Distance(Owner.Center) < 300)
+                        {
+                            playere.AddCD(LAPContent.CDType<NightBoost>(), 30 * 60, false);
+                            for (int i = 0; i < 25; i++)
+                            {
+                                ShadowMetaBall.SpawnParticle(Owner.Center - new Vector2(0, -Owner.height / 2) + new Vector2(Main.rand.Next(-10, 10), Main.rand.Next(-2, 2)), Vector2.UnitX * i * 0.3f, Main.rand.NextFloat(0.1f, 0.15f));
+                            }
+
+                            for (int i = 0; i < 25; i++)
+                            {
+                                ShadowMetaBall.SpawnParticle(Owner.Center - new Vector2(0, -Owner.height / 2) + new Vector2(Main.rand.Next(-10, 10), Main.rand.Next(-2, 2)), Vector2.UnitX * i * 0.3f * -1, Main.rand.NextFloat(0.1f, 0.15f));
+                            }
+
+                            for (int i = 0; i < 30; i++)
+                            {
+                                ShadowMetaBall.SpawnParticle(Owner.Center - new Vector2(Main.rand.Next(-50, 50), -Owner.height / 2), Vector2.UnitY * i * 0.4f * -1, Main.rand.NextFloat(0.1f, 0.15f));
+                            }
+                        }
                     }
-
-                    for (int i = 0; i < 25; i++)
+                    if (Main.LocalPlayer.Center.Distance(Owner.Center) < 300)
                     {
-                        ShadowMetaBall.SpawnParticle(Owner.Center - new Vector2(0, -Owner.height / 2) + new Vector2(Main.rand.Next(-10, 10), Main.rand.Next(-2, 2)), Vector2.UnitX * i * 0.3f * -1, Main.rand.NextFloat(0.1f, 0.15f));
-                    }
-
-                    for (int i = 0; i < 30; i++)
-                    {
-                        ShadowMetaBall.SpawnParticle(Owner.Center - new Vector2(Main.rand.Next(-50, 50), -Owner.height / 2), Vector2.UnitY * i * 0.4f * -1, Main.rand.NextFloat(0.1f, 0.15f));
+                        Main.LocalPlayer.AddCD(LAPContent.CDType<NightBoost>(), 30 * 60, false);
+                        Main.LocalPlayer.UCA().NightShieldHP = UCAPlayer.NightShieldMaxHP;
                     }
                 }
 
@@ -143,25 +156,23 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
         {
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
-            
-            Main.graphics.GraphicsDevice.Textures[0] = ModContent.Request<Texture2D>(Texture).Value;
+
+            Texture2D texture = TextureAssets.Projectile[Type].Value;
+
+            Main.graphics.GraphicsDevice.Textures[0] = texture;
             Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
-            Effect shader = UCAShaderRegister.EdgeMeltsShader.Value;
-            shader.Parameters["progress"].SetValue(Opacity);
-            shader.Parameters["InPutTextureSize"].SetValue(ModContent.Request<Texture2D>(Texture).Size());
-            shader.Parameters["EdgeColor"].SetValue(Color.DarkViolet.ToVector4());
-            shader.Parameters["EdgeWidth"].SetValue(0.01f);
-            shader.CurrentTechnique.Passes[0].Apply();
-            
+
+            LAPUtilities.FastApplyEdgeMeltsShader(Opacity, texture.Size(), Color.DarkViolet, 0.01f, 0);
+
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             float drawRotation = Projectile.rotation + (Projectile.spriteDirection == -1 ? MathHelper.Pi : 0f);
-            Vector2 rotationPoint = ModContent.Request<Texture2D>(Texture).Value.Size() / 2f;
+            Vector2 rotationPoint = texture.Size() / 2f;
             SpriteEffects flipSprite = Projectile.spriteDirection * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             // spriteBatch会自动把textures0设置为当前使用的材质，所以需要你手动改一下
-            Main.spriteBatch.Draw(ModContent.Request<Texture2D>(Texture).Value, drawPosition, null, Color.White, drawRotation - MathHelper.PiOver4, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
+            Main.spriteBatch.Draw(Request<Texture2D>(Texture).Value, drawPosition, null, lightColor, drawRotation - MathHelper.PiOver4, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);

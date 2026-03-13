@@ -1,4 +1,7 @@
-﻿using CalamityMod;
+﻿using LAP.Core.AnimationHandle;
+using LAP.Core.Enums;
+using LAP.Core.SystemsLoader;
+using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -6,6 +9,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets;
@@ -15,17 +19,13 @@ using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
 using UCA.Content.UCACooldowns;
-using LAP.Core.AnimationHandle;
 using UCA.Core.Utilities;
-using LAP.Core.Utilities;
-using LAP.Core.SystemsLoader;
-using LAP.Core.Enums;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
 {
     public class TerraRayHeldProjSkill : ModProjectile, ILocalizedModType
     {
-        public override LocalizedText DisplayName => CalamityUtils.GetItemName<TerraRay>();
+        public override LocalizedText DisplayName => LAPUtilities.GetItemName<TerraRay>();
         public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/TerraRayHeld/TerraRayHeldProj";
         public Player Owner => Main.player[Projectile.owner];
         public float Opacity = 1f;
@@ -34,6 +34,11 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
         public float PosOffsetRot;
         public float RotOffset;
         public int Break;
+        public override void SetStaticDefaults()
+        {
+            // 保存旧朝向与旧位置
+            Projectile.AddToSkillProj();
+        }
         public override void SetDefaults()
         {
             Projectile.width = 8;
@@ -46,10 +51,11 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
         }
         public override void OnSpawn(IEntitySource source)
         {
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<TerraMatrix>(),0,0,Projectile.owner);
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ProjectileType<TerraMatrix>(),0,0,Projectile.owner);
         }
         public override void AI()
         {
+            Owner.SetUseFocus(2);
             if (Projectile.LAP().FirstFrame)
             {
                 SoundEngine.PlaySound(SoundsMenu.TerraRestore, Projectile.Center);
@@ -114,15 +120,17 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
                     }
                     if (Projectile.ai[0] != 0)
                     {
-                        foreach (Player player in Main.ActivePlayers)
+                        foreach (Player playere in Main.ActivePlayers)
                         {
-                            if (player.active && player.Center.Distance(Owner.Center) < 650)
-                            {
-                                Owner.UCA().TerraRestore = true;
-                                player.UCA().TerraRestore = true;
-                            }
+                            if (playere.Distance(Owner.Center) < 650)
+                                playere.AddCD(LAPContent.CDType<TerraBoost>(), 30 * 60, false);
+                            playere.UCA().TerraRestore = true;
                         }
-                        Owner.AddCD(LAPContent.CDType<TerraBoost>(), CalamityUtils.SecondsToFrames(30));
+                        if (Main.LocalPlayer.Center.Distance(Owner.Center) < 650)
+                        {
+                            Main.LocalPlayer.AddCD(LAPContent.CDType<TerraBoost>(), 30 * 60, false);
+                            Owner.UCA().TerraRestore = true;
+                        }
                     }
                     animationHelper.HasFinish[AnimationState.Middle] = true;
                 }
@@ -136,7 +144,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
 
                     Vector2 firVec = Vector2.UnitX.RotatedBy(rot * i).RotatedByRandom(MathHelper.TwoPi);
                     Color color = Main.rand.NextBool() ? Color.ForestGreen : Color.SaddleBrown;
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(1.6f, 6.4f), color, 0, DrawLayer.BeforeDusts, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
+                    new TerraTree(firPos, firVec * Main.rand.NextFloat(1.6f, 6.4f), color, 0, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
                 }
             }
             else if (!animationHelper.HasFinish[AnimationState.End])
@@ -159,36 +167,49 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
         public void GenTornado()
         {
             SoundEngine.PlaySound(SoundsMenu.NightRayHit, Projectile.Center);
+            if (!Projectile.IsLocalPlayer())
+                return;
             for (int j = 0; j < 2; j++)
             {
                 for (int i = 0; i < 3; i++)
                 {
                     Vector2 offset = new Vector2(56 * i * (j == 0 ? 1 : -1), 32 * i);
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Owner.Center - offset, Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner, 40 * i, 0, 1);
+                    Projectile p = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Owner.Center - offset, Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner, 40 * i, 0, 1);
+                    p.LAP().isWeaponSkillProj = true;
                     Vector2 offset2 = new Vector2(56 * i * (j == 0 ? 1 : -1), 48);
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Owner.Center - offset2, Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner, 20 * i, 0, 1);
+                    Projectile p2 = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Owner.Center - offset2, Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner, 20 * i, 0, 1);
+                    p2.LAP().isWeaponSkillProj = true;
                 }
             }
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Owner.Center - new Vector2(96, -24), Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner, 10, 0, 1);
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Owner.Center - new Vector2(-96, -24), Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner, 30, 0, 1);
-
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Owner.Center - new Vector2(0, -64), Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner, 10, 0, 1);
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Owner.Center - new Vector2(0, 102), Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner, 30, 0, 1);
+            Projectile p3 = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Owner.Center - new Vector2(96, -24), Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner, 10, 0, 1);
+            p3.LAP().isWeaponSkillProj = true;
+            Projectile p4 = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Owner.Center - new Vector2(-96, -24), Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner, 30, 0, 1);
+            p4.LAP().isWeaponSkillProj = true;
+            Projectile p5 = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Owner.Center - new Vector2(0, -64), Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner, 10, 0, 1);
+            p5.LAP().isWeaponSkillProj = true;
+            Projectile p6 = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Owner.Center - new Vector2(0, 102), Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner, 30, 0, 1);
+            p6.LAP().isWeaponSkillProj = true;
         }
         public void GenTrackTornado(Vector2 GenPos)
         {
+            if (!Projectile.IsLocalPlayer())
+                return;
             for (int j = 0; j < 2; j++)
             {
                 for (int i = 0; i < 2; i++)
                 {
                     Vector2 offset = new Vector2(56 * i * (j == 0 ? 1 : -1), 32 * i);
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), GenPos - offset, Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner, 40 * i, 0, 0);
+                    Projectile p = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), GenPos - offset, Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner, 40 * i, 0, 0);
+                    p.LAP().isWeaponSkillProj = true;
                     Vector2 offset2 = new Vector2(56 * i * (j == 0 ? 1 : -1), 48);
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), GenPos - offset2, Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner, 20 * i, 0, 0);
+                    Projectile p2 = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), GenPos - offset2, Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner, 20 * i, 0, 0);
+                    p2.LAP().isWeaponSkillProj = true;
                 }
             }
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), GenPos - new Vector2(48, -24), Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner, 10, 0, 0);
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), GenPos - new Vector2(-48, -24), Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner, 30, 0, 0);
+            Projectile p3 = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), GenPos - new Vector2(48, -24), Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner, 10, 0, 0);
+            p3.LAP().isWeaponSkillProj = true;
+            Projectile p4 = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), GenPos - new Vector2(-48, -24), Vector2.Zero, ModContent.ProjectileType<TerrarTornado>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner, 30, 0, 0);
+            p4.LAP().isWeaponSkillProj = true;
         }
         #endregion
         #region 处理动画
@@ -267,7 +288,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
             float drawRotation = Projectile.rotation + (Projectile.spriteDirection == -1 ? MathHelper.PiOver2 + MathHelper.PiOver4 : MathHelper.PiOver4);
             Vector2 rotationPoint = texture.Size() / 2f;
             SpriteEffects flipSprite = Projectile.spriteDirection * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            Main.spriteBatch.Draw(texture, drawPosition, null, Color.White, drawRotation, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, null, lightColor, drawRotation, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
             return false;

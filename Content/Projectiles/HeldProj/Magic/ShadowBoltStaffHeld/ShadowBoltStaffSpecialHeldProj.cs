@@ -1,11 +1,9 @@
-﻿using CalamityMod;
-using CalamityMod.Buffs.DamageOverTime;
-using LAP.Core.AnimationHandle;
+﻿using LAP.Core.AnimationHandle;
 using LAP.Core.Enums;
+using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.Localization;
@@ -21,7 +19,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ShadowBoltStaffHeld
 {
     public class ShadowBoltStaffSpecialHeldProj : ModProjectile, ILocalizedModType
     {
-        public override LocalizedText DisplayName => CalamityUtils.GetItemName<ShadowBoltStaffAlt>();
+        public override LocalizedText DisplayName => LAPUtilities.GetItemName<ShadowBoltStaffAlt>();
         public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/ShadowBoltStaffHeld/ShadowBoltStaffHeldProj";
         public AnimationHelper animationHelper = new AnimationHelper(3);
         public BasePartInfo ShadowOrb;
@@ -41,6 +39,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ShadowBoltStaffHeld
         }
         public override void AI()
         {
+            Owner.SetUseFocus(2);
             if (Projectile.LAP().FirstFrame)
             {
                 SoundEngine.PlaySound(SoundsMenu.MagicStaffCharge, Projectile.Center);
@@ -161,14 +160,17 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ShadowBoltStaffHeld
         public void ResetShadowPos()
         {
             SoundEngine.PlaySound(SoundsMenu.ShadowBoltStaffSkillrelease, Projectile.Center);
+            if (!LAPUtilities.IsLocalPlayer(Projectile.owner))
+                return;
             bool HasProj = false;
             int ProjTime = 600;
             int TotalCount = 0;
             foreach (Projectile projectile in Main.ActiveProjectiles)
             {
+                if (projectile.owner != Main.myPlayer)
+                    continue;
                 if (!projectile.active)
                     continue;
-
                 if (projectile.type != ModContent.ProjectileType<ShadowPlayer>())
                     continue;
                 HasProj = true;
@@ -204,32 +206,27 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ShadowBoltStaffHeld
         }
         public override bool PreDraw(ref Color lightColor)
         {
-            LAPUtilities.ReSetToBeginShader(BlendState.NonPremultiplied);
-            Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
-            Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
-            LAPUtilities.FastApplyEdgeMeltsShader(Opacity, ModContent.Request<Texture2D>(Texture).Size(), Color.DarkViolet, 0.01f, 0);
-            DrawBaseStaff();
-            LAPUtilities.ReSetToEndShader();
-            DrawOrb();
+            DrawBaseStaff(lightColor);
+            DrawOrb(lightColor);
             return false;
         }
-        public void DrawBaseStaff()
+        public void DrawBaseStaff(Color lightColor)
         {
             Texture2D DrawTexture = UCATextureRegister.ShadowBoltStaffLong.Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             float drawRotation = Projectile.rotation + (Projectile.spriteDirection == -1 ? MathHelper.Pi - MathHelper.PiOver4 : MathHelper.PiOver4);
             Vector2 rotationPoint = DrawTexture.Size() / 2f;
             SpriteEffects flipSprite = Projectile.spriteDirection * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            Main.spriteBatch.Draw(DrawTexture, drawPosition, null, Color.White, drawRotation, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
+            Main.spriteBatch.Draw(DrawTexture, drawPosition, null, lightColor, drawRotation, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
         }
-        public void DrawOrb()
+        public void DrawOrb(Color lightColor)
         {
             Texture2D DrawTexture = ShadowOrb.Texture;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition + ShadowOrb.Position;
             Vector2 rotationPoint = DrawTexture.Size() / 2f;
             SpriteEffects flipSprite = Projectile.spriteDirection * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             // spriteBatch会自动把textures0设置为当前使用的材质，所以需要你手动改一下
-            Main.spriteBatch.Draw(DrawTexture, drawPosition, null, Color.White, 0, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
+            Main.spriteBatch.Draw(DrawTexture, drawPosition, null, lightColor, 0, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
         }
     }
 }

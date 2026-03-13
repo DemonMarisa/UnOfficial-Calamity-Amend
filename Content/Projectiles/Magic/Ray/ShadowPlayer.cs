@@ -1,5 +1,6 @@
-﻿using CalamityMod.DataStructures;
+﻿using LAP.Assets.TextureRegister;
 using LAP.Content.Configs;
+using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,9 +10,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.WorldBuilding;
 using UCA.Assets;
-using UCA.Content.Configs;
 using UCA.Content.Particiles;
 using UCA.Core.BaseClass;
 
@@ -19,25 +18,29 @@ namespace UCA.Content.Projectiles.Magic.Ray
 {
     public class ShadowPlayer : BaseMagicProj
     {
-        public override string Texture => UCATextureRegister.InvisibleTexturePath;
+        public override string Texture => LAPTextureRegister.InvisibleTexturePath;
         public Vector2 offset = new Vector2(0, -6);
         public ref float AttackTimer => ref Projectile.ai[0];
         public ref float ToNewPos => ref Projectile.ai[1];
         public float StaffRot;
         public Player Owner => Main.player[Projectile.owner];
+        public override void SetStaticDefaults()
+        {
+            Projectile.AddProtectedProj();
+        }
         public override void SetDefaults()
         {
             Projectile.width = 32;
             Projectile.height = 48;
             Projectile.friendly = true;
             Projectile.DamageType = DamageClass.Magic;
-            Projectile.penetrate = 10;
+            Projectile.penetrate = -1;
             Projectile.tileCollide = true;
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 1800;
             Projectile.extraUpdates = 0;
-            Projectile.usesIDStaticNPCImmunity = true;
-            Projectile.idStaticNPCHitCooldown = 30;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 30;
         }
 
         public override void AI()
@@ -85,14 +88,16 @@ namespace UCA.Content.Projectiles.Magic.Ray
             AttackTimer++;
             if (AttackTimer > 60)
             {
-                NPC npc = Projectile.FindClosestTarget(3000);
+                NPC npc = LAPUtilities.FindClosestTarget(Projectile.Center, 3000, true);
                 if (npc is not null)
                 {
                     SoundEngine.PlaySound(SoundID.Item91, Projectile.Center);
                     Vector2 direction = (npc.Center - Projectile.Center).SafeNormalize(Vector2.Zero) * 12;
-                    int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, direction, ModContent.ProjectileType<ShadowBeam>(), Projectile.damage / 2, Projectile.knockBack, Projectile.owner, 0.6f);
-                    Main.projectile[p].penetrate = 1;
-                    Main.projectile[p].tileCollide = false;
+                    if (LAPUtilities.IsLocalPlayer(Projectile.owner))
+                    {
+                        int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, direction, ProjectileType<ShadowBeamWeak>(), Projectile.damage / 2, Projectile.knockBack, Projectile.owner, 0.6f);
+                        Main.projectile[p].LAP().isWeaponSkillProj = true;
+                    } 
                     StaffRot = direction.ToRotation();
                     for (int i = 0; i < 35; i++)
                     {

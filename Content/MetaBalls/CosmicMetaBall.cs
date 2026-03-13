@@ -1,17 +1,15 @@
-﻿using CalamityMod.Particles;
-using LAP.Core.Graphics.Primitives.Trail;
-using LAP.Core.MetaBallsSystem;
+﻿using LAP.Core.MetaBallsSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
 using UCA.Assets;
-using UCA.Assets.Effects;
 
 namespace UCA.Content.MetaBalls
 {
     public partial class CosmicMetaBall : BaseMetaBall
     {
+        public override float BGTimeMult => 4;
         public override Color EdgeColor => Color.DarkViolet;
         public static List<CosmicParticle> CircleParticles = [];
         public static List<CrossStar> CrossParticles = [];
@@ -77,20 +75,6 @@ namespace UCA.Content.MetaBalls
                     Main.spriteBatch.Draw(UCATextureRegister.Lozenge.Value, LozengeParticles[i].Center - Main.screenPosition, null, Color.White, LozengeParticles[i].Rot, UCATextureRegister.Lozenge.Size() / 2, LozengeParticles[i].Scale, SpriteEffects.None, 0f);
                 }
             }
-        }
-
-        public override void PrepareShader()
-        {
-            Main.graphics.GraphicsDevice.Textures[0] = AlphaTexture;
-            Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
-            Main.graphics.GraphicsDevice.Textures[1] = BgTexture;
-            Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
-            Effect shader = UCAShaderRegister.MetaballShader.Value;
-            shader.Parameters["renderTargetSize"].SetValue(AlphaTexture.Size());
-            shader.Parameters["bakcGroundSize"].SetValue(BgTexture.Size() / 2);
-            shader.Parameters["edgeColor"].SetValue(EdgeColor.ToVector4());
-            shader.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly * 4);
-            shader.CurrentTechnique.Passes[0].Apply();
         }
     }
 }

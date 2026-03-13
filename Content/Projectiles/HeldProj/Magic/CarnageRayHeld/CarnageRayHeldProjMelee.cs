@@ -1,10 +1,7 @@
-﻿using CalamityMod;
-using CalamityMod.Buffs.DamageOverTime;
-using CalamityMod.Enums;
-using CalamityMod.Graphics.Primitives;
-using LAP.Core.BaseClass;
+﻿using LAP.Core.BaseClass.Legacys;
 using LAP.Core.Enums;
 using LAP.Core.Graphics.PixelatedRender;
+using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -16,14 +13,12 @@ using Terraria.GameContent;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets;
-using UCA.Assets.Effects;
 using UCA.Assets.Sounds;
 using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
-using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
 {
@@ -57,6 +52,10 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
         public float IinToAni = 10;
 
         public bool CanHit = false;
+        public override void SetStaticDefaults()
+        {
+            Projectile.AddHeldProj();
+        }
         public override void SetDefaults()
         {
             Projectile.width = 66;
@@ -227,12 +226,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointWrap;
 
             Rectangle frame = UCATextureRegister.CarnageStabs.Frame(19, 1, StabsFrame, 0);
-            Effect shader = UCAShaderRegister.EdgeMeltsShader.Value;
-            shader.Parameters["progress"].SetValue(ShaderOpacity);
-            shader.Parameters["InPutTextureSize"].SetValue(frame.Size());
-            shader.Parameters["EdgeColor"].SetValue(Color.Red.ToVector4());
-            shader.Parameters["EdgeWidth"].SetValue(0.01f);
-            shader.CurrentTechnique.Passes[0].Apply();
+
+            LAPUtilities.FastApplyEdgeMeltsShader(ShaderOpacity, frame.Size(), Color.Red, 0.01f, 0);
 
             DrawStabs();
             Main.spriteBatch.End();
@@ -258,17 +253,15 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
 
-            Main.graphics.GraphicsDevice.Textures[0] = ModContent.Request<Texture2D>(Texture).Value;
+            Texture2D Weapontexture = TextureAssets.Projectile[Type].Value;
+
+            Main.graphics.GraphicsDevice.Textures[0] = Weapontexture;
             Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
-            Effect shader = UCAShaderRegister.EdgeMeltsShader.Value;
-            shader.Parameters["progress"].SetValue(ShaderOpacity);
-            shader.Parameters["InPutTextureSize"].SetValue(ModContent.Request<Texture2D>(Texture).Size());
-            shader.Parameters["EdgeColor"].SetValue(Color.Red.ToVector4());
-            shader.Parameters["EdgeWidth"].SetValue(0.01f);
-            shader.CurrentTechnique.Passes[0].Apply();
+
+            LAPUtilities.FastApplyEdgeMeltsShader(ShaderOpacity, Weapontexture.Size(), Color.Red, 0.01f, 0);
 
             Texture2D texture = TextureAssets.Projectile[Type].Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
@@ -278,7 +271,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
 
             SpriteEffects flipSprite = Owner.direction * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
-            Main.spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(lightColor), drawRotation, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, default);
+            Main.spriteBatch.Draw(texture, drawPosition, null, lightColor, drawRotation, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, default);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
@@ -341,13 +334,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
                     CarnageMetaBall.SpawnParticle(Projectile.Center, spawnVec, Main.rand.NextFloat(0.4f, 0.6f), 0, true);
                 }
             }
-
-            target.AddBuff(ModContent.BuffType<BurningBlood>(), 600);
-        }
-
-        public void RenderPixelatedPrimitives(SpriteBatch spriteBatch, GeneralDrawLayer layer)
-        {
-            throw new NotImplementedException();
         }
     }
 }

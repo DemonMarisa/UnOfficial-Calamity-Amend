@@ -1,12 +1,9 @@
-﻿using CalamityMod.NPCs.NormalNPCs;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.ModLoader;
 using UCA.Assets;
 using LAP.Core.ParticleSystem;
-using UCA.Core.Utilities;
 using LAP.Core.Utilities;
 
 namespace UCA.Content.Particiles

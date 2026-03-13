@@ -1,13 +1,11 @@
-﻿using CalamityMod.Buffs.DamageOverTime;
+﻿using LAP.Assets.TextureRegister;
 using LAP.Content.Configs;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ModLoader;
-using UCA.Assets;
 using UCA.Assets.Sounds;
-using UCA.Content.Configs;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Core.BaseClass;
@@ -16,7 +14,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
 {
     public class CarnageEnergy : BaseMagicProj
     {
-        public override string Texture => UCATextureRegister.InvisibleTexturePath;
+        public override string Texture => LAPTextureRegister.InvisibleTexturePath;
 
         public bool MainRay => Projectile.ai[0] != 0;
 
@@ -165,7 +163,6 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(ModContent.BuffType<BurningBlood>(), 180);
         }
     }
 }

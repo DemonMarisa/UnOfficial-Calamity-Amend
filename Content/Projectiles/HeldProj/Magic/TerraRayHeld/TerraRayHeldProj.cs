@@ -1,6 +1,5 @@
-﻿using CalamityMod;
-using LAP.Core.AnimationHandle;
-using LAP.Core.BaseClass;
+﻿using LAP.Core.AnimationHandle;
+using LAP.Core.BaseClass.Legacys;
 using LAP.Core.Enums;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
@@ -23,7 +22,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
 {
     public class TerraRayHeldProj : BaseHeldProj
     {
-        public override LocalizedText DisplayName => CalamityUtils.GetItemName<TerraRay>();
+        public override LocalizedText DisplayName => LAPUtilities.GetItemName<TerraRay>();
         public Vector2 RotVector => new Vector2(10 * Owner.direction, 7).BetterRotatedBy(Owner.GetPlayerToMouseVector2().ToRotation(), default, 0.5f, 1f);
         public override Vector2 RotPoint => TextureAssets.Projectile[Type].Size() / 2;
         public override Vector2 Posffset => new Vector2(RotVector.X, RotVector.Y) * Owner.direction;
@@ -95,7 +94,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
             GenStar(Projectile.Center + FireOffset, Projectile.rotation + MathHelper.PiOver2);
             SoundEngine.PlaySound(SoundsMenu.TerraRayLeftFire, Projectile.Center);
             // 后坐力
-            Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.1f;
+            Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.1f * Owner.direction;
         }
         public static void GenStar(Vector2 pos, float rotoffset, float Xmult = 0.8f)
         {
@@ -140,7 +139,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
             }
             // 生成枝条
             Vector2 firPos = pos;
-            for (int i = 0; i <9; i++)
+            for (int i = 0; i < 9; i++)
             {
                 float rot = MathHelper.TwoPi / 9;
                 float XScale = Main.rand.NextFloat(9, 12);
@@ -148,19 +147,19 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
 
                 Vector2 firVec = Vector2.UnitX.RotatedBy(rot * i);
                 Color color = Main.rand.NextBool() ? Color.DarkGreen : Color.SaddleBrown;
-                new TerraTree(firPos, firVec * Main.rand.NextFloat(0.3f, 0.6f), color, 0, DrawLayer.BeforeDusts, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
+                new TerraTree(firPos, firVec * Main.rand.NextFloat(0.3f, 0.6f), color, 0, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
             }
             #region 生成环形粒子
-            for (int i = 0; i < 30; i++)
+            for (int i = 0; i < 20; i++)
             {
-                float offset = MathHelper.TwoPi / 30;
+                float offset = MathHelper.TwoPi / 20;
                 Color RandomColor = Color.Lerp(Color.LightGreen, Color.ForestGreen, Main.rand.NextFloat(0, 1));
                 Vector2 firVel = Vector2.UnitX.BetterRotatedBy(offset * i, default, 0.75f, 1f);
                 new MediumGlowBall(firPos, firVel.RotatedBy(RotOffset + MathHelper.PiOver2) * 1.5f, RandomColor, 60, 0, 1, 0.2f, 0).Spawn();
             }
             #endregion
             #region 生成蝴蝶
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 2; i++)
             {
                 float offset = MathHelper.TwoPi / 3;
                 Color RandomColor = Color.Lerp(Color.LightGreen, Color.ForestGreen, Main.rand.NextFloat(0, 1));
@@ -216,14 +215,14 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
 
-            LAPUtilities.FastApplyEdgeMeltsShader(Opacity, ModContent.Request<Texture2D>(Texture).Size(), Color.LimeGreen, 0.01f, 0);
+            LAPUtilities.FastApplyEdgeMeltsShader(Opacity, Request<Texture2D>(Texture).Size(), Color.LimeGreen, 0.01f, 0);
 
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             float drawRotation = Projectile.rotation + (Projectile.spriteDirection == -1 ? MathHelper.Pi : 0f + MathHelper.PiOver4 * (Projectile.spriteDirection + 1));
             Vector2 rotationPoint = ModContent.Request<Texture2D>(Texture).Value.Size() / 2f;
             SpriteEffects flipSprite = Projectile.spriteDirection * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             // spriteBatch会自动把textures0设置为当前使用的材质，所以需要你手动改一下
-            Main.spriteBatch.Draw(ModContent.Request<Texture2D>(Texture).Value, drawPosition, null, Color.White, drawRotation - MathHelper.PiOver4, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
+            Main.spriteBatch.Draw(ModContent.Request<Texture2D>(Texture).Value, drawPosition, null, lightColor, drawRotation - MathHelper.PiOver4, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);

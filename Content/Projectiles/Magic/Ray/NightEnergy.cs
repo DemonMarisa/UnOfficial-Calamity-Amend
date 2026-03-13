@@ -6,20 +6,18 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using UCA.Assets;
 using UCA.Assets.Sounds;
-using UCA.Content.Configs;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld;
 using UCA.Core.BaseClass;
-using UCA.Core.Utilities;
+using LAP.Assets.TextureRegister;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
     public class NightEnergy : BaseMagicProj
     {
-        public override string Texture => UCATextureRegister.InvisibleTexturePath;
+        public override string Texture => LAPTextureRegister.InvisibleTexturePath;
 
         public float ScaleMult = 1;
 
@@ -81,7 +79,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Projectile.rotation = Projectile.velocity.ToRotation();
             if (Projectile.timeLeft % 20 == 0)
             {
-                NPC npc = Projectile.FindClosestTarget(1500, false);
+                NPC npc = LAPUtilities.FindClosestTarget(Projectile.Center, 1500, true);
                 if (npc is not null)
                 {
                     float DistanceToNPC = Vector2.Distance(Projectile.Center, npc.Center);

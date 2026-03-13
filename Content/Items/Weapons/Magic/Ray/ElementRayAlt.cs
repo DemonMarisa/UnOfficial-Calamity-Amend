@@ -1,8 +1,8 @@
-﻿using CalamityMod;
-using CalamityMod.Items.Materials;
-using CalamityMod.Items.Weapons.Magic;
+﻿using LAP.Common.CalamityModCross;
+using LAP.Common.Utilities;
 using LAP.Core.Enums;
 using LAP.Core.Keybind;
+using LAP.Core.LAPSource;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -16,6 +16,7 @@ using UCA.Common.Misc;
 using UCA.Content.GUI;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld;
+using UCA.Content.Projectiles.HeldProj.Melee.StormRuler;
 using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
 
@@ -59,6 +60,9 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             Item.LAP().UseCustomWeaponSkill = true;
             Item.LAP().StatInflationMult = 1f;
             Item.LAP().WeaponSkillManaCost = 200;
+
+            Item.LAP().SkillShoot = ProjectileType<ElementRaySkillHeldProj>();
+            Item.LAP().SkillShootSpeed = 0;
         }
         public override bool CanUseItem( Player player)
         {
@@ -130,7 +134,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             }
             return false;
         }
-        public override void WeaponSkill(Player player)
+        public override void WeaponSkill(Player player, EntitySource_ItemUse_WeaponSkill source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             if (player.ownedProjectileCounts[ModContent.ProjectileType<ElementRayHeldProj>()] < 1 && player.ownedProjectileCounts[ModContent.ProjectileType<ElementRaySpecialHeldProj>()] < 1)
             {
@@ -143,7 +147,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
                 }
                 if (player.ownedProjectileCounts[ModContent.ProjectileType<ElementRaySkillHeldProj>()] > 0)
                     return;
-                Projectile.NewProjectile(Item.GetSource_FromThis(), player.Center, Vector2.Zero, ModContent.ProjectileType<ElementRaySkillHeldProj>(), 0, 0, player.whoAmI, player.UCA().ElementalRayStates);
+                Projectile.NewProjectile(source, position, velocity, type, 0, 0, player.whoAmI, player.UCA().ElementalRayStates);
             }
         }
         public override void UpdateHoldItem(Player player)
@@ -184,7 +188,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             if (player.UCA().ElementalRayStates == ElementalRayState.Misc)
             {
                 MiscTooltip = LocalizedPath.ElementalRayMiscTooltip;
-                ReplaceTooltipToNeedState(tooltips, MiscTooltip, $"CalamityMod/{nameof(GalacticaSingularity)}");
+                ReplaceTooltipToNeedState(tooltips, MiscTooltip, $"CalamityMod/GalacticaSingularity");
             }
 
             if (player.UCA().ElementalRayStates == ElementalRayState.Solar)
@@ -220,21 +224,24 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
         }
         public override void AddRecipes()
         {
-            CreateRecipe().
-                AddIngredient<TerraRay>().
-                AddIngredient(ItemID.LunarBar, 5).
-                AddIngredient<LifeAlloy>(5).
-                AddIngredient<GalacticaSingularity>(5).
-                AddTile(TileID.LunarCraftingStation).
-                Register();
-
-            CreateRecipe().
-                AddIngredient<Photosynthesis>().
-                AddIngredient(ItemID.LunarBar, 5).
-                AddIngredient<LifeAlloy>(5).
-                AddIngredient<GalacticaSingularity>(5).
-                AddTile(TileID.LunarCraftingStation).
-                Register();
+            if (ModCrossUtils.HasCalamityMod())
+            {
+                CreateRecipe().
+                    AddIngredient<TerraRay>().
+                    AddIngredient(ItemID.LunarBar, 5).
+                    AddIngredient(CalMaterialsID.LifeAlloyID, 5).
+                    AddIngredient(CalMaterialsID.GalacticaSingularityID, 5).
+                    AddTile(TileID.LunarCraftingStation).
+                    Register();
+            }
+            else
+            {
+                CreateRecipe().
+                    AddIngredient<TerraRay>().
+                    AddIngredient(ItemID.LunarBar, 5).
+                    AddTile(TileID.LunarCraftingStation).
+                    Register();
+            }
         }
     }
 }

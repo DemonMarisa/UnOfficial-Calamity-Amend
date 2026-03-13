@@ -7,6 +7,7 @@ using UCA.Assets;
 using UCA.Assets.Effects;
 using LAP.Core.Graphics.DrawNode;
 using LAP.Core.Graphics.Primitives.Trail;
+using LAP.Assets.TextureRegister;
 
 namespace UCA.Content.DrawNodes
 {
@@ -46,13 +47,13 @@ namespace UCA.Content.DrawNodes
         {
             if (!CanAdd)
             {
-                Opacity = MathHelper.Lerp(Opacity, 1f, 0.03f);
+                Opacity = MathHelper.Lerp(Opacity, 0f, 0.03f);
                 if (Opacity > 0.95f)
                     Time = Lifetime;
                 return;
             }
 
-            Opacity = MathHelper.Lerp(Opacity, 0f, 0.03f);
+            Opacity = MathHelper.Lerp(Opacity, 1f, 0.03f);
 
             if (Time > TotalPoint)
                 CanAdd = false;
@@ -84,17 +85,13 @@ namespace UCA.Content.DrawNodes
         }
         public override void Draw(SpriteBatch sb)
         {
-            Main.graphics.GraphicsDevice.Textures[0] = UCATextureRegister.Wood.Value;
-            Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
-
-            Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
-            Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
+            Main.graphics.GraphicsDevice.Textures[0] = LAPTextureRegister.Wood.Value;
+            Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointWrap;
 
             Effect shader = UCAShaderRegister.TerraRayVinesShader.Value;
             shader.Parameters["progress"].SetValue(Opacity);
-            shader.Parameters["InPutTextureSize"].SetValue(new Vector2(1024, 1024));
-            shader.Parameters["EdgeColor"].SetValue(DrawColor.ToVector4());
-            shader.Parameters["EdgeWidth"].SetValue(0.2f);
+            shader.Parameters["UVMult"].SetValue(new Vector2(100, 0.5f));
+            shader.Parameters["UVAdd"].SetValue(new Vector2(1, 1));
             shader.CurrentTechnique.Passes[0].Apply();
 
             List<VertexPositionColorTexture2D> Vertexlist = new List<VertexPositionColorTexture2D>();

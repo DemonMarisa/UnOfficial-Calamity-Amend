@@ -1,20 +1,19 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LAP.Assets.TextureRegister;
+using LAP.Core.StateMachine.SynedHitEffect;
+using LAP.Core.Utilities;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.IO;
 using Terraria;
-using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
-using UCA.Assets.Sounds;
 using UCA.Content.DrawNodes;
+using UCA.Content.HitEffect;
 using UCA.Content.Particiles;
 using UCA.Core.BaseClass;
-using LAP.Core.Utilities;
-using LAP.Assets.TextureRegister;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
@@ -51,12 +50,10 @@ namespace UCA.Content.Projectiles.Magic.Ray
         public override void SendExtraAI(BinaryWriter writer)
         {
             writer.Write(inToFadeOut);
-            writer.Write(Projectile.ai[0]);
         }
         public override void ReceiveExtraAI(BinaryReader reader)
         {
             inToFadeOut = reader.ReadBoolean();
-            Projectile.ai[0] = reader.ReadSingle();
         }
         public override void AI()
         {
@@ -108,40 +105,10 @@ namespace UCA.Content.Projectiles.Magic.Ray
             if (Projectile.timeLeft < MaxTime / 2)
                 inToFadeOut = true;
 
-            if (inToFadeOut && Projectile.ai[1] == 0)
+            if (inToFadeOut)
             {
                 for (int i = 0; i < Vine.Count; i++)
-                {
                     Vine[i].CanAdd = false;
-                }
-                Projectile.ai[1]++;
-            }
-
-            if (Projectile.ai[0] != 0)
-            {
-                inToFadeOut = true;
-                // 生成枝条
-                Vector2 firPos = Projectile.Center;
-                for (int i = 0; i < 2; i++)
-                {
-                    float rot = MathHelper.TwoPi / 3;
-                    float XScale = Main.rand.NextFloat(9, 12);
-                    float Height = Main.rand.NextFloat(4f, 6f);
-
-                    Vector2 firVec = Vector2.UnitX.RotatedBy(rot * i).RotatedByRandom(MathHelper.TwoPi);
-                    Color color = Main.rand.NextBool() ? Color.DarkGreen : Color.SaddleBrown;
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(0.3f, 0.6f), color, 0, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
-                }
-                for (int i = 0; i < 5; i++)
-                {
-                    float offset = MathHelper.TwoPi / 5;
-                    Color RandomColor = Color.Lerp(Color.LightGreen, Color.ForestGreen, Main.rand.NextFloat(0, 1));
-                    Vector2 firVel = Vector2.UnitX.BetterRotatedBy(offset * i, default, 0.75f, 1f);
-                    new MediumGlowBall(firPos, firVel * 1.5f, RandomColor, 60, 0, 1, 0.2f, Main.rand.NextFloat(2, 3)).Spawn();
-                }
-                SoundEngine.PlaySound(SoundsMenu.TerraRayHit, Projectile.Center);
-                Projectile.netUpdate = true;
-                Projectile.ai[0] = 0;
             }
         }
         public void UpdateVine()
@@ -200,8 +167,10 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            Projectile.ai[0]++;
+            HitEffectManager.SpawnHitEffect(HitEffectManager.HEType<TerraEnergyHit>(), Projectile.owner, Projectile.GetSource_FromThis(), target.Center, Vector2.Zero);
+            inToFadeOut = true;
             Projectile.netUpdate = true;
+            Projectile.netSpam = 0;
         }
     }
 }

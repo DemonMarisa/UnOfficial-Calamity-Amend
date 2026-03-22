@@ -1,4 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LAP.Assets.TextureRegister;
+using LAP.Core.AnimationHandle;
+using LAP.Core.Enums;
+using LAP.Core.Utilities;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;
@@ -7,12 +11,8 @@ using UCA.Assets;
 using UCA.Content.DrawNodes;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.HealPRoj;
-using LAP.Core.AnimationHandle;
 using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
-using LAP.Core.Utilities;
-using LAP.Core.Enums;
-using LAP.Assets.TextureRegister;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
@@ -22,7 +22,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         public int FrameX;
         public int FrameY;
         public int MaxTime = 128;
-        public AnimationHelper AnimationHelper = new AnimationHelper(3);
+        public AniHelper AniHelper = new AniHelper(3);
         public SpriteEffects filp = SpriteEffects.None;
         public NPC Target;
         public bool CanShootLance => Projectile.ai[1] != 0;
@@ -49,9 +49,9 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             if (Projectile.LAP().FirstFrame)
             {
-                AnimationHelper = new AnimationHelper(3);
-                AnimationHelper.MaxAniProgress[AnimationState.Begin] = 16;
-                AnimationHelper.MaxAniProgress[AnimationState.End] = 32;
+                AniHelper = new AniHelper(3);
+                AniHelper.MaxAniProgress[AniState.Begin] = 16;
+                AniHelper.MaxAniProgress[AniState.End] = 32;
                 FrameX = Main.rand.Next(0, 7);
                 FrameY = Main.rand.Next(0, 7);
                 int filps = -1;
@@ -102,15 +102,9 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (Projectile.owner != Main.myPlayer)
-                return;
-
             Player player = Main.player[Projectile.owner];
-
-
             if (player.UCA().TerraRayHealCD > 0)
                 return;
-
             if (CanShootHealLance)
             {
                 player.UCA().TerraRayHealCD = 5;
@@ -162,27 +156,27 @@ namespace UCA.Content.Projectiles.Magic.Ray
         #region 更新淡入淡出
         public void UpDateFade()
         {
-            if (!AnimationHelper.HasFinish[AnimationState.Begin])
+            if (!AniHelper.HasFinish[AniState.Begin])
             {
-                float maxAni = AnimationHelper.MaxAniProgress[AnimationState.Begin];
-                float curAni = AnimationHelper.AniProgress[AnimationState.Begin];
+                float maxAni = AniHelper.MaxAniProgress[AniState.Begin];
+                float curAni = AniHelper.AniProgress[AniState.Begin];
 
                 Projectile.Opacity = MathHelper.Lerp(0f, 1f, curAni / maxAni);
-                AnimationHelper.AniProgress[AnimationState.Begin]++;
+                AniHelper.AniProgress[AniState.Begin]++;
 
-                if (AnimationHelper.AniProgress[AnimationState.Begin] >= AnimationHelper.MaxAniProgress[AnimationState.Begin])
-                    AnimationHelper.HasFinish[AnimationState.Begin] = true;
+                if (AniHelper.AniProgress[AniState.Begin] >= AniHelper.MaxAniProgress[AniState.Begin])
+                    AniHelper.HasFinish[AniState.Begin] = true;
             }
-            else if (Projectile.timeLeft < AnimationHelper.MaxAniProgress[AnimationState.End])
+            else if (Projectile.timeLeft < AniHelper.MaxAniProgress[AniState.End])
             {
-                float maxAni = AnimationHelper.MaxAniProgress[AnimationState.End];
-                float curAni = AnimationHelper.AniProgress[AnimationState.End];
+                float maxAni = AniHelper.MaxAniProgress[AniState.End];
+                float curAni = AniHelper.AniProgress[AniState.End];
 
                 Projectile.Opacity = MathHelper.Lerp(1f, 0f, curAni / maxAni);
-                AnimationHelper.AniProgress[AnimationState.End]++;
+                AniHelper.AniProgress[AniState.End]++;
 
-                if (AnimationHelper.AniProgress[AnimationState.End] >= AnimationHelper.MaxAniProgress[AnimationState.End])
-                    AnimationHelper.HasFinish[AnimationState.End] = true;
+                if (AniHelper.AniProgress[AniState.End] >= AniHelper.MaxAniProgress[AniState.End])
+                    AniHelper.HasFinish[AniState.End] = true;
             }
         }
         #endregion
@@ -194,7 +188,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             if (!CanShootLance)
                 return;
             Projectile.ai[0]--;
-            if (Projectile.ai[0] == 0 && Projectile.timeLeft > AnimationHelper.MaxAniProgress[AnimationState.End])
+            if (Projectile.ai[0] == 0 && Projectile.timeLeft > AniHelper.MaxAniProgress[AniState.End])
             {
                 Vector2 shootVel = LAPUtilities.GetVector2(Projectile.Center, Target.Center).SafeNormalize(Vector2.UnitX).RotatedByRandom(MathHelper.PiOver4);
                 Projectile.ai[0] = 64;

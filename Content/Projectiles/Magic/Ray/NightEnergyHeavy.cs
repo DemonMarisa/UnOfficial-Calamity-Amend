@@ -3,6 +3,11 @@ using LAP.Content.Configs;
 using LAP.Core.Presets.Content;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -14,7 +19,7 @@ using UCA.Core.BaseClass;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
-    public class NightEnergy : BaseMagicProj
+    public class NightEnergyHeavy : BaseMagicProj
     {
         public override string Texture => LAPTextureRegister.InvisibleTexturePath;
 
@@ -28,7 +33,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Projectile.height = 8;
             Projectile.extraUpdates = 5;
             Projectile.friendly = true;
-            Projectile.timeLeft = 79;
+            Projectile.timeLeft = 99;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.tileCollide = true;
             Projectile.penetrate = -1;
@@ -63,7 +68,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                     new Vector2(1f, 0).RotatedBy(Main.rand.NextFloat(-6, 6)) * Main.rand.NextFloat(0, 1),
                     Main.rand.NextFloat(0.10f, 0.15f) * ScaleMult);
             }
-            
+
             Projectile.velocity *= 1.03f;
             Projectile.rotation = Projectile.velocity.ToRotation();
             if (Projectile.timeLeft % 20 == 0)

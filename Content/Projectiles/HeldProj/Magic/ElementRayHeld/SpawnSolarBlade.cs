@@ -26,29 +26,29 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             SolarBladeXOffset = 128;
 
             RelativeOwnerPos = new Vector2(10, 0);
-            animationHelper.MaxAniProgress[AnimationState.Begin] = 30;
-            animationHelper.MaxAniProgress[AnimationState.Middle] = 25;
-            animationHelper.MaxAniProgress[AnimationState.End] = 100;
+            AniHelper.MaxAniProgress[AniState.Begin] = 30;
+            AniHelper.MaxAniProgress[AniState.Middle] = 25;
+            AniHelper.MaxAniProgress[AniState.End] = 100;
             SoundEngine.PlaySound(SoundsMenu.MAGNOLIASPRelease, Projectile.Center);
             SoundEngine.PlaySound(SoundsMenu.MagicStaffCharge, Projectile.Center);
         }
         public void UpdateSolarBlade()
         {
-            if (!animationHelper.HasFinish[AnimationState.Begin])
+            if (!AniHelper.HasFinish[AniState.Begin])
             {
-                animationHelper.UpDateAni(AnimationState.Begin, 35);
+                AniHelper.UpDateAni(AniState.Begin, 35);
                 HandleSolorBeginAni();
             }
-            else if (!animationHelper.HasFinish[AnimationState.Middle])
+            else if (!AniHelper.HasFinish[AniState.Middle])
             {
-                if (animationHelper.AniProgress[AnimationState.Middle] < animationHelper.MaxAniProgress[AnimationState.Middle])
-                    animationHelper.AniProgress[AnimationState.Middle]++;
+                if (AniHelper.AniProgress[AniState.Middle] < AniHelper.MaxAniProgress[AniState.Middle])
+                    AniHelper.AniProgress[AniState.Middle]++;
 
                 HandleSolorMiddleAni();
 
-                if (animationHelper.AniProgress[AnimationState.Middle] >= animationHelper.MaxAniProgress[AnimationState.Middle] && !Owner.LAP().MouseRight)
+                if (AniHelper.AniProgress[AniState.Middle] >= AniHelper.MaxAniProgress[AniState.Middle] && !Owner.LAP().MouseRight)
                 {
-                    animationHelper.HasFinish[AnimationState.Middle] = true;
+                    AniHelper.HasFinish[AniState.Middle] = true;
                     BeginRot = ToMouseVector;
                     CanChangeDir = false;
                     candamage = true;
@@ -58,15 +58,15 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                     SoundEngine.PlaySound(SoundsMenu.SoulGreatSwordSwimg, Projectile.Center);
                 }
             }
-            else if (!animationHelper.HasFinish[AnimationState.End])
+            else if (!AniHelper.HasFinish[AniState.End])
             {
-                animationHelper.AniProgress[AnimationState.End]++;
+                AniHelper.AniProgress[AniState.End]++;
                 Projectile.extraUpdates = 10;
                 HandleSolorEndAni();
-                if (animationHelper.AniProgress[AnimationState.End] >= animationHelper.MaxAniProgress[AnimationState.End])
+                if (AniHelper.AniProgress[AniState.End] >= AniHelper.MaxAniProgress[AniState.End])
                 {
                     SpawnDust();
-                    animationHelper.HasFinish[AnimationState.End] = true;
+                    AniHelper.HasFinish[AniState.End] = true;
                 }
             }
             else
@@ -79,10 +79,10 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 sound.Pitch = 0.2f;
                 SoundEngine.PlaySound(sound, Projectile.Center);
             }
-            if (animationHelper.HasFinish[AnimationState.Begin] && Time % 20 == 0)
+            if (AniHelper.HasFinish[AniState.Begin] && Time % 20 == 0)
                 SoundEngine.PlaySound(SoundsMenu.Fire, Projectile.Center);
 
-            if (animationHelper.HasFinish[AnimationState.Begin] && Time % 2 == 0 && CanDraw)
+            if (AniHelper.HasFinish[AniState.Begin] && Time % 2 == 0 && CanDraw)
             {
                 Vector2 beginSpawnPos = Projectile.Center + new Vector2(64, Main.rand.Next(-100, 100)).RotatedBy(Projectile.rotation);
                 Vector2 EndSpawnPos = Projectile.Center + new Vector2(SolarBladeXOffset + 720, Main.rand.Next(-100, 100)).RotatedBy(Projectile.rotation);
@@ -97,8 +97,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         #region 处理开始动画
         public void HandleSolorBeginAni()
         {
-            int MaxAni = animationHelper.MaxAniProgress[AnimationState.Begin];
-            int CurAni = animationHelper.AniProgress[AnimationState.Begin];
+            int MaxAni = AniHelper.MaxAniProgress[AniState.Begin];
+            int CurAni = AniHelper.AniProgress[AniState.Begin];
             float easedProgress = EasingHelper.EaseOutCubic(CurAni / (float)MaxAni);
             float startAngleOffset = MathHelper.ToRadians(45);
             float endAngleOffset = MathHelper.ToRadians(-145);
@@ -142,8 +142,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         #region 处理中间的动画
         public void HandleSolorMiddleAni()
         {
-            int MaxAni = animationHelper.MaxAniProgress[AnimationState.Middle];
-            int CurAni = animationHelper.AniProgress[AnimationState.Middle];
+            int MaxAni = AniHelper.MaxAniProgress[AniState.Middle];
+            int CurAni = AniHelper.AniProgress[AniState.Middle];
             // 使用缓动函数让动画更自然
             float easedProgress = EasingHelper.EaseOutCubic(CurAni / (float)MaxAni);
 
@@ -185,8 +185,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         #region 处理结束的动画
         public void HandleSolorEndAni()
         {
-            int MaxAni = animationHelper.MaxAniProgress[AnimationState.End];
-            int CurAni = animationHelper.AniProgress[AnimationState.End];
+            int MaxAni = AniHelper.MaxAniProgress[AniState.End];
+            int CurAni = AniHelper.AniProgress[AniState.End];
             // 使用缓动函数让动画更自然
             float easedProgress = EasingHelper.EaseInCubic(CurAni / (float)MaxAni);
             // 设置起始与结束角度
@@ -245,7 +245,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         #region 更新耀斑模式的碎片位置
         public void UpdateSolarFragmentOffset()
         {
-            if (!animationHelper.HasFinish[AnimationState.Begin])
+            if (!AniHelper.HasFinish[AniState.Begin])
             {
                 UpdateFragContractile();
             }
@@ -256,8 +256,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         }
         public void UpdateFragContractile()
         {
-            int MaxAni = animationHelper.MaxAniProgress[AnimationState.Begin];
-            int CurAni = animationHelper.AniProgress[AnimationState.Begin];
+            int MaxAni = AniHelper.MaxAniProgress[AniState.Begin];
+            int CurAni = AniHelper.AniProgress[AniState.Begin];
             float Progress = CurAni / (float)MaxAni;
             // 更新主碎片
             Vector2 MainFragTarget = Vector2.Lerp(new Vector2(260, 0), new Vector2(48, 0), EasingHelper.EaseOutCubic(Progress)).RotatedBy(Projectile.rotation);

@@ -2,6 +2,7 @@
 using LAP.Core.AnimationHandle;
 using LAP.Core.Enums;
 using LAP.Core.SpecificEffectManagers;
+using LAP.Core.StateMachine.SynedHitEffect;
 using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
@@ -15,11 +16,11 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Sounds;
+using UCA.Content.HitEffect;
 using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.Magic.Ray;
-using UCA.Content.Projectiles.Misc;
 using UCA.Content.UCACooldowns;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
@@ -32,7 +33,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
 
         public float Opacity = 1f; // 1f是完全透明
 
-        public AnimationHelper animationHelper = new AnimationHelper(10);
+        public AniHelper AniHelper = new AniHelper(10);
 
         public float BeginRot;
 
@@ -63,24 +64,24 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
         }
         public override void SendExtraAI(BinaryWriter writer)
         {
-            writer.Write(animationHelper.MaxAniProgress[AnimationState.Begin]);
-            writer.Write(animationHelper.MaxAniProgress[AnimationState.Middle]);
-            writer.Write(animationHelper.MaxAniProgress[AnimationState.End]);
+            writer.Write(AniHelper.MaxAniProgress[AniState.Begin]);
+            writer.Write(AniHelper.MaxAniProgress[AniState.Middle]);
+            writer.Write(AniHelper.MaxAniProgress[AniState.End]);
             writer.Write(BeginRot);
         }
         public override void ReceiveExtraAI(BinaryReader reader)
         {
-            animationHelper.MaxAniProgress[AnimationState.Begin] = reader.ReadInt32();
-            animationHelper.MaxAniProgress[AnimationState.Middle] = reader.ReadInt32();
-            animationHelper.MaxAniProgress[AnimationState.End] = reader.ReadInt32();
+            AniHelper.MaxAniProgress[AniState.Begin] = reader.ReadInt32();
+            AniHelper.MaxAniProgress[AniState.Middle] = reader.ReadInt32();
+            AniHelper.MaxAniProgress[AniState.End] = reader.ReadInt32();
             BeginRot = reader.ReadSingle();
         }
 
         public override void OnSpawn(IEntitySource source)
         {
-            animationHelper.MaxAniProgress[AnimationState.Begin] = 100;
-            animationHelper.MaxAniProgress[AnimationState.Middle] = 40;
-            animationHelper.MaxAniProgress[AnimationState.End] = 40;
+            AniHelper.MaxAniProgress[AniState.Begin] = 100;
+            AniHelper.MaxAniProgress[AniState.Middle] = 40;
+            AniHelper.MaxAniProgress[AniState.End] = 40;
 
             BeginRot = Owner.GetPlayerToMouseVector2().ToRotation();
 
@@ -117,7 +118,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
             Owner.SetUseFocus(2);
             AllAI();
 
-           if (!animationHelper.HasFinish[AnimationState.Middle])
+           if (!AniHelper.HasFinish[AniState.Middle])
            {
                 int Lenth = LengthOffset + 50;
                 int Spawn = 9;
@@ -173,54 +174,54 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
             Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, baseRotation + Owner.direction * directionVerticality * 1.5f + offset);
             Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, baseRotation + Owner.direction * directionVerticality * 1.2f + offset);
 
-            if (!animationHelper.HasFinish[AnimationState.Begin])
+            if (!AniHelper.HasFinish[AniState.Begin])
             {
                 BeginRot = BeginRot.AngleTowards(Owner.GetPlayerToMouseVector2().ToRotation(), 0.05f);
 
-                if (animationHelper.AniProgress[AnimationState.Begin] == 1)
+                if (AniHelper.AniProgress[AniState.Begin] == 1)
                     SoundEngine.PlaySound(SoundsMenu.CarnageCharge, Projectile.Center);
 
                 Projectile.extraUpdates = 2;
 
-                animationHelper.AniProgress[AnimationState.Begin]++;
+                AniHelper.AniProgress[AniState.Begin]++;
 
                 HandleBeginAni();
 
-                if (animationHelper.AniProgress[AnimationState.Begin] == animationHelper.MaxAniProgress[AnimationState.Begin])
+                if (AniHelper.AniProgress[AniState.Begin] == AniHelper.MaxAniProgress[AniState.Begin])
                 {
                     RotFilp = -1;
-                    animationHelper.HasFinish[AnimationState.Begin] = true;
+                    AniHelper.HasFinish[AniState.Begin] = true;
                 }
             }
-            else if (!animationHelper.HasFinish[AnimationState.Middle])
+            else if (!AniHelper.HasFinish[AniState.Middle])
             {
-                if (animationHelper.AniProgress[AnimationState.Middle] == 1)
+                if (AniHelper.AniProgress[AniState.Middle] == 1)
                 {
                     Projectile.LAP().OnceHitEffect = true;
                     SoundEngine.PlaySound(SoundsMenu.CarnageSwingBeign, Projectile.Center);
                 }
 
                 Projectile.extraUpdates = 10;
-                animationHelper.AniProgress[AnimationState.Middle]++;
+                AniHelper.AniProgress[AniState.Middle]++;
 
                 HandleMiddleAni();
 
                 // 提前几帧在速度未消失前进入下一个动画
-                if (animationHelper.AniProgress[AnimationState.Middle] == animationHelper.MaxAniProgress[AnimationState.Middle])
+                if (AniHelper.AniProgress[AniState.Middle] == AniHelper.MaxAniProgress[AniState.Middle])
                 {
-                    animationHelper.HasFinish[AnimationState.Middle] = true;
+                    AniHelper.HasFinish[AniState.Middle] = true;
                 }
             }
-            else if (!animationHelper.HasFinish[AnimationState.End])
+            else if (!AniHelper.HasFinish[AniState.End])
             {
                 Projectile.extraUpdates = 0;
 
-                animationHelper.AniProgress[AnimationState.End]++;
+                AniHelper.AniProgress[AniState.End]++;
 
                 HandleEndAni();
 
-                if (animationHelper.AniProgress[AnimationState.End] == animationHelper.MaxAniProgress[AnimationState.End] - 10)
-                    animationHelper.HasFinish[AnimationState.End] = true;
+                if (AniHelper.AniProgress[AniState.End] == AniHelper.MaxAniProgress[AniState.End] - 10)
+                    AniHelper.HasFinish[AniState.End] = true;
             }
             else
             {
@@ -230,8 +231,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
         #region 处理准备动画
         public void HandleBeginAni()
         {
-            int MaxAni = animationHelper.MaxAniProgress[AnimationState.Begin];
-            int CurAni = animationHelper.AniProgress[AnimationState.Begin];
+            int MaxAni = AniHelper.MaxAniProgress[AniState.Begin];
+            int CurAni = AniHelper.AniProgress[AniState.Begin];
 
             if (CurAni > 1)
                 Canhit = true;
@@ -264,8 +265,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
         float angularVelocity; // 旋转角速度
         public void HandleMiddleAni()
         {
-            int MaxAni = animationHelper.MaxAniProgress[AnimationState.Middle];
-            int CurAni = animationHelper.AniProgress[AnimationState.Middle];
+            int MaxAni = AniHelper.MaxAniProgress[AniState.Middle];
+            int CurAni = AniHelper.AniProgress[AniState.Middle];
 
             if (Owner.direction == 1)
             {
@@ -317,8 +318,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
         #region 处理结束动画
         public void HandleEndAni()
         {
-            int MaxAni = animationHelper.MaxAniProgress[AnimationState.End];
-            int CurAni = animationHelper.AniProgress[AnimationState.End];
+            int MaxAni = AniHelper.MaxAniProgress[AniState.End];
+            int CurAni = AniHelper.AniProgress[AniState.End];
             Projectile.rotation += angularVelocity * (float)Math.Sin(MathHelper.TwoPi * (CurAni / (float)MaxAni)) * 0.25f * -Owner.direction;
             Opacity = MathHelper.Lerp(0, 1, CurAni / (float)MaxAni);
         }
@@ -363,7 +364,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<UseForOnHitNPCProj>(), 0, 0, Projectile.owner, Type);
+            HitEffectManager.SpawnHitEffect(HitEffectManager.HEType<CarnageRaySkillHit>(), Projectile.owner, Projectile.GetSource_FromThis(), target.Center, Projectile.velocity);
 
             if (Projectile.LAP().OnceHitEffect)
                 ScreenShakeSystem.AddScreenShakes(Projectile.Center, 35 * RotFilp * - Owner.direction, 15, Projectile.rotation + MathHelper.PiOver2, 0.5f, true , 1000);

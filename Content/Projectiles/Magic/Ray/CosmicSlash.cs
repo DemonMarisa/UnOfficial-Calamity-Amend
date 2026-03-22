@@ -1,17 +1,16 @@
 ﻿using LAP.Assets.TextureRegister;
 using LAP.Core.SpecificEffectManagers;
+using LAP.Core.StateMachine.SynedHitEffect;
 using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ModLoader;
 using UCA.Assets.Sounds;
 using UCA.Content.DrawNodes;
+using UCA.Content.HitEffect;
 using UCA.Content.MetaBalls;
-using UCA.Content.Projectiles.Misc;
 using UCA.Core.BaseClass;
 
 namespace UCA.Content.Projectiles.Magic.Ray
@@ -92,7 +91,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             if (Projectile.LAP().OnceHitEffect)
             {
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<UseForOnHitNPCProj>(), 0, 0, Projectile.owner, Type);
+                HitEffectManager.SpawnHitEffect(HitEffectManager.HEType<CosmicSlashHit>(), Projectile.owner, Projectile.GetSource_FromThis(), target.Center, Vector2.Zero);
                 ScreenShakeSystem.AddScreenShakes(Projectile.Center, 2, 5, Projectile.rotation, 0);
             }
         }

@@ -23,7 +23,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
     {
         public override LocalizedText DisplayName => LAPUtilities.GetItemName<TerraRay>();
         public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/TerraRayHeld/TerraRayHeldProj";
-        public AnimationHelper animationHelper = new AnimationHelper(4);
+        public AniHelper AniHelper = new AniHelper(4);
         public int OwnerDir = 0;
         // 动画的旋转标准
         public float BeginRot = 0;
@@ -58,9 +58,9 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
         {
             if (Projectile.LAP().FirstFrame)
             {
-                animationHelper.MaxAniProgress[AnimationState.Begin] = 30;
-                animationHelper.MaxAniProgress[AnimationState.Middle] = 10;
-                animationHelper.MaxAniProgress[AnimationState.End] = 40;
+                AniHelper.MaxAniProgress[AniState.Begin] = 30;
+                AniHelper.MaxAniProgress[AniState.Middle] = 10;
+                AniHelper.MaxAniProgress[AniState.End] = 40;
                 SoundEngine.PlaySound(SoundsMenu.TerraRightCharge, Projectile.Center);
             }
             OwnerDir = Owner.LocalMouseWorld().X > Owner.Center.X ? 1 : -1;
@@ -68,12 +68,10 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
             Owner.itemTime = 2;
             Owner.itemAnimation = 2;
             Owner.ChangeDir(OwnerDir);
-            if (!Owner.active || Owner.dead)
-                Projectile.Kill();
 
-            if (animationHelper.HasFinish[AnimationState.Begin])
+            if (AniHelper.HasFinish[AniState.Begin])
                 Owner.heldProj = Projectile.whoAmI;
-            
+
             // 基础信息
             Projectile.velocity = Projectile.rotation.ToRotationVector2();
             Projectile.timeLeft = 2;
@@ -90,47 +88,50 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
             Projectile.spriteDirection = Owner.direction;
             Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, ArmRot - MathHelper.PiOver2);
             HandleAni();
+
+            if (!Owner.active || Owner.dead)
+                Projectile.Kill();
         }
         public void HandleAni()
         {
             // 处理动画
-            if (!animationHelper.HasFinish[AnimationState.Begin])
+            if (!AniHelper.HasFinish[AniState.Begin])
             {
-                if (animationHelper.AniProgress[AnimationState.Begin] < animationHelper.MaxAniProgress[AnimationState.Begin])
-                    animationHelper.AniProgress[AnimationState.Begin]++;
+                if (AniHelper.AniProgress[AniState.Begin] < AniHelper.MaxAniProgress[AniState.Begin])
+                    AniHelper.AniProgress[AniState.Begin]++;
 
                 HandleBeginAni();
 
-                if (animationHelper.AniProgress[AnimationState.Begin] >= animationHelper.MaxAniProgress[AnimationState.Begin])
+                if (AniHelper.AniProgress[AniState.Begin] >= AniHelper.MaxAniProgress[AniState.Begin])
                 {
-                    animationHelper.HasFinish[AnimationState.Begin] = true;
+                    AniHelper.HasFinish[AniState.Begin] = true;
                 }
             }
-            else if (!animationHelper.HasFinish[AnimationState.Middle])
+            else if (!AniHelper.HasFinish[AniState.Middle])
             {
-                animationHelper.AniProgress[AnimationState.Middle]++;
+                AniHelper.AniProgress[AniState.Middle]++;
 
-                if (animationHelper.AniProgress[AnimationState.Middle] == 1)
+                if (AniHelper.AniProgress[AniState.Middle] == 1)
                 {
                     GenLance();
                 }
 
                 HandleMiddleAni();
-                if (animationHelper.AniProgress[AnimationState.Middle] >= animationHelper.MaxAniProgress[AnimationState.Middle])
+                if (AniHelper.AniProgress[AniState.Middle] >= AniHelper.MaxAniProgress[AniState.Middle])
                 {
-                    animationHelper.HasFinish[AnimationState.Middle] = true;
+                    AniHelper.HasFinish[AniState.Middle] = true;
                 }
             }
-            else if (!animationHelper.HasFinish[AnimationState.End])
+            else if (!AniHelper.HasFinish[AniState.End])
             {
                 Break++;
                 if (Break > 8)
                 {
                     Projectile.extraUpdates = 2;
 
-                    animationHelper.AniProgress[AnimationState.End]++;
+                    AniHelper.AniProgress[AniState.End]++;
 
-                    if (animationHelper.AniProgress[AnimationState.End] == 30)
+                    if (AniHelper.AniProgress[AniState.End] == 30)
                     {
                         GenTornado(Owner.Center, false);
                         GenTornado(Owner.LocalMouseWorld(), true);
@@ -138,8 +139,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
 
                     HandleEndAni();
 
-                    if (animationHelper.AniProgress[AnimationState.End] == animationHelper.MaxAniProgress[AnimationState.End])
-                        animationHelper.HasFinish[AnimationState.End] = true;
+                    if (AniHelper.AniProgress[AniState.End] == AniHelper.MaxAniProgress[AniState.End])
+                        AniHelper.HasFinish[AniState.End] = true;
                 }
             }
             else
@@ -150,8 +151,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
         #region 处理动画
         public void HandleBeginAni()
         {
-            int MaxAni = animationHelper.MaxAniProgress[AnimationState.Begin];
-            int CurAni = animationHelper.AniProgress[AnimationState.Begin];
+            int MaxAni = AniHelper.MaxAniProgress[AniState.Begin];
+            int CurAni = AniHelper.AniProgress[AniState.Begin];
             Opacity = MathHelper.Lerp(1f, 0f, CurAni / (float)MaxAni);
             // 使用缓动函数让动画更自然
             float easedProgress = EasingHelper.EaseOutCubic(CurAni / (float)MaxAni);
@@ -170,8 +171,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
         }
         public void HandleMiddleAni()
         {
-            int MaxAni = animationHelper.MaxAniProgress[AnimationState.Middle];
-            int CurAni = animationHelper.AniProgress[AnimationState.Middle];
+            int MaxAni = AniHelper.MaxAniProgress[AniState.Middle];
+            int CurAni = AniHelper.AniProgress[AniState.Middle];
             // 使用缓动函数让动画更自然
             float easedProgress = EasingHelper.EaseOutCubic(CurAni / (float)MaxAni);
             easedProgress = (float)Math.Pow(easedProgress, 0.1f);
@@ -190,8 +191,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
         }
         public void HandleEndAni()
         {
-            int MaxAni = animationHelper.MaxAniProgress[AnimationState.End];
-            int CurAni = animationHelper.AniProgress[AnimationState.End];
+            int MaxAni = AniHelper.MaxAniProgress[AniState.End];
+            int CurAni = AniHelper.AniProgress[AniState.End];
             // 使用缓动函数让动画更自然
             float easedProgress = EasingHelper.EaseInCubic(CurAni / (float)MaxAni);
             easedProgress = (float)Math.Pow(easedProgress, 2f);
@@ -302,7 +303,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
         {
             if (Projectile.owner != Main.myPlayer)
                 return;
-
             int Damage = (int)(Projectile.damage * 2);
             if (fromMouse)
             {
@@ -345,7 +345,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
             Owner.itemAnimation = 0;
             if (Main.mouseRight)
             {
-                animationHelper = new AnimationHelper();
+                AniHelper = new AniHelper();
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, Type, Projectile.damage, Projectile.knockBack, Projectile.owner, 0);
             }
         }

@@ -28,17 +28,8 @@ namespace UCA.Core.GlobalInstance.Players
         {
             if (Player.HasCD<ShadowBotlStaffDodge>())
             {
-                Player.RemoveCD<ShadowBotlStaffDodge>();
+                Player.RemoveCD(LAPContent.CDType<ShadowBotlStaffDodge>());
                 Player.SetImmuneTimeForAllTypes(180);
-                SoundEngine.PlaySound(SoundsMenu.FireBallBlast with { Pitch = -0.5f });
-                Vector2 firpos = Player.Center;
-                for (int i = 0; i < 100; i++)
-                {
-                    Color Firecolor = LAPUtilities.LerpColor(Color.Black, Color.DarkViolet);
-                    new Fire(firpos, Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.6f, 1.2f) * 12, Firecolor, 90, Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.3f).SpawnToPriorityNonPreMult();
-                }
-                new CrossGlow(firpos, Vector2.Zero, Color.Violet, 60, 1f, 0.7f, true).Spawn();
-                new CrossGlow(firpos, Vector2.Zero, Color.DarkViolet, 60, 1f, 0.7f, true).Spawn();
                 return true;
             }
             return false;

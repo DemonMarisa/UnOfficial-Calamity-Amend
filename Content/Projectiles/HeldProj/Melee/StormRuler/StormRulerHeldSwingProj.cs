@@ -40,7 +40,7 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
         public ref float Heigh => ref Projectile.ai[1];
         public ref float BeginTargetRot => ref Projectile.ai[2];
         public int UseTime => Owner.ApplyWeaponAttackSpeed(Owner.HeldItem, Owner.HeldItem.useTime * 10, 200);
-        public AnimationHelper animationHelper = new AnimationHelper(3);
+        public AniHelper AniHelper = new AniHelper(3);
         public List<Vector2> OldAimPos = [];
         public float SwordLength = 170;
         public float ScaleMult = 1.25f;
@@ -88,15 +88,15 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
             Projectile.SetHeldProj(Owner, true, false);
             Projectile.Center = Owner.Center + new Vector2(-2, -2);
             Projectile.timeLeft = 2;
-            if (!animationHelper.HasFinish[AnimationState.Begin])
+            if (!AniHelper.HasFinish[AniState.Begin])
             {
-                animationHelper.UpDateAni(AnimationState.Begin);
+                AniHelper.UpDateAni(AniState.Begin);
                 HandleBeginAni();
             }
-            else if (!animationHelper.HasFinish[AnimationState.End])
+            else if (!AniHelper.HasFinish[AniState.End])
             {
-                TargetRot = TargetRot.AngleTowards(Owner.GetToMouseVector2(Projectile.Center).ToRotation(), 0.01f);
-                animationHelper.UpDateAni(AnimationState.End);
+                TargetRot = TargetRot.AngleTowards(Owner.GetToMouseVector2(Projectile.Center).ToRotation(), 0.1f);
+                AniHelper.UpDateAni(AniState.End);
                 HandleEndAni();
             }
             else
@@ -114,8 +114,8 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
             if (Projectile.LAP().FirstFrame)
             {
                 SoundEngine.PlaySound(LAPSoundsMenu.SwingAttack with { Volume = 0.85f, Pitch = Main.rand.NextFloat(0.2f, 0.4f) , MaxInstances = -1}, Projectile.Center);
-                animationHelper.MaxAniProgress[AnimationState.Begin] = (int)(UseTime * 0.33f);
-                animationHelper.MaxAniProgress[AnimationState.End] = (int)(UseTime * 0.66f);
+                AniHelper.MaxAniProgress[AniState.Begin] = (int)(UseTime * 0.33f);
+                AniHelper.MaxAniProgress[AniState.End] = (int)(UseTime * 0.66f);
                 TargetRot = BeginTargetRot;
                 SwordLength = 140;
                 SlashOpacity = 1f;
@@ -123,24 +123,24 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
         }
         public void HandleBeginAni()
         {
-            float easedProgress = EasingHelper.EaseInBack(animationHelper.GetProgress(AnimationState.Begin));
-            float baseRotation = animationHelper.UpDateAngle(-135 * Filp, 105 * Filp, Owner.direction, easedProgress);
+            float easedProgress = EasingHelper.EaseInBack(AniHelper.GetProgress(AniState.Begin));
+            float baseRotation = AniHelper.UpDateAngle(-135 * Filp, 105 * Filp, Owner.direction, easedProgress);
             Matrix transform = Matrix.CreateRotationZ(baseRotation) * Matrix.CreateScale(1.2f, Heigh, 1f);
             Vector2 TargetPos = Vector2.Transform(Vector2.UnitX, transform) * 1.25f;
             Projectile.scale = TargetPos.Length();
             Projectile.rotation = TargetPos.ToRotation() + TargetRot;
-            if (animationHelper.AniProgress[AnimationState.Begin] == 60)
+            if (AniHelper.AniProgress[AniState.Begin] == 60)
             {
                 // SoundEngine.PlaySound(SoundID.DD2_BetsyWindAttack, Projectile.Center);
                 if (Projectile.IsLocalPlayer())
                 {
-                    Vector2 fireVel = LAPUtilities.GetVector2(Projectile.Center, Projectile.Owner().LocalMouseWorld()) * 42;
+                    Vector2 fireVel = Projectile.velocity.SafeNormalize(Vector2.UnitX) * 42;
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center - fireVel * 3.5f, fireVel, ProjectileType<StormShockWave>(), Projectile.damage, Projectile.knockBack, Projectile.owner, Heigh);
                 }
             }
             if (easedProgress < 0.01f)
             {
-                TargetRot = TargetRot.AngleTowards(Owner.GetToMouseVector2(Projectile.Center).ToRotation(), 0.5f);
+                TargetRot = TargetRot.AngleTowards(Owner.GetToMouseVector2(Projectile.Center).ToRotation(), 0.01f);
             }
             else
             {
@@ -152,7 +152,7 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
                 Vector2 Pos2 = Vector2.Lerp(Projectile.Center, Projectile.Center + TargetPos.RotatedBy(TargetRot) * 160, Main.rand.NextFloat(0.35f, 1f));
                 new SmallGlowBall(Pos2, Vector2.Zero, Color.White, Main.rand.Next(30, 120), 0.1f, 3f).Spawn();
 
-                float baseSlashRotation = animationHelper.UpDateAngle(-135 * Filp, 145 * Filp, Owner.direction, easedProgress);
+                float baseSlashRotation = AniHelper.UpDateAngle(-135 * Filp, 145 * Filp, Owner.direction, easedProgress);
                 Matrix Slashtransform = Matrix.CreateRotationZ(baseSlashRotation) * Matrix.CreateScale(1.2f, Heigh, 1f);
                 Vector2 SlashTargetPos = Vector2.Transform(Vector2.UnitX, Slashtransform) * 1.25f;
                 Vector2 FinalPos = SlashTargetPos.RotatedBy(TargetRot) * SwordLength;
@@ -170,13 +170,13 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
         }
         public void HandleEndAni()
         {
-            float easedProgress = EasingHelper.EaseOutCubic(animationHelper.GetProgress(AnimationState.End));
-            float baseRotation = animationHelper.UpDateAngle(105 * Filp, 135 * Filp, Owner.direction, easedProgress);
+            float easedProgress = EasingHelper.EaseOutCubic(AniHelper.GetProgress(AniState.End));
+            float baseRotation = AniHelper.UpDateAngle(105 * Filp, 135 * Filp, Owner.direction, easedProgress);
             Matrix transform = Matrix.CreateRotationZ(baseRotation) * Matrix.CreateScale(1.2f, Heigh, 1f);
             Vector2 TargetPos = Vector2.Transform(Vector2.UnitX, transform) * 1.25f;
             Projectile.scale = TargetPos.Length();
             Projectile.rotation = TargetPos.ToRotation() + TargetRot;
-            SlashOpacity = 1f - animationHelper.GetProgress(AnimationState.End);
+            SlashOpacity = 1f - AniHelper.GetProgress(AniState.End);
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
@@ -185,6 +185,8 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
         }
         public override void OnKill(int timeLeft)
         {
+            if (!Projectile.IsLocalPlayer())
+                return;
             if (LAPKeybind.WeaponSkillHotKey.Current)
             {
                 Item item = ItemLoader.GetItem(ItemType<StormRulerAlt>()).Item;
@@ -239,8 +241,8 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
         }
         public void DrawBlade(Color lightColor)
         {
+            Projectile.GetProjDrawInfo_Melee(out Texture2D _, out Vector2 _, out float drawRotation, out Vector2 rotationPoint, out SpriteEffects flipSprite);
             Texture2D texture = UCATextureRegister.StormRulerAlt.Value;
-            Projectile.GetProjDrawInfo_Melee(texture, out Vector2 _, out float drawRotation, out Vector2 rotationPoint, out SpriteEffects flipSprite);
             Vector2 drawPosition = Projectile.Center - Main.screenPosition + Vector2.UnitX.RotatedBy(Projectile.rotation) * -9;
             Main.spriteBatch.Draw(texture, drawPosition, null, lightColor, drawRotation, rotationPoint, Projectile.scale * ScaleMult, flipSprite, 0f);
         }

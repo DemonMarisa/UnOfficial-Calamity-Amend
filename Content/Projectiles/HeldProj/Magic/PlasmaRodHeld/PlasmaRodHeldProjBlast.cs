@@ -21,7 +21,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
         public override LocalizedText DisplayName => LAPUtilities.GetItemName<PlasmaRodAlt>();
         public override string Texture => $"{ItemPath.MagicRayWeaponsPath}" + "PlasmaRodAlt";
 
-        public AnimationHelper animationHelper = new AnimationHelper(3);
+        public AniHelper AniHelper = new AniHelper(3);
 
         public int OwnerDir = 0;
         public Player Owner => Main.player[Projectile.owner];
@@ -43,22 +43,22 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
         }
         public override void SendExtraAI(BinaryWriter writer)
         {
-            writer.Write(animationHelper.MaxAniProgress[AnimationState.Begin]);
-            writer.Write(animationHelper.MaxAniProgress[AnimationState.End]);
+            writer.Write(AniHelper.MaxAniProgress[AniState.Begin]);
+            writer.Write(AniHelper.MaxAniProgress[AniState.End]);
             writer.Write(BeginRot);
         }
         public override void ReceiveExtraAI(BinaryReader reader)
         {
-            animationHelper.MaxAniProgress[AnimationState.Begin] = reader.ReadInt32();
-            animationHelper.MaxAniProgress[AnimationState.End] = reader.ReadInt32();
+            AniHelper.MaxAniProgress[AniState.Begin] = reader.ReadInt32();
+            AniHelper.MaxAniProgress[AniState.End] = reader.ReadInt32();
             BeginRot = reader.ReadSingle();
         }
         public override void AI()
         {
             if (Projectile.LAP().FirstFrame)
             {
-                animationHelper.MaxAniProgress[AnimationState.Begin] = 30;
-                animationHelper.MaxAniProgress[AnimationState.End] = 10;
+                AniHelper.MaxAniProgress[AniState.Begin] = 30;
+                AniHelper.MaxAniProgress[AniState.End] = 10;
                 BeginRot = Owner.GetPlayerToMouseVector2().ToRotation();
                 OwnerDir = Owner.LocalMouseWorld().X > Owner.Center.X ? 1 : -1;
             }
@@ -84,23 +84,23 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
             float baseRotation = Projectile.velocity.ToRotation();
             Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, baseRotation - MathHelper.PiOver2);
 
-            if (!animationHelper.HasFinish[AnimationState.Begin])
+            if (!AniHelper.HasFinish[AniState.Begin])
             {
                 Projectile.extraUpdates = 0;
 
-                animationHelper.AniProgress[AnimationState.Begin]++;
+                AniHelper.AniProgress[AniState.Begin]++;
 
                 HandleBeginAni();
 
-                if (animationHelper.AniProgress[AnimationState.Begin] >= animationHelper.MaxAniProgress[AnimationState.Begin])
-                    animationHelper.HasFinish[AnimationState.Begin] = true;
+                if (AniHelper.AniProgress[AniState.Begin] >= AniHelper.MaxAniProgress[AniState.Begin])
+                    AniHelper.HasFinish[AniState.Begin] = true;
             }
-            else if (!animationHelper.HasFinish[AnimationState.End])
+            else if (!AniHelper.HasFinish[AniState.End])
             {
-                animationHelper.AniProgress[AnimationState.End]++;
+                AniHelper.AniProgress[AniState.End]++;
 
-                if (animationHelper.AniProgress[AnimationState.End] >= animationHelper.MaxAniProgress[AnimationState.End])
-                    animationHelper.HasFinish[AnimationState.End] = true;
+                if (AniHelper.AniProgress[AniState.End] >= AniHelper.MaxAniProgress[AniState.End])
+                    AniHelper.HasFinish[AniState.End] = true;
             }
             else
             {
@@ -110,11 +110,19 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
 
         public void HandleBeginAni()
         {
-            int MaxAni = animationHelper.MaxAniProgress[AnimationState.Begin];
-            int CurAni = animationHelper.AniProgress[AnimationState.Begin];
+            int MaxAni = AniHelper.MaxAniProgress[AniState.Begin];
+            int CurAni = AniHelper.AniProgress[AniState.Begin];
 
             if (CurAni == 8)
             {
+                SoundEngine.PlaySound(SoundsMenu.NightRayHit, Projectile.Center);
+                Vector2 FireOffset = new Vector2(54, 0).RotatedBy(BeginRot);
+                for (int i = 0; i < 35; i++)
+                {
+                    float offset = MathHelper.TwoPi / 35;
+                    Color RandomColor = Color.Lerp(Color.DarkViolet, Color.LightPink, Main.rand.NextFloat(0, 1));
+                    new MediumGlowBall(Projectile.Center + FireOffset, Projectile.velocity.RotatedBy(offset * i), RandomColor, 60, 0, 1, 0.2f, Main.rand.NextFloat(2f, 2.2f)).Spawn();
+                }
                 if (Projectile.owner == Main.myPlayer)
                     FireProj();
             }
@@ -145,14 +153,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
 
         public void FireProj()
         {
-            SoundEngine.PlaySound(SoundsMenu.NightRayHit, Projectile.Center);
             Vector2 FireOffset = new Vector2(54, 0).RotatedBy(BeginRot);
-            for (int i = 0; i < 35; i++)
-            {
-                float offset = MathHelper.TwoPi / 35;
-                Color RandomColor = Color.Lerp(Color.DarkViolet, Color.LightPink, Main.rand.NextFloat(0, 1));
-                new MediumGlowBall(Projectile.Center + FireOffset, Projectile.velocity.RotatedBy(offset * i), RandomColor, 60, 0, 1, 0.2f, Main.rand.NextFloat(2f, 2.2f)).Spawn();
-            }
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + FireOffset, BeginRot.ToRotationVector2() * 2f, ModContent.ProjectileType<PlasmaPrimarySpark>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
         }
         public override bool PreDraw(ref Color lightColor)
@@ -188,7 +189,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
                 {
                     Projectile.ai[1] = 1;
                 }
-                animationHelper = new AnimationHelper();
+                AniHelper = new AniHelper();
                 if (Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.HeldItem.mana * Owner.manaCost), true, false))
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, Type, Projectile.damage, Projectile.knockBack, Projectile.owner, 0, Projectile.ai[1]);
             }

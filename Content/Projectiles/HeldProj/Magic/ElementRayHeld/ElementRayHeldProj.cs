@@ -1,4 +1,4 @@
-﻿using LAP.Core.BaseClass.Legacys;
+﻿using LAP.Core.BaseClass.Projectiles;
 using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
@@ -6,13 +6,11 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Audio;
-using Terraria.GameContent;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Sounds;
 using UCA.Content.Items.Weapons.Magic.Ray;
-using UCA.Content.Particiles;
 using UCA.Content.Projectiles.Magic.Ray;
 using UCA.Core.Utilities;
 
@@ -34,14 +32,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         // 星璇模式下会在玩家背后发射更多导弹，分裂改为发射闪电
         public override LocalizedText DisplayName => LAPUtilities.GetItemName<ElementRayAlt>();
         public Vector2 RotVector => new Vector2(8 * Owner.direction, 7).BetterRotatedBy(Owner.GetPlayerToMouseVector2().ToRotation(), default, 0.5f, 1f);
-
-        public override Vector2 RotPoint => TextureAssets.Projectile[Type].Size() / 2;
-
-        public override Vector2 Posffset => new Vector2(RotVector.X, RotVector.Y) * Owner.direction;
-
-        public override float RotAmount => 0.25f;
-
-        public override float RotOffset => MathHelper.PiOver4;
+        public override Vector2 PositionOffset => RotVector * Owner.direction;
 
         public Vector2 MainFragmentOffset = new Vector2(0, 0);
         public Vector2 AuxFragmentOffset = new Vector2(0, 0);
@@ -50,11 +41,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         public ref float LightShootTime => ref Projectile.ai[0];
         public ref float LightShootCount => ref Projectile.ai[1];
         public Vector2 OldSpawnPos;
-        public override void SetStaticDefaults()
-        {
-            Projectile.AddHeldProj();
-        }
-        public override void SetDefaults()
+        public override void ExSD()
         {
             Projectile.width = 74;
             Projectile.height = 74;
@@ -63,44 +50,43 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
+            RotAmount = 0.25f;
         }
-        public override bool StillInUse()
+        public override void Initialize()
         {
-            return !Owner.noItems && !LAPUtilities.JustPressRightClick() && !Owner.CCed && Owner.LAP().MouseLeft;
+            RotAmount = 0.25f;
+            // 只在本地玩家设置状态，随后依靠收发包来同步状态，防止同步问题
+            if (Projectile.owner == Main.myPlayer)
+                WeaponStates = Owner.UCA().ElementalRayStates;
+            OldSpawnPos = Vector2.Zero;
         }
-
-        public override void ExtraHoldoutAI()
+        public override void ExAI()
         {
-            if (UseDelay <= 0 && Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.HeldItem.mana * Owner.manaCost), true, false))
+            if (Owner.LAP().MouseLeft && UseDelay <= 0 && Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.HeldItem.mana * Owner.manaCost), true, false))
             {
                 // 生成弹幕
                 SoundEngine.PlaySound(SoundsMenu.MagicStaffFire, Projectile.Center);
                 Vector2 FireOffset = new Vector2(48, 0).RotatedBy(Projectile.rotation);
                 Vector2 FireVel = new Vector2(1, 0).RotatedBy(Projectile.rotation);
-
                 if (Projectile.owner == Main.myPlayer)
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + FireOffset, FireVel, ModContent.ProjectileType<ElementalLaser>(), Projectile.damage, Projectile.knockBack, Projectile.owner, WeaponStates);
-
                 if (WeaponStates == ElementalRayState.Solar)
                 {
                     SoundEngine.PlaySound(SoundsMenu.Fire, Projectile.Center);
                     ShootFireBall();
                 }
-
                 OldSpawnPos = Vector2.Zero;
                 LightShootCount = 4;
-
                 if (WeaponStates == ElementalRayState.Nebula || WeaponStates == ElementalRayState.Vortex)
                 {
                     LightShootCount = 6;
                 }
-
                 // 后坐力
-                Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.15f * Owner.direction;
+                Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.15f;
                 MainFragmentOffset *= 1.2f;
                 AuxFragmentOffset *= 1.2f;
                 FilpAuxFragmentOffset *= 1.2f;
-                UseDelay = Owner.HeldItem.useTime;
+                UseDelay = Owner.ApplyWeaponAttackSpeed(Owner.ActiveItem(), Owner.HeldItem.useTime, Owner.HeldItem.useTime / 2);
             }
         }
         #region 日耀
@@ -118,26 +104,12 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             }
         }
         #endregion
-
-        public override bool CanDel()
-        {
-            return UseDelay <= 0 && !LAPUtilities.JustPressLeftClick();
-        }
         public override void OnKill(int timeLeft)
         {
             if (Projectile.owner == Main.myPlayer)
                 Main.mouseRight = false;
-
             Owner.itemTime = 0;
             Owner.itemAnimation = 0;
-        }
-        public override void Initialize()
-        {
-            // 只在本地玩家设置状态，随后依靠收发包来同步状态，防止同步问题
-            if (Projectile.owner == Main.myPlayer)
-                WeaponStates = Owner.UCA().ElementalRayStates;
-
-            OldSpawnPos = Vector2.Zero;
         }
         public override void PostAI()
         {
@@ -149,6 +121,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, baseRotation + Owner.direction * directionVerticality * 1.2f);
 
             ShootVortex();
+
+            base.PostAI();
         }
         public void ShootVortex()
         {
@@ -182,7 +156,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                     damage *= 2;
                     SoundEngine.PlaySound(SoundsMenu.MetalHit, Spawn);
                     if (OldSpawnPos != Vector2.Zero)
-                        GenStarLine(OldSpawnPos, Spawn, 100);
+                         LAPUtilities.GenStarLine(OldSpawnPos, Spawn, 100);
                 }
                 OldSpawnPos = Spawn;
                 if (Projectile.owner == Main.myPlayer)
@@ -192,14 +166,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             }
             if (LightShootTime > 0)
                 LightShootTime--;
-        }
-        public void GenStarLine(Vector2 BeginPos, Vector2 EndPos, float GenStep)
-        {
-            for (int i = 0; i < GenStep; i++)
-            {
-                Vector2 SpawnVector = Vector2.Lerp(BeginPos, EndPos, i / GenStep);
-                new MediumGlowBall(SpawnVector, Vector2.Zero, Color.SkyBlue, 60, 0,1f, 0.1f, 0).Spawn();
-            }
         }
         public void UpdateDrawOffset()
         {

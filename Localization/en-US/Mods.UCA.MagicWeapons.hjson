@@ -116,9 +116,9 @@ ShadowBoltStaffAlt: {
 		'''
 		Fires a pure Shadow Bolt
 		The more enemies travels through the more damage the beam does (15%)
-		Right click: Consumes [LAPFocusCost] focus point teleport all shadows to your side
+		Right click: Consumes [ManaCost] mana teleport all shadows to your side
 		Weapon Skill: Shadow of the SoulPress
-		the [KEY] key Consumes [LAPManaCost] mana to summon eight shadows around the player after a brief charge.
+		the [KEY] key Consumes [LAPFocusCost] focus point to summon eight shadows around the player after a brief charge.
 		the player can dodge one attack within the next 30 seconds.
 		The dodge grants 180 frames of invincibility.
 		The skill has a 30 second cooldown.

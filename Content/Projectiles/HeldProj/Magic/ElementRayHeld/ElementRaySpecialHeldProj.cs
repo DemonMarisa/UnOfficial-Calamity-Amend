@@ -11,7 +11,6 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets.Sounds;
 using UCA.Content.Items.Weapons.Magic.Ray;
-using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
 using UCA.Content.UCACooldowns;
 using UCA.Core.Utilities;
@@ -21,11 +20,11 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
     public partial class ElementRaySpecialHeldProj : ModProjectile, ILocalizedModType
     {
         public override LocalizedText DisplayName => LAPUtilities.GetItemName<ElementRayAlt>();
-        public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/ElementRayHeld/ElementRayHeldProj";
+        public override string Texture => GetInstance<ElementRayHeldProj>().Texture;
         public Player Owner => Main.player[Projectile.owner];
         public ref float WeaponStates => ref Projectile.ai[0];
         public bool IsMAGBOLIABlue => Projectile.ai[1] != 0;
-        public AnimationHelper animationHelper = new AnimationHelper(10);
+        public AniHelper AniHelper = new AniHelper(10);
         public float ToMouseVector;
         public Vector2 RelativeOwnerPos;
         public float RelativeOwnerPosRot;

@@ -38,7 +38,7 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
         public int UseTime => Owner.ApplyWeaponAttackSpeed(Owner.HeldItem, Owner.HeldItem.useTime * 20, 250);
         public Vector2 BeginPos;
         public int BeginDir;
-        public AnimationHelper animationHelper = new AnimationHelper(5);
+        public AniHelper AniHelper = new AniHelper(5);
         public Vector2 HeldPos;
         public float TargetRot;
         public float ProjRotOffset;
@@ -104,9 +104,9 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
             BeginDir = Owner.LocalMouseWorld().X > Owner.Center.X ? 1 : -1;
             Projectile.rotation = TargetRot;
             HeldPos = new Vector2(FatherHeldPosX, FatherHeldPosY);
-            animationHelper.MaxAniProgress[AnimationState.Begin] = (int)(UseTime * 0.1f);
-            animationHelper.MaxAniProgress[AnimationState.Middle] = (int)(UseTime * 0.9f);
-            ScreenShakeSystem.AddScreenShakes(Projectile.Center, 100 * Owner.direction, 45, Projectile.rotation, 0, true, 1000);
+            AniHelper.MaxAniProgress[AniState.Begin] = (int)(UseTime * 0.1f);
+            AniHelper.MaxAniProgress[AniState.Middle] = (int)(UseTime * 0.9f);
+            ScreenShakeSystem.AddScreenShakes(Projectile.Center, 100, 45, Projectile.rotation, 0, true, 1000);
             for (int i = 0; i < 120; i++)
             {
                 Vector2 BeginPos = Projectile.Center + new Vector2(1, 0).RotatedBy(Projectile.rotation) * 24 + Main.rand.NextVector2Circular(18, 18);
@@ -162,14 +162,14 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
         }
         public void UpdateAni()
         {
-            if (!animationHelper.HasFinish[AnimationState.Begin])
+            if (!AniHelper.HasFinish[AniState.Begin])
             {
-                animationHelper.UpDateAni(AnimationState.Begin);
+                AniHelper.UpDateAni(AniState.Begin);
                 HandleBeginAni();
             }
-            else if (!animationHelper.HasFinish[AnimationState.Middle])
+            else if (!AniHelper.HasFinish[AniState.Middle])
             {
-                animationHelper.UpDateAni(AnimationState.Middle);
+                AniHelper.UpDateAni(AniState.Middle);
                 HandleMiddleAni();
             }
             else
@@ -179,18 +179,18 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
         }
         public void HandleBeginAni()
         {
-            float easedProgress = EasingHelper.EaseOutCubic(animationHelper.GetProgress(AnimationState.Begin));
-            float baseRotation = animationHelper.UpDateAngle(-165, -115, Owner.direction, easedProgress);
+            float easedProgress = EasingHelper.EaseOutCubic(AniHelper.GetProgress(AniState.Begin));
+            float baseRotation = AniHelper.UpDateAngle(-165, -115, Owner.direction, easedProgress);
             HeldPos = IdleOffset.RotatedBy(baseRotation).RotatedBy(TargetRot);
         }
         public void HandleMiddleAni()
         {
-            float easedProgress = EasingHelper.EaseOutCubic(animationHelper.GetProgress(AnimationState.Middle));
-            float baseRotation = animationHelper.UpDateAngle(-115, -15, Owner.direction, easedProgress);
+            float easedProgress = EasingHelper.EaseOutCubic(AniHelper.GetProgress(AniState.Middle));
+            float baseRotation = AniHelper.UpDateAngle(-115, -15, Owner.direction, easedProgress);
             HeldPos = IdleOffset.RotatedBy(baseRotation).RotatedBy(TargetRot);
-            float ProjRotation = animationHelper.UpDateAngle(0, -155, Owner.direction, easedProgress);
+            float ProjRotation = AniHelper.UpDateAngle(0, -155, Owner.direction, easedProgress);
             ProjRotOffset2 = ProjRotation;
-            easedProgress = animationHelper.GetProgress(AnimationState.Middle);
+            easedProgress = AniHelper.GetProgress(AniState.Middle);
             Projectile.Opacity = 1 - easedProgress;
         }
         public void SetArmRot()
@@ -210,7 +210,7 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
         {
             if (HitCooldown == 0)
             {
-                Projectile p = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ProjectileType<StormBlast>(), (int)(Projectile.damage * UCABlanceRule.StormRulerSkillLungeDamageMult), Projectile.knockBack, Projectile.owner);
+                Projectile p = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ProjectileType<StormBlast>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
                 p.LAP().isWeaponSkillProj = true;
                 HitCooldown = 5;
             }
@@ -238,8 +238,7 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
         }
         public void DrawBlade(Color lightColor)
         {
-            Texture2D texture = UCATextureRegister.StormRulerAlt.Value;
-            Projectile.GetProjDrawInfo_Melee(texture, out Vector2 _, out float drawRotation, out Vector2 rotationPoint, out SpriteEffects flipSprite);
+            Projectile.GetProjDrawInfo_Melee(out Texture2D texture, out Vector2 _, out float drawRotation, out Vector2 rotationPoint, out SpriteEffects flipSprite);
             Vector2 drawPosition = Projectile.Center - Main.screenPosition + Vector2.UnitX.RotatedBy(Projectile.rotation + ProjRotOffset + ProjRotOffset2) * -24;
             Main.spriteBatch.Draw(texture, drawPosition, null, lightColor, drawRotation + ProjRotOffset + ProjRotOffset2, rotationPoint, Projectile.scale * 1f, flipSprite, 0f);
         }

@@ -1,4 +1,4 @@
-﻿using LAP.Core.BaseClass.Legacys;
+﻿using LAP.Core.BaseClass.Projectiles;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -18,10 +18,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
     {
         public override LocalizedText DisplayName => LAPUtilities.GetItemName<SoulPiercerAlt>();
         public Vector2 RotVector => new Vector2(12 * Owner.direction, 7).BetterRotatedBy(Owner.GetPlayerToMouseVector2().ToRotation(), default, 0.5f, 1f);
-        public override Vector2 RotPoint => TextureAssets.Projectile[Type].Size() / 2;
-        public override Vector2 Posffset => new Vector2(RotVector.X, RotVector.Y) * Owner.direction;
-        public override float RotAmount => 0.25f;
-        public override float RotOffset => MathHelper.PiOver4;
+        public override Vector2 PositionOffset => RotVector * Owner.direction;
         public override void SetDefaults()
         {
             Projectile.width = 66;
@@ -33,23 +30,16 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
             Projectile.ignoreWater = true;
             Projectile.netImportant = true;
         }
-        public override bool StillInUse()
+        public override void ExAI()
         {
-            return !Owner.noItems && !LAPUtilities.JustPressRightClick() && !Owner.CCed && Owner.LAP().MouseLeft;
-        }
-        public override bool PreAI()
-        {
-            if (Projectile.LAP().FirstFrame)
+            RotAmount = 0.25f;
+            if (Owner.LAP().MouseLeft && !Owner.LAP().MouseRight)
             {
-            }
-            return true;
-        }
-        public override void ExtraHoldoutAI()
-        {
-            if (UseDelay <= 0 && Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.HeldItem.mana * Owner.manaCost), true, false))
-            {
-                FirePorj();
-                UseDelay = Owner.HeldItem.useTime;
+                if (UseDelay <= 0 && Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.HeldItem.mana * Owner.manaCost), true, false))
+                {
+                    FirePorj();
+                    UseDelay = Owner.HeldItem.useTime;
+                }
             }
         }
         public void FirePorj()
@@ -58,19 +48,19 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
             Vector2 FireOffset = new Vector2(48, 0).RotatedBy(Projectile.rotation);
             if (Projectile.owner == Main.myPlayer)
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + FireOffset, Projectile.velocity, ModContent.ProjectileType<CosmicLaser>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
-            Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.1f * Owner.direction;
+            Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.1f;
         }
-        public override bool CanDel()
-        {
-            return UseDelay <= 0 && !LAPUtilities.JustPressLeftClick();
-        }
-        public override void PostAI()
+        public override void ExPostAI()
         {
             // 设置玩家手持效果
             float baseRotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
             float directionVerticality = MathF.Abs(Projectile.velocity.X);
             Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, baseRotation + Owner.direction * directionVerticality * 1.5f);
             Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, baseRotation + Owner.direction * directionVerticality * 1.2f);
+            if (!Owner.LAP().MouseLeft && Owner.LAP().MouseRight && UseDelay == 0)
+            {
+                Projectile.Kill();
+            }
         }
         public override void OnKill(int timeLeft)
         {

@@ -7,7 +7,6 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Common.Misc;
-using UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld;
 using UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld;
 using UCA.Content.UCACooldowns;
 using UCA.Core.BaseClass;

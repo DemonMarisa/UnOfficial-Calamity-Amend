@@ -5,6 +5,7 @@ using LAP.Core.LAPSource;
 using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -82,7 +83,12 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
                 Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI);
             }
         }
-
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            base.ModifyTooltips(tooltips);
+            int manacost = (int)(200 * Main.LocalPlayer.manaCost);
+            tooltips.FindAndReplace("[ManaCost]" , manacost.ToString());
+        }
         public override void UpdateHoldItem(Player player)
         {
         }

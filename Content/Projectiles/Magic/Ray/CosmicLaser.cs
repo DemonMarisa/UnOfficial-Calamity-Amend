@@ -26,7 +26,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         public int Time;
         public int MaxTime = 45;
         public int LaserLength = 2200;
-        public AnimationHelper animationHelper = new AnimationHelper(3);
+        public AniHelper AniHelper = new AniHelper(3);
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 4400;
@@ -62,8 +62,8 @@ namespace UCA.Content.Projectiles.Magic.Ray
         public void FirstFrame()
         {
             Projectile.rotation = Projectile.velocity.ToRotation();
-            animationHelper.MaxAniProgress[AnimationState.Begin] = 5;
-            animationHelper.MaxAniProgress[AnimationState.End] = 10;
+            AniHelper.MaxAniProgress[AniState.Begin] = 5;
+            AniHelper.MaxAniProgress[AniState.End] = 10;
             for (int i = 0; i < 25; i++)
             {
                 Vector2 spawnVec = Projectile.velocity.RotateRandom(0.15f) * Main.rand.NextFloat(0.1f, 1.1f) * 36f;
@@ -126,23 +126,23 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public void UpdateFade()
         {
-            if (!animationHelper.HasFinish[AnimationState.Begin])
+            if (!AniHelper.HasFinish[AniState.Begin])
             {
-                animationHelper.AniProgress[AnimationState.Begin]++;
-                float progress = animationHelper.AniProgress[AnimationState.Begin] / (float)animationHelper.MaxAniProgress[AnimationState.Begin];
+                AniHelper.AniProgress[AniState.Begin]++;
+                float progress = AniHelper.AniProgress[AniState.Begin] / (float)AniHelper.MaxAniProgress[AniState.Begin];
                 Projectile.Opacity = MathHelper.Lerp(0f, 1f, progress);
                 Projectile.scale = MathHelper.Lerp(0f, 1f, progress);
-                if (animationHelper.AniProgress[AnimationState.Begin] >= animationHelper.MaxAniProgress[AnimationState.Begin])
-                    animationHelper.HasFinish[AnimationState.Begin] = true;
+                if (AniHelper.AniProgress[AniState.Begin] >= AniHelper.MaxAniProgress[AniState.Begin])
+                    AniHelper.HasFinish[AniState.Begin] = true;
             }
-            else if (Projectile.timeLeft < animationHelper.MaxAniProgress[AnimationState.End])
+            else if (Projectile.timeLeft < AniHelper.MaxAniProgress[AniState.End])
             {
-                animationHelper.AniProgress[AnimationState.End]++;
-                float progress = animationHelper.AniProgress[AnimationState.End] / (float)animationHelper.MaxAniProgress[AnimationState.End];
+                AniHelper.AniProgress[AniState.End]++;
+                float progress = AniHelper.AniProgress[AniState.End] / (float)AniHelper.MaxAniProgress[AniState.End];
                 Projectile.Opacity = MathHelper.Lerp(1f, 0f, progress);
                 Projectile.scale = MathHelper.Lerp(1f, 0f, progress);
-                if (animationHelper.AniProgress[AnimationState.End] >= animationHelper.MaxAniProgress[AnimationState.End])
-                    animationHelper.HasFinish[AnimationState.End] = true;
+                if (AniHelper.AniProgress[AniState.End] >= AniHelper.MaxAniProgress[AniState.End])
+                    AniHelper.HasFinish[AniState.End] = true;
             }
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)

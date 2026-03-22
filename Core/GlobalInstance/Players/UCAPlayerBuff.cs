@@ -15,7 +15,7 @@ namespace UCA.Core.GlobalInstance.Players
             {
                 Player.LAP().ExternalDR += 0.1f;
                 Player.statDefense += 30;
-                if (WeakHeldNightShield)
+                if (!NightShieldCanBlock)
                 {
                     Player.LAP().ExternalDR -= 0.05f;
                     Player.statDefense -= 15;

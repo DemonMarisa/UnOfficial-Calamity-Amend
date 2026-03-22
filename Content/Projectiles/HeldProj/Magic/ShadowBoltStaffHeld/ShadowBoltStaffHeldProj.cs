@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Audio;
-using Terraria.GameContent;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets;
@@ -14,7 +13,7 @@ using LAP.Core.AnimationHandle;
 using LAP.Core.Enums;
 using UCA.Content.Items.Weapons.Magic.Ray;
 using LAP.Core.Utilities;
-using LAP.Core.BaseClass.Legacys;
+using LAP.Core.BaseClass.Projectiles;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.ShadowBoltStaffHeld
 {
@@ -22,15 +21,9 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ShadowBoltStaffHeld
     {
         public override LocalizedText DisplayName => LAPUtilities.GetItemName<ShadowBoltStaffAlt>();
         public Vector2 RotVector => new Vector2(12 * Owner.direction, 7).BetterRotatedBy(Owner.GetPlayerToMouseVector2().ToRotation(), default, 0.5f, 1f);
-        public override Vector2 RotPoint => TextureAssets.Projectile[Type].Size() / 2;
-
-        public override Vector2 Posffset => new Vector2(RotVector.X, RotVector.Y) * Owner.direction;
-
-        public override float RotAmount => 0.25f;
-
-        public override float RotOffset => MathHelper.PiOver4;
+        public override Vector2 PositionOffset => RotVector * Owner.direction;
         public float Opacity = 1f;
-        public AnimationHelper animationHelper = new AnimationHelper(3);
+        public AniHelper aniHelper = new AniHelper(3);
         public BasePartInfo ShadowOrb;
         public override void SetDefaults()
         {
@@ -43,26 +36,26 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ShadowBoltStaffHeld
             Projectile.ignoreWater = true;
             Projectile.netImportant = true;
         }
-        public override bool StillInUse()
-        {
-            return !Owner.noItems && !LAPUtilities.JustPressRightClick() && !Owner.CCed && Owner.LAP().MouseLeft;
-        }
         public override bool PreAI()
         {
             if (Projectile.LAP().FirstFrame)
             {
                 Texture2D texture2d = UCATextureRegister.ShadowBoltStaffOrb.Value;
                 ShadowOrb = new BasePartInfo(texture2d, Vector2.Zero, Vector2.Zero, 0, texture2d.Size() / 2);
-                animationHelper.MaxAniProgress[AnimationState.Begin] = 15;
+                aniHelper.MaxAniProgress[AniState.Begin] = 15;
             }
             return true;
         }
-        public override void ExtraHoldoutAI()
+        public override void ExAI()
         {
-            if (UseDelay <= 0 && Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.HeldItem.mana * Owner.manaCost), true, false))
+            RotAmount = 0.25f;
+            if (Owner.LAP().MouseLeft && !Owner.LAP().MouseRight)
             {
-                FirePorj();
-                UseDelay = Owner.HeldItem.useTime;
+                if (UseDelay <= 0 && Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.HeldItem.mana * Owner.manaCost), true, false))
+                {
+                    FirePorj();
+                    UseDelay = Owner.HeldItem.useTime;
+                }
             }
         }
         public void FirePorj()
@@ -77,14 +70,11 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ShadowBoltStaffHeld
             }
             if (Projectile.owner == Main.myPlayer)
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + FireOffset, Projectile.velocity * 12f, ModContent.ProjectileType<ShadowBeam>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
-            Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.1f * Owner.direction;
-        }
-        public override bool CanDel()
-        {
-            return UseDelay <= 0 && !LAPUtilities.JustPressLeftClick();
+            Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.1f;
         }
         public override void PostAI()
         {
+            base.PostAI();
             // 设置玩家手持效果
             float baseRotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
             float directionVerticality = MathF.Abs(Projectile.velocity.X);
@@ -95,18 +85,22 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ShadowBoltStaffHeld
                 return;
             if ((Main.mouseLeft || Active) && !LAPUtilities.JustPressRightClick())
             {
-                if (animationHelper.AniProgress[AnimationState.Begin] < animationHelper.MaxAniProgress[AnimationState.Begin])
-                    animationHelper.AniProgress[AnimationState.Begin]++;
+                if (aniHelper.AniProgress[AniState.Begin] < aniHelper.MaxAniProgress[AniState.Begin])
+                    aniHelper.AniProgress[AniState.Begin]++;
             }
             else
             {
-                if (animationHelper.AniProgress[AnimationState.Begin] > 0)
-                    animationHelper.AniProgress[AnimationState.Begin]--;
+                if (aniHelper.AniProgress[AniState.Begin] > 0)
+                    aniHelper.AniProgress[AniState.Begin]--;
             }
-            int MaxAni = animationHelper.MaxAniProgress[AnimationState.Begin];
-            int CurAni = animationHelper.AniProgress[AnimationState.Begin];
+            int MaxAni = aniHelper.MaxAniProgress[AniState.Begin];
+            int CurAni = aniHelper.AniProgress[AniState.Begin];
             float easedProgress = (CurAni / (float)MaxAni);
             Opacity = MathHelper.Lerp(0.7f, 0f, easedProgress);
+            if (!Owner.LAP().MouseLeft && Owner.LAP().MouseRight && UseDelay == 0)
+            {
+                Projectile.Kill();
+            }
         }
         public void UpdateOrb()
         {

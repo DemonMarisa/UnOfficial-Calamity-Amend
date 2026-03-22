@@ -8,9 +8,9 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets.Sounds;
 using UCA.Content.MetaBalls;
-using UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld;
 using UCA.Core.BaseClass;
 using LAP.Assets.TextureRegister;
+using LAP.Core.Presets.Content;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
@@ -31,25 +31,15 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Projectile.timeLeft = 79;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.tileCollide = true;
-            Projectile.penetrate = -1;
+            Projectile.penetrate = 1;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 10 * (Projectile.extraUpdates + 1);
-        }
-        public override void SendExtraAI(BinaryWriter writer)
-        {
-            writer.Write(Projectile.extraUpdates);
-            writer.Write(Projectile.penetrate);
-        }
-        public override void ReceiveExtraAI(BinaryReader reader)
-        {
-            Projectile.extraUpdates = reader.ReadInt32();
-            Projectile.penetrate = reader.ReadInt32();
         }
         public override void AI()
         {
             if (Projectile.LAP().FirstFrame)
             {
-                NightRayHeldProj.GenUnDeathSign(Projectile.Center, Projectile.ai[0]);
+                ParticlePreset.GenUnDeathSign(Projectile.Center, Projectile.ai[0]);
                 Projectile.netUpdate = true;
             }
 

@@ -1,6 +1,6 @@
 displayName = UnOfficial Calamity Amend
 author = DemonLilies
-version = 0.0.0.23
+version = 0.0.0.24
 hideCode = false
 hideResources = false
 weakReferences = CalamityMod

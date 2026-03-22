@@ -4,14 +4,13 @@ using UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld;
 namespace UCA.Core.GlobalInstance.Players
 {
     public partial class UCAPlayer : ModPlayer
-    { 
+    {
         #region 射线杖
         #region 永夜射线
         public bool HeldNightShield = false;
-        public bool WeakHeldNightShield = false;
+        public bool NightShieldCanBlock = true;
         public static int NightShieldMaxHP = 400;
         public int NightShieldHP = 400;
-        public bool NightShieldCanDefense = true;
         #endregion
         #region 泰拉射线
         public static int MaxTerraRayRestore = 3;

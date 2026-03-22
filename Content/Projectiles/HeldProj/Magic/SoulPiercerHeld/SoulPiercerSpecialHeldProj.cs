@@ -22,7 +22,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
         public override LocalizedText DisplayName => LAPUtilities.GetItemName<SoulPiercerAlt>();
         public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/SoulPiercerHeld/SoulPiercerHeldProj";
         public Player Owner => Main.player[Projectile.owner];
-        public AnimationHelper animationHelper = new AnimationHelper(3);
+        public AniHelper AniHelper = new AniHelper(3);
         public float TargetRot;
         public ref float Filp => ref Projectile.ai[1];
         public override void SetDefaults()
@@ -43,8 +43,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
                     Filp = 1;
                 SoundEngine.PlaySound(SoundsMenu.MAGNOLIASPRelease, Projectile.Center);
                 SoundEngine.PlaySound(SoundsMenu.MagicStaffCharge, Projectile.Center);
-                animationHelper.MaxAniProgress[AnimationState.Begin] = 30;
-                animationHelper.MaxAniProgress[AnimationState.End] = 7;
+                AniHelper.MaxAniProgress[AniState.Begin] = 30;
+                AniHelper.MaxAniProgress[AniState.End] = 7;
                 TargetRot = Owner.GetPlayerToMouseVector2().ToRotation();
             }
             Projectile.SetHeldProj(Owner);
@@ -58,22 +58,22 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
         #region 处理动画
         public void HandleAni()
         {
-            if (!animationHelper.HasFinish[AnimationState.Begin]) {
-                animationHelper.UpDateAni(AnimationState.Begin, 10);
+            if (!AniHelper.HasFinish[AniState.Begin]) {
+                AniHelper.UpDateAni(AniState.Begin, 10);
                 HandleBeginAni();
             }
-            else if (!animationHelper.HasFinish[AnimationState.End]) {
-                animationHelper.UpDateAni(AnimationState.End, 25);
+            else if (!AniHelper.HasFinish[AniState.End]) {
+                AniHelper.UpDateAni(AniState.End, 25);
                 HandleEndAni();
             }
             else Projectile.Kill();
         }
         public void HandleBeginAni()
         {
-            int MaxAni = animationHelper.MaxAniProgress[AnimationState.Begin];
-            int CurAni = animationHelper.AniProgress[AnimationState.Begin];
+            int MaxAni = AniHelper.MaxAniProgress[AniState.Begin];
+            int CurAni = AniHelper.AniProgress[AniState.Begin];
             float easedProgress = EasingHelper.EaseOutCubic(CurAni / (float)MaxAni);
-            float baseRotation = animationHelper.UpDateAngle(-145 * Filp, -145 * Filp, Owner.direction, easedProgress);
+            float baseRotation = AniHelper.UpDateAngle(-145 * Filp, -145 * Filp, Owner.direction, easedProgress);
             Projectile.rotation = baseRotation + TargetRot;
             Vector2 offset = new(50, 0);
             if (CurAni < MaxAni / 2)
@@ -90,7 +90,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
                 new FollowProjCrossGlow(Owner.Center, Color.DarkViolet, LifeTime, 0.8f, Projectile.whoAmI, offset).Spawn();
                 new FollowProjCrossGlow(Owner.Center, Color.Violet, LifeTime, 0.4f, Projectile.whoAmI, offset).Spawn();
             }
-            if (animationHelper.Auxfloat[AnimationState.Begin] == 10)
+            if (AniHelper.BreakTime[AniState.Begin] == 10)
             {
                 Vector2 firpos = Projectile.Center + offset.RotatedBy(Projectile.rotation);
                 for (int i = 0; i < 100; i++)
@@ -116,10 +116,10 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
         }
         public void HandleEndAni()
         {
-            int MaxAni = animationHelper.MaxAniProgress[AnimationState.End];
-            int CurAni = animationHelper.AniProgress[AnimationState.End];
+            int MaxAni = AniHelper.MaxAniProgress[AniState.End];
+            int CurAni = AniHelper.AniProgress[AniState.End];
             float easedProgress = EasingHelper.EaseOutCubic(CurAni / (float)MaxAni);
-            float baseRotation = animationHelper.UpDateAngle(-145 * Filp, 145 * Filp, Owner.direction, easedProgress);
+            float baseRotation = AniHelper.UpDateAngle(-145 * Filp, 145 * Filp, Owner.direction, easedProgress);
             Projectile.rotation = baseRotation + TargetRot;
             Projectile.ai[0]++;
             if (Projectile.ai[0] % 5 == 0)
@@ -165,7 +165,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
             Owner.itemAnimation = 0;
             if (Main.mouseRight)
             {
-                animationHelper = new AnimationHelper();
+                AniHelper = new AniHelper();
                 if (Filp == 1)
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, Type, Projectile.damage, Projectile.knockBack, Projectile.owner, 0, -1);
                 else

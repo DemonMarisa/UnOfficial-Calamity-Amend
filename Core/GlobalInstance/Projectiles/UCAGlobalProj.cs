@@ -9,15 +9,16 @@ namespace UCA.Core.GlobalInstance.Projectiles
     {
         public override bool InstancePerEntity => true;
 
-        public bool HasThroughNightShield = false;
-        public bool HasThroughNightShieldOverMax = false;
+        public bool NightShieldBeBlock = false;
+        public bool NightShieldFallBlock = false;
+        // 如果没能全部格挡，那这个弹幕要降低多少伤害
         public int DamageDefence = 0;
         public override void AI(Projectile projectile)
         {
         }
         public override void ModifyHitPlayer(Projectile projectile, Player target, ref Player.HurtModifiers modifiers)
         {
-            if (HasThroughNightShield)
+            if (NightShieldBeBlock)
             {
                 modifiers.ModifyHurtInfo += ModifyHurtInfo_NightShield;
                 projectile.netUpdate = true;
@@ -25,16 +26,13 @@ namespace UCA.Core.GlobalInstance.Projectiles
         }
         public void ModifyHurtInfo_NightShield(ref Player.HurtInfo info)
         {
-            Player player = Main.player[Main.myPlayer];
-            UCAPlayer uCAPlayer = player.UCA();
-            if (!HasThroughNightShieldOverMax)
+            if (NightShieldFallBlock)
             {
-                info.Damage = 0;
+                info.Damage -= DamageDefence;
             }
             else
             {
-                info.Damage -= DamageDefence;
-                uCAPlayer.NightShieldCanDefense = false;
+                info.Damage = 0;
             }
         }
 

@@ -1,12 +1,11 @@
-﻿using LAP.Core.BaseClass.Legacys;
+﻿using LAP.Core.AnimationHandle;
+using LAP.Core.BaseClass.Projectiles;
 using LAP.Core.Enums;
 using LAP.Core.Graphics.PixelatedRender;
-using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -17,7 +16,6 @@ using UCA.Assets.Sounds;
 using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
-using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
@@ -25,38 +23,15 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
     public class CarnageRayHeldProjMelee : BaseHeldProj, IPixelatedRenderer
     {
         public DrawLayer LayerToRenderTo => DrawLayer.BeforeDusts;
-        public int YOffset = 7;
         public override LocalizedText DisplayName => LAPUtilities.GetItemName<CarnageRay>();
-        public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/CarnageRayHeld/CarnageRayHeldProj";
-        public Vector2 RotVector => new Vector2((12 + XOffset) * Owner.direction, YOffset).BetterRotatedBy(Owner.GetPlayerToMouseVector2().ToRotation());
-
-        public override Vector2 RotPoint => TextureAssets.Projectile[Type].Size() / 2;
-
-        public override Vector2 Posffset => new Vector2(RotVector.X, RotVector.Y) * Owner.direction;
-
-        public override float RotAmount => 0.25f;
-
-        public override float RotOffset => MathHelper.PiOver4;
-
-        // 控制动画进度
-        public int AniProgress = 0;
-
-        // 这里0才是完全出现
-        public float ShaderOpacity = 1f;
-
+        public override string Texture => GetInstance<CarnageRayHeldProj>().Texture;
+        public Vector2 RotVector => new Vector2((12 + XOffset) * Owner.direction, YOffset).BetterRotatedBy(Owner.GetPlayerToMouseVector2().ToRotation()) * Owner.direction;
+        public override Vector2 PositionOffset => RotVector;
+        public AniHelper AniHelper = new AniHelper(3);
         public float XOffset = -8;
-
-        // 帧图的索引
-        public int StabsFrame = 0;
-
-        public float IinToAni = 10;
-
-        public bool CanHit = false;
-        public override void SetStaticDefaults()
-        {
-            Projectile.AddHeldProj();
-        }
-        public override void SetDefaults()
+        public int YOffset = 7;
+        public int StabsFrame;
+        public override void ExSD()
         {
             Projectile.width = 66;
             Projectile.height = 66;
@@ -68,110 +43,74 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = -1;
             Projectile.netImportant = true;
-        }
-        public override void SendExtraAI(BinaryWriter writer)
-        {
-            writer.Write(ShaderOpacity);
-            writer.Write(XOffset);
-            writer.Write(StabsFrame);
-            writer.Write(CanHit);
-            writer.Write(Projectile.ai[0]);
-        }
-        public override void ReceiveExtraAI(BinaryReader reader)
-        {
-            ShaderOpacity = reader.ReadSingle();
-            XOffset = reader.ReadSingle();
-            StabsFrame = reader.ReadInt32();
-            CanHit = reader.ReadBoolean();
-            Projectile.ai[0] = reader.ReadSingle();
+            RotAmount = 0.25f;
         }
         public override bool? CanHitNPC(NPC target)
         {
-            if (target.friendly)
-                return false;
-            else
-                return true;
+            return null;
         }
-
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
+            if (targetHitbox.Intersects(projHitbox))
+                return true;
             float _ = float.NaN;
             bool c = Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center, Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.Zero) * 55, 33f, ref _);
             return c;
         }
+        public override void Initialize()
+        {
+            AniHelper.MaxAniProgress[AniState.Begin] = 10;
+            RotAmount = 0.25f;
+        }
+        public override void ExAI()
+        {
+            Projectile.Opacity = MathHelper.Lerp(Projectile.Opacity, 1f, 0.14f);
+            if (Owner.LAP().MouseRight)
+            {
+                if (UseDelay <= 0)
+                {
+                    Projectile.LAP().OnceHitEffect = true;
+                    StabsFrame = 0;
+                    UseDelay = 45;
+                    AniHelper.ResetAni(AniState.Begin);
+                }
+            }
+            if (!AniHelper.HasFinish[AniState.Begin])
+            {
+                AniHelper.UpDateAni(AniState.Begin);
+                float progress = AniHelper.GetProgress(AniState.Begin);
+                XOffset = MathHelper.Lerp(-8, 35, EasingHelper.EaseInBack(progress));
 
-        public override bool StillInUse()
-        {
-            return Active && LAPUtilities.JustPressRightClick();
-        }
-        public override void HoldoutAI()
-        {
-            if (AniProgress == IinToAni && Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.HeldItem.mana * Owner.manaCost), true, false))
-            {
-                for (int i = 0; i < 4; i++)
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity.RotatedByRandom(MathHelper.PiOver4 * 0.7f) * 9 * Main.rand.NextFloat(0.3f, 1.1f), ModContent.ProjectileType<CarnageBall>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 1);
-                #region 处理额外弹幕
-                Vector2 SpawnPos = Owner.Center + new Vector2(Main.rand.Next(100, 300), 0).RotatedByRandom(MathHelper.TwoPi);
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), SpawnPos, Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * 3f, ModContent.ProjectileType<CarnageBall>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 1);
-                #endregion
-                Projectile.ai[0]++;
-            }
-        }
-        public override void ExtraHoldoutAI()
-        {
-            if (AniProgress == IinToAni && Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.HeldItem.mana * Owner.manaCost), false, false))
-                SpawnDust();
-        }
-        #region AI
-        
-        public override void PostAI()
-        {
-            if (StabsFrame < 20)
-                StabsFrame++;
-            StabsAI();
-        }
-        
-        public void StabsAI()
-        {
-            // 基础信息
-            AniProgress++;
-            Projectile.timeLeft = 2;
-
-            // 设置玩家手持效果
-            float baseRotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
-            float directionVerticality = MathF.Abs(Projectile.velocity.X);
-            Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, baseRotation + Owner.direction * directionVerticality * 1.5f);
-            Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, baseRotation + Owner.direction * directionVerticality * 1.2f);
-
-            if (AniProgress == IinToAni)
-            {
-                SoundEngine.PlaySound(SoundsMenu.CarnageRightUse, Projectile.Center);
-            }
-            if (UseDelay <= 0)
-            {
-                Projectile.LAP().OnceHitEffect = true;
-                CanHit = true;
-                StabsFrame = 0;
-                UseDelay = 45;
-                AniProgress = 0;
-            }
-            if (UseDelay == 35)
-            {
-                Projectile.ResetLocalNPCHitImmunity();
-            }
-            if (AniProgress < IinToAni)
-            {
-                XOffset = MathHelper.Lerp(-8, 50, EasingHelper.EaseInBack(AniProgress / IinToAni));
+                if (AniHelper.AniProgress[AniState.Begin] == 9)
+                {
+                    SoundEngine.PlaySound(SoundsMenu.CarnageRightUse, Projectile.Center);
+                    SpawnDust();
+                    if (Projectile.IsLocalPlayer() && !Owner.LAP().MouseLeft)
+                    {
+                        for (int i = 0; i < 5; i++)
+                            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity.RotatedByRandom(MathHelper.PiOver4 * 0.7f) * 9 * Main.rand.NextFloat(0.3f, 1.1f), ModContent.ProjectileType<CarnageBall>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 1);
+                    }
+                }
             }
             else
             {
                 XOffset = MathHelper.Lerp(XOffset, -8, 0.12f);
             }
+            if (UseDelay == 35)
+            {
+                Projectile.ResetLocalNPCHitImmunity();
+            }
 
-            if (Active)
-                ShaderOpacity = MathHelper.Lerp(ShaderOpacity, 0, 0.12f);
-            else
-                ShaderOpacity = MathHelper.Lerp(ShaderOpacity, 1, 0.08f);
+            float baseRotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            float directionVerticality = MathF.Abs(Projectile.velocity.X);
+            Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, baseRotation + Owner.direction * directionVerticality * 1.5f);
+            Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, baseRotation + Owner.direction * directionVerticality * 1.2f);
+        }
+        public override void PostAI()
+        {
+            base.PostAI();
+            if (StabsFrame < 20)
+                StabsFrame++;
         }
         public void SpawnDust()
         {
@@ -189,33 +128,37 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
                 if (shootVel.ToRotation() > 0)
                     shootVel.Y *= 0.15f;
                 Color color = Main.rand.NextBool(3) ? Color.Black : Color.DarkRed;
-                new BloodDrop(Projectile.Center,
-                    shootVel,
-                    color,
-                    Main.rand.Next(60, 90), 0, 1, 0.1f).Spawn();
+                new BloodDrop(Projectile.Center,  shootVel,  color, Main.rand.Next(60, 90), 0, 1, 0.1f).Spawn();
             }
-
             for (int i = 0; i < 10; i++)
                 CarnageMetaBall.SpawnParticle(Projectile.Center + Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.2f, 0.55f) * 24f,
-                    Projectile.rotation.ToRotationVector2(),
-                    Main.rand.NextFloat(0.4f, 1f),
-                    Projectile.rotation);
+                    Projectile.rotation.ToRotationVector2(), Main.rand.NextFloat(0.4f, 1f), Projectile.rotation);
             SoundEngine.PlaySound(SoundsMenu.CarnageBallSpawn, Projectile.Center);
         }
-        #endregion
-        public override bool CanDel()
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            return AniProgress == 0 && !LAPUtilities.PressLeftAndRightClick();
+            modifiers.SourceDamage *= 3;
         }
-
-        public override void InDel()
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            Projectile.Kill();
+            if (Projectile.LAP().OnceHitEffect)
+            {
+                if (Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.HeldItem.mana * Owner.manaCost), true, false))
+                {
+                    for (int i = 0; i < Main.rand.Next(5, 9); i++)
+                    {
+                        Vector2 SpawnPos = Owner.Center + new Vector2(Main.rand.Next(300, 500), 0).RotatedByRandom(MathHelper.TwoPi);
+                        int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), SpawnPos, Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * 3f, ModContent.ProjectileType<CarnageBall>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 1);
+                        Main.projectile[p].tileCollide = false;
+                    }
+                }
+            }
         }
         public void RenderPixelated(SpriteBatch spriteBatch)
         {
             if (StabsFrame > 19)
                 return;
+
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null);
 
@@ -227,7 +170,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
 
             Rectangle frame = UCATextureRegister.CarnageStabs.Frame(19, 1, StabsFrame, 0);
 
-            LAPUtilities.FastApplyEdgeMeltsShader(ShaderOpacity, frame.Size(), Color.Red, 0.01f, 0);
+            LAPUtilities.FastApplyEdgeMeltsShader(1 - Projectile.Opacity, frame.Size(), Color.Red, 0.01f, 0);
 
             DrawStabs();
             Main.spriteBatch.End();
@@ -261,15 +204,9 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
 
-            LAPUtilities.FastApplyEdgeMeltsShader(ShaderOpacity, Weapontexture.Size(), Color.Red, 0.01f, 0);
+            LAPUtilities.FastApplyEdgeMeltsShader(1 - Projectile.Opacity, Weapontexture.Size(), Color.Red, 0.01f, 0);
 
-            Texture2D texture = TextureAssets.Projectile[Type].Value;
-            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            float drawRotation = Projectile.rotation + (Owner.direction == -1 ? MathHelper.Pi : 0f) + RotOffset * Owner.direction;
-
-            Vector2 rotationPoint = RotPoint;
-
-            SpriteEffects flipSprite = Owner.direction * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            Projectile.GetProjDrawInfo_Staff(out Texture2D texture,out Vector2 drawPosition, out float drawRotation, out Vector2 rotationPoint, out SpriteEffects flipSprite);
 
             Main.spriteBatch.Draw(texture, drawPosition, null, lightColor, drawRotation, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, default);
 
@@ -277,63 +214,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
 
             return false;
-        }
-        #region 对原的覆写
-        public override void UpdateAim(Vector2 source)
-        {
-            Vector2 aim = Vector2.Normalize(Owner.LocalMouseWorld() - Owner.Center);
-            if (aim.HasNaNs())
-            {
-                aim = -Vector2.UnitY;
-            }
-
-            aim = Vector2.Normalize(Vector2.Lerp(Vector2.Normalize(Projectile.velocity), aim, RotAmount));
-
-            if (aim != Projectile.velocity)
-            {
-                Projectile.netUpdate = true;
-            }
-
-            Projectile.velocity = aim;
-        }
-        #endregion
-
-        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
-        {
-            modifiers.SourceDamage *= 3;
-        }
-
-        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
-        {
-            if (Projectile.LAP().OnceHitEffect)
-            {
-                CanHit = false;
-                if (Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.HeldItem.mana * Owner.manaCost), true, false))
-                {
-                    for (int i = 0; i < Main.rand.Next(5, 9); i++)
-                    {
-                        Vector2 SpawnPos = Owner.Center + new Vector2(Main.rand.Next(300, 500), 0).RotatedByRandom(MathHelper.TwoPi);
-
-                        for (int j = 0; j < 10; j++)
-                        {
-                            new LilyLiquid(SpawnPos, Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0f, 1.2f) * -6f, Color.Red, 64, 0, 1, 1.5f).Spawn();
-                        }
-                        for (int x = 0; x < 5; x++)
-                        {
-                            new LilyLiquid(SpawnPos, Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0f, 1.2f) * -6f, Color.Black, 64, 0, 1, 1.5f).Spawn();
-                        }
-
-                        int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), SpawnPos, Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * 3f, ModContent.ProjectileType<CarnageBall>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 1);
-                        Main.projectile[p].tileCollide = false;
-                    }
-                }
-
-                for (int i = 0; i < 15; i++)
-                {
-                    Vector2 spawnVec = Projectile.velocity.RotateRandom(0.3f) * Main.rand.NextFloat(0.1f, 1.6f) * 24f;
-                    CarnageMetaBall.SpawnParticle(Projectile.Center, spawnVec, Main.rand.NextFloat(0.4f, 0.6f), 0, true);
-                }
-            }
         }
     }
 }

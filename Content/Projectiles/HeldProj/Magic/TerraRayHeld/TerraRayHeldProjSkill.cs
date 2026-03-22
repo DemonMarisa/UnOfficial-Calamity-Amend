@@ -29,7 +29,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
         public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/TerraRayHeld/TerraRayHeldProj";
         public Player Owner => Main.player[Projectile.owner];
         public float Opacity = 1f;
-        public AnimationHelper animationHelper = new AnimationHelper(4);
+        public AniHelper AniHelper = new AniHelper(4);
         public float HeightOffset;
         public float PosOffsetRot;
         public float RotOffset;
@@ -51,7 +51,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
         }
         public override void OnSpawn(IEntitySource source)
         {
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ProjectileType<TerraMatrix>(),0,0,Projectile.owner);
+            if (Projectile.IsLocalPlayer())
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ProjectileType<TerraMatrix>(),0,0,Projectile.owner);
         }
         public override void AI()
         {
@@ -60,9 +61,9 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
             {
                 SoundEngine.PlaySound(SoundsMenu.TerraRestore, Projectile.Center);
                 // 初始化效果
-                animationHelper.MaxAniProgress[AnimationState.Begin] = 75;
-                animationHelper.MaxAniProgress[AnimationState.Middle] = 10;
-                animationHelper.MaxAniProgress[AnimationState.End] = 10;
+                AniHelper.MaxAniProgress[AniState.Begin] = 75;
+                AniHelper.MaxAniProgress[AniState.Middle] = 10;
+                AniHelper.MaxAniProgress[AniState.End] = 10;
             }
             Owner.itemTime = 2;
             Owner.itemAnimation = 2;
@@ -84,23 +85,23 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
         public void HandleAni()
         {
             // 处理动画
-            if (!animationHelper.HasFinish[AnimationState.Begin])
+            if (!AniHelper.HasFinish[AniState.Begin])
             {
-                if (animationHelper.AniProgress[AnimationState.Begin] < animationHelper.MaxAniProgress[AnimationState.Begin])
-                    animationHelper.AniProgress[AnimationState.Begin]++;
+                if (AniHelper.AniProgress[AniState.Begin] < AniHelper.MaxAniProgress[AniState.Begin])
+                    AniHelper.AniProgress[AniState.Begin]++;
 
                 HandleBeginAni();
                 Owner.velocity.X *= 0.5f;
                 Owner.UCA().TerraRayUseSkillCount = 20;
 
-                if (animationHelper.AniProgress[AnimationState.Begin] >= animationHelper.MaxAniProgress[AnimationState.Begin])
-                    animationHelper.HasFinish[AnimationState.Begin] = true;
+                if (AniHelper.AniProgress[AniState.Begin] >= AniHelper.MaxAniProgress[AniState.Begin])
+                    AniHelper.HasFinish[AniState.Begin] = true;
             }
-            else if (!animationHelper.HasFinish[AnimationState.Middle])
+            else if (!AniHelper.HasFinish[AniState.Middle])
             {
-                animationHelper.AniProgress[AnimationState.Middle]++;
+                AniHelper.AniProgress[AniState.Middle]++;
                 HandleMiddleAni();
-                if (animationHelper.AniProgress[AnimationState.Middle] >= animationHelper.MaxAniProgress[AnimationState.Middle])
+                if (AniHelper.AniProgress[AniState.Middle] >= AniHelper.MaxAniProgress[AniState.Middle])
                 {
                     SoundEngine.PlaySound(SoundsMenu.TerraRestoreRelease, Projectile.Center);
                     GenTornado();
@@ -132,7 +133,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
                             Owner.UCA().TerraRestore = true;
                         }
                     }
-                    animationHelper.HasFinish[AnimationState.Middle] = true;
+                    AniHelper.HasFinish[AniState.Middle] = true;
                 }
 
                 Vector2 firPos = Owner.Center;
@@ -147,12 +148,12 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
                     new TerraTree(firPos, firVec * Main.rand.NextFloat(1.6f, 6.4f), color, 0, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
                 }
             }
-            else if (!animationHelper.HasFinish[AnimationState.End])
+            else if (!AniHelper.HasFinish[AniState.End])
             {
-                animationHelper.AniProgress[AnimationState.End]++;
+                AniHelper.AniProgress[AniState.End]++;
                 HandleEndAni();
-                if (animationHelper.AniProgress[AnimationState.End] >= animationHelper.MaxAniProgress[AnimationState.End])
-                    animationHelper.HasFinish[AnimationState.End] = true;
+                if (AniHelper.AniProgress[AniState.End] >= AniHelper.MaxAniProgress[AniState.End])
+                    AniHelper.HasFinish[AniState.End] = true;
             }
             else
             {
@@ -215,8 +216,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
         #region 处理动画
         public void HandleBeginAni()
         {
-            int MaxAni = animationHelper.MaxAniProgress[AnimationState.Begin];
-            int CurAni = animationHelper.AniProgress[AnimationState.Begin];
+            int MaxAni = AniHelper.MaxAniProgress[AniState.Begin];
+            int CurAni = AniHelper.AniProgress[AniState.Begin];
             // 使用缓动函数让动画更自然
             float easedProgress = EasingHelper.EaseOutCubic(CurAni / (float)MaxAni);
             easedProgress = (float)Math.Pow(easedProgress, 0.3f);
@@ -238,8 +239,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
         }
         public void HandleMiddleAni()
         {
-            int MaxAni = animationHelper.MaxAniProgress[AnimationState.Middle];
-            int CurAni = animationHelper.AniProgress[AnimationState.Middle];
+            int MaxAni = AniHelper.MaxAniProgress[AniState.Middle];
+            int CurAni = AniHelper.AniProgress[AniState.Middle];
             // 使用缓动函数让动画更自然
             float easedProgress = EasingHelper.EaseOutCubic(CurAni / (float)MaxAni);
             // 设置起始与结束角度
@@ -259,8 +260,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
         }
         public void HandleEndAni()
         {
-            int MaxAni = animationHelper.MaxAniProgress[AnimationState.End];
-            int CurAni = animationHelper.AniProgress[AnimationState.End];
+            int MaxAni = AniHelper.MaxAniProgress[AniState.End];
+            int CurAni = AniHelper.AniProgress[AniState.End];
             // 使用缓动函数让动画更自然
             float easedProgress = EasingHelper.EaseInCubic(CurAni / (float)MaxAni);
             // 设置起始与结束角度

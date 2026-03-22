@@ -2,6 +2,7 @@
 using LAP.Core.AnimationHandle;
 using LAP.Core.Enums;
 using LAP.Core.SpecificEffectManagers;
+using LAP.Core.StateMachine.SynedHitEffect;
 using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
@@ -15,10 +16,10 @@ using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
 using UCA.Assets.Sounds;
+using UCA.Content.HitEffect;
 using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Particiles;
 using UCA.Content.Paths;
-using UCA.Content.Projectiles.Misc;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
 {
@@ -27,7 +28,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
         public override LocalizedText DisplayName => LAPUtilities.GetItemName<PlasmaRodAlt>();
         public override string Texture => $"{ItemPath.MagicRayWeaponsPath}" + "PlasmaRodAlt";
 
-        public AnimationHelper animationHelper = new AnimationHelper(3);
+        public AniHelper AniHelper = new AniHelper(3);
 
         public int OwnerDir = 0;
         public Player Owner => Main.player[Projectile.owner];
@@ -66,16 +67,16 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
         }
         public override void SendExtraAI(BinaryWriter writer)
         {
-            writer.Write(animationHelper.MaxAniProgress[AnimationState.Begin]);
-            writer.Write(animationHelper.MaxAniProgress[AnimationState.End]);
+            writer.Write(AniHelper.MaxAniProgress[AniState.Begin]);
+            writer.Write(AniHelper.MaxAniProgress[AniState.End]);
             writer.Write(BeginRot);
             writer.Write(CanHit);
             writer.Write(SwordLength);
         }
         public override void ReceiveExtraAI(BinaryReader reader)
         {
-            animationHelper.MaxAniProgress[AnimationState.Begin] = reader.ReadInt32();
-            animationHelper.MaxAniProgress[AnimationState.End] = reader.ReadInt32();
+            AniHelper.MaxAniProgress[AniState.Begin] = reader.ReadInt32();
+            AniHelper.MaxAniProgress[AniState.End] = reader.ReadInt32();
             BeginRot = reader.ReadSingle();
             CanHit = reader.ReadBoolean();
             SwordLength = reader.ReadInt32();
@@ -93,8 +94,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
             Projectile.netUpdate = true;
             if (Projectile.LAP().FirstFrame)
             {
-                animationHelper.MaxAniProgress[AnimationState.Begin] = 45;
-                animationHelper.MaxAniProgress[AnimationState.End] = 10;
+                AniHelper.MaxAniProgress[AniState.Begin] = 45;
+                AniHelper.MaxAniProgress[AniState.End] = 10;
                 OwnerDir = Owner.LocalMouseWorld().X > Owner.Center.X ? 1 : -1;
                 BeginRot = Owner.GetPlayerToMouseVector2().ToRotation();
             }
@@ -119,25 +120,25 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
             Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, baseRotation - MathHelper.PiOver2);
 
             // 处理动画
-            if (!animationHelper.HasFinish[AnimationState.Begin])
+            if (!AniHelper.HasFinish[AniState.Begin])
             {
                 Projectile.extraUpdates = 1;
 
-                animationHelper.AniProgress[AnimationState.Begin]++;
+                AniHelper.AniProgress[AniState.Begin]++;
 
                 HandleBeginAni();
 
-                if (animationHelper.AniProgress[AnimationState.Begin] == animationHelper.MaxAniProgress[AnimationState.Begin])
-                    animationHelper.HasFinish[AnimationState.Begin] = true;
+                if (AniHelper.AniProgress[AniState.Begin] == AniHelper.MaxAniProgress[AniState.Begin])
+                    AniHelper.HasFinish[AniState.Begin] = true;
             }
-            else if (!animationHelper.HasFinish[AnimationState.End])
+            else if (!AniHelper.HasFinish[AniState.End])
             {
-                animationHelper.AniProgress[AnimationState.End]++;
+                AniHelper.AniProgress[AniState.End]++;
 
-                Opacity = MathHelper.Lerp(1f, 0f, animationHelper.AniProgress[AnimationState.End] / (float)animationHelper.MaxAniProgress[AnimationState.End]);
+                Opacity = MathHelper.Lerp(1f, 0f, AniHelper.AniProgress[AniState.End] / (float)AniHelper.MaxAniProgress[AniState.End]);
 
-                if (animationHelper.AniProgress[AnimationState.End] == animationHelper.MaxAniProgress[AnimationState.End])
-                    animationHelper.HasFinish[AnimationState.End] = true;
+                if (AniHelper.AniProgress[AniState.End] == AniHelper.MaxAniProgress[AniState.End])
+                    AniHelper.HasFinish[AniState.End] = true;
             }
             else
             {
@@ -147,8 +148,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
 
         public void HandleBeginAni()
         {
-            int MaxAni = animationHelper.MaxAniProgress[AnimationState.Begin];
-            int CurAni = animationHelper.AniProgress[AnimationState.Begin];
+            int MaxAni = AniHelper.MaxAniProgress[AniState.Begin];
+            int CurAni = AniHelper.AniProgress[AniState.Begin];
             Opacity = MathHelper.Lerp(0f, 1f, CurAni / 25f);
             // 播放音效与开始判定
             if (CurAni == 25)
@@ -249,7 +250,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<UseForOnHitNPCProj>(), 0, 0, Projectile.owner, Type);
+            HitEffectManager.SpawnHitEffect(HitEffectManager.HEType<PlasmaRodHit>(), Projectile.owner, Projectile.GetSource_FromThis(), target.Center, Vector2.Zero);
 
             target.AddBuff(BuffID.ShadowFlame, 300);
 

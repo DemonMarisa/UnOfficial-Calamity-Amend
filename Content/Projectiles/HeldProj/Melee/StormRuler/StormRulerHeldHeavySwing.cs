@@ -41,7 +41,7 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
         public float FatherProjRotOffset => MathHelper.ToRadians(225f);
         public int UseTime => Owner.ApplyWeaponAttackSpeed(Owner.HeldItem, Owner.HeldItem.useTime * 15, 250);
         public int BeginDir;
-        public AnimationHelper animationHelper = new AnimationHelper(3);
+        public AniHelper AniHelper = new AniHelper(3);
         public List<Vector2> OldAimPos = [];
         public Vector2 BeginMouseWorld;
         public Vector2 HeldPos;
@@ -106,8 +106,8 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
             Projectile.rotation = TargetRot;
             HeldPos = new Vector2(FatherHeldPosX, FatherHeldPosY);
             ProjRotOffset = FatherProjRotOffset;
-            animationHelper.MaxAniProgress[AnimationState.Begin] = (int)(UseTime * 0.25f);
-            animationHelper.MaxAniProgress[AnimationState.Middle] = (int)(UseTime * 0.75f);
+            AniHelper.MaxAniProgress[AniState.Begin] = (int)(UseTime * 0.25f);
+            AniHelper.MaxAniProgress[AniState.Middle] = (int)(UseTime * 0.75f);
         }
         #region 常规更新
         public void UpdateGeneral()
@@ -127,14 +127,14 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
         #region 更新动画
         public void UpdateAnimation()
         {
-            if (!animationHelper.HasFinish[AnimationState.Begin])
+            if (!AniHelper.HasFinish[AniState.Begin])
             {
-                animationHelper.UpDateAni(AnimationState.Begin);
+                AniHelper.UpDateAni(AniState.Begin);
                 HandleBeginAni();
             }
-            else if (!animationHelper.HasFinish[AnimationState.Middle])
+            else if (!AniHelper.HasFinish[AniState.Middle])
             {
-                animationHelper.UpDateAni(AnimationState.Middle);
+                AniHelper.UpDateAni(AniState.Middle);
                 HandleMiddleAni();
             }
             else
@@ -144,14 +144,14 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
         }
         public void HandleBeginAni()
         {
-            float easedProgress = EasingHelper.EaseInCubic(animationHelper.GetProgress(AnimationState.Begin));
-            float baseRotation = animationHelper.UpDateAngle(155, -150, Owner.direction, easedProgress);
+            float easedProgress = EasingHelper.EaseInCubic(AniHelper.GetProgress(AniState.Begin));
+            float baseRotation = AniHelper.UpDateAngle(155, -150, Owner.direction, easedProgress);
             HeldPos = IdleOffset.RotatedBy(baseRotation).RotatedBy(TargetRot);
-            float ProjRotation = animationHelper.UpDateAngle(225f, -145, Owner.direction, easedProgress);
+            float ProjRotation = AniHelper.UpDateAngle(225f, -145, Owner.direction, easedProgress);
             ProjRotOffset = ProjRotation;
 
-            float easedProgress2 = animationHelper.GetProgress(AnimationState.Begin);
-            float baseSlashRotation = animationHelper.UpDateAngle(155, -125, Owner.direction, easedProgress2);
+            float easedProgress2 = AniHelper.GetProgress(AniState.Begin);
+            float baseSlashRotation = AniHelper.UpDateAngle(155, -125, Owner.direction, easedProgress2);
             Matrix Slashtransform = Matrix.CreateRotationZ(baseSlashRotation) * Matrix.CreateScale(1.2f, 0.8f, 1f);
             Vector2 SlashTargetPos = Vector2.Transform(Vector2.UnitX, Slashtransform) * 1.25f;
             Vector2 TargetPos = SlashTargetPos.RotatedBy(TargetRot) * SwordLength;
@@ -165,7 +165,7 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
                 Color DrawColor = Color.White;
                 new TrailGlowBall(SpawnPos, firVel, DrawColor * 0.5f, Main.rand.Next(45, 65), 0.2f, true).Spawn();
             }
-            if (animationHelper.AniProgress[AnimationState.Begin] == 50)
+            if (AniHelper.AniProgress[AniState.Begin] == 50)
             {
                 if (Projectile.IsLocalPlayer())
                 {
@@ -188,16 +188,16 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
         }
         public void HandleMiddleAni()
         {
-            float easedProgress = EasingHelper.EaseOutCubic(animationHelper.GetProgress(AnimationState.Middle));
-            float baseRotation = animationHelper.UpDateAngle(-150, -160, Owner.direction, easedProgress);
+            float easedProgress = EasingHelper.EaseOutCubic(AniHelper.GetProgress(AniState.Middle));
+            float baseRotation = AniHelper.UpDateAngle(-150, -160, Owner.direction, easedProgress);
             HeldPos = IdleOffset.RotatedBy(baseRotation).RotatedBy(TargetRot);
-            float ProjRotation = animationHelper.UpDateAngle(-145, -155, Owner.direction, easedProgress);
+            float ProjRotation = AniHelper.UpDateAngle(-145, -155, Owner.direction, easedProgress);
             ProjRotOffset = ProjRotation;
 
-            SlashOpacity = 1f - EasingHelper.EaseInCubic(animationHelper.GetProgress(AnimationState.Middle));
+            SlashOpacity = 1f - EasingHelper.EaseInCubic(AniHelper.GetProgress(AniState.Middle));
 
-            float easedProgress2 = EasingHelper.EaseOutCubic(animationHelper.GetProgress(AnimationState.Middle));
-            float baseSlashRotation = animationHelper.UpDateAngle(-125, -155, Owner.direction, easedProgress2);
+            float easedProgress2 = EasingHelper.EaseOutCubic(AniHelper.GetProgress(AniState.Middle));
+            float baseSlashRotation = AniHelper.UpDateAngle(-125, -155, Owner.direction, easedProgress2);
             Matrix Slashtransform = Matrix.CreateRotationZ(baseSlashRotation) * Matrix.CreateScale(1.2f, 0.8f, 1f);
             Vector2 SlashTargetPos = Vector2.Transform(Vector2.UnitX, Slashtransform) * 1.25f;
             if (Projectile.FinalExtraUpdate())
@@ -234,8 +234,7 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
         }
         public void DrawBlade(Color lightColor)
         {
-            Texture2D texture = UCATextureRegister.StormRulerAlt.Value;
-            Projectile.GetProjDrawInfo_Melee(texture, out Vector2 _, out float drawRotation, out Vector2 rotationPoint, out SpriteEffects flipSprite);
+            Projectile.GetProjDrawInfo_Melee(out Texture2D texture, out Vector2 _, out float drawRotation, out Vector2 rotationPoint, out SpriteEffects flipSprite);
             Vector2 drawPosition = Projectile.Center - Main.screenPosition + Vector2.UnitX.RotatedBy(Projectile.rotation + ProjRotOffset) * -24;
             Main.spriteBatch.Draw(texture, drawPosition, null, lightColor, drawRotation + ProjRotOffset, rotationPoint, Projectile.scale * 1.5f, flipSprite, 0f);
         }

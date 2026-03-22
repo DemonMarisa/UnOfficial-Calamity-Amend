@@ -27,7 +27,7 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
         public Player Owner => Projectile.Owner();
         public Vector2 IdleOffset => new Vector2(12, 4 * Owner.direction);
         public int UseTime => Owner.ApplyWeaponAttackSpeed(Owner.HeldItem, 50, 35);
-        public AnimationHelper animationHelper = new AnimationHelper(3);
+        public AniHelper AniHelper = new AniHelper(3);
         public Vector2 HeldPos;
         public float TargetRot;
         public float ProjRotOffset;
@@ -76,8 +76,8 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
         {
             TargetRot = LAPUtilities.GetVector2(Projectile.Center, Owner.LocalMouseWorld()).ToRotation();
             HeldPos = IdleOffset;
-            animationHelper.MaxAniProgress[AnimationState.Begin] = (int)(UseTime * 0.5f);
-            animationHelper.MaxAniProgress[AnimationState.Middle] = (int)(UseTime * 0.5f);
+            AniHelper.MaxAniProgress[AniState.Begin] = (int)(UseTime * 0.5f);
+            AniHelper.MaxAniProgress[AniState.Middle] = (int)(UseTime * 0.5f);
             if (Owner.UCA().KingOfStorm)
                 ChargeTimer = 182;
         }
@@ -113,15 +113,15 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
         #region 处理动画
         public void UpdateAnimation()
         {
-            if (!animationHelper.HasFinish[AnimationState.Begin])
+            if (!AniHelper.HasFinish[AniState.Begin])
             {
-                animationHelper.UpDateAni(AnimationState.Begin);
+                AniHelper.UpDateAni(AniState.Begin);
                 HandleBeginAni();
             }
             else if (BeginAttack || BeginRightAttack)
             {
-                if (!animationHelper.HasFinish[AnimationState.Middle])
-                    animationHelper.UpDateAni(AnimationState.Middle);
+                if (!AniHelper.HasFinish[AniState.Middle])
+                    AniHelper.UpDateAni(AniState.Middle);
                 else
                 {
                     if (Owner.UCA().KingOfStorm)
@@ -166,10 +166,10 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
         }
         public void HandleBeginAni()
         {
-            float easedProgress = EasingHelper.EaseOutCubic(animationHelper.GetProgress(AnimationState.Begin));
-            float baseRotation = animationHelper.UpDateAngle(0, -155, Owner.direction, easedProgress);
+            float easedProgress = EasingHelper.EaseOutCubic(AniHelper.GetProgress(AniState.Begin));
+            float baseRotation = AniHelper.UpDateAngle(0, -155, Owner.direction, easedProgress);
             HeldPos = IdleOffset.RotatedBy(baseRotation).RotatedBy(TargetRot);
-            float ProjRotation = animationHelper.UpDateAngle(-155, 0, Owner.direction, easedProgress);
+            float ProjRotation = AniHelper.UpDateAngle(-155, 0, Owner.direction, easedProgress);
             ProjRotOffset = ProjRotation;
         }
         public void HandleAttackAni()
@@ -178,18 +178,18 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
             {
                 if (BeginAttack)
                 {
-                    float easedProgress = EasingHelper.EaseOutCubic(animationHelper.GetProgress(AnimationState.Middle));
-                    float baseRotation = animationHelper.UpDateAngle(-155, -115, Owner.direction, easedProgress);
+                    float easedProgress = EasingHelper.EaseOutCubic(AniHelper.GetProgress(AniState.Middle));
+                    float baseRotation = AniHelper.UpDateAngle(-155, -115, Owner.direction, easedProgress);
                     HeldPos = IdleOffset.RotatedBy(baseRotation).RotatedBy(TargetRot);
-                    float ProjRotation = animationHelper.UpDateAngle(0, -155, Owner.direction, easedProgress);
+                    float ProjRotation = AniHelper.UpDateAngle(0, -155, Owner.direction, easedProgress);
                     ProjRotOffset = ProjRotation;
                 }
                 else if (BeginRightAttack)
                 {
-                    float easedProgress = EasingHelper.EaseOutCubic(animationHelper.GetProgress(AnimationState.Middle));
-                    float baseRotation = animationHelper.UpDateAngle(-155, -165, Owner.direction, easedProgress);
+                    float easedProgress = EasingHelper.EaseOutCubic(AniHelper.GetProgress(AniState.Middle));
+                    float baseRotation = AniHelper.UpDateAngle(-155, -165, Owner.direction, easedProgress);
                     HeldPos = IdleOffset.RotatedBy(baseRotation).RotatedBy(TargetRot);
-                    float ProjRotation = animationHelper.UpDateAngle(0, 0, Owner.direction, easedProgress);
+                    float ProjRotation = AniHelper.UpDateAngle(0, 0, Owner.direction, easedProgress);
                     ProjRotOffset = ProjRotation;
                 }
             }
@@ -197,27 +197,27 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
             {
                 if (BeginAttack)
                 {
-                    float easedProgress = EasingHelper.EaseOutCubic(animationHelper.GetProgress(AnimationState.Middle));
-                    float baseRotation = animationHelper.UpDateAngle(-155, 155, Owner.direction, easedProgress);
+                    float easedProgress = EasingHelper.EaseOutCubic(AniHelper.GetProgress(AniState.Middle));
+                    float baseRotation = AniHelper.UpDateAngle(-155, 155, Owner.direction, easedProgress);
                     HeldPos = IdleOffset.RotatedBy(baseRotation).RotatedBy(TargetRot);
-                    float ProjRotation = animationHelper.UpDateAngle(0, 225, Owner.direction, easedProgress);
+                    float ProjRotation = AniHelper.UpDateAngle(0, 225, Owner.direction, easedProgress);
                     ProjRotOffset = ProjRotation;
                 }
                 else if (BeginRightAttack)
                 {
-                    float easedProgress = EasingHelper.EaseOutCubic(animationHelper.GetProgress(AnimationState.Middle));
-                    float baseRotation = animationHelper.UpDateAngle(-155, -165, Owner.direction, easedProgress);
+                    float easedProgress = EasingHelper.EaseOutCubic(AniHelper.GetProgress(AniState.Middle));
+                    float baseRotation = AniHelper.UpDateAngle(-155, -165, Owner.direction, easedProgress);
                     HeldPos = IdleOffset.RotatedBy(baseRotation).RotatedBy(TargetRot);
-                    float ProjRotation = animationHelper.UpDateAngle(0, 0, Owner.direction, easedProgress);
+                    float ProjRotation = AniHelper.UpDateAngle(0, 0, Owner.direction, easedProgress);
                     ProjRotOffset = ProjRotation;
                 }
             }
         }
         public void HandleEndAni()
         {
-            float baseRotation = animationHelper.UpDateAngle(0, -155, Owner.direction, 1);
+            float baseRotation = AniHelper.UpDateAngle(0, -155, Owner.direction, 1);
             HeldPos = IdleOffset.RotatedBy(baseRotation).RotatedBy(TargetRot);
-            float ProjRotation = animationHelper.UpDateAngle(-155, 0, Owner.direction, 1);
+            float ProjRotation = AniHelper.UpDateAngle(-155, 0, Owner.direction, 1);
             ProjRotOffset = ProjRotation;
         }
         #endregion
@@ -341,8 +341,8 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
         }
         public void DrawBlade(Color lightColor)
         {
+            Projectile.GetProjDrawInfo_Melee(out Texture2D _, out Vector2 _, out float drawRotation, out Vector2 rotationPoint, out SpriteEffects flipSprite);
             Texture2D texture = UCATextureRegister.StormRulerAlt.Value;
-            Projectile.GetProjDrawInfo_Melee(texture, out Vector2 _, out float drawRotation, out Vector2 rotationPoint, out SpriteEffects flipSprite);
             Vector2 drawPosition = Projectile.Center - Main.screenPosition + Vector2.UnitX.RotatedBy(Projectile.rotation + ProjRotOffset) * -16;
             Main.spriteBatch.Draw(texture, drawPosition, null, lightColor, drawRotation + ProjRotOffset, rotationPoint, Projectile.scale, flipSprite, 0f);
         }

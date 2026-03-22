@@ -1,5 +1,5 @@
 ﻿using LAP.Core.AnimationHandle;
-using LAP.Core.BaseClass.Legacys;
+using LAP.Core.BaseClass.Projectiles;
 using LAP.Core.Enums;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
@@ -24,14 +24,11 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
     {
         public override LocalizedText DisplayName => LAPUtilities.GetItemName<TerraRay>();
         public Vector2 RotVector => new Vector2(10 * Owner.direction, 7).BetterRotatedBy(Owner.GetPlayerToMouseVector2().ToRotation(), default, 0.5f, 1f);
-        public override Vector2 RotPoint => TextureAssets.Projectile[Type].Size() / 2;
-        public override Vector2 Posffset => new Vector2(RotVector.X, RotVector.Y) * Owner.direction;
-        public override float RotAmount => 0.25f;
-        public override float RotOffset => 0;
+        public override Vector2 PositionOffset => RotVector * Owner.direction;
 
         public float Opacity = 1f;
 
-        public AnimationHelper animationHelper = new AnimationHelper(3);
+        public AniHelper AniHelper = new AniHelper(3);
         public override void SetDefaults()
         {
             Projectile.width = 66;
@@ -51,25 +48,20 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
         {
             Opacity = reader.ReadSingle();
         }
-
-        public override bool StillInUse()
-        {
-            return !Owner.noItems && !LAPUtilities.JustPressRightClick() && !Owner.CCed && Owner.LAP().MouseLeft;
-        }
-
-        public override void HoldoutAI()
-        {
-        }
-        public override void ExtraHoldoutAI()
+        public override void ExAI()
         {
             if (Projectile.LAP().FirstFrame)
             {
-                animationHelper.MaxAniProgress[AnimationState.Begin] = 15;
+                RotAmount = 0.25f;
+                AniHelper.MaxAniProgress[AniState.Begin] = 15;
             }
-            if (UseDelay <= 0 && Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.HeldItem.mana * Owner.manaCost), true, false))
+            if (Owner.LAP().MouseLeft && !Owner.LAP().MouseRight)
             {
-                FirePorj();
-                UseDelay = Owner.HeldItem.useTime;
+                if (UseDelay <= 0 && Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.HeldItem.mana * Owner.manaCost), true, false))
+                {
+                    FirePorj();
+                    UseDelay = Owner.HeldItem.useTime;
+                }
             }
         }
 
@@ -84,17 +76,17 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
                 Vector2 firePos = Projectile.Center + -Projectile.velocity.RotateRandom(MathHelper.PiOver4) * Main.rand.Next(250, 350);
                 Vector2 firvel = LAPUtilities.GetVector2(firePos, Owner.LocalMouseWorld());
 
-                if (Projectile.owner == Main.myPlayer)
+                if (Projectile.IsLocalPlayer())
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), firePos, firvel * 18, ModContent.ProjectileType<TerraLance>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 1);
             }
 
-            if (Projectile.owner == Main.myPlayer)
+            if (Projectile.IsLocalPlayer())
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + ProjFireOffset, firVec * 0.0001f, ModContent.ProjectileType<TerraLaser>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
 
             GenStar(Projectile.Center + FireOffset, Projectile.rotation + MathHelper.PiOver2);
             SoundEngine.PlaySound(SoundsMenu.TerraRayLeftFire, Projectile.Center);
             // 后坐力
-            Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.1f * Owner.direction;
+            Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.1f;
         }
         public static void GenStar(Vector2 pos, float rotoffset, float Xmult = 0.8f)
         {
@@ -181,24 +173,24 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
 
             if ((Main.mouseLeft || Active) && !LAPUtilities.JustPressRightClick())
             {
-                if (animationHelper.AniProgress[AnimationState.Begin] < animationHelper.MaxAniProgress[AnimationState.Begin])
-                    animationHelper.AniProgress[AnimationState.Begin]++;
+                if (AniHelper.AniProgress[AniState.Begin] < AniHelper.MaxAniProgress[AniState.Begin])
+                    AniHelper.AniProgress[AniState.Begin]++;
             }
             else
             {
-                if (animationHelper.AniProgress[AnimationState.Begin] > 0)
-                    animationHelper.AniProgress[AnimationState.Begin]--;
+                if (AniHelper.AniProgress[AniState.Begin] > 0)
+                    AniHelper.AniProgress[AniState.Begin]--;
             }
-            int MaxAni = animationHelper.MaxAniProgress[AnimationState.Begin];
-            int CurAni = animationHelper.AniProgress[AnimationState.Begin];
+            int MaxAni = AniHelper.MaxAniProgress[AniState.Begin];
+            int CurAni = AniHelper.AniProgress[AniState.Begin];
             float easedProgress = (CurAni / (float)MaxAni);
 
             Opacity = MathHelper.Lerp(0.7f, 0f, easedProgress);
-        }
 
-        public override bool CanDel()
-        {
-            return UseDelay <= 0 && !LAPUtilities.JustPressLeftClick();
+            if (!Owner.LAP().MouseLeft && UseDelay == 0)
+            {
+                Projectile.Kill();
+            }
         }
         public override void OnKill(int timeLeft)
         {
@@ -206,7 +198,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
             Owner.itemTime = 0;
             Owner.itemAnimation = 0;
         }
-
         public override bool PreDraw(ref Color lightColor)
         {
             Main.spriteBatch.End();
@@ -222,7 +213,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
             Vector2 rotationPoint = ModContent.Request<Texture2D>(Texture).Value.Size() / 2f;
             SpriteEffects flipSprite = Projectile.spriteDirection * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             // spriteBatch会自动把textures0设置为当前使用的材质，所以需要你手动改一下
-            Main.spriteBatch.Draw(ModContent.Request<Texture2D>(Texture).Value, drawPosition, null, lightColor, drawRotation - MathHelper.PiOver4, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
+            Main.spriteBatch.Draw(Request<Texture2D>(Texture).Value, drawPosition, null, lightColor, drawRotation - MathHelper.PiOver4, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);

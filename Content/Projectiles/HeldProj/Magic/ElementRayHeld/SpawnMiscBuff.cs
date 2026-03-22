@@ -19,28 +19,28 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             FilpAuxFragmentOffset = new Vector2(0, 0);
 
             RelativeOwnerPos = new Vector2(10, 0);
-            animationHelper.MaxAniProgress[AnimationState.Begin] = 40;
-            animationHelper.MaxAniProgress[AnimationState.Middle] = 10;
-            animationHelper.MaxAniProgress[AnimationState.End] = 60;
+            AniHelper.MaxAniProgress[AniState.Begin] = 40;
+            AniHelper.MaxAniProgress[AniState.Middle] = 10;
+            AniHelper.MaxAniProgress[AniState.End] = 60;
             SoundEngine.PlaySound(SoundsMenu.MAGNOLIASPRelease, Projectile.Center);
             SoundEngine.PlaySound(SoundsMenu.ReStoreCharge, Projectile.Center);
         }
         public void UpdateMisc()
         {
             BeginRot = ToMouseVector;
-            if (!animationHelper.HasFinish[AnimationState.Begin])
+            if (!AniHelper.HasFinish[AniState.Begin])
             {
-                animationHelper.UpDateAni(AnimationState.Begin, 35);
+                AniHelper.UpDateAni(AniState.Begin, 35);
                 HandleMiscBeginAni();
             }
-            else if (!animationHelper.HasFinish[AnimationState.Middle])
+            else if (!AniHelper.HasFinish[AniState.Middle])
             {
-                animationHelper.UpDateAni(AnimationState.Middle, 0);
+                AniHelper.UpDateAni(AniState.Middle, 0);
                 HandleMiscMiddleAni();
             }
-            else if (!animationHelper.HasFinish[AnimationState.End])
+            else if (!AniHelper.HasFinish[AniState.End])
             {
-                animationHelper.UpDateAni(AnimationState.End, 0);
+                AniHelper.UpDateAni(AniState.End, 0);
                 HandleMiscEndAni();
             }
             else
@@ -51,10 +51,10 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         #region 处理开始动画
         public void HandleMiscBeginAni()
         {
-            int MaxAni = animationHelper.MaxAniProgress[AnimationState.Begin];
-            int CurAni = animationHelper.AniProgress[AnimationState.Begin];
+            int MaxAni = AniHelper.MaxAniProgress[AniState.Begin];
+            int CurAni = AniHelper.AniProgress[AniState.Begin];
             float easedProgress = EasingHelper.EaseOutCubic(CurAni / (float)MaxAni);
-            float baseRotation = animationHelper.UpDateAngle(45, -145, Owner.direction, easedProgress);
+            float baseRotation = AniHelper.UpDateAngle(45, -145, Owner.direction, easedProgress);
             RelativeOwnerPosRot = baseRotation + ToMouseVector;
             Projectile.rotation = RelativeOwnerPosRot;
             if (CurAni < MaxAni / 2)
@@ -77,10 +77,10 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         #region 处理中间的动画
         public void HandleMiscMiddleAni()
         {
-            int MaxAni = animationHelper.MaxAniProgress[AnimationState.Middle];
-            int CurAni = animationHelper.AniProgress[AnimationState.Middle];
+            int MaxAni = AniHelper.MaxAniProgress[AniState.Middle];
+            int CurAni = AniHelper.AniProgress[AniState.Middle];
             float easedProgress = EasingHelper.EaseInCubic(CurAni / (float)MaxAni);
-            float baseRotation = animationHelper.UpDateAngle(-145, -40, Owner.direction, easedProgress);
+            float baseRotation = AniHelper.UpDateAngle(-145, -40, Owner.direction, easedProgress);
             if (CurAni == 1)
             {
                 int LifeTime = 75;
@@ -117,10 +117,10 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         #region 处理结束的动画
         public void HandleMiscEndAni()
         {
-            int MaxAni = animationHelper.MaxAniProgress[AnimationState.End];
-            ref float CurAni = ref animationHelper.Auxfloat[AnimationState.End];
+            int MaxAni = AniHelper.MaxAniProgress[AniState.End];
+            ref float CurAni = ref AniHelper.BreakTime[AniState.End];
             float easedProgress = EasingHelper.EaseInCubic(CurAni / (float)MaxAni);
-            float baseRotation = animationHelper.UpDateAngle(-40, -45, Owner.direction, easedProgress);
+            float baseRotation = AniHelper.UpDateAngle(-40, -45, Owner.direction, easedProgress);
 
             RelativeOwnerPosRot = baseRotation + BeginRot;
             Projectile.rotation = RelativeOwnerPosRot;

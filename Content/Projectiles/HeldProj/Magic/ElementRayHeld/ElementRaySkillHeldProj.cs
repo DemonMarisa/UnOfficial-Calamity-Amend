@@ -22,11 +22,11 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
     public class ElementRaySkillHeldProj : ModProjectile, ILocalizedModType
     {
         public override LocalizedText DisplayName => LAPUtilities.GetItemName<ElementRayAlt>();
-        public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/ElementRayHeld/ElementRayHeldProj";
+        public override string Texture => GetInstance<ElementRayHeldProj>().Texture;
         public float ToMouseVector;
         public Player Owner => Main.player[Projectile.owner];
         public Vector2 OffsetToOwner;
-        public AnimationHelper animationHelper = new AnimationHelper(10);
+        public AniHelper AniHelper = new AniHelper(10);
         public float OffsetToOwnerLength;
         public ref float WeaponStates => ref Projectile.ai[0];
         public ref float CanPlayerEnd => ref Projectile.ai[1]; 
@@ -80,8 +80,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         {
             if (Projectile.LAP().FirstFrame)
             {
-                animationHelper.MaxAniProgress[AnimationState.Begin] = 15;
-                animationHelper.MaxAniProgress[AnimationState.End] = 15;
+                AniHelper.MaxAniProgress[AniState.Begin] = 15;
+                AniHelper.MaxAniProgress[AniState.End] = 15;
                 ToMouseVector = Owner.GetPlayerToMouseVector2().ToRotation();
                 OffsetToOwnerLength = 12;
                 OffsetToOwner = new Vector2(OffsetToOwnerLength, 0);
@@ -89,46 +89,46 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         }
         public void HandleAni()
         {
-            if (!animationHelper.HasFinish[AnimationState.Begin])
+            if (!AniHelper.HasFinish[AniState.Begin])
             {
-                if (animationHelper.AniProgress[AnimationState.Begin] < animationHelper.MaxAniProgress[AnimationState.Begin])
-                    animationHelper.AniProgress[AnimationState.Begin]++;
+                if (AniHelper.AniProgress[AniState.Begin] < AniHelper.MaxAniProgress[AniState.Begin])
+                    AniHelper.AniProgress[AniState.Begin]++;
                 HandleBeginAni();
-                if (animationHelper.AniProgress[AnimationState.Begin] >= animationHelper.MaxAniProgress[AnimationState.Begin])
+                if (AniHelper.AniProgress[AniState.Begin] >= AniHelper.MaxAniProgress[AniState.Begin])
                 {
                     if (CanPlayerEnd != 0)
-                        animationHelper.HasFinish[AnimationState.Begin] = true;
+                        AniHelper.HasFinish[AniState.Begin] = true;
                     if (Projectile.owner == Main.myPlayer)
                     {
                         if (ElementalRayUI.BeginFadeOut || CanPlayerEnd != 0)
                         {
-                            animationHelper.HasFinish[AnimationState.Begin] = true;
+                            AniHelper.HasFinish[AniState.Begin] = true;
                             CanPlayerEnd++;
                             Projectile.netUpdate = true;
                         }
                     }
                 }
             }
-            else if (!animationHelper.HasFinish[AnimationState.End])
+            else if (!AniHelper.HasFinish[AniState.End])
             {
-                animationHelper.UpDateAni(AnimationState.End, 25);
+                AniHelper.UpDateAni(AniState.End, 25);
                 HandleEndAni();
                 if (Projectile.owner == Main.myPlayer)
                 {
                     ElementalRayUI.BeginFadeOut = true;
                 }
             }
-            else if (animationHelper.HasFinish[AnimationState.End])
+            else if (AniHelper.HasFinish[AniState.End])
             {
                 Projectile.Kill();
             }
         }
         public void HandleBeginAni()
         {
-            int MaxAni = animationHelper.MaxAniProgress[AnimationState.Begin];
-            int CurAni = animationHelper.AniProgress[AnimationState.Begin];
+            int MaxAni = AniHelper.MaxAniProgress[AniState.Begin];
+            int CurAni = AniHelper.AniProgress[AniState.Begin];
             float easedProgress = EasingHelper.EaseOutCubic(CurAni / (float)MaxAni);
-            float baseRotation = animationHelper.UpDateAngle(45, -145, Owner.direction, easedProgress);
+            float baseRotation = AniHelper.UpDateAngle(45, -145, Owner.direction, easedProgress);
             Projectile.rotation = baseRotation + ToMouseVector;
             if (CurAni == 1)
             {
@@ -140,10 +140,10 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         }
         public void HandleEndAni()
         {
-            int MaxAni = animationHelper.MaxAniProgress[AnimationState.End];
-            int CurAni = animationHelper.AniProgress[AnimationState.End];
+            int MaxAni = AniHelper.MaxAniProgress[AniState.End];
+            int CurAni = AniHelper.AniProgress[AniState.End];
             float easedProgress = EasingHelper.EaseOutCubic(CurAni / (float)MaxAni);
-            float baseRotation = animationHelper.UpDateAngle(-145, 145, Owner.direction, easedProgress);
+            float baseRotation = AniHelper.UpDateAngle(-145, 145, Owner.direction, easedProgress);
             Projectile.rotation = baseRotation + ToMouseVector;
             OffsetToOwnerLength = MathHelper.Lerp(12, -64, easedProgress);
             if (CurAni == 1)

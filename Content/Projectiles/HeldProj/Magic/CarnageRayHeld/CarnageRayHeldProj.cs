@@ -1,4 +1,4 @@
-﻿using LAP.Core.BaseClass.Legacys;
+﻿using LAP.Core.BaseClass.Projectiles;
 using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
@@ -8,40 +8,17 @@ using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
-using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets;
-using UCA.Assets.Effects;
 using UCA.Assets.Sounds;
-using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Projectiles.Magic.Ray;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
 {
     public class CarnageRayHeldProj : BaseHeldProj
     {
-        public override LocalizedText DisplayName => LAPUtilities.GetItemName<CarnageRay>();
-        public Vector2 RotVector => new Vector2(16 * Owner.direction, 7).BetterRotatedBy(Owner.GetPlayerToMouseVector2().ToRotation(), default, 0.5f, 1f);
-
-        public override Vector2 RotPoint => TextureAssets.Projectile[Type].Size() / 2;
-
-        public override Vector2 Posffset => new Vector2(RotVector.X, RotVector.Y) * Owner.direction;
-
-        public override float RotAmount => 0.25f;
-
-        public override float RotOffset => MathHelper.PiOver4;
-
-        // 1f是完全透明
-        public float ShaderOpacity = 1f;
-
-        public int MaxAni = 10;
-
-        public int AniProgress = 0;
-        public override void SetStaticDefaults()
-        {
-            Projectile.AddHeldProj();
-        }
-        public override void SetDefaults()
+        public override Vector2 PositionOffset => new Vector2(16 * Owner.direction, 7).BetterRotatedBy(Owner.GetPlayerToMouseVector2().ToRotation(), default, 0.5f, 1f) * Owner.direction;
+        public override void ExSD()
         {
             Projectile.width = 66;
             Projectile.height = 66;
@@ -51,71 +28,42 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.netImportant = true;
+            Projectile.Opacity = 0f;
+            RotAmount = 0.25f;
         }
         public override void SendExtraAI(BinaryWriter writer)
         {
-            writer.Write(ShaderOpacity);
+            writer.Write(Projectile.Opacity);
         }
         public override void ReceiveExtraAI(BinaryReader reader)
         {
-            ShaderOpacity = reader.ReadSingle();
+            Projectile.Opacity = reader.ReadSingle();
         }
-
-        public override bool StillInUse()
+        public override void ExAI()
         {
-            return AniProgress == MaxAni && Main.mouseLeft;
-        }
-
-        public override void HoldoutAI()
-        {
-            if (Main.mouseRight)
-                return;
-
-            if (AniProgress < MaxAni)
-                return;
-
-            if (UseDelay <= 0 && Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.HeldItem.mana * Owner.manaCost), true, false))
+            RotAmount = 0.25f;
+            if (Owner.LAP().MouseLeft && !Owner.LAP().MouseRight)
             {
-                SoundEngine.PlaySound(SoundsMenu.CarnageLeftShoot, Projectile.Center);
-                // 常规开火
-                // 这里用发射的弹幕AI[0]是否为1来确定是否为主射线
-                // ai[0]为1时是主射线
-                Vector2 firePos = Projectile.Center + new Vector2(40, 0).RotatedBy(Projectile.rotation);
+                if (UseDelay <= 0 && Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.HeldItem.mana * Owner.manaCost), true, false))
+                {
+                    SoundEngine.PlaySound(SoundsMenu.CarnageLeftShoot, Projectile.Center);
+                    Vector2 firePos = Projectile.Center + new Vector2(40, 0).RotatedBy(Projectile.rotation);
+                    SoundEngine.PlaySound(SoundsMenu.NightRayHeavyAttack, Projectile.Center);
+                    if (Projectile.IsLocalPlayer())
+                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), firePos, Projectile.rotation.ToRotationVector2() * 3, ProjectileType<CarnageEnergy>(), Projectile.damage, Projectile.knockBack, Owner.whoAmI, 1);
+                    Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.1f;
 
-                SoundEngine.PlaySound(SoundsMenu.NightRayHeavyAttack, Projectile.Center);
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), firePos, Projectile.rotation.ToRotationVector2() * 3, ModContent.ProjectileType<CarnageEnergy>(), Projectile.damage, Projectile.knockBack, Owner.whoAmI, 1);
-                Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.06f * Owner.direction;
-
-                UseDelay = Owner.HeldItem.useTime;
+                    UseDelay = Owner.ApplyWeaponAttackSpeed(Owner.ActiveItem(), Owner.HeldItem.useTime, Owner.HeldItem.useTime / 2);
+                }
             }
-        }
-
-        public override void PostAI()
-        {
             float baseRotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
             float directionVerticality = MathF.Abs(Projectile.velocity.X);
             Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, baseRotation + Owner.direction * directionVerticality * 1.5f);
             Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, baseRotation + Owner.direction * directionVerticality * 1.2f);
-            if (Projectile.owner == Main.myPlayer)
-            {
-                if ((Main.mouseLeft || Active) && !LAPUtilities.JustPressRightClick())
-                {
-                    if (AniProgress < MaxAni)
-                        AniProgress++;
-                }
-                else
-                {
-                    if (AniProgress > 0)
-                        AniProgress--;
-                }
+            Projectile.Opacity = MathHelper.Lerp(Projectile.Opacity, 1f, 0.16f);
 
-                ShaderOpacity = MathHelper.Lerp(0.8f, 0f, EasingHelper.EaseInCubic(AniProgress / (float)MaxAni));
-            }
-        }
-
-        public override bool CanDel()
-        {
-            return AniProgress == 0 && !Main.mouseLeft;
+            if (Owner.JustPressRightClick() && UseDelay == 0)
+                Projectile.Kill();
         }
         public override void OnKill(int timeLeft)
         {
@@ -123,8 +71,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
             Owner.itemTime = 0;
             Owner.itemAnimation = 0;
         }
-
-
         public override bool PreDraw(ref Color lightColor)
         {
             Main.spriteBatch.End();
@@ -138,16 +84,11 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
 
-            LAPUtilities.FastApplyEdgeMeltsShader(ShaderOpacity, Weapontexture.Size(), Color.Red, 0.01f, 0);
+            LAPUtilities.FastApplyEdgeMeltsShader(1 - Projectile.Opacity, Weapontexture.Size(), Color.Red, 0.01f, 0);
 
-            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            float drawRotation = Projectile.rotation + (Owner.direction == -1 ? MathHelper.Pi : 0f) + RotOffset * Owner.direction;
+            Projectile.GetProjDrawInfo_Staff(out Texture2D texture, out Vector2 drawPosition, out float drawRotation, out Vector2 rotationPoint, out SpriteEffects flipSprite);
 
-            Vector2 rotationPoint = RotPoint;
-
-            SpriteEffects flipSprite = Owner.direction * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-
-            Main.spriteBatch.Draw(Weapontexture, drawPosition, null, lightColor, drawRotation, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, default);
+            Main.spriteBatch.Draw(texture, drawPosition, null, lightColor, drawRotation, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, default);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);

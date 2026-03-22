@@ -3,6 +3,7 @@ using LAP.Core.AnimationHandle;
 using LAP.Core.Enums;
 using LAP.Core.Graphics.Primitives.Trail;
 using LAP.Core.SpecificEffectManagers;
+using LAP.Core.StateMachine.SynedHitEffect;
 using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
@@ -17,10 +18,10 @@ using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
 using UCA.Assets.Sounds;
+using UCA.Content.HitEffect;
 using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Particiles;
 using UCA.Content.Paths;
-using UCA.Content.Projectiles.Misc;
 using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
@@ -34,7 +35,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
         public bool CanUpdateAngle = true;
         public int SwordLength = 900;
         public float TargetRot;
-        public AnimationHelper animationHelper = new AnimationHelper(3);
+        public AniHelper AniHelper = new AniHelper(3);
         public List<Vector2> OldAimPos = [];
         public List<float> OldRot = [];
         public List<float> OldScale = [];
@@ -84,9 +85,9 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
             {
                 SoundEngine.PlaySound(SoundsMenu.MAGNOLIASPRelease, Projectile.Center);
                 SoundEngine.PlaySound(SoundsMenu.MagicStaffCharge, Projectile.Center);
-                animationHelper.MaxAniProgress[AnimationState.Begin] = 30; 
-                animationHelper.MaxAniProgress[AnimationState.Middle] = 50;
-                animationHelper.MaxAniProgress[AnimationState.End] = 300;
+                AniHelper.MaxAniProgress[AniState.Begin] = 30; 
+                AniHelper.MaxAniProgress[AniState.Middle] = 50;
+                AniHelper.MaxAniProgress[AniState.End] = 300;
                 TargetRot = Owner.GetPlayerToMouseVector2().ToRotation();
             }
             Projectile.SetHeldProj(Owner, false, CanUpdateAngle);
@@ -103,24 +104,24 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
         #region 对动画的处理
         public void HandleAni()
         {
-            if (!animationHelper.HasFinish[AnimationState.Begin]) {
+            if (!AniHelper.HasFinish[AniState.Begin]) {
                 HandleBeginAni();
-                animationHelper.UpDateAni(AnimationState.Begin, 30);
+                AniHelper.UpDateAni(AniState.Begin, 30);
             }
-            else if (!animationHelper.HasFinish[AnimationState.Middle]) {
+            else if (!AniHelper.HasFinish[AniState.Middle]) {
                 HandleMiddleAni();
-                animationHelper.UpDateAni(AnimationState.Middle);
+                AniHelper.UpDateAni(AniState.Middle);
             }
-            else if (!animationHelper.HasFinish[AnimationState.End]) {
+            else if (!AniHelper.HasFinish[AniState.End]) {
                 HandleEndAni();
-                animationHelper.UpDateAni(AnimationState.End);
+                AniHelper.UpDateAni(AniState.End);
             }
             else Projectile.Kill();
         }
         public void HandleBeginAni()
         {
-            float easedProgress = EasingHelper.EaseOutCubic(animationHelper.GetProgress(AnimationState.Begin));
-            float baseRotation = animationHelper.UpDateAngle(-45, -145, Owner.direction, easedProgress);
+            float easedProgress = EasingHelper.EaseOutCubic(AniHelper.GetProgress(AniState.Begin));
+            float baseRotation = AniHelper.UpDateAngle(-45, -145, Owner.direction, easedProgress);
             Opacity = easedProgress;
             // 确定椭圆的点
             Vector2 TargetPos = new Vector2(SwordLength, 0).BetterRotatedBy(baseRotation, SourceOffset, 1, XScale);
@@ -156,10 +157,10 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
             CanHit = true;
             CanUpdateAngle = false;
             Projectile.extraUpdates = 10;
-            float easedProgress = animationHelper.GetProgress(AnimationState.Middle);
+            float easedProgress = AniHelper.GetProgress(AniState.Middle);
             if (easedProgress == 0)
                 SoundEngine.PlaySound(SoundsMenu.SoulGreatSwordSwimg with { Volume = 0.6f, Pitch = 0f });
-            float baseRotation = animationHelper.UpDateAngle(-145, 125, Owner.direction, easedProgress);
+            float baseRotation = AniHelper.UpDateAngle(-145, 125, Owner.direction, easedProgress);
             // 确定椭圆的点
             Vector2 TargetPos = new Vector2(SwordLength, 0).BetterRotatedBy(baseRotation, SourceOffset, 1, XScale);
             Projectile.scale = TargetPos.Distance(Vector2.Zero) / (float)SwordLength;
@@ -195,9 +196,9 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
         public void HandleEndAni()
         {
             CanHit = false;
-            float easedProgress = EasingHelper.EaseOutCubic(animationHelper.GetProgress(AnimationState.End));
+            float easedProgress = EasingHelper.EaseOutCubic(AniHelper.GetProgress(AniState.End));
             Opacity = 1 - easedProgress;
-            float baseRotation = animationHelper.UpDateAngle(125, 145, Owner.direction, easedProgress);
+            float baseRotation = AniHelper.UpDateAngle(125, 145, Owner.direction, easedProgress);
             // 确定椭圆的点
             Vector2 TargetPos = new Vector2(SwordLength, 0).BetterRotatedBy(baseRotation, SourceOffset, 1, XScale);
             Projectile.scale = TargetPos.Distance(Vector2.Zero) / (float)SwordLength;
@@ -222,7 +223,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
                 Owner.SetImmuneTimeForAllTypes(40);
             }
             if (HitCount < 5)
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<UseForOnHitNPCProj>(), 0, 0, Projectile.owner, Type);
+                HitEffectManager.SpawnHitEffect(HitEffectManager.HEType<SoulPiercerSkillHit>(), Projectile.owner, Projectile.GetSource_FromThis(), target.Center, Vector2.Zero);
             HitCount++;
         }
         public override bool PreDraw(ref Color lightColor)

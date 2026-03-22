@@ -30,9 +30,9 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             FilpAuxFragmentOffset = new Vector2(0, 0);
             SolarBladeXOffset = 128;
 
-            animationHelper.MaxAniProgress[AnimationState.Begin] = 120;
-            animationHelper.MaxAniProgress[AnimationState.Middle] = 5;
-            animationHelper.MaxAniProgress[AnimationState.End] = 120;
+            AniHelper.MaxAniProgress[AniState.Begin] = 120;
+            AniHelper.MaxAniProgress[AniState.Middle] = 5;
+            AniHelper.MaxAniProgress[AniState.End] = 120;
             SoundEngine.PlaySound(SoundsMenu.MAGNOLIASPRelease, Projectile.Center);
             SoundEngine.PlaySound(SoundsMenu.SoulStreamCharge, Projectile.Center);
         }
@@ -42,24 +42,24 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             BeginRot = ToMouseVector;
             RelativeOwnerPos = new Vector2(0, 6 * Owner.direction);
 
-            if (!animationHelper.HasFinish[AnimationState.Begin])
+            if (!AniHelper.HasFinish[AniState.Begin])
             {
-                animationHelper.UpDateAni(AnimationState.Begin, 40);
+                AniHelper.UpDateAni(AniState.Begin, 40);
                 HandleStarDustBeginAni();
-                if (animationHelper.Auxfloat[AnimationState.Begin] > 0)
+                if (AniHelper.BreakTime[AniState.Begin] > 0)
                 {
                     BallScale = MathHelper.Lerp(BallScale, 0f, 0.02f);
                 }
             }
-            else if (!animationHelper.HasFinish[AnimationState.Middle])
+            else if (!AniHelper.HasFinish[AniState.Middle])
             {
-                animationHelper.UpDateAni(AnimationState.Middle, 0);
+                AniHelper.UpDateAni(AniState.Middle, 0);
                 HandleStarDustMiddleAni();
             }
-            else if (!animationHelper.HasFinish[AnimationState.End])
+            else if (!AniHelper.HasFinish[AniState.End])
             {
                 UseSlowRot = true;
-                animationHelper.UpDateAni(AnimationState.End, 0);
+                AniHelper.UpDateAni(AniState.End, 0);
                 HandleStarDustEndAni();
             }
             else
@@ -70,10 +70,10 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         #region 处理开始动画
         public void HandleStarDustBeginAni()
         {
-            int MaxAni = animationHelper.MaxAniProgress[AnimationState.Begin];
-            int CurAni = animationHelper.AniProgress[AnimationState.Begin];
+            int MaxAni = AniHelper.MaxAniProgress[AniState.Begin];
+            int CurAni = AniHelper.AniProgress[AniState.Begin];
             float easedProgress = EasingHelper.EaseOutCubic(CurAni / (float)MaxAni);
-            float baseRotation = animationHelper.UpDateAngle(0, 45, Owner.direction, easedProgress, 0);
+            float baseRotation = AniHelper.UpDateAngle(0, 45, Owner.direction, easedProgress, 0);
             RelativeOwnerPosRot = baseRotation + ToMouseVector;
             Projectile.rotation = RelativeOwnerPosRot;
             Projectile.Center += new Vector2(baseRotation, 0).RotatedBy(BeginRot) * -25 * Owner.direction;
@@ -92,10 +92,10 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         #region 处理中间动画
         public void HandleStarDustMiddleAni()
         {
-            int MaxAni = animationHelper.MaxAniProgress[AnimationState.Middle];
-            int CurAni = animationHelper.AniProgress[AnimationState.Middle];
+            int MaxAni = AniHelper.MaxAniProgress[AniState.Middle];
+            int CurAni = AniHelper.AniProgress[AniState.Middle];
             float easedProgress = EasingHelper.EaseInCubic(CurAni / (float)MaxAni);
-            float baseRotation = animationHelper.UpDateAngle(45, 0, Owner.direction, easedProgress, 0);
+            float baseRotation = AniHelper.UpDateAngle(45, 0, Owner.direction, easedProgress, 0);
             RelativeOwnerPosRot = baseRotation + ToMouseVector;
             Projectile.rotation = RelativeOwnerPosRot;
             Projectile.Center += new Vector2(baseRotation, 0).RotatedBy(BeginRot) * -25 * Owner.direction;
@@ -118,8 +118,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         #region 处理结束动画
         public void HandleStarDustEndAni()
         {
-            int MaxAni = animationHelper.MaxAniProgress[AnimationState.End];
-            int CurAni = animationHelper.AniProgress[AnimationState.End];
+            int MaxAni = AniHelper.MaxAniProgress[AniState.End];
+            int CurAni = AniHelper.AniProgress[AniState.End];
             RelativeOwnerPosRot = BeginRot;
             Projectile.rotation = RelativeOwnerPosRot;
 

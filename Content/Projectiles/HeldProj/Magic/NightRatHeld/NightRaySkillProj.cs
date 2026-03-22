@@ -107,9 +107,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
                 {
                     foreach (Player playere in Main.ActivePlayers)
                     {
-                        if (playere.Distance(Owner.Center) < 300)
+                        if (playere.Distance(Owner.Center) < 200)
                         {
-                            playere.AddCD(LAPContent.CDType<NightBoost>(), 30 * 60, false);
                             for (int i = 0; i < 25; i++)
                             {
                                 ShadowMetaBall.SpawnParticle(Owner.Center - new Vector2(0, -Owner.height / 2) + new Vector2(Main.rand.Next(-10, 10), Main.rand.Next(-2, 2)), Vector2.UnitX * i * 0.3f, Main.rand.NextFloat(0.1f, 0.15f));
@@ -126,9 +125,9 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
                             }
                         }
                     }
-                    if (Main.LocalPlayer.Center.Distance(Owner.Center) < 300)
+                    if (Main.LocalPlayer.Center.Distance(Owner.Center) < 200)
                     {
-                        Main.LocalPlayer.AddCD(LAPContent.CDType<NightBoost>(), 30 * 60, false);
+                        Main.LocalPlayer.AddCD(LAPContent.CDType<NightBoost>(), 30 * 60);
                         Main.LocalPlayer.UCA().NightShieldHP = UCAPlayer.NightShieldMaxHP;
                     }
                 }

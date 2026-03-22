@@ -1,4 +1,5 @@
-﻿using Terraria.ModLoader;
+﻿using LAP.Core.Utilities;
+using Terraria.ModLoader;
 
 namespace UCA.Core.GlobalInstance.Players
 {
@@ -25,14 +26,6 @@ namespace UCA.Core.GlobalInstance.Players
 
             if (NightShieldHP < 0)
                 NightShieldHP = 0;
-
-            // 充满后才会激活护盾
-            if (NightShieldHP >= NightShieldMaxHP)
-                NightShieldCanDefense = true;
-
-            // 如果护盾归零则失效，必须充满才可以抵挡伤害
-            if (NightShieldHP <= 0)
-                NightShieldCanDefense = false;
         }
         public void UpdateTerraRayCD()
         {
@@ -58,6 +51,20 @@ namespace UCA.Core.GlobalInstance.Players
                 TerraRayUseSkillCount--;
         }
         #endregion
+        #endregion
+        #region PostUpdate的Reset
+        public void Reset_PostUpdate()
+        {
+            ResetRay_PostUpdate();
+        }
+        public void ResetRay_PostUpdate()
+        {
+            if (TerraRestore)
+            {
+                Player.NCHeal(Player.statLifeMax2 / 4);
+                TerraRestore = false;
+            }
+        }
         #endregion
     }
 }

@@ -146,8 +146,10 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             for (int i = 0; i < FirePos.Count; i++)
             {
-                NPC npc = LAPUtilities.FindClosestTarget(Projectile.Center, 1500, true);
                 GenStar(FirePos[i], MathHelper.PiOver2 + Projectile.rotation, 1f);
+                if (!Projectile.IsLocalPlayer())
+                    return;
+                NPC npc = LAPUtilities.FindClosestTarget(Projectile.Center, 1500, true);
                 if (npc != null)
                 {
                     float DistanceToNPC = Vector2.Distance(FirePos[i], npc.Center);
@@ -167,6 +169,12 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 Vector2 genPos = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitX) * 350f * (Projectile.ai[1]);
                 if (Projectile.ai[1] == 0)
                     genPos = Projectile.Center + new Vector2(30, 0).RotatedBy(Projectile.rotation);
+                else
+                    GenStar(genPos, MathHelper.PiOver2 + Projectile.rotation, 1f);
+                Projectile.ai[1]++;
+                FirePos.Add(genPos);
+                if (!Projectile.IsLocalPlayer())
+                    return;
                 NPC npc = LAPUtilities.FindClosestTarget(genPos, 1500, true);
                 if (npc is not null)
                 {
@@ -175,12 +183,6 @@ namespace UCA.Content.Projectiles.Magic.Ray
                     Vector2 direction = (npc.Center + npc.velocity * PredictMult - genPos).SafeNormalize(Vector2.Zero) * 12;
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), genPos, direction, ModContent.ProjectileType<TerraEnergy>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
                 }
-                FirePos.Add(genPos);
-
-                if (Projectile.ai[1] != 0)
-                    GenStar(genPos, MathHelper.PiOver2 + Projectile.rotation, 1f);
-
-                Projectile.ai[1]++;
             }
         }
         #endregion

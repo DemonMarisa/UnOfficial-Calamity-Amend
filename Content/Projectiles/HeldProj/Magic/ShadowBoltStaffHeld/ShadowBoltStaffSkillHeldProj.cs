@@ -22,7 +22,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ShadowBoltStaffHeld
         public override LocalizedText DisplayName => LAPUtilities.GetItemName<ShadowBoltStaffAlt>();
         public override string Texture => GetInstance<ShadowBoltStaffHeldProj>().Texture;
         public Player Owner => Main.player[Projectile.owner];
-        public AnimationHelper animationHelper = new AnimationHelper(3);
+        public AniHelper AniHelper = new AniHelper(3);
         public BasePartInfo ShadowOrb;
         public float Opacity = 1f;
         public Vector2 ProjCenterOffset = Vector2.Zero;
@@ -57,8 +57,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ShadowBoltStaffHeld
                 Texture2D texture2d = UCATextureRegister.ShadowBoltStaffOrb.Value;
                 ShadowOrb = new BasePartInfo(texture2d, Vector2.Zero, Vector2.Zero, 0, texture2d.Size() / 2);
                 BeginRot = Owner.GetToMouseVector2(Owner.Center).ToRotation();
-                animationHelper.MaxAniProgress[AnimationState.Begin] = 30;
-                animationHelper.MaxAniProgress[AnimationState.End] = 100;
+                AniHelper.MaxAniProgress[AniState.Begin] = 30;
+                AniHelper.MaxAniProgress[AniState.End] = 100;
             }
             if (!Owner.active || Owner.dead)
                 Projectile.Kill();
@@ -83,15 +83,15 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ShadowBoltStaffHeld
         #region 处理动画
         public void HandleAni()
         {
-            if (!animationHelper.HasFinish[AnimationState.Begin])
+            if (!AniHelper.HasFinish[AniState.Begin])
             {
-                animationHelper.UpDateAni(AnimationState.Begin, 10);
+                AniHelper.UpDateAni(AniState.Begin, 10);
                 HandleBeginAni();
             }
-            else if (!animationHelper.HasFinish[AnimationState.End])
+            else if (!AniHelper.HasFinish[AniState.End])
             {
                 Projectile.extraUpdates = 10;
-                animationHelper.UpDateAni(AnimationState.End);
+                AniHelper.UpDateAni(AniState.End);
                 HandleEndAni();
             }
             else
@@ -102,8 +102,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ShadowBoltStaffHeld
         #region 处理开始动画
         public void HandleBeginAni()
         {
-            int MaxAni = animationHelper.MaxAniProgress[AnimationState.Begin];
-            int CurAni = animationHelper.AniProgress[AnimationState.Begin];
+            int MaxAni = AniHelper.MaxAniProgress[AniState.Begin];
+            int CurAni = AniHelper.AniProgress[AniState.Begin];
             // 使用缓动函数让动画更自然
             float easedProgress = EasingHelper.EaseOutCubic(CurAni / (float)MaxAni);
             // 设置起始与结束角度
@@ -139,8 +139,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ShadowBoltStaffHeld
         #region 处理结束动画
         public void HandleEndAni()
         {
-            int MaxAni = animationHelper.MaxAniProgress[AnimationState.End];
-            int CurAni = animationHelper.AniProgress[AnimationState.End];
+            int MaxAni = AniHelper.MaxAniProgress[AniState.End];
+            int CurAni = AniHelper.AniProgress[AniState.End];
             // 使用缓动函数让动画更自然
             float easedProgress = EasingHelper.EaseInCubic(CurAni / (float)MaxAni);
             // 设置起始与结束角度

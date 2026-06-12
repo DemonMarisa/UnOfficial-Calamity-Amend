@@ -5,7 +5,7 @@ using Terraria;
 using Terraria.ModLoader;
 using UCA.Assets;
 using LAP.Core.ParticleSystem;
-
+using LAP.Core.Enums;
 namespace UCA.Content.Particiles
 {
     public class BloodDrop : BaseParticle

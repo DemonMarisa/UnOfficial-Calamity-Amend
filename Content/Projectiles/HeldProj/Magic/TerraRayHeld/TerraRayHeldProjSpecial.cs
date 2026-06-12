@@ -1,4 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LAP.Assets.TextureRegister;
+using LAP.Core.AnimationHandle;
+using LAP.Core.Enums;
+using LAP.Core.Utilities;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -13,9 +17,6 @@ using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Particiles;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
-using LAP.Core.AnimationHandle;
-using LAP.Core.Utilities;
-using LAP.Core.Enums;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
 {
@@ -354,7 +355,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
 
-            Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
+            Main.graphics.GraphicsDevice.Textures[1] = LAPTextureRegister.Noise.Value;
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
 
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;

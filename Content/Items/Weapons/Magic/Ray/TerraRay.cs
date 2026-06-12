@@ -11,13 +11,11 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Common.Misc;
-using UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld;
 using UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld;
 using UCA.Content.UCACooldowns;
 using UCA.Core.BaseClass;
 using UCA.Core.GlobalInstance.Players;
 using UCA.Core.Utilities;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace UCA.Content.Items.Weapons.Magic.Ray
 {
@@ -49,6 +47,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
 
             Item.noUseGraphic = true;
             Item.channel = true;
+
             Item.LAP().UseWeaponSkill = true;
             Item.LAP().DrawUCASmallIcon = true;
             Item.LAP().UseCustomWeaponSkill = true;

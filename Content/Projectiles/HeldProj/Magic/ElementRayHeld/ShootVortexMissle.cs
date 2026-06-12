@@ -9,6 +9,7 @@ using UCA.Content.Particiles;
 using UCA.Content.Projectiles.Magic.Ray;
 using UCA.Content.UCACooldowns;
 using LAP.Core.Enums;
+using LAP.Content.Particles;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
 {

@@ -88,14 +88,9 @@ namespace UCA.Content.Projectiles.Magic.Ray
             else
             {
                 if (Projectile.velocity.X != oldVelocity.X)
-                {
                     Projectile.velocity.X = 0f - oldVelocity.X;
-                }
-
                 if (Projectile.velocity.Y != oldVelocity.Y)
-                {
                     Projectile.velocity.Y = 0f - oldVelocity.Y;
-                }
             }
             if (OldCollidePos != Vector2.Zero)
             {

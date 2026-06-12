@@ -1,25 +1,22 @@
-﻿using LAP.Content.Configs;
+﻿using LAP.Assets.TextureRegister;
+using LAP.Content.Configs;
+using LAP.Core.Presets.Content;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.WorldBuilding;
-using UCA.Assets;
 using UCA.Assets.Sounds;
-using UCA.Content.Configs;
 using UCA.Content.Particiles;
 using UCA.Core.BaseClass;
-using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
     public class PlasmaSpark : BaseMagicProj
     {
-        public override string Texture => UCATextureRegister.CollectableLightPath;
+        public override string Texture => LAPTextureRegister.InvisibleTexturePath;
 
         public bool CanHit = true;
 
@@ -83,13 +80,13 @@ namespace UCA.Content.Projectiles.Magic.Ray
                         if (Projectile.timeLeft % 2 == 0)
                         {
                             Color RandomColor = Color.Lerp(Color.Violet, Color.Purple, Main.rand.NextFloat(0, 1));
-                            new MediumGlowBall(Projectile.Center, -Projectile.velocity, RandomColor, 180, 0, 1, 0.12f, Main.rand.NextFloat(0.2f, 0.5f)).Spawn();
+                            ParticlePreset.NewTGlowBall(Projectile.Center, -Projectile.velocity, RandomColor, 180, 0.12f, Main.rand.NextFloat(0.2f, 0.5f));
                         }
                     }
                     else
                     {
                         Color RandomColor = Color.Lerp(Color.Violet, Color.Purple, Main.rand.NextFloat(0, 1));
-                        new MediumGlowBall(Projectile.Center + Projectile.velocity, -Projectile.velocity, RandomColor, 180, 0, 1, 0.12f, Main.rand.NextFloat(0.2f, 0.5f)).Spawn();
+                        ParticlePreset.NewTGlowBall(Projectile.Center, -Projectile.velocity, RandomColor, 180, 0.12f, Main.rand.NextFloat(0.2f, 0.5f));
                     }
                 }
                 else
@@ -97,7 +94,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                     if (Projectile.timeLeft % 4 == 0)
                     {
                         Color RandomColor = Color.Lerp(Color.Violet, Color.Purple, Main.rand.NextFloat(0, 1));
-                        new MediumGlowBall(Projectile.Center + Projectile.velocity, -Projectile.velocity, RandomColor, 180, 0, 1, 0.12f, Main.rand.NextFloat(0.2f, 0.5f)).Spawn();
+                        ParticlePreset.NewTGlowBall(Projectile.Center, -Projectile.velocity, RandomColor, 180, 0.12f, Main.rand.NextFloat(0.2f, 0.5f));
                     }
                 }
             }

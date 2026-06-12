@@ -137,3 +137,8 @@ SoulPiercerAlt: {
 		Hitting an enemy will grant you 40 immunity frames 
 		'''
 }
+
+VividClarityAlt: {
+	DisplayName: Vivid Clarity Alt
+	Tooltip: ""
+}

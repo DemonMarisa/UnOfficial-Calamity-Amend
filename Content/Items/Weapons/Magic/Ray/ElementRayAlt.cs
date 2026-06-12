@@ -3,6 +3,7 @@ using LAP.Common.Utilities;
 using LAP.Core.Enums;
 using LAP.Core.Keybind;
 using LAP.Core.LAPSource;
+using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -13,10 +14,9 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Common.Misc;
-using UCA.Content.GUI;
+using UCA.Content.GUI.ERayUI;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld;
-using UCA.Content.Projectiles.HeldProj.Melee.StormRuler;
 using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
 
@@ -66,7 +66,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
         }
         public override bool CanUseItem( Player player)
         {
-            if (ElementalRayUI.Active)
+            if (LAPContent.GetUI<ERayUI>().Active)
                 return false;
             return player.ownedProjectileCounts[ModContent.ProjectileType<ElementRayHeldProj>()] < 1;
         }
@@ -134,17 +134,11 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             }
             return false;
         }
+        public override bool PreCheckMana(Player player, int manaCost) => false;
         public override void WeaponSkill(Player player, EntitySource_ItemUse_WeaponSkill source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             if (player.ownedProjectileCounts[ModContent.ProjectileType<ElementRayHeldProj>()] < 1 && player.ownedProjectileCounts[ModContent.ProjectileType<ElementRaySpecialHeldProj>()] < 1)
             {
-                if (ElementalRayUI.Active)
-                    ElementalRayUI.BeginFadeOut = true;
-                else
-                {
-                    ElementalRayUI.BeginFadeOut = false;
-                    ElementalRayUI.Active = true;
-                }
                 if (player.ownedProjectileCounts[ModContent.ProjectileType<ElementRaySkillHeldProj>()] > 0)
                     return;
                 Projectile.NewProjectile(source, position, velocity, type, 0, 0, player.whoAmI, player.UCA().ElementalRayStates);
@@ -230,7 +224,6 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
                     AddIngredient<TerraRay>().
                     AddIngredient(ItemID.LunarBar, 5).
                     AddIngredient(CalMaterialsID.LifeAlloyID, 5).
-                    AddIngredient(CalMaterialsID.GalacticaSingularityID, 5).
                     AddTile(TileID.LunarCraftingStation).
                     Register();
             }

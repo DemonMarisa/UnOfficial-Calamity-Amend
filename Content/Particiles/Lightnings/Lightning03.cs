@@ -1,12 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using UCA.Assets;
 using LAP.Core.ParticleSystem;
-using UCA.Core.Utilities;
-using static tModPorter.ProgressUpdate;
 using LAP.Core.Utilities;
+using LAP.Core.Enums;
 
 namespace UCA.Content.Particiles.Lightnings
 {

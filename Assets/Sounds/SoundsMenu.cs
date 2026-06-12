@@ -46,36 +46,9 @@ namespace UCA.Assets.Sounds
         #region 马格诺利亚
         public static SoundStyle MAGNOLIASPRelease => new($"{MAGNOLIASoundRoute}/MAGNOLIASPRelease") { Volume = 0.4f, Pitch = Main.rand.NextFloat(0.1f, 0.2f) };
         #endregion
-
-        #region 锤子们
-        private static SoundStyle Smash_AirHeavy1 => new($"{WeaponsSoundRoute}/Rogue/ThrownHammer/{nameof(Smash_AirHeavy1)}");
-        private static SoundStyle Smash_AirHeavy2 => new($"{WeaponsSoundRoute}/Rogue/ThrownHammer/{nameof(Smash_AirHeavy2)}");
-        public static SoundStyle Smash_GroundHeavy => new($"{WeaponsSoundRoute}/Rogue/ThrownHammer/{nameof(Smash_GroundHeavy)}");
-        private static SoundStyle Hammer_Shoot1 => new($"{WeaponsSoundRoute}/Rogue/ThrownHammer/{nameof(Hammer_Shoot1)}");
-        private static SoundStyle Hammer_Shoot2 => new($"{WeaponsSoundRoute}/Rogue/ThrownHammer/{nameof(Hammer_Shoot2)}");
-        private static SoundStyle Hammer_Shoot3 => new($"{WeaponsSoundRoute}/Rogue/ThrownHammer/{nameof(Hammer_Shoot3)}");
-        private static SoundStyle Atom_Strike1 => new($"{WeaponsSoundRoute}/Rogue/{nameof(Atom_Strike1)}");
-        private static SoundStyle Atom_Strike2 => new($"{WeaponsSoundRoute}/Rogue/{nameof(Atom_Strike2)}");
-        private static SoundStyle Atom_Strike3 => new($"{WeaponsSoundRoute}/Rogue/{nameof(Atom_Strike3)}");
-        public static SoundStyle Pipes => new($"{WeaponsSoundRoute}/Rogue/ThrownHammer/{nameof(Pipes)}");
-        public static SoundStyle Mana_Toss=> new($"{WeaponsSoundRoute}/Rogue/{nameof(Mana_Toss)}");
-        public static SoundStyle[] Hammer_Shoot =>
-            [
-                Hammer_Shoot1,
-                Hammer_Shoot2,
-                Hammer_Shoot3,
-            ];
-        public static SoundStyle[] Smash_AirHeavy =>
-            [
-                Smash_AirHeavy1,
-                Smash_AirHeavy2,
-            ];
-        public static SoundStyle[] Atom_Strike =>
-            [
-                Atom_Strike1,
-                Atom_Strike2,
-                Atom_Strike3,
-            ];
+        #region 耀界
+        public static SoundStyle VividClarityBeamAppear => new($"{WeaponsSoundRoute}/Magic/VividClarity/VividClarityBeamAppear") { Volume = 1f, Pitch = Main.rand.NextFloat(0.15f, 0.6f) };
+        public static SoundStyle VividClarityShoot => new($"{WeaponsSoundRoute}/Magic/VividClarity/VividClarityShoot") { Volume = 0.7f, Pitch = Main.rand.NextFloat(0.2f, 0.5f) };
         #endregion
     }
 }

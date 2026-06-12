@@ -3,8 +3,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using UCA.Assets;
 using LAP.Core.ParticleSystem;
-using UCA.Core.Utilities;
 using LAP.Core.Utilities;
+using LAP.Core.Enums;
 
 namespace UCA.Content.Particiles
 {

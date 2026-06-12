@@ -1,4 +1,5 @@
-﻿using LAP.Core.BaseClass.Projectiles;
+﻿using LAP.Assets.TextureRegister;
+using LAP.Core.BaseClass.Projectiles;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -153,7 +154,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
             Main.graphics.GraphicsDevice.Textures[0] = texture;
             Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
-            Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
+            Main.graphics.GraphicsDevice.Textures[1] = LAPTextureRegister.Noise.Value;
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
 
             LAPUtilities.FastApplyEdgeMeltsShader(1 - Projectile.Opacity, texture.Size(), Color.DarkViolet, 0.01f, 0);

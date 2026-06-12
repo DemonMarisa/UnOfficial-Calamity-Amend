@@ -4,9 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
-
 using UCA.Assets;
-using UCA.Assets.Effects;
 
 namespace UCA.Content.MetaBalls
 {
@@ -68,6 +66,6 @@ namespace UCA.Content.MetaBalls
                 }
             }
         }
-        public override float BGTimeMult => 4;
+        public override float BGTimeMult => 1;
     }
 }

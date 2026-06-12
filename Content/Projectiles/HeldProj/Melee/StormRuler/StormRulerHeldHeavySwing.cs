@@ -20,7 +20,6 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using Terraria.WorldBuilding;
 using UCA.Assets;
 using UCA.Content.Items.Weapons.Melee.GreatSword;
 using UCA.Content.Projectiles.Melee.NormalProj;
@@ -234,6 +233,8 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
         }
         public void DrawBlade(Color lightColor)
         {
+            if (Projectile.LAP().FirstFrame)
+                return;
             Projectile.GetProjDrawInfo_Melee(out Texture2D texture, out Vector2 _, out float drawRotation, out Vector2 rotationPoint, out SpriteEffects flipSprite);
             Vector2 drawPosition = Projectile.Center - Main.screenPosition + Vector2.UnitX.RotatedBy(Projectile.rotation + ProjRotOffset) * -24;
             Main.spriteBatch.Draw(texture, drawPosition, null, lightColor, drawRotation + ProjRotOffset, rotationPoint, Projectile.scale * 1.5f, flipSprite, 0f);
@@ -255,7 +256,7 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
             if (!LAPConfig.Instance.PerformanceMode)
             {
                 Texture2D texture2 = UCATextureRegister.Aura_01.Value;
-                Effect effect2 = LAPShaderRegister.AlphaFade_ACut_OColor.Value;
+                Effect effect2 = LAPShaderRegister.AlphaFade_Noise_OColor.Value;
                 effect2.Parameters["uFadeoutLeftLength"].SetValue(0.1f);
                 effect2.Parameters["uFadeinRigtLength"].SetValue(0.1f);
                 effect2.Parameters["UVOffset"].SetValue(new Vector2(Main.GlobalTimeWrappedHourly * 0.3f, 0));

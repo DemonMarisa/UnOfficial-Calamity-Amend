@@ -1,4 +1,5 @@
-﻿using LAP.Core.AnimationHandle;
+﻿using LAP.Assets.TextureRegister;
+using LAP.Core.AnimationHandle;
 using LAP.Core.BaseClass.Projectiles;
 using LAP.Core.Enums;
 using LAP.Core.Graphics.PixelatedRender;
@@ -165,7 +166,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
             Main.graphics.GraphicsDevice.Textures[0] = UCATextureRegister.CarnageStabs.Value;
             Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointWrap;
 
-            Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
+            Main.graphics.GraphicsDevice.Textures[1] = LAPTextureRegister.Noise.Value;
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointWrap;
 
             Rectangle frame = UCATextureRegister.CarnageStabs.Frame(19, 1, StabsFrame, 0);
@@ -201,7 +202,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
             Main.graphics.GraphicsDevice.Textures[0] = Weapontexture;
             Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
-            Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
+            Main.graphics.GraphicsDevice.Textures[1] = LAPTextureRegister.Noise.Value;
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
 
             LAPUtilities.FastApplyEdgeMeltsShader(1 - Projectile.Opacity, Weapontexture.Size(), Color.Red, 0.01f, 0);

@@ -1,4 +1,6 @@
-﻿using LAP.Content.Configs;
+﻿using LAP.Assets.TextureRegister;
+using LAP.Content.Configs;
+using LAP.Core.Presets.Content;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using System.IO;
@@ -9,8 +11,7 @@ using Terraria.ModLoader;
 using UCA.Assets.Sounds;
 using UCA.Content.MetaBalls;
 using UCA.Core.BaseClass;
-using LAP.Assets.TextureRegister;
-using LAP.Core.Presets.Content;
+using UCA.Core.Presets;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
@@ -39,7 +40,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             if (Projectile.LAP().FirstFrame)
             {
-                ParticlePreset.GenUnDeathSign(Projectile.Center, Projectile.ai[0]);
+                UCAParticlePreset.GenUnDeathSign(Projectile.Center, Projectile.ai[0]);
                 Projectile.netUpdate = true;
             }
 

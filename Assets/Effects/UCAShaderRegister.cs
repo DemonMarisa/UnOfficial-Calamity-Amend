@@ -1,5 +1,4 @@
-﻿using LAP.Assets.Effects;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria;
 using Terraria.Graphics.Shaders;
@@ -16,7 +15,6 @@ namespace UCA.Assets.Effects
         public static Asset<Effect> TerrarRayLaser { get; private set; }
         public static Asset<Effect> SolarBladeShader { get; private set; }
         public static Asset<Effect> SolarBlastShader { get; private set; }
-        public static Asset<Effect> StandardFlowShader { get; private set; }
         public static Asset<Effect> FlowWithAShader { get; private set; }
         public static Asset<Effect> PolarDistortShader { get; private set; }
         public static Asset<Effect> PolarDistortShaderWithR { get; private set; }
@@ -40,14 +38,11 @@ namespace UCA.Assets.Effects
             SolarBladeShader = LoadShader("SolarBladeShader");
             RegisterMiscShader(SolarBladeShader, "UCASolarBladePass", nameof(SolarBladeShader));
 
-            StandardFlowShader = LoadShader("StandardFlowShader");
-            RegisterMiscShader(StandardFlowShader, "UCAStandardFlowPass", nameof(StandardFlowShader));
-
             SolarBlastShader = LoadShader("SolarBlastShader");
             RegisterMiscShader(SolarBlastShader, "UCASolarBlastPass", nameof(SolarBlastShader));
             
             FlowWithAShader = LoadShader("FlowWithAShader");
-            RegisterMiscShader(StandardFlowShader, "UCAFlowWithAPass", nameof(FlowWithAShader));
+            RegisterMiscShader(FlowWithAShader, "UCAFlowWithAPass", nameof(FlowWithAShader));
 
             PolarDistortShader = LoadShader("PolarDistortShader");
             RegisterMiscShader(PolarDistortShader, "UCAPolarDistortPass", nameof(PolarDistortShader));
@@ -64,7 +59,6 @@ namespace UCA.Assets.Effects
             TerrarRayLaser = null;
             SolarBladeShader = null;
             SolarBlastShader = null;
-            StandardFlowShader = null;
             FlowWithAShader = null;
             PolarDistortShader = null;
             PolarDistortShaderWithR = null;

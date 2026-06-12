@@ -1,4 +1,5 @@
-﻿using LAP.Content.Configs;
+﻿using LAP.Assets.TextureRegister;
+using LAP.Content.Configs;
 using LAP.Core.AnimationHandle;
 using LAP.Core.Enums;
 using LAP.Core.SpecificEffectManagers;
@@ -335,7 +336,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
             Main.graphics.GraphicsDevice.Textures[0] = ModContent.Request<Texture2D>(Texture).Value;
             Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
-            Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
+            Main.graphics.GraphicsDevice.Textures[1] = LAPTextureRegister.Noise.Value;
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
 
             LAPUtilities.FastApplyEdgeMeltsShader(Opacity, ModContent.Request<Texture2D>(Texture).Size(), Color.Red, 0.01f, 0);

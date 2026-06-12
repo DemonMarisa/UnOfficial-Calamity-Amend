@@ -4,7 +4,7 @@ using System;
 using Terraria;
 using UCA.Assets;
 using LAP.Core.ParticleSystem;
-
+using LAP.Core.Enums;
 namespace UCA.Content.Particiles
 {
     public class Fire : BaseParticle

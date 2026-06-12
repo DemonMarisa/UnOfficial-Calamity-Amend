@@ -5,6 +5,7 @@ using UCA.Assets;
 using UCA.Assets.Effects;
 using LAP.Core.ParticleSystem;
 using LAP.Core.Utilities;
+using LAP.Core.Enums;
 
 namespace UCA.Content.Particiles
 {
@@ -66,7 +67,6 @@ namespace UCA.Content.Particiles
             }
             Rotation += 0.05f;
         }
-        // 这里采样没有问题，他贴图就是这样
         public override void Draw(SpriteBatch spriteBatch)
         {
             LAPUtilities.ReSetToBeginShader();

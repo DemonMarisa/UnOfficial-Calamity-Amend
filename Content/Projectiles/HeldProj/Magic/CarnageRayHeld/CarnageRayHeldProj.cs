@@ -1,4 +1,5 @@
-﻿using LAP.Core.BaseClass.Projectiles;
+﻿using LAP.Assets.TextureRegister;
+using LAP.Core.BaseClass.Projectiles;
 using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
@@ -8,6 +9,7 @@ using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Sounds;
@@ -81,7 +83,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.CarnageRayHeld
             Main.graphics.GraphicsDevice.Textures[0] = Weapontexture;
             Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
-            Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
+            Main.graphics.GraphicsDevice.Textures[1] = LAPTextureRegister.Noise.Value;
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
 
             LAPUtilities.FastApplyEdgeMeltsShader(1 - Projectile.Opacity, Weapontexture.Size(), Color.Red, 0.01f, 0);

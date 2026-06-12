@@ -30,6 +30,7 @@
 	<ItemGroup>
 	  <Folder Include="Content\ItemOverride\Magic\" />
 	  <Folder Include="Content\Projectiles\Misc\Test\" />
+	  <Folder Include="Core\UI\" />
 	</ItemGroup>
 
 	<!-- References -->

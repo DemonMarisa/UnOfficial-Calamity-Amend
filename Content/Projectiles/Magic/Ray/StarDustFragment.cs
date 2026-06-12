@@ -1,4 +1,5 @@
-﻿using LAP.Content.Configs;
+﻿using LAP.Assets.TextureRegister;
+using LAP.Content.Configs;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -6,19 +7,16 @@ using System.Collections.Generic;
 using System.IO;
 using Terraria;
 using Terraria.ModLoader;
-using Terraria.ModLoader.IO;
 using UCA.Assets;
-using UCA.Content.Configs;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Core.BaseClass;
-using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
     public class StarDustFragment : BaseMagicProj
     {
-        public override string Texture => UCATextureRegister.CollectableLightPath;
+        public override string Texture => LAPTextureRegister.InvisibleTexturePath;
         public bool CanHit = true;
         public int MaxLife = 90;
         public override void SetDefaults()

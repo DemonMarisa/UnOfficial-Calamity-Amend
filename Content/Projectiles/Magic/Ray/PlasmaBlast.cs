@@ -1,5 +1,8 @@
-﻿using LAP.Core.Enums;
+﻿using LAP.Assets.TextureRegister;
+using LAP.Core.Enums;
+using LAP.Core.Graphics.DeepGlow;
 using LAP.Core.Graphics.PixelatedRender;
+using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,8 +12,6 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Core.BaseClass;
-using LAP.Assets.TextureRegister;
-using LAP.Core.SystemsLoader;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
@@ -87,6 +88,14 @@ namespace UCA.Content.Projectiles.Magic.Ray
         public override bool PreDraw(ref Color lightColor)
         {
             PixelatedRenderManger.BeginDrawProj = true;
+
+            DeepGlow.SubmitCustomGlow(() =>
+            {
+                Vector2 DrawPos = Projectile.Center - Main.screenPosition;
+                Color color = Color.DarkViolet;
+                color = color * Opacity;
+                Main.spriteBatch.Draw(UCATextureRegister.Ring04.Value, DrawPos, null, color, Rot, UCATextureRegister.Ring04.Size() / 2, Scale * 1.2f, SpriteEffects.None, 0);
+            });
             return false;
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)

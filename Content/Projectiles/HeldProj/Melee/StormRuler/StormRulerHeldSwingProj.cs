@@ -226,7 +226,7 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
             if (!LAPConfig.Instance.PerformanceMode)
             {
                 Texture2D texture2 = UCATextureRegister.Aura_01.Value;
-                Effect effect2 = LAPShaderRegister.AlphaFade_ACut_OColor.Value;
+                Effect effect2 = LAPShaderRegister.AlphaFade_Noise_OColor.Value;
                 effect2.Parameters["uFadeoutLeftLength"].SetValue(0.2f);
                 effect2.Parameters["uFadeinRigtLength"].SetValue(0.2f);
                 effect2.Parameters["UVOffset"].SetValue(new Vector2(Main.GlobalTimeWrappedHourly * 0.3f, 0));

@@ -1,4 +1,5 @@
-﻿using LAP.Core.AnimationHandle;
+﻿using LAP.Assets.TextureRegister;
+using LAP.Core.AnimationHandle;
 using LAP.Core.BaseClass.Projectiles;
 using LAP.Core.Enums;
 using LAP.Core.Utilities;
@@ -8,7 +9,6 @@ using System;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
-using Terraria.GameContent;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets;
@@ -203,7 +203,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
 
-            Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.Noise.Value;
+            Main.graphics.GraphicsDevice.Textures[1] = LAPTextureRegister.Noise.Value;
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
 
             LAPUtilities.FastApplyEdgeMeltsShader(Opacity, Request<Texture2D>(Texture).Size(), Color.LimeGreen, 0.01f, 0);

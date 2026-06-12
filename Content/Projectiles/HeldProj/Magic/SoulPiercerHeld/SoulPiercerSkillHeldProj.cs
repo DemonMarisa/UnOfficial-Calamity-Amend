@@ -1,6 +1,8 @@
 ﻿using LAP.Content.Configs;
+using LAP.Content.Particles;
 using LAP.Core.AnimationHandle;
 using LAP.Core.Enums;
+using LAP.Core.Graphics.DeepGlow;
 using LAP.Core.Graphics.Primitives.Trail;
 using LAP.Core.SpecificEffectManagers;
 using LAP.Core.StateMachine.SynedHitEffect;
@@ -135,7 +137,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
                 Color DrawColor = Color.Lerp(Color.DarkViolet, Color.SkyBlue, Main.rand.NextFloat());
                 new TLineOF(Vector2.Lerp(beginSpawnPos, EndSpawnPos, Main.rand.NextFloat()), Main.rand.NextFloat(2f, 4f), DrawColor, Main.rand.Next(60, 120), 0.15f, Main.rand.NextFloat(MathHelper.TwoPi)).Spawn();
                 Color TGBColor = Color.Lerp(Color.Violet, Color.SkyBlue, Main.rand.NextFloat());
-                new TrailGlowBall_T(Vector2.Lerp(beginSpawnPos, EndSpawnPos, Main.rand.NextFloat() - 0.1f), TGBColor, Main.rand.Next(45, 90), 0.15f, Main.rand.NextFloat(1f, 2f), Main.rand.NextFloat(MathHelper.TwoPi), 1f).Spawn();
+                new LAP.Content.Particles.TrailGlowBall_T(Vector2.Lerp(beginSpawnPos, EndSpawnPos, Main.rand.NextFloat() - 0.1f), TGBColor, Main.rand.Next(45, 90), 0.15f, Main.rand.NextFloat(1f, 2f), Main.rand.NextFloat(MathHelper.TwoPi), 1f).Spawn();
             }
             if (easedProgress < 0.8f)
             {
@@ -180,7 +182,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
                     Vector2 EndSpawnPos = Projectile.Center + RealAimPoint;
                     Color DrawColor;
                     DrawColor = Color.Lerp(Color.Violet, Color.DarkViolet, Main.rand.NextFloat());
-                    new TrailGlowBall_T(Vector2.Lerp(beginSpawnPos, EndSpawnPos, Main.rand.NextFloat()), DrawColor, Main.rand.Next(45, 90), 0.15f, Main.rand.NextFloat(2f, 4f), Main.rand.NextFloat(MathHelper.TwoPi), 1f).Spawn();
+                    new LAP.Content.Particles.TrailGlowBall_T(Vector2.Lerp(beginSpawnPos, EndSpawnPos, Main.rand.NextFloat()), DrawColor, Main.rand.Next(45, 90), 0.15f, Main.rand.NextFloat(2f, 4f), Main.rand.NextFloat(MathHelper.TwoPi), 1f).Spawn();
                 }
                 for (int i = 0; i < 1; i++)
                 {
@@ -302,6 +304,28 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
             }
             LAPUtilities.ReSetToEndShader();
 
+            DeepGlow.SubmitCustomGlow(() =>
+            {
+                if (OldAimPos.Count > 2)
+                {
+                    LAPUtilities.ReSetToBeginShader(BlendState.Additive);
+                    // 绘制拖尾
+                    Vector2 UVOffset = new Vector2(Main.GlobalTimeWrappedHourly * 0.1f, 0);
+                    Vector2 TextureScale = new Vector2(0.75f, 1f);
+                    LAPUtilities.ApplyTrailShader(UVOffset, TextureScale, 1 - Opacity, TextureScale, Vector2.Zero, true);
+                    LAPUtilities.SetTexture(UCATextureRegister.Slash2.Value, SamplerState.LinearWrap, 0);
+                    LAPUtilities.SetTexture(UCATextureRegister.HarshNoise.Value, SamplerState.LinearWrap, 1);
+                    LAPUtilities.SetTexture(UCATextureRegister.HarshNoise.Value, SamplerState.LinearWrap, 2);
+                    DrawTrail(0.9f, 0.2f);
+                    DrawTrail(0.9f, 0.2f);
+                    LAPUtilities.SetTexture(UCATextureRegister.Slash.Value, SamplerState.LinearWrap, 0);
+                    LAPUtilities.SetTexture(UCATextureRegister.HarshNoise.Value, SamplerState.LinearWrap, 1);
+                    LAPUtilities.SetTexture(UCATextureRegister.HarshNoise.Value, SamplerState.LinearWrap, 2);
+                    DrawTrail(0.9f, 0.2f);
+                    DrawTrail(0.9f, 0.2f);
+                    LAPUtilities.ReSetToEndShader();
+                }
+            });
             Main.spriteBatch.Draw(texture, drawPosition, null, Color.White, drawRotation, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
 
             return false;

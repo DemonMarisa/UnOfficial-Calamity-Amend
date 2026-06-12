@@ -1,10 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using UCA.Assets;
 using LAP.Core.ParticleSystem;
-using UCA.Core.Utilities;
+using LAP.Core.Enums;
 using LAP.Core.Utilities;
 
 namespace UCA.Content.Particiles

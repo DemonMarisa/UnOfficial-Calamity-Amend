@@ -5,6 +5,7 @@ using Terraria;
 using UCA.Assets;
 using LAP.Core.ParticleSystem;
 using LAP.Core.Utilities;
+using LAP.Core.Enums;
 
 namespace UCA.Content.Particiles.Lightnings
 {

@@ -35,7 +35,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
             RotAmount = 0.25f;
             if (Owner.LAP().MouseLeft && !Owner.LAP().MouseRight)
             {
-                if (UseDelay <= 0 && Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.HeldItem.mana * Owner.manaCost), true, false))
+                if (UseDelay <= 0 && Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.HeldItem.mana * Owner.manaCost), true))
                 {
                     FirePorj();
                     UseDelay = Owner.HeldItem.useTime;

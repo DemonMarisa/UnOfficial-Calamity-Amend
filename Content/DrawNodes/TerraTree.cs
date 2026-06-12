@@ -53,7 +53,7 @@ namespace UCA.Content.DrawNodes
         public bool FireFrame = true;
         public override void OnSpawn()
         {
-            Lifetime = 360;
+            Lifetime = 640;
             ExtraUpdate = 4;
             Opacity = 1f;
         }
@@ -63,7 +63,7 @@ namespace UCA.Content.DrawNodes
             {
                 Time = 2;
                 ExtraUpdate = 0;
-                Opacity = MathHelper.Lerp(Opacity, 0f, 0.08f);
+                Opacity = MathHelper.Lerp(Opacity, 0f, 0.04f);
                 if (Opacity < 0.02f)
                     Kill();
                 return;

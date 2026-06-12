@@ -1,4 +1,6 @@
-﻿using LAP.Content.Configs;
+﻿using LAP.Assets.Effects;
+using LAP.Assets.TextureRegister;
+using LAP.Content.Configs;
 using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
@@ -9,19 +11,16 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets;
-using UCA.Assets.Effects;
 using UCA.Assets.Sounds;
-using UCA.Content.Configs;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Core.BaseClass;
-using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
     public class StarDustLaser : BaseMagicProj
     {
-        public override string Texture => UCATextureRegister.CollectableLightPath;
+        public override string Texture => LAPTextureRegister.InvisibleTexturePath;
         public bool CanHit = true;
         public int MaxLife = 270;
         public Vector2 BeginPos;
@@ -149,7 +148,6 @@ namespace UCA.Content.Projectiles.Magic.Ray
             else
             {
                 Opacity = MathHelper.Lerp(Opacity, 1f, 0.1f);
-
             }
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
@@ -157,10 +155,6 @@ namespace UCA.Content.Projectiles.Magic.Ray
             CanHit = false;
             BeginFadeOut = true;
             Projectile.netUpdate = true;
-        }
-        public override void OnKill(int timeLeft)
-        {
-
         }
         public override bool PreDraw(ref Color lightColor)
         {
@@ -175,8 +169,8 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             float TextureHeight = UCATextureRegister.ElementalRayFlow.Height();
             float TextureWidth = UCATextureRegister.ElementalRayFlow.Width();
-            Effect shader = UCAShaderRegister.StandardFlowShader.Value;
-            shader.Parameters["LaserTextureSize"].SetValue(UCATextureRegister.ElementalRayFlow.Size());
+            Effect shader = LAPShaderRegister.StandardFlowShader.Value;
+            shader.Parameters["FlowTextureSize"].SetValue(UCATextureRegister.ElementalRayFlow.Size());
             shader.Parameters["targetSize"].SetValue(new Vector2(LaserLength, TextureHeight));
             shader.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly * Speed);
             shader.Parameters["uColor"].SetValue(colro.ToVector4() * Opacity);

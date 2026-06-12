@@ -1,6 +1,8 @@
 ﻿using LAP.Assets.TextureRegister;
 using LAP.Content.Configs;
+using LAP.Content.Particles;
 using LAP.Core.Enums;
+using LAP.Core.Graphics.DeepGlow;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -217,7 +219,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                         DrawColor = Color.Lerp(Color.SkyBlue, Color.DeepSkyBlue, Main.rand.NextFloat());
                     else
                         DrawColor = Color.Lerp(Color.Orange, Color.OrangeRed, Main.rand.NextFloat());
-                    new Fire(Vector2.Lerp(beginSpawnPos, EndSpawnPos, Progress), firVel, DrawColor, Main.rand.Next(45, 55), Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.8f).Spawn();
+                    new LAP.Content.Particles.Fire(Vector2.Lerp(beginSpawnPos, EndSpawnPos, Progress), firVel, DrawColor, Main.rand.Next(45, 55), Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.8f).Spawn();
                 }
                 for (int i = 0; i < SpawRate; i++)
                 {
@@ -229,7 +231,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                         DrawColor = Color.Lerp(Color.SkyBlue, Color.DeepSkyBlue, Main.rand.NextFloat());
                     else
                         DrawColor = Color.Lerp(Color.Orange, Color.OrangeRed, Main.rand.NextFloat());
-                    new TrailGlowBall(Vector2.Lerp(beginSpawnPos, EndSpawnPos, Main.rand.NextFloat()), firVel, DrawColor, Main.rand.Next(45, 65), 0.4f).Spawn();
+                    new LAP.Content.Particles.TrailGlowBall(Vector2.Lerp(beginSpawnPos, EndSpawnPos, Main.rand.NextFloat()), firVel, DrawColor, Main.rand.Next(45, 65), 0.4f).Spawn();
                 }
             }
             Vector2 beginSpawnPos2 = Projectile.Center + new Vector2(64, Main.rand.Next(-100, 100)).RotatedBy(Projectile.rotation);
@@ -296,24 +298,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         }
         #endregion
         #region 绘制耀斑大剑
-        public void DrawSolarBlade(Vector2 DrawPos, Vector2 offset, float DrawRot, Vector2 scale)
+        public void DrawBlade2(Vector2 DrawPos, Vector2 offset, float DrawRot, Vector2 scale)
         {
-            
-            if (!LAPConfig.Instance.PerformanceMode)
-            {
-                LAPUtilities.ReSetToBeginShader(BlendState.Additive);
-                Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.FireNoise.Value;
-                Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointWrap;
-                // 准备shader
-                if (IsMAGBOLIABlue)
-                    PrepareShader(Color.Blue, Color.DeepSkyBlue, 0.08f, false, 0.5f);
-                else
-                    PrepareShader(Color.Red, Color.OrangeRed, 0.08f, false, 0.6f);
-                Vector2 GlowScale = new Vector2(1f * SolarBladeXScale, 1f) * scale;
-                DrawBladeGlowSource(DrawPos + offset.RotatedBy(DrawRot), DrawRot, GlowScale);
-                LAPUtilities.ReSetToEndShader();
-            }
-            
             LAPUtilities.ReSetToBeginShader(BlendState.Additive);
             offset.Y = offset.Y + 56;
             if (IsMAGBOLIABlue)
@@ -336,13 +322,33 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointWrap;
             Vector2 OutSideBladeScale = new Vector2(0.85f * SolarBladeXScale, 1f) * scale;
             DrawMainBladeSource(DrawPos + offset.RotatedBy(DrawRot), DrawRot, OutSideBladeScale);
-            // 改一下置换材质
             Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.FireNoise.Value;
             Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointWrap;
             Vector2 InSideBladeScale = new Vector2(0.4f * SolarBladeXScale, 0.79f) * scale;
             offset.Y = offset.Y - 64;
             DrawAuxBladeSource(DrawPos + offset.RotatedBy(DrawRot), DrawRot, InSideBladeScale);
             LAPUtilities.ReSetToEndShader();
+        }
+        public void DrawSolarBlade(Vector2 DrawPos, Vector2 offset, float DrawRot, Vector2 scale)
+        {
+            if (!LAPConfig.Instance.PerformanceMode)
+            {
+                LAPUtilities.ReSetToBeginShader(BlendState.Additive);
+                Main.graphics.GraphicsDevice.Textures[1] = UCATextureRegister.FireNoise.Value;
+                Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointWrap;
+                // 准备shader
+                if (IsMAGBOLIABlue)
+                    PrepareShader(Color.Blue, Color.DeepSkyBlue, 0.08f, false, 0.5f);
+                else
+                    PrepareShader(Color.Red, Color.OrangeRed, 0.08f, false, 0.6f);
+                Vector2 GlowScale = new Vector2(1f * SolarBladeXScale, 1f) * scale;
+                DrawBladeGlowSource(DrawPos + offset.RotatedBy(DrawRot), DrawRot, GlowScale);
+                LAPUtilities.ReSetToEndShader();
+            }
+            else
+            {
+                DrawBlade2(DrawPos, offset, DrawRot, scale);
+            }
         }
         public void PrepareShader(Color beginColor, Color endColor, float uIntensity = 0.15f, bool useColor = true, float Opacity = 0.5f)
         {

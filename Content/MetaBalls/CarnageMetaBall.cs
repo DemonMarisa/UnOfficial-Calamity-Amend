@@ -28,7 +28,7 @@ namespace UCA.Content.MetaBalls
                     Scale *= 0.96f;
             }
         }
-        public override float BGTimeMult => 12;
+        public override float BGTimeMult => 4;
         public override Color EdgeColor => Color.Red;
         public static List<BloodParticle> Particles = [];
         public override Texture2D BgTexture => UCATextureRegister.CarnageBackGround.Value;

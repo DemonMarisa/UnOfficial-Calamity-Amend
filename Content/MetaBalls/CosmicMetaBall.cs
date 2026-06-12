@@ -9,7 +9,7 @@ namespace UCA.Content.MetaBalls
 {
     public partial class CosmicMetaBall : BaseMetaBall
     {
-        public override float BGTimeMult => 4;
+        public override float BGTimeMult => 1;
         public override Color EdgeColor => Color.DarkViolet;
         public static List<CosmicParticle> CircleParticles = [];
         public static List<CrossStar> CrossParticles = [];

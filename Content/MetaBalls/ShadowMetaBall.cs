@@ -64,6 +64,6 @@ namespace UCA.Content.MetaBalls
                 }
             }
         }
-        public override float BGTimeMult => 4;
+        public override float BGTimeMult => 1;
     }
 }

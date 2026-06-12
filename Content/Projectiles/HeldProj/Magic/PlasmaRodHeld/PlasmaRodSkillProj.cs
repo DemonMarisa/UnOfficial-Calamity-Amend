@@ -1,6 +1,7 @@
 ﻿using LAP.Content.Configs;
 using LAP.Core.AnimationHandle;
 using LAP.Core.Enums;
+using LAP.Core.Graphics.DeepGlow;
 using LAP.Core.SpecificEffectManagers;
 using LAP.Core.StateMachine.SynedHitEffect;
 using LAP.Core.SystemsLoader;
@@ -203,6 +204,24 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
         public override bool PreDraw(ref Color lightColor)
         {
             DrawBlade();
+            DeepGlow.SubmitCustomGlow(() =>
+            {
+                LAPUtilities.ReSetToBeginShader();
+                Texture2D texture = UCATextureRegister.BladeAura.Value;
+                Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+                float drawRotation = Projectile.rotation + (Owner.direction == -1 ? MathHelper.Pi : 0f);
+                SpriteEffects flipSprite = Owner.direction * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+                Effect shader = UCAShaderRegister.SolarBladeShader.Value;
+                shader.Parameters["uTime"].SetValue(-Main.GlobalTimeWrappedHourly);
+                shader.Parameters["uIntensity"].SetValue(0.1f);
+                shader.Parameters["ubeginColor"].SetValue(Color.DarkViolet.ToVector4());
+                shader.Parameters["uendColor"].SetValue(Color.DarkViolet.ToVector4());
+                shader.Parameters["UseColor"].SetValue(true);
+                shader.Parameters["Opacity"].SetValue(0.4f * Opacity);
+                shader.CurrentTechnique.Passes[0].Apply();
+                Main.spriteBatch.Draw(UCATextureRegister.BladeAura.Value, drawPosition, null, Color.White, drawRotation + MathHelper.PiOver2 * Owner.direction, new Vector2(texture.Size().X / 2, texture.Size().Y + 100), Projectile.scale * 0.16f * new Vector2(1.2f, 1f), flipSprite, default);
+                LAPUtilities.ReSetToEndShader();
+            });
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
             // 绘制位置，在这里进行偏移，碰撞箱使用自定义碰撞箱
             Vector2 drawPosition = Projectile.Center - Main.screenPosition + Vector2.UnitX.RotatedBy(Projectile.rotation) * 0;
@@ -235,15 +254,15 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
             shader.Parameters["UseColor"].SetValue(true);
             shader.Parameters["Opacity"].SetValue(0.6f * Opacity);
             shader.CurrentTechnique.Passes[0].Apply();
-            Main.spriteBatch.Draw(UCATextureRegister.BladeAura.Value, drawPosition, null, Color.White, drawRotation + MathHelper.PiOver2 * Owner.direction, new Vector2(texture.Size().X / 2, texture.Size().Y + 100), Projectile.scale * Main.player[Projectile.owner].gravDir * 0.16f * new Vector2(1.2f, 1f), flipSprite, default);
+            Main.spriteBatch.Draw(UCATextureRegister.BladeAura.Value, drawPosition, null, Color.White, drawRotation + MathHelper.PiOver2 * Owner.direction, new Vector2(texture.Size().X / 2, texture.Size().Y + 100), Projectile.scale * 0.16f * new Vector2(1.2f, 1f), flipSprite, default);
             shader.Parameters["uTime"].SetValue(-Main.GlobalTimeWrappedHourly);
             shader.Parameters["uIntensity"].SetValue(0.1f);
-            shader.Parameters["ubeginColor"].SetValue(Color.Violet.ToVector4());
+            shader.Parameters["ubeginColor"].SetValue(Color.White.ToVector4());
             shader.Parameters["uendColor"].SetValue(Color.Purple.ToVector4());
             shader.Parameters["UseColor"].SetValue(true);
             shader.Parameters["Opacity"].SetValue(0.6f * Opacity);
             shader.CurrentTechnique.Passes[0].Apply();
-            Main.spriteBatch.Draw(UCATextureRegister.BladeAura.Value, drawPosition, null, Color.White, drawRotation + MathHelper.PiOver2 * Owner.direction, new Vector2(texture.Size().X / 2, texture.Size().Y + 100), Projectile.scale * Main.player[Projectile.owner].gravDir * 0.16f * new Vector2(0.6f, 1f), flipSprite, default);
+            Main.spriteBatch.Draw(UCATextureRegister.BladeAura.Value, drawPosition, null, Color.White, drawRotation + MathHelper.PiOver2 * Owner.direction, new Vector2(texture.Size().X / 2, texture.Size().Y + 100), Projectile.scale * 0.16f * new Vector2(0.6f, 1f), flipSprite, default);
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
 

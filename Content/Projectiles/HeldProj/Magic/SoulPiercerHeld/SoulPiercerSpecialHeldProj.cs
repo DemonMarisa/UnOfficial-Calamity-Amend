@@ -82,7 +82,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
                 float rotSpeed = Main.rand.NextBool() ? 0.07f : -0.07f;
                 int length = Main.rand.Next(250, 500);
                 int LifeTime = Main.rand.Next(30, 60);
-                new ProjAbsorbGlowBall(Owner.Center, Color.DarkViolet, LifeTime, 0.1f, beginrot, rotSpeed, Projectile.whoAmI, length, offset).Spawn();
+                new LAP.Content.Particles.ProjAbsorbGlowBall(Owner.Center, Color.DarkViolet, LifeTime, 0.1f, beginrot, rotSpeed, Projectile.whoAmI, length, offset).Spawn();
             }
             if (CurAni == 1)
             {
@@ -163,7 +163,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
         {
             Owner.itemTime = 0;
             Owner.itemAnimation = 0;
-            if (Main.mouseRight)
+            if (Main.mouseRight && Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.ActiveItem().mana * Owner.manaCost), true))
             {
                 AniHelper = new AniHelper();
                 if (Filp == 1)

@@ -1,7 +1,6 @@
 ﻿using LAP.Assets.TextureRegister;
 using LAP.Content.Configs;
-using LAP.Core.Enums;
-using LAP.Core.Graphics;
+using LAP.Core.Graphics.DeepGlow;
 using LAP.Core.Graphics.Primitives.Trail;
 using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
@@ -295,6 +294,12 @@ namespace UCA.Content.Projectiles.Magic.Ray
             DrawLaser(Color.LimeGreen, 1f);
             DrawLaser(Color.White, 0.2f);
 
+            DeepGlow.SubmitCustomGlow( () =>
+            {
+                LAPUtilities.ReSetToBeginShader();
+                DrawLaser(Color.Green, 1.2f);
+                LAPUtilities.ReSetToEndShader();
+            });
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
             return false;
@@ -316,7 +321,6 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
             Main.graphics.GraphicsDevice.Textures[0] = UCATextureRegister.TerrarRayFlow.Value;
             Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
-
 
             List<VertexPositionColorTexture2D> Vertexlist = new List<VertexPositionColorTexture2D>();
             for (int i = 0; i < OldPos.Count; i++)

@@ -1,12 +1,18 @@
+using LAP.Core.SystemsLoader;
+using LAP.Core.UISystem;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using UCA.Assets.Sounds;
+using UCA.Content.GUI.ERayUI;
 using UCA.Content.MetaBalls;
 using UCA.Content.Projectiles.HealPRoj;
+using UCA.Content.Projectiles.Magic.Ray;
 using UCA.Core.Utilities;
 
 namespace UCA.Content.Items
@@ -33,21 +39,43 @@ namespace UCA.Content.Items
 			Item.autoReuse = true;
 			Item.shoot = ProjectileID.WoodenArrowFriendly;
 			Item.shootSpeed = 12;
-		}
+
+            Item.useTime = 6;
+            Item.useAnimation = 54;
+            Item.reuseDelay = 25;
+            Item.useLimitPerAnimation = 9;
+        }
         public override bool AltFunctionUse(Player player)
         {
             return true;
         }
-        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo projSource, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            /*
-            for (int i = 0; i < 11; i++)
+
+            Vector2 playerPos = player.RotatedRelativePoint(player.MountedCenter, true);
+            float speed = Item.shootSpeed;
+            float xPos = Main.mouseX + Main.screenPosition.X - playerPos.X;
+            float yPos = Main.mouseY + Main.screenPosition.Y - playerPos.Y;
+            float f = Main.rand.NextFloat() * MathHelper.TwoPi;
+
+            float sourceVariationLow = 90f;
+            float sourceVariationHigh = 180f;
+            Vector2 source = playerPos + f.ToRotationVector2() * MathHelper.Lerp(sourceVariationLow, sourceVariationHigh, Main.rand.NextFloat());
+
+            for (int i = 0; i < 50; i++)
             {
-                float rotAdd = MathHelper.ToRadians(3);
-                Projectile.NewProjectile(source, position, velocity.RotatedBy(MathHelper.ToRadians(-15) + rotAdd * i) * Main.rand.NextFloat(1f, 2f) * 0.5f, ModContent.ProjectileType<NebulaEnegry>(), damage, knockback, player.whoAmI);
+                source = playerPos + f.ToRotationVector2() * MathHelper.Lerp(sourceVariationLow, sourceVariationHigh, Main.rand.NextFloat());
+                if (Collision.CanHit(playerPos, 0, 0, source + (source - playerPos).SafeNormalize(Vector2.UnitX) * 8f, 0, 0))
+                {
+                    break;
+                }
+                f = Main.rand.NextFloat() * MathHelper.TwoPi;
             }
-            */
-            Projectile.NewProjectile(source, Main.MouseWorld, velocity, ProjectileType<CosmicHeal>(), 0, 0f, 2, 10);
+            Vector2 velocityReal = Main.MouseWorld - source;
+            Vector2 velocityVariation = new Vector2(xPos, yPos).SafeNormalize(Vector2.UnitY) * speed;
+            velocityReal = velocityReal.SafeNormalize(velocityVariation) * speed;
+
+            Projectile.NewProjectile(projSource, source, velocityReal, ProjectileType<VividBeam>(), damage, knockback, player.whoAmI);
             return false;
         }
         public static void GenUnDeathSign(Vector2 firePos, float speedMult = 1)
@@ -66,7 +94,6 @@ namespace UCA.Content.Items
         }
         public override bool? UseItem(Player player)
         {
-            var UCAPlayer = player.UCA();
             return base.UseItem(player);
         }   
 

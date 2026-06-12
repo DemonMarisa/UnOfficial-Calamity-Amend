@@ -256,7 +256,7 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
             Vector2 drawPosition2 = BeginPos - Main.screenPosition + Vector2.UnitX.RotatedBy(Projectile.rotation + ProjRotOffset) * 1000 - Vector2.UnitY * 18 * Owner.direction;
 
             Texture2D texture2 = UCATextureRegister.Aura_01.Value;
-            Effect effect2 = LAPShaderRegister.AlphaFade_ACut_OColor.Value;
+            Effect effect2 = LAPShaderRegister.AlphaFade_Noise_OColor.Value;
             effect2.Parameters["uFadeoutLeftLength"].SetValue(0.2f);
             effect2.Parameters["uFadeinRigtLength"].SetValue(0.3f);
             effect2.Parameters["UVOffset"].SetValue(new Vector2(Main.GlobalTimeWrappedHourly * 0.5f, 0));

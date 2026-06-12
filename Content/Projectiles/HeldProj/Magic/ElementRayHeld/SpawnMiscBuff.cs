@@ -7,6 +7,7 @@ using UCA.Assets.Sounds;
 using UCA.Content.Particiles;
 using UCA.Content.UCACooldowns;
 using LAP.Core.Enums;
+using LAP.Content.Particles;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
 {

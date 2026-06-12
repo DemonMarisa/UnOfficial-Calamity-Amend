@@ -28,8 +28,6 @@ namespace UCA.Assets
         public static Asset<Texture2D> Hahen02 { get; private set; }
         #endregion
         #region 来自马格诺利亚的
-        public static string CollectableLightPath = "UCA/Assets/MAGNOLIA/CollectableLight";
-        public static Asset<Texture2D> CollectableLight { get; private set; }
         public static Asset<Texture2D> BladeM { get; private set; }
         public static Asset<Texture2D> BladeAura { get; private set; }
         public static Asset<Texture2D> Fire { get; private set; }
@@ -67,7 +65,6 @@ namespace UCA.Assets
             Hahen01 = ModContent.Request<Texture2D>($"UCA/Assets/LILES/Hahen01");
             Hahen02 = ModContent.Request<Texture2D>($"UCA/Assets/LILES/Hahen02");
 
-            CollectableLight = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/CollectableLight");
             BladeM = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/BladeM");
             BladeAura = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/BladeAura");
             Fire = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/Fire");
@@ -106,7 +103,6 @@ namespace UCA.Assets
             Hahen01 = null;
             Hahen02 = null;
 
-            CollectableLight = null;
             BladeM = null;
             BladeAura = null;
             Fire = null;

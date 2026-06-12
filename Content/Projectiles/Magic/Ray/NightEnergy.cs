@@ -11,6 +11,7 @@ using UCA.Assets.Sounds;
 using UCA.Content.MetaBalls;
 using UCA.Content.Particiles;
 using UCA.Core.BaseClass;
+using UCA.Core.Presets;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
@@ -40,7 +41,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             if (Projectile.LAP().FirstFrame)
             {
-                ParticlePreset.GenUnDeathSign(Projectile.Center, Projectile.ai[0]);
+                UCAParticlePreset.GenUnDeathSign(Projectile.Center, Projectile.ai[0]);
                 for (int i = 0; i < 10; i++)
                 {
                     Color color = Color.Lerp(Color.DarkOrchid, Color.DarkViolet, Main.rand.NextFloat(0, 1f));

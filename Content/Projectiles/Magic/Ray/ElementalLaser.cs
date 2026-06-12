@@ -1,4 +1,5 @@
-﻿using LAP.Assets.TextureRegister;
+﻿using LAP.Assets.Effects;
+using LAP.Assets.TextureRegister;
 using LAP.Core.Enums;
 using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
@@ -307,8 +308,8 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             float TextureHeight = UCATextureRegister.ElementalRayFlow.Height();
             float TextureWidth = UCATextureRegister.ElementalRayFlow.Width();
-            Effect shader = UCAShaderRegister.StandardFlowShader.Value;
-            shader.Parameters["LaserTextureSize"].SetValue(UCATextureRegister.ElementalRayFlow.Size());
+            Effect shader = LAPShaderRegister.StandardFlowShader.Value;
+            shader.Parameters["FlowTextureSize"].SetValue(UCATextureRegister.ElementalRayFlow.Size());
             shader.Parameters["targetSize"].SetValue(new Vector2(LaserLength, TextureHeight));
             shader.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly * Speed + LaserTimeOffset);
             shader.Parameters["uColor"].SetValue(colro.ToVector4() * Opacity);

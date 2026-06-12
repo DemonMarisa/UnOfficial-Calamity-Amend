@@ -81,6 +81,7 @@ namespace UCA.Content.Projectiles.Melee.NormalProj
             LAPUtilities.Draw(texture, Pos, null, Color.White with { A = 0 } * Projectile.Opacity, Projectile.rotation, texture.Size() / 2, Projectile.scale, 0, 0);
             LAPUtilities.Draw(texture, Pos, null, Color.White with { A = 0 } * Projectile.Opacity, Projectile.rotation, texture.Size() / 2, Projectile.scale, 0, 0);
             LAPUtilities.Draw(texture, Pos, null, Color.White with { A = 0 } * Projectile.Opacity, Projectile.rotation, texture.Size() / 2, Projectile.scale, 0, 0);
+            LAPUtilities.Draw(texture, Pos, null, Color.White with { A = 0 } * Projectile.Opacity, Projectile.rotation, texture.Size() / 2, Projectile.scale, 0, 0);
             return false;
         }
     }

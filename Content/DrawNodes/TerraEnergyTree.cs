@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
-using UCA.Assets;
 using UCA.Assets.Effects;
 using LAP.Core.Graphics.DrawNode;
 using LAP.Core.Graphics.Primitives.Trail;
@@ -40,7 +39,7 @@ namespace UCA.Content.DrawNodes
         public int TotalPoint = 90;
         public override void OnSpawn()
         {
-            Lifetime = 480;
+            Lifetime = 640;
             Opacity = 1f;
         }
         public override void Update()

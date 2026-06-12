@@ -99,6 +99,9 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ShadowBoltStaffHeld
             Opacity = MathHelper.Lerp(0.7f, 0f, easedProgress);
             if (!Owner.LAP().MouseLeft && Owner.LAP().MouseRight && UseDelay == 0)
             {
+                Main.mouseRight = false;
+                Owner.itemTime = 0;
+                Owner.itemAnimation = 0;
                 Projectile.Kill();
             }
         }

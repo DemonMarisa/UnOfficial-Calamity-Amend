@@ -1,4 +1,6 @@
-﻿using LAP.Content.Configs;
+﻿using LAP.Assets.TextureRegister;
+using LAP.Content.Configs;
+using LAP.Core.Graphics.DeepGlow;
 using LAP.Core.Graphics.Primitives.Trail;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
@@ -16,7 +18,6 @@ using UCA.Content.DrawNodes;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld;
 using UCA.Core.BaseClass;
-using LAP.Assets.TextureRegister;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
@@ -196,7 +197,14 @@ namespace UCA.Content.Projectiles.Magic.Ray
             DrawLaser(Color.DarkGreen, 0.8f);
             DrawLaser(Color.LightGreen, 0.4f);
             DrawLaser(Color.White, 0.2f);
-            
+
+
+            DeepGlow.SubmitCustomGlow(() =>
+            {
+                LAPUtilities.ReSetToBeginShader();
+                DrawLaser(Color.Green, 0.8f);
+                LAPUtilities.ReSetToEndShader();
+            });
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
             

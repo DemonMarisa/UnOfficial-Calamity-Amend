@@ -1,7 +1,9 @@
 ﻿using LAP.Assets.TextureRegister;
 using LAP.Core.Enums;
+using LAP.Core.Graphics.DeepGlow;
 using LAP.Core.Graphics.PixelatedRender;
 using LAP.Core.Graphics.Primitives.Trail;
+using LAP.Core.Presets.Content;
 using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
@@ -73,8 +75,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             for (int i = 0; i < 2; i++)
             {
                 Color RandomColor = Color.Lerp(Color.Violet, Color.Purple, Main.rand.NextFloat(0, 1));
-                new MediumGlowBall(Projectile.Center + Main.rand.NextVector2Circular(18, 18) + Projectile.velocity / 2 * i,
-                    -Projectile.velocity, RandomColor, 120, 0, 1, 0.12f, Main.rand.NextFloat(0.5f, 1f)).Spawn();
+                ParticlePreset.NewTGlowBall(Projectile.Center + Main.rand.NextVector2Circular(18, 18) + Projectile.velocity / 2 * i, -Projectile.velocity, RandomColor, 120, 0.12f, Main.rand.NextFloat(0.5f, 1f));
             }
             TrackTarget();
         }
@@ -99,9 +100,9 @@ namespace UCA.Content.Projectiles.Magic.Ray
             LAPContent.ReSetToBeginShader_Pixel(BlendState.AlphaBlend);
 
             Vector2 HalfProj = new Vector2(Projectile.width / 2, Projectile.height / 2);
-            List<TrailDrawDate> trailDrawDate = [];
-            List<TrailDrawDate> SecondtrailDrawDate = [];
-            List<TrailDrawDate> ThirdtrailDrawDate = [];
+            List<TrailDrawData> trailDrawDate = [];
+            List<TrailDrawData> SecondtrailDrawDate = [];
+            List<TrailDrawData> ThirdtrailDrawDate = [];
             DrawSetting drawSetting = new(UCATextureRegister.HoodTrail.Value);
 
             for (int i = 0; i < Projectile.oldPos.Length; i++)
@@ -110,13 +111,13 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 {
                     Vector2 DrawPos = Projectile.oldPos[i] - Main.screenPosition + HalfProj - new Vector2(-12, 0).RotatedBy(Projectile.oldRot[i]);
 
-                    TrailDrawDate TrailDrawDate = new(DrawPos, new Color(208, 0, 255, 0), new Vector2(0, 24), Projectile.oldRot[i]);
+                    TrailDrawData TrailDrawDate = new(DrawPos, new Color(208, 0, 255, 0), new Vector2(0, 24), Projectile.oldRot[i]);
                     trailDrawDate.Add(TrailDrawDate);
 
-                    TrailDrawDate TrailDrawDate2 = new(DrawPos, new Color(255, 255, 255, 0), new Vector2(0, 8), Projectile.oldRot[i]);
+                    TrailDrawData TrailDrawDate2 = new(DrawPos, new Color(255, 255, 255, 0), new Vector2(0, 8), Projectile.oldRot[i]);
                     SecondtrailDrawDate.Add(TrailDrawDate2);
 
-                    TrailDrawDate TrailDrawDate3 = new(DrawPos, new Color(186, 50, 205, 0), new Vector2(0, 40), Projectile.oldRot[i]);
+                    TrailDrawData TrailDrawDate3 = new(DrawPos, new Color(186, 50, 205, 0), new Vector2(0, 40), Projectile.oldRot[i]);
                     ThirdtrailDrawDate.Add(TrailDrawDate3);
                 }
             }
@@ -133,6 +134,28 @@ namespace UCA.Content.Projectiles.Magic.Ray
         public override bool PreDraw(ref Color lightColor)
         {
             PixelatedRenderManger.BeginDrawProj = true;
+            DeepGlow.SubmitCustomGlow(() =>
+            {
+                LAPUtilities.ReSetToBeginShader();
+                Vector2 DrawTexPos = Projectile.Center - Main.screenPosition;
+                Texture2D texture = UCATextureRegister.GlowBall.Value;
+                Vector2 HalfProj = new Vector2(Projectile.width / 2, Projectile.height / 2);
+                List<TrailDrawData> trailDrawDate = [];
+                DrawSetting drawSetting = new(UCATextureRegister.HoodTrail.Value);
+
+                for (int i = 0; i < Projectile.oldPos.Length; i++)
+                {
+                    if (Projectile.oldPos[i] != Vector2.Zero)
+                    {
+                        Vector2 DrawPos = Projectile.oldPos[i] - Main.screenPosition + HalfProj - new Vector2(-12, 0).RotatedBy(Projectile.oldRot[i]);
+                        TrailDrawData TrailDrawDate = new(DrawPos, Color.DarkViolet, new Vector2(0, 24), Projectile.oldRot[i]);
+                        trailDrawDate.Add(TrailDrawDate);
+                    }
+                }
+                TrailRender.RenderTrail(trailDrawDate.ToArray(), drawSetting);
+                Main.spriteBatch.Draw(UCATextureRegister.Spirit.Value, DrawTexPos, null, Color.DarkViolet, Main.GlobalTimeWrappedHourly * 2, UCATextureRegister.Spirit.Size() / 2, Projectile.scale * 0.4f, SpriteEffects.None, 0);
+                LAPUtilities.ReSetToEndShader();
+            });
             return false;
         }
 
@@ -140,9 +163,8 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             for (int i = 0; i < 45; i++)
             {
-                float offset = MathHelper.TwoPi / 45;
                 Color RandomColor = Color.Lerp(Color.DarkViolet, Color.LightPink, Main.rand.NextFloat(0, 1));
-                new MediumGlowBall(Projectile.Center + Projectile.velocity.ToRotation().ToRotationVector2() * 12f, Projectile.velocity.RotatedBy(offset * i), RandomColor, 180, 0, 1, 0.2f, Main.rand.NextFloat(3f, 5f)).Spawn();
+                ParticlePreset.NewTGlowBall(Projectile.Center + Projectile.velocity.ToRotation().ToRotationVector2() * 12f, Vector2.Zero, RandomColor, 180, 0.2f, Main.rand.NextFloat(3f, 5f));
             }
             SoundEngine.PlaySound(SoundsMenu.PlasmaBlastBomb, Projectile.Center);
             if (LAPUtilities.IsLocalPlayer(Projectile.owner))

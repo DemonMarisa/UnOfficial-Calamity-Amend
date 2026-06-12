@@ -6,7 +6,6 @@ namespace UCA.Assets
 {
     public partial class UCATextureRegister : ModSystem
     {
-        public static Asset<Texture2D> Noise { get; private set; }
         public static Asset<Texture2D> NightRayShield { get; private set; }
         public static Asset<Texture2D> SpreadLine { get; private set; }
         public static Asset<Texture2D> CarnageBackGround { get; private set; }
@@ -42,7 +41,6 @@ namespace UCA.Assets
         public static Asset<Texture2D> OpticalFlaresLine { get; private set; }
         public static void LoadExtraTextures()
         {
-            Noise = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/Noise");
             NebulaBG = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/MetaBall/NebulaBG");
             StarDustBG = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/MetaBall/StarDustBG");
             CosmicBG = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/MetaBall/CosmicBG");
@@ -79,7 +77,6 @@ namespace UCA.Assets
         }
         public static void UnLoadExtraTextures()
         {
-            Noise = null;
             NebulaBG = null;
             StarDustBG = null;
 

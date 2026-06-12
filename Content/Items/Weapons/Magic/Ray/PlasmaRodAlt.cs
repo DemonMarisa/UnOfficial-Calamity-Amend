@@ -1,6 +1,5 @@
 ﻿using LAP.Core.LAPSource;
 using LAP.Core.MiscDate;
-using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -10,7 +9,6 @@ using Terraria.ModLoader;
 using UCA.Common.Misc;
 using UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld;
 using UCA.Core.BaseClass;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace UCA.Content.Items.Weapons.Magic.Ray
 {

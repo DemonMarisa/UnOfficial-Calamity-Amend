@@ -1,4 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LAP.Core.AnimationHandle;
+using LAP.Core.Enums;
+using LAP.Core.Presets.Content;
+using LAP.Core.Utilities;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using Terraria;
@@ -6,13 +10,10 @@ using Terraria.Audio;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets.Sounds;
+using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Particiles;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
-using LAP.Core.AnimationHandle;
-using LAP.Core.Utilities;
-using LAP.Core.Enums;
-using UCA.Content.Items.Weapons.Magic.Ray;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
 {
@@ -119,9 +120,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
                 Vector2 FireOffset = new Vector2(54, 0).RotatedBy(BeginRot);
                 for (int i = 0; i < 35; i++)
                 {
-                    float offset = MathHelper.TwoPi / 35;
                     Color RandomColor = Color.Lerp(Color.DarkViolet, Color.LightPink, Main.rand.NextFloat(0, 1));
-                    new MediumGlowBall(Projectile.Center + FireOffset, Projectile.velocity.RotatedBy(offset * i), RandomColor, 60, 0, 1, 0.2f, Main.rand.NextFloat(2f, 2.2f)).Spawn();
+                    ParticlePreset.NewTGlowBall(Projectile.Center + FireOffset, Vector2.Zero, RandomColor, 120, 0.2f, Main.rand.NextFloat(2f, 2.2f));
                 }
                 if (Projectile.owner == Main.myPlayer)
                     FireProj();

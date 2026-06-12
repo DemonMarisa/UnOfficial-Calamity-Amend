@@ -123,6 +123,13 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             ShootVortex();
 
             base.PostAI();
+            if (!Owner.LAP().MouseLeft && Owner.LAP().MouseRight && UseDelay == 0)
+            {
+                Main.mouseRight = false;
+                Owner.itemTime = 0;
+                Owner.itemAnimation = 0;
+                Projectile.Kill();
+            }
         }
         public void ShootVortex()
         {

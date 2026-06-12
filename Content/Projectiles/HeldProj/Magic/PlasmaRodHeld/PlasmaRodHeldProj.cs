@@ -1,11 +1,10 @@
 ﻿using LAP.Core.BaseClass.Projectiles;
-using LAP.Core.IDSets;
+using LAP.Core.Presets.Content;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
-using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -49,9 +48,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
                     Vector2 FireOffset = new Vector2(54, 0).RotatedBy(Projectile.rotation);
                     for (int i = 0; i < 35; i++)
                     {
-                        float offset = MathHelper.TwoPi / 35;
                         Color RandomColor = Color.Lerp(Color.DarkViolet, Color.LightPink, Main.rand.NextFloat(0, 1));
-                        new MediumGlowBall(Projectile.Center + FireOffset, Projectile.velocity.RotatedBy(offset * i), RandomColor, 60, 0, 1, 0.2f, Main.rand.NextFloat(2f, 2.2f)).Spawn();
+                        ParticlePreset.NewTGlowBall(Projectile.Center + FireOffset, Vector2.Zero, RandomColor, 120, 0.2f, Main.rand.NextFloat(2f, 2.2f));
                     }
                     FirePorj();
                     Projectile.velocity -= Projectile.velocity.RotatedBy(Projectile.spriteDirection * MathHelper.PiOver2) * 0.1f;
@@ -64,6 +62,14 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
         {
             base.PostAI();
             Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Owner.GetPlayerToMouseVector2().ToRotation() - MathHelper.PiOver2);
+
+            if (!Owner.LAP().MouseLeft && Owner.LAP().MouseRight && UseDelay == 0)
+            {
+                Main.mouseRight = false;
+                Owner.itemTime = 0;
+                Owner.itemAnimation = 0;
+                Projectile.Kill();
+            }
         }
 
         public void FirePorj()

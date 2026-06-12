@@ -1,7 +1,9 @@
-﻿using LAP.Assets.TextureRegister;
+﻿using LAP.Assets.Effects;
+using LAP.Assets.TextureRegister;
 using LAP.Content.Configs;
 using LAP.Core.AnimationHandle;
 using LAP.Core.Enums;
+using LAP.Core.Graphics.DeepGlow;
 using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
@@ -176,14 +178,20 @@ namespace UCA.Content.Projectiles.Magic.Ray
             DrawLaser(Color.Violet, 0.05f * Projectile.scale, 0.02f);
             DrawLighting(Color.Violet, 0.1f * Projectile.scale, 0.02f, -25);
             LAPUtilities.ReSetToEndShader();
+            DeepGlow.SubmitCustomGlow(() =>
+            {
+                LAPUtilities.ReSetToBeginShader();
+                DrawLaser(Color.DarkViolet * 0.4f, 0.3f * Projectile.scale, 0.02f);
+                LAPUtilities.ReSetToEndShader();
+            });
             return false;
         }
         public void DrawLaser(Color colro, float height = 0.2f, float op = 0.1f, int Speed = -50, float Timeoffset = 0)
         {
             float TextureHeight = UCATextureRegister.LaserHighContrast.Height();
             float TextureWidth = UCATextureRegister.LaserHighContrast.Width();
-            Effect shader = UCAShaderRegister.StandardFlowShader.Value;
-            shader.Parameters["LaserTextureSize"].SetValue(UCATextureRegister.LaserHighContrast.Size());
+            Effect shader = LAPShaderRegister.StandardFlowShader.Value;
+            shader.Parameters["FlowTextureSize"].SetValue(UCATextureRegister.LaserHighContrast.Size());
             shader.Parameters["targetSize"].SetValue(new Vector2(LaserLength, TextureHeight));
             shader.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly * Speed + Timeoffset);
             shader.Parameters["uColor"].SetValue(colro.ToVector4() * Projectile.Opacity);
@@ -199,8 +207,8 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             float TextureHeight = UCATextureRegister.Lightning.Height();
             float TextureWidth = UCATextureRegister.Lightning.Width();
-            Effect shader = UCAShaderRegister.StandardFlowShader.Value;
-            shader.Parameters["LaserTextureSize"].SetValue(UCATextureRegister.Lightning.Size());
+            Effect shader = LAPShaderRegister.StandardFlowShader.Value;
+            shader.Parameters["FlowTextureSize"].SetValue(UCATextureRegister.Lightning.Size());
             shader.Parameters["targetSize"].SetValue(new Vector2(LaserLength / 5f, TextureHeight));
             shader.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly * Speed + Timeoffset);
             shader.Parameters["uColor"].SetValue(colro.ToVector4() * Projectile.Opacity);

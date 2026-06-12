@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
-using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
 using UCA.Assets.Sounds;
@@ -13,6 +12,7 @@ using LAP.Core.Enums;
 using LAP.Core.SpecificEffectManagers;
 using LAP.Core.Utilities;
 using LAP.Core.SystemsLoader;
+using LAP.Content.Particles;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
 {
@@ -108,7 +108,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                     Color RandomColor = LAPUtilities.LerpColor(Color.SkyBlue, Color.DeepSkyBlue);
                     new MediumGlowBall(Projectile.Center + offset + Owner.velocity * 6, RandomColor, 120, 0.4f, Main.rand.NextFloat(4f, 12f)).Spawn();
                 }
-                ScreenShakeSystem.AddScreenShakes(Projectile.Center, 250, 180, Projectile.rotation, 0.1f, true, 1000);
+                ScreenShakeSystem.AddScreenShakes(Projectile.Center, 250, 180, Projectile.rotation, 0.01f, true, 1000);
                 SoulStreamIndex = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + offset, Vector2.Zero, ProjectileType<SoulStream>(), Projectile.damage * 6, Projectile.knockBack, Projectile.owner, Projectile.whoAmI);
                 Main.projectile[SoulStreamIndex].LAP().isWeaponSkillProj = true;
                 Owner.AddCD(LAPContent.CDType<StarDustBoost>(),  1200);

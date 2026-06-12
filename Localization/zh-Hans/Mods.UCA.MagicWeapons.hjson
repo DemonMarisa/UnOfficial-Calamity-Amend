@@ -157,3 +157,8 @@ SoulPiercerAlt: {
 		一些魔法师会将此作为王牌使用
 		'''
 }
+
+VividClarityAlt: {
+	// DisplayName: Vivid Clarity Alt
+	// Tooltip: ""
+}

@@ -107,7 +107,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ShadowBoltStaffHeld
                 float rotSpeed = Main.rand.NextBool() ? 0.07f : -0.07f;
                 int length = Main.rand.Next(250, 500);
                 int LifeTime = Main.rand.Next(30, 60);
-                new ProjAbsorbGlowBall(Owner.Center, Color.DarkViolet, LifeTime, 0.1f, beginrot, rotSpeed, Projectile.whoAmI, length, offset).Spawn();
+                new LAP.Content.Particles.ProjAbsorbGlowBall(Owner.Center, Color.DarkViolet, LifeTime, 0.1f, beginrot, rotSpeed, Projectile.whoAmI, length, offset).Spawn();
             }
             if (CurAni == 1)
             {

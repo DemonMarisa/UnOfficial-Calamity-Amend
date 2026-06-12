@@ -1,4 +1,5 @@
-﻿using LAP.Core.AnimationHandle;
+﻿using LAP.Content.Particles;
+using LAP.Core.AnimationHandle;
 using LAP.Core.Enums;
 using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
@@ -133,7 +134,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ShadowBoltStaffHeld
             }
 
             Color Firecolor = LAPUtilities.LerpColor(Color.Black, Color.DarkViolet);
-            new Fire(Projectile.Center + offset.RotatedBy(Projectile.rotation), Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.2f, 1.2f) * 4, Firecolor, 90, Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.3f).SpawnToPriorityNonPreMult();
+            new LAP.Content.Particles.Fire(Projectile.Center + offset.RotatedBy(Projectile.rotation), Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.2f, 1.2f) * 4, Firecolor, 90, Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.3f).SpawnToPriorityNonPreMult();
         }
         #endregion
         #region 处理结束动画
@@ -155,7 +156,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ShadowBoltStaffHeld
 
             Vector2 offset = new Vector2(50, 0);
             Color Firecolor = LAPUtilities.LerpColor(Color.Black, Color.DarkViolet);
-            new Fire(Projectile.Center + offset.RotatedBy(Projectile.rotation), Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.2f, 1.2f) * 4, Firecolor, 90, Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.3f).SpawnToPriorityNonPreMult();
+            new LAP.Content.Particles.Fire(Projectile.Center + offset.RotatedBy(Projectile.rotation), Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.2f, 1.2f) * 4, Firecolor, 90, Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.3f).SpawnToPriorityNonPreMult();
         }
         #endregion
         #endregion
@@ -171,7 +172,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ShadowBoltStaffHeld
             for (int i = 0; i < 100; i++)
             {
                 Color Firecolor = LAPUtilities.LerpColor(Color.Black, Color.DarkViolet);
-                new Fire(firpos, Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.6f, 1.2f) * 12, Firecolor, 90, Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.3f).SpawnToPriorityNonPreMult();
+                new LAP.Content.Particles.Fire(firpos, Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.6f, 1.2f) * 12, Firecolor, 90, Main.rand.NextFloat(MathHelper.TwoPi), 1f, 0.3f).SpawnToPriorityNonPreMult();
             }
             for (int i = 0; i < 8; i++)
             {

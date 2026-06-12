@@ -118,14 +118,14 @@ namespace UCA.Content.Projectiles.Magic.Ray
         public void DrawTrail(int height, Color drawColor)
         {
             Vector2 HalfProj = new Vector2(Projectile.width / 2, Projectile.height / 2);
-            List<TrailDrawDate> trailDrawDate = [];
+            List<TrailDrawData> trailDrawDate = [];
             DrawSetting drawSetting = new(UCATextureRegister.Slash_Wrap.Value);
             for (int i = 0; i < Projectile.oldPos.Length; i++)
             {
                 if (Projectile.oldPos[i] != Vector2.Zero)
                 {
                     Vector2 DrawPos = Projectile.oldPos[i] - Main.screenPosition + HalfProj + new Vector2(24, 0).RotatedBy(Projectile.rotation);
-                    TrailDrawDate TrailDrawDate = new(DrawPos, drawColor, new Vector2(0, height), Projectile.oldRot[i]);
+                    TrailDrawData TrailDrawDate = new(DrawPos, drawColor, new Vector2(0, height), Projectile.oldRot[i]);
                     trailDrawDate.Add(TrailDrawDate);
                 }
             }

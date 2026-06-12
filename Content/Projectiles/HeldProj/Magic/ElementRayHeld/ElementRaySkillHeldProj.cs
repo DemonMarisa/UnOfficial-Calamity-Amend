@@ -11,10 +11,9 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Sounds;
-using UCA.Content.GUI;
+using UCA.Content.GUI.ERayUI;
 using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Particiles;
-using UCA.Content.Paths;
 using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
@@ -85,6 +84,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 ToMouseVector = Owner.GetPlayerToMouseVector2().ToRotation();
                 OffsetToOwnerLength = 12;
                 OffsetToOwner = new Vector2(OffsetToOwnerLength, 0);
+                if (Projectile.IsLocalPlayer())
+                    LAPContent.ActiveUI(LAPContent.UIType<ERayUI>());
             }
         }
         public void HandleAni()
@@ -100,7 +101,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                         AniHelper.HasFinish[AniState.Begin] = true;
                     if (Projectile.owner == Main.myPlayer)
                     {
-                        if (ElementalRayUI.BeginFadeOut || CanPlayerEnd != 0)
+                        // 在外部UIDeActive后，弹幕也立刻进入淡出动作
+                        if (!LAPContent.GetUI<ERayUI>().Active || CanPlayerEnd != 0)
                         {
                             AniHelper.HasFinish[AniState.Begin] = true;
                             CanPlayerEnd++;
@@ -113,10 +115,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             {
                 AniHelper.UpDateAni(AniState.End, 25);
                 HandleEndAni();
-                if (Projectile.owner == Main.myPlayer)
-                {
-                    ElementalRayUI.BeginFadeOut = true;
-                }
             }
             else if (AniHelper.HasFinish[AniState.End])
             {

@@ -97,7 +97,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 if (!LAPConfig.Instance.PerformanceMode)
                     StarDustMetaBall.SpawnParticle(Projectile.Center + vec * i, Vector2.Zero, 0.1f, 30);
                 else
-                    StarDustMetaBall.SpawnParticle(Projectile.Center + vec * i, Vector2.Zero, 0.1f, 25);
+                    StarDustMetaBall.SpawnParticle(Projectile.Center + vec * i, Vector2.Zero, 0.1f, 15);
             }
         }
         public override bool PreDraw(ref Color lightColor)

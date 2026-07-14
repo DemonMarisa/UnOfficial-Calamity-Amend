@@ -8,9 +8,9 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
 using UCA.Assets;
-using UCA.Content.DrawNodes;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.HealPRoj;
+using UCA.Content.VFXs;
 using UCA.Core.BaseClass;
 using UCA.Core.Utilities;
 
@@ -78,10 +78,11 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 for (int i = 0; i < 1; i++)
                 {
                     Color color = Color.Lerp(Color.DarkGreen, Color.LightGreen, Main.rand.NextFloat(0, 1f));
-                    Vector2 pos = Projectile.position + new Vector2(Main.rand.Next(0, Projectile.width), Projectile.height);
-                    new TerraTree(pos, -Vector2.UnitY.RotatedBy(MathHelper.PiOver4 * filps) * Main.rand.NextFloat(1, 2), color, 0, Main.rand.NextFloat(12, 15), -1, Main.rand.NextFloat(9, 18f)).Spawn();
-                    Vector2 pos2 = Projectile.position + new Vector2(Main.rand.Next(0, Projectile.width), Projectile.height);
-                    new TerraTree(pos2, -Vector2.UnitY.RotatedBy(-MathHelper.PiOver4 * filps) * Main.rand.NextFloat(1, 2), Color.SaddleBrown, 0, Main.rand.NextFloat(12, 17), 1, Main.rand.NextFloat(11, 22)).Spawn();
+                    Vector2 pos = Projectile.position + new Vector2(Main.rand.NextFloat(0, Projectile.width * 0.8f), Projectile.height);
+                    TerraVine.Spawn(pos, -Vector2.UnitY.RotatedBy(MathHelper.PiOver4 * filps) * Main.rand.NextFloat(1, 2), color, -1, 2f, Main.rand.NextFloat(12, 15), Main.rand.NextFloat(2f, 3.5f));
+
+                    Vector2 pos2 = Projectile.position + new Vector2(Main.rand.NextFloat(0, Projectile.width * 0.8f), Projectile.height);
+                    TerraVine.Spawn(pos2, -Vector2.UnitY.RotatedBy(MathHelper.PiOver4 * filps) * Main.rand.NextFloat(1, 2), Color.SaddleBrown, -1, 2f, Main.rand.NextFloat(12, 15), Main.rand.NextFloat(2f, 3.5f));
                 }
 
                 for (int i = 0; i < 2; i++)
@@ -113,17 +114,17 @@ namespace UCA.Content.Projectiles.Magic.Ray
             if (!Projectile.LAP().OnceHitEffect)
                 return;
             // 生成枝条
-            Vector2 firPos = target.Center;
-            for (int i = 0; i < 3; i++)
-            {
-                float rot = MathHelper.TwoPi / 3;
-                float XScale = Main.rand.NextFloat(9, 12);
-                float Height = Main.rand.NextFloat(4f, 9f);
+            //Vector2 firPos = target.Center;
+            //for (int i = 0; i < 3; i++)
+            //{
+            //    float rot = MathHelper.TwoPi / 3;
+            //    float XScale = Main.rand.NextFloat(9, 12);
+            //    float Height = Main.rand.NextFloat(4f, 9f);
 
-                Vector2 firVec = Vector2.UnitX.RotatedBy(rot * i).RotatedByRandom(MathHelper.TwoPi);
-                Color color = Main.rand.NextBool() ? Color.ForestGreen : Color.SaddleBrown;
-                new TerraTree(firPos, firVec * Main.rand.NextFloat(0.8f, 1.4f), color, 0, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
-            }
+            //    Vector2 firVec = Vector2.UnitX.RotatedBy(rot * i).RotatedByRandom(MathHelper.TwoPi);
+            //    Color color = Main.rand.NextBool() ? Color.ForestGreen : Color.SaddleBrown;
+            //    new TerraTree(firPos, firVec * Main.rand.NextFloat(0.8f, 1.4f), color, 0, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
+            //}
         }
         public override void OnKill(int timeLeft)
         {

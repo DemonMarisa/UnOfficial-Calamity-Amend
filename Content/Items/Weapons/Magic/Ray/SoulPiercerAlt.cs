@@ -51,7 +51,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
 
             Item.LAP().WeaponTier = AllWeaponTier.PostDOG;
             Item.LAP().UseCICalStatInflation = true;
-            Item.LAP().WeaponSkillManaCost = 350;
+            Item.LAP().WeaponSkillManaCost = 200;
         }
         public override bool AltFunctionUse(Player player)
         {

@@ -1,10 +1,11 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LAP.Assets.TextureRegister;
+using LAP.Core.Enums;
+using LAP.Core.ParticleSystem;
+using LAP.Core.Utilities;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using UCA.Assets;
-using LAP.Core.ParticleSystem;
-using LAP.Core.Utilities;
-using LAP.Core.Enums;
 
 namespace UCA.Content.Particiles
 {
@@ -44,8 +45,8 @@ namespace UCA.Content.Particiles
         }
         public override void Draw(SpriteBatch spriteBatch)
         {
-            Texture2D texture = UCATextureRegister.Fire.Value;
-            Rectangle frame = UCATextureRegister.Fire.Frame(8, 8, (int)(LifetimeRatio * 64) % 8, (int)(LifetimeRatio * 8));
+            Texture2D texture = LAPTextureRegister.Fire.Value;
+            Rectangle frame = texture.Frame(8, 8, (int)(LifetimeRatio * 64) % 8, (int)(LifetimeRatio * 8));
             Vector2 origin = frame.Size() * 0.5f;
             spriteBatch.Draw(texture, Position - Main.screenPosition + new Vector2(DrawLengthOffset, 0).RotatedBy(Rotation), frame, DrawColor * Opacity, BeginRot + Main.GlobalTimeWrappedHourly, origin, Scale, 0, 0f);
 

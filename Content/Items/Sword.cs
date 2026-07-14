@@ -1,19 +1,19 @@
+using LAP.Core.Graphics.Lightning;
+using LAP.Core.Graphics.VFX;
 using LAP.Core.SystemsLoader;
-using LAP.Core.UISystem;
-using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
-using System;
+using Mono.Cecil;
+using System.Net.NetworkInformation;
 using Terraria;
-using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using UCA.Assets.Sounds;
-using UCA.Content.GUI.ERayUI;
-using UCA.Content.MetaBalls;
-using UCA.Content.Projectiles.HealPRoj;
+using UCA.Content.Particiles;
 using UCA.Content.Projectiles.Magic.Ray;
-using UCA.Core.Utilities;
+using UCA.Content.Projectiles.Melee.NormalProj;
+using UCA.Content.Projectiles.Misc;
+using UCA.Content.VFXs;
+using UCA.Content.VFXs.ExoBlasts;
 
 namespace UCA.Content.Items
 { 
@@ -40,10 +40,8 @@ namespace UCA.Content.Items
 			Item.shoot = ProjectileID.WoodenArrowFriendly;
 			Item.shootSpeed = 12;
 
-            Item.useTime = 6;
-            Item.useAnimation = 54;
-            Item.reuseDelay = 25;
-            Item.useLimitPerAnimation = 9;
+            Item.useTime = 20;
+            Item.useAnimation = 20;
         }
         public override bool AltFunctionUse(Player player)
         {
@@ -51,46 +49,8 @@ namespace UCA.Content.Items
         }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo projSource, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-
-            Vector2 playerPos = player.RotatedRelativePoint(player.MountedCenter, true);
-            float speed = Item.shootSpeed;
-            float xPos = Main.mouseX + Main.screenPosition.X - playerPos.X;
-            float yPos = Main.mouseY + Main.screenPosition.Y - playerPos.Y;
-            float f = Main.rand.NextFloat() * MathHelper.TwoPi;
-
-            float sourceVariationLow = 90f;
-            float sourceVariationHigh = 180f;
-            Vector2 source = playerPos + f.ToRotationVector2() * MathHelper.Lerp(sourceVariationLow, sourceVariationHigh, Main.rand.NextFloat());
-
-            for (int i = 0; i < 50; i++)
-            {
-                source = playerPos + f.ToRotationVector2() * MathHelper.Lerp(sourceVariationLow, sourceVariationHigh, Main.rand.NextFloat());
-                if (Collision.CanHit(playerPos, 0, 0, source + (source - playerPos).SafeNormalize(Vector2.UnitX) * 8f, 0, 0))
-                {
-                    break;
-                }
-                f = Main.rand.NextFloat() * MathHelper.TwoPi;
-            }
-            Vector2 velocityReal = Main.MouseWorld - source;
-            Vector2 velocityVariation = new Vector2(xPos, yPos).SafeNormalize(Vector2.UnitY) * speed;
-            velocityReal = velocityReal.SafeNormalize(velocityVariation) * speed;
-
-            Projectile.NewProjectile(projSource, source, velocityReal, ProjectileType<VividBeam>(), damage, knockback, player.whoAmI);
+            Projectile.NewProjectile(projSource, position, velocity, ProjectileType<VividSmallBeam>(), damage, knockback, player.whoAmI, Main.MouseWorld.X, Main.MouseWorld.Y);
             return false;
-        }
-        public static void GenUnDeathSign(Vector2 firePos, float speedMult = 1)
-        {
-            for (int i = 0; i < 145f; i++)
-            {
-                float offsetAngle = MathHelper.TwoPi * i / 145f;
-                float unitOffsetX = (float)Math.Pow(Math.Cos(offsetAngle), 5D) * 1.5f;
-                float unitOffsetY = (float)Math.Pow(Math.Sin(offsetAngle), 5D);
-                Vector2 puffDustVelocity = new Vector2(unitOffsetX, unitOffsetY) * 7f * speedMult;
-                CosmicMetaBall.SpawnCircleParticle(firePos, puffDustVelocity, 0.13f, 90);
-            }
-        }
-        public static void GenStar()
-        {
         }
         public override bool? UseItem(Player player)
         {

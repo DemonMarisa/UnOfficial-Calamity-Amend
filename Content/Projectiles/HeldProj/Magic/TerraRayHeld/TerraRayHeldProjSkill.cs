@@ -10,16 +10,14 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
-using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using UCA.Assets;
 using UCA.Assets.Sounds;
-using UCA.Content.DrawNodes;
 using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
 using UCA.Content.UCACooldowns;
+using UCA.Content.VFXs;
 using UCA.Core.Utilities;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
@@ -141,12 +139,11 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
                 for (int i = 0; i < 6; i++)
                 {
                     float rot = MathHelper.TwoPi / 6;
-                    float XScale = Main.rand.NextFloat(5, 9);
-                    float Height = Main.rand.NextFloat(4f, 12f);
 
-                    Vector2 firVec = Vector2.UnitX.RotatedBy(rot * i).RotatedByRandom(MathHelper.TwoPi);
+                    Vector2 firVec = Vector2.UnitX.RotatedBy(rot * i).RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(1.6f, 6.4f);
                     Color color = Main.rand.NextBool() ? Color.ForestGreen : Color.SaddleBrown;
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(1.6f, 6.4f), color, 0, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
+
+                    TerraVine.Spawn(firPos, firVec, color, Main.rand.NextBool() ? -1 : 1, 2.2f, Main.rand.NextFloat(8f, 12f), Main.rand.NextFloat(1f, 2f));
                 }
             }
             else if (!AniHelper.HasFinish[AniState.End])

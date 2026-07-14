@@ -227,7 +227,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
             Vector2 shieldNormal = Projectile.rotation.ToRotationVector2();
             foreach (Projectile projectile in Main.ActiveProjectiles)
             {
-                // 需要：是敌对弹幕，活跃，伤害不超过100，不是无限穿
+                // 需要：是敌对弹幕，活跃，不是无限穿
                 if (!projectile.hostile || !projectile.active || projectile.UCA().NightShieldBeBlock || projectile.velocity == Vector2.Zero)
                     continue;
                 if (ProjectileID.Sets.DrawScreenCheckFluff[projectile.type] > 500)
@@ -240,8 +240,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
                 if (!movingTowardsForcefield)
                     continue;
                 float RealSpeed = projectile.velocity.Length() * (projectile.extraUpdates + 1);
-                //if (RealSpeed > 150)
-                //    return;
+                if (RealSpeed > 150)
+                    return;
                 bool collidingWithForcefield = false;
 
                 // 根据extraUpdates分段回溯弹幕在这一帧内的运动轨迹

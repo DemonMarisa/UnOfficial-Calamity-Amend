@@ -20,7 +20,7 @@ namespace UCA.Content.Items.Weapons.Melee.GreatSword
         public override string Texture => UCATextureRegister.StormRulerAlt.Path;
         public override void SetDefaults()
         {
-            Item.damage = 800;
+            Item.damage = 600;
             Item.DamageType = DamageClass.Melee;
             Item.width = 84;
             Item.height = 84;

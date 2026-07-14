@@ -1,7 +1,6 @@
 ﻿using LAP.Assets.Effects;
 using LAP.Assets.Sounds;
 using LAP.Assets.TextureRegister;
-using LAP.Common.Blance;
 using LAP.Content.Configs;
 using LAP.Content.Particles;
 using LAP.Core.AnimationHandle;
@@ -21,6 +20,7 @@ using Terraria.Audio;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets;
+using UCA.Common.Blance;
 using UCA.Content.Items.Weapons.Melee.GreatSword;
 using UCA.Content.Projectiles.Melee.NormalProj;
 
@@ -255,7 +255,7 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
             DrawSlash(texture, Color.White * 0.3f, 0f);
             if (!LAPConfig.Instance.PerformanceMode)
             {
-                Texture2D texture2 = UCATextureRegister.Aura_01.Value;
+                Texture2D texture2 = LAPTextureRegister.Aura_01.Value;
                 Effect effect2 = LAPShaderRegister.AlphaFade_Noise_OColor.Value;
                 effect2.Parameters["uFadeoutLeftLength"].SetValue(0.1f);
                 effect2.Parameters["uFadeinRigtLength"].SetValue(0.1f);

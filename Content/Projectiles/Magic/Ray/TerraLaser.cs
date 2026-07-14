@@ -15,8 +15,8 @@ using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
 using UCA.Assets.Sounds;
-using UCA.Content.DrawNodes;
 using UCA.Content.Particiles;
+using UCA.Content.VFXs;
 using UCA.Core.BaseClass;
 
 namespace UCA.Content.Projectiles.Magic.Ray
@@ -77,11 +77,11 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 for (int i = 0; i < 2; i++)
                 {
                     if (!LAPConfig.Instance.PerformanceMode)
-                        new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.DarkGreen, 0, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.ForestGreen, 0, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
+                        TerraVine.Spawn(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.DarkGreen, -1 * Filp, 1.5f, Main.rand.NextFloat(15, 20), Main.rand.NextFloat(0.4f, 1f));
+                    TerraVine.Spawn(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.ForestGreen, 1 * Filp, 1.5f, Main.rand.NextFloat(12, 20), Main.rand.NextFloat(0.4f, 1f));
                     if (!LAPConfig.Instance.PerformanceMode)
-                        new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.LightGreen, 0, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.SaddleBrown, 0, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
+                        TerraVine.Spawn(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.LightGreen, -1 * Filp, 1.5f, Main.rand.NextFloat(15, 20), Main.rand.NextFloat(0.4f, 1f));
+                    TerraVine.Spawn(firPos, firVec * Main.rand.NextFloat(6, 6.5f), Color.SaddleBrown, 1 * Filp, 1.5f, Main.rand.NextFloat(12, 20), Main.rand.NextFloat(0.4f, 1f));
                 }
                 #endregion
             }
@@ -220,8 +220,6 @@ namespace UCA.Content.Projectiles.Magic.Ray
                         // 插值向量，形成花瓣的形状
                         float LerpVelMult = MathHelper.Lerp(1f, 0.7f, EasingHelper.EaseInCubic(Progress));
                         Vector2 FinalVel = LerpPos * 0.085f * LerpVelMult;
-                        // 生成粒子
-                        // SpawnParticle(Projectile.Center + FireOffset, FinalVel, 0.1f);
                         Color RandomColor = Color.Lerp(Color.LightGreen, Color.ForestGreen, Main.rand.NextFloat(0, 1));
                         new MediumGlowBall(pos, FinalVel, RandomColor, 70, 0, 1, 0.1f, 0).Spawn();
                     }
@@ -230,18 +228,17 @@ namespace UCA.Content.Projectiles.Magic.Ray
             // 生成枝条
             
             Vector2 firPos = pos;
-            
+
             for (int i = 0; i < 5; i++)
             {
                 float rot = MathHelper.TwoPi / 5;
-                float XScale = Main.rand.NextFloat(9, 12);
-                float Height = Main.rand.NextFloat(4f, 6f);
 
                 Vector2 firVec = Vector2.UnitX.RotatedBy(rot * i);
                 Color color = Main.rand.NextBool() ? Color.DarkGreen : Color.SaddleBrown;
-                new TerraTree(firPos, firVec * Main.rand.NextFloat(0.3f, 0.6f), color, 0, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
+                TerraVine.Spawn(firPos, firVec * Main.rand.NextFloat(0.3f, 0.6f), color, Main.rand.NextBool() ? 1 : -1, 1.5f,
+                    Main.rand.NextFloat(3, 6), Main.rand.NextFloat(7f, 10f));
             }
-            
+
             for (int i = 0; i < 3; i++)
             {
                 Color RandomColor = Color.Lerp(Color.LightGreen, Color.ForestGreen, Main.rand.NextFloat(0, 1));
@@ -266,12 +263,11 @@ namespace UCA.Content.Projectiles.Magic.Ray
             for (int i = 0; i < 3; i++)
             {
                 float rot = MathHelper.TwoPi / 3;
-                float XScale = Main.rand.NextFloat(9, 12);
-                float Height = Main.rand.NextFloat(4f, 9f);
 
                 Vector2 firVec = Vector2.UnitX.RotatedBy(rot * i).RotatedByRandom(MathHelper.TwoPi);
                 Color color = Main.rand.NextBool() ? Color.ForestGreen : Color.SaddleBrown;
-                new TerraTree(firPos, firVec * Main.rand.NextFloat(0.8f, 1.4f), color, 0, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
+
+                TerraVine.Spawn(firPos, firVec * Main.rand.NextFloat(0.8f, 1.4f), color, Main.rand.NextBool() ? 1 : -1, 1.5f,Main.rand.NextFloat(3, 6), Main.rand.NextFloat(4f, 6f));
             }
             for (int i = 0; i < 2; i++)
             {

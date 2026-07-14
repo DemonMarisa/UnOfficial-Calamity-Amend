@@ -38,6 +38,7 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
             Item.shoot = ProjectileType<VividClarityHeldProj>();
             //Item.rare = RarityType<CatalystViolet>();
             Item.shootSpeed = 12f;
+            Item.LAP().SkillShoot = ProjectileType<VividClarityGreatSword>();
 
             Item.channel = true;
             Item.noUseGraphic = true;
@@ -55,10 +56,10 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
         {
             if (player.altFunctionUse == 2)
             {
-                Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI);
+                Projectile.NewProjectile(source, position, velocity, ProjectileType<VividClarityGreatSword>(), damage, knockback, player.whoAmI);
             }
             else
-                Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI);
+                Projectile.NewProjectile(source, position, velocity, ProjectileType<VividClarityHeldProj>(), damage, knockback, player.whoAmI);
             return false;
         }
 
@@ -66,18 +67,18 @@ namespace UCA.Content.Items.Weapons.Magic.Ray
         {
             if (!player.HasProj<VividClarityHeldProj>())
             {
-                // Projectile.NewProjectile(source, position, velocity, type, damage * 10, knockback, player.whoAmI);
+                Projectile.NewProjectile(source, position, velocity, ProjectileType<VividClarityGreatSword>(), damage * 100, knockback, player.whoAmI);
             }
         }
 
         public override void AddRecipes()
         {
-            CreateRecipe().
-                AddIngredient(ItemID.Amethyst).
-                AddIngredient(ItemID.Glass, 2).
-                AddRecipeGroup(VanillaRecipeGroups.Wood, 12).
-                AddTile(TileID.WorkBenches).
-                Register();
+            //CreateRecipe().
+            //    AddIngredient(ItemID.Amethyst).
+            //    AddIngredient(ItemID.Glass, 2).
+            //    AddRecipeGroup(VanillaRecipeGroups.Wood, 12).
+            //    AddTile(TileID.WorkBenches).
+            //    Register();
         }
     }
 }

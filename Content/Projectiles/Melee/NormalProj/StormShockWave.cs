@@ -143,7 +143,7 @@ namespace UCA.Content.Projectiles.Melee.NormalProj
             DrawBaseWave(texture, Color.White * 0.2f, 15f);
             if (!LAPConfig.Instance.PerformanceMode)
             {
-                Texture2D texture2 = UCATextureRegister.Aura_01.Value;
+                Texture2D texture2 = LAPTextureRegister.Aura_01.Value;
                 Vector4 vector4 = new (0.2f, 0.2f, 0.02f, 0.6f);
                 LAPUtilities.ApplyAlphaCut(vector4, new(0, -Main.GlobalTimeWrappedHourly * 0.5f + RanddomOffset), new Vector2(1.6f, 0.07f), Color.White);
                 DrawBaseWave(texture2, Color.White, 10f);
@@ -151,7 +151,7 @@ namespace UCA.Content.Projectiles.Melee.NormalProj
                 LAPUtilities.ApplyAlphaCut(vector4, new(0, -Main.GlobalTimeWrappedHourly * 0.65f + RanddomOffset2), new Vector2(2f, 0.1f), Color.White);
                 DrawBaseWave(texture2, Color.White, 20f);
 
-                texture2 = UCATextureRegister.Aura_02.Value;
+                texture2 = LAPTextureRegister.Aura_02.Value;
                 LAPUtilities.ApplyAlphaCut(vector4, new(0, -Main.GlobalTimeWrappedHourly * 0.45f + RanddomOffset3), new Vector2(2f, 0.15f), Color.White);
                 DrawBaseWave(texture2, Color.White, 10f);
 

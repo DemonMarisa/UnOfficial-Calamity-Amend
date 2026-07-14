@@ -211,7 +211,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public void DrawFlash()
         {
-            Texture2D texture = UCATextureRegister.Flash_01.Value;
+            Texture2D texture = LAPTextureRegister.Flash_01.Value;
             Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.SkyBlue, Main.GlobalTimeWrappedHourly, texture.Size() / 2, 0.2f * Projectile.scale, SpriteEffects.FlipHorizontally, 0f);
             Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.DeepSkyBlue, -Main.GlobalTimeWrappedHourly, texture.Size() / 2, 0.2f * Projectile.scale, SpriteEffects.None, 0f);
         }

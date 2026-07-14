@@ -18,6 +18,7 @@ namespace UCA.Assets.Effects
         public static Asset<Effect> FlowWithAShader { get; private set; }
         public static Asset<Effect> PolarDistortShader { get; private set; }
         public static Asset<Effect> PolarDistortShaderWithR { get; private set; }
+        public static Asset<Effect> PolarDistortShader_Rot { get; private set; }
         public static Asset<Effect> SoulGreatSwordFlowShader { get; private set; }
         public override void Load()
         {
@@ -30,28 +31,22 @@ namespace UCA.Assets.Effects
             }
 
             TerraRayVinesShader = LoadShader("TerraRayVinesShader");
-            RegisterMiscShader(TerraRayVinesShader, "Pass0", nameof(TerraRayVinesShader));
 
             TerrarRayLaser = LoadShader("TerrarRayLaser");
-            RegisterMiscShader(TerrarRayLaser, "UCATerrarRayLaserPass", nameof(TerrarRayLaser));
 
             SolarBladeShader = LoadShader("SolarBladeShader");
-            RegisterMiscShader(SolarBladeShader, "UCASolarBladePass", nameof(SolarBladeShader));
 
             SolarBlastShader = LoadShader("SolarBlastShader");
-            RegisterMiscShader(SolarBlastShader, "UCASolarBlastPass", nameof(SolarBlastShader));
-            
+
             FlowWithAShader = LoadShader("FlowWithAShader");
-            RegisterMiscShader(FlowWithAShader, "UCAFlowWithAPass", nameof(FlowWithAShader));
 
             PolarDistortShader = LoadShader("PolarDistortShader");
-            RegisterMiscShader(PolarDistortShader, "UCAPolarDistortPass", nameof(PolarDistortShader));
 
             PolarDistortShaderWithR = LoadShader("PolarDistortShaderWithR");
-            RegisterMiscShader(PolarDistortShaderWithR, "UCAPolarDistortPass", nameof(PolarDistortShaderWithR));
 
             SoulGreatSwordFlowShader = LoadShader("SoulGreatSwordFlowShader");
-            RegisterMiscShader(SoulGreatSwordFlowShader, "UCASGSShaderPass", nameof(SoulGreatSwordFlowShader));
+
+            PolarDistortShader_Rot = LoadShader("PolarDistortShader_Rot");
         }
         public override void Unload()
         {
@@ -63,12 +58,7 @@ namespace UCA.Assets.Effects
             PolarDistortShader = null;
             PolarDistortShaderWithR = null;
             SoulGreatSwordFlowShader = null;
-        }
-        public static void RegisterMiscShader(Asset<Effect> shader, string passName, string registrationName)
-        {
-            Asset<Effect> shaderPointer = shader;
-            MiscShaderData passParamRegistration = new(shaderPointer, passName);
-            GameShaders.Misc[$"{ShaderPrefix}{registrationName}"] = passParamRegistration;
+            PolarDistortShader_Rot = null;
         }
     }
 }

@@ -1,5 +1,8 @@
-﻿using LAP.Content.Configs;
+﻿using LAP.Assets.TextureRegister;
+using LAP.Content.Configs;
 using LAP.Core.Graphics.Primitives.Trail;
+using LAP.Core.Presets.Content;
+using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -10,9 +13,7 @@ using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Sounds;
 using UCA.Content.Particiles;
-using UCA.Content.Particiles.Lightnings;
 using UCA.Core.BaseClass;
-using LAP.Assets.TextureRegister;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
@@ -64,8 +65,8 @@ namespace UCA.Content.Projectiles.Magic.Ray
                     for (int i = 0; i < 5; i++)
                     {
                         float rot = MathHelper.TwoPi / 5;
-                        new Lightning02(Projectile.Center, Vector2.Zero, Main.rand.NextBool() ? Color.PaleTurquoise : Color.Turquoise, Main.rand.Next(25, 35),
-                            rot * i + Main.rand.NextFloat(-0.2f, 0.2f), Main.rand.NextFloat(0.1f, 0.2f)).Spawn();
+                        ParticlePreset.NewLightning02(Projectile.Center, Vector2.Zero, Main.rand.NextBool() ? Color.PaleTurquoise : Color.Turquoise, Main.rand.Next(25, 35),
+                            Main.rand.NextFloat(0.1f, 0.2f), rot * i + Main.rand.NextFloat(-0.2f, 0.2f));
                     }
                     new BloomShockwave(Projectile.Center, Vector2.Zero, Color.PaleTurquoise, 25, 1f, 0.15f).Spawn();
                     new BloomShockwave(Projectile.Center, Vector2.Zero, Color.Turquoise, 35, 1f, 0.25f).Spawn();
@@ -88,8 +89,8 @@ namespace UCA.Content.Projectiles.Magic.Ray
                     for (int i = 0; i < 3; i++)
                     {
                         float rot = MathHelper.TwoPi / 3;
-                        new Lightning02(Projectile.Center, Vector2.Zero, Main.rand.NextBool() ? Color.PaleTurquoise : Color.Turquoise, Main.rand.Next(25, 35),
-                            rot * i + Main.rand.NextFloat(-0.2f, 0.2f), Main.rand.NextFloat(0.1f, 0.2f)).Spawn();
+                        ParticlePreset.NewLightning02(Projectile.Center, Vector2.Zero, Main.rand.NextBool() ? Color.PaleTurquoise : Color.Turquoise, Main.rand.Next(25, 35),
+                            Main.rand.NextFloat(0.1f, 0.2f), rot * i + Main.rand.NextFloat(-0.2f, 0.2f));
                     }
                     new BloomShockwave(Projectile.Center, Vector2.Zero, Color.Turquoise, 35, 1f, 0.25f).Spawn();
                     new CrossGlow(Projectile.Center, Vector2.Zero, Color.Turquoise, 25, 1f, 0.45f).Spawn();
@@ -100,26 +101,25 @@ namespace UCA.Content.Projectiles.Magic.Ray
                     }
                 }
             }
-
             if (!LAPUtilities.OutOffScreen(Projectile.Center))
             {
                 if (!LAPConfig.Instance.PerformanceMode)
                 {
-                    for (int i = 0; i < 5; i++)
-                    {
-                        Vector2 vel = -Projectile.velocity / 5;
-                        new VortexGlowBall(Projectile.Center + vel * i, Vector2.Zero, Color.Turquoise, 20, 0.1f).Spawn();
-                    }
-                    new Lightning01(Projectile.Center, Vector2.Zero, Main.rand.NextBool() ? Color.PaleTurquoise : Color.Turquoise, Main.rand.Next(25, 30), Projectile.rotation + MathHelper.PiOver2, Main.rand.NextFloat(0.2f, 0.4f)).Spawn();
-                }
-                else
-                {
                     for (int i = 0; i < 3; i++)
                     {
                         Vector2 vel = -Projectile.velocity / 3;
-                        new VortexGlowBall(Projectile.Center + vel * i, Vector2.Zero, Color.Turquoise, 10, 0.1f).Spawn();
+                        ParticlePreset.NewTGlowBall(Projectile.Center + vel * i, Vector2.Zero, Color.Turquoise, 20, 0.15f);
                     }
-                    new Lightning01(Projectile.Center, Vector2.Zero, Main.rand.NextBool() ? Color.PaleTurquoise : Color.Turquoise, Main.rand.Next(15, 25), Projectile.rotation + MathHelper.PiOver2, Main.rand.NextFloat(0.1f, 0.3f)).Spawn();
+                    ParticlePreset.NewLightning01(Projectile.Center, Vector2.Zero, Main.rand.NextBool() ? Color.PaleTurquoise : Color.Turquoise, Main.rand.Next(25, 30), Main.rand.NextFloat(0.1f, 0.3f), Projectile.rotation + MathHelper.PiOver2);
+                }
+                else
+                {
+                    for (int i = 0; i < 2; i++)
+                    {
+                        Vector2 vel = -Projectile.velocity / 2;
+                        ParticlePreset.NewTGlowBall(Projectile.Center + vel * i, Vector2.Zero, Color.Turquoise, 10, 0.1f);
+                    }
+                    ParticlePreset.NewLightning01(Projectile.Center, Vector2.Zero, Main.rand.NextBool() ? Color.PaleTurquoise : Color.Turquoise, Main.rand.Next(15, 25), Main.rand.NextFloat(0.1f, 0.3f), Projectile.rotation + MathHelper.PiOver2);
                 }
             }
 
@@ -187,20 +187,8 @@ namespace UCA.Content.Projectiles.Magic.Ray
         }
         public void DrawTrail(int height = 36)
         {
-            Vector2 HalfProj = new Vector2(Projectile.width / 2, Projectile.height / 2);
-            List<TrailDrawData> trailDrawDate = [];
             DrawSetting drawSetting = new(UCATextureRegister.Thrust02.Value);
-            for (int i = 0; i < Projectile.oldPos.Length; i++)
-            {
-                if (Projectile.oldPos[i] != Vector2.Zero)
-                {
-                    Vector2 DrawPos = Projectile.oldPos[i] - Main.screenPosition + HalfProj;
-
-                    TrailDrawData TrailDrawDate = new(DrawPos, Color.Turquoise, new Vector2(0, height), Projectile.oldRot[i]);
-                    trailDrawDate.Add(TrailDrawDate);
-                }
-            }
-            TrailRender.RenderTrail(trailDrawDate.ToArray(), drawSetting);
+            LAPContent.DrawTrail(Projectile.oldPos, Projectile.oldRot, Projectile.Size / 2, Color.Turquoise, height, drawSetting);
         }
     }
 }

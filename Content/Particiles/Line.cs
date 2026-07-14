@@ -38,7 +38,7 @@ namespace UCA.Content.Particiles
             {
                 Mult = MathHelper.Lerp(12, 0, EasingHelper.EaseOutExpo(LifetimeRatio));
 
-                Scale = (float)Math.Pow(EasingHelper.EaseInOutSin(LifetimeRatio), 2) * 0.5f;
+                Scale = (float)Math.Pow(EasingHelper.EaseInOutExpo(LifetimeRatio), 2) * 0.5f;
                 if (Mult == 0)
                     return;
 

@@ -8,9 +8,9 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ModLoader;
 using UCA.Assets.Sounds;
-using UCA.Content.DrawNodes;
 using UCA.Content.HitEffect;
 using UCA.Content.MetaBalls;
+using UCA.Content.VFXs;
 using UCA.Core.BaseClass;
 
 namespace UCA.Content.Projectiles.Magic.Ray
@@ -83,7 +83,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             SoundEngine.PlaySound(SoundsMenu.SwordSwing2 with { Volume = 0.6f}, Projectile.Center);
             Projectile.rotation = Projectile.velocity.ToRotation();
             int Filp = Main.rand.NextBool() ? 1 : -1;
-            new CosmicDustEmitting(Projectile.Center, Filp).Spawn();
+            CosmicDustEmitting.Spawn(Projectile.Center, Filp);
             BeginPos = Projectile.Center + Projectile.velocity * 8 * 260;
             EndPos = Projectile.Center + -Projectile.velocity * 8 * 130;
         }

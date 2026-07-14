@@ -13,6 +13,8 @@ using LAP.Core.SpecificEffectManagers;
 using LAP.Core.Utilities;
 using LAP.Core.SystemsLoader;
 using LAP.Content.Particles;
+using LAP.Assets.TextureRegister;
+using LAP.Core.Presets.Content;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
 {
@@ -106,7 +108,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 for (int i = 0; i < 100; i++)
                 {
                     Color RandomColor = LAPUtilities.LerpColor(Color.SkyBlue, Color.DeepSkyBlue);
-                    new MediumGlowBall(Projectile.Center + offset + Owner.velocity * 6, RandomColor, 120, 0.4f, Main.rand.NextFloat(4f, 12f)).Spawn();
+                    ParticlePreset.NewTGlowBall(Projectile.Center + offset + Owner.velocity * 6, Vector2.Zero,RandomColor, 120, 0.4f, Main.rand.NextFloat(4f, 12f));
                 }
                 ScreenShakeSystem.AddScreenShakes(Projectile.Center, 250, 180, Projectile.rotation, 0.01f, true, 1000);
                 SoulStreamIndex = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + offset, Vector2.Zero, ProjectileType<SoulStream>(), Projectile.damage * 6, Projectile.knockBack, Projectile.owner, Projectile.whoAmI);
@@ -144,7 +146,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
         }
         public void DrawFlash()
         {
-            Texture2D texture = UCATextureRegister.Flash_01.Value;
+            Texture2D texture = LAPTextureRegister.Flash_01.Value;
             Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition + PostRotBalloffset, null, Color.SkyBlue, Main.GlobalTimeWrappedHourly, texture.Size() / 2, 0.2f * BallScale, SpriteEffects.FlipHorizontally, 0f);
             Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition + PostRotBalloffset, null, Color.DeepSkyBlue, -Main.GlobalTimeWrappedHourly, texture.Size() / 2, 0.2f * BallScale, SpriteEffects.None, 0f);
         }
@@ -158,7 +160,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
             shader.CurrentTechnique.Passes[0].Apply();
             Main.instance.GraphicsDevice.Textures[1] = UCATextureRegister.FusableBall.Value;
             float Scale = 1.5f * BallScale;
-            Texture2D texture = UCATextureRegister.Aura_01.Value;
+            Texture2D texture = LAPTextureRegister.Aura_01.Value;
             Vector2 orig = texture.Size() / 2;
             Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition + PostRotBalloffset, null, Color.SkyBlue, 0, orig, Scale, SpriteEffects.None, 0);
             Scale *= 0.5f;

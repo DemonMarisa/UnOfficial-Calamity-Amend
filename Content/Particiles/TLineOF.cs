@@ -6,6 +6,7 @@ using System;
 using Terraria;
 using UCA.Assets;
 using LAP.Core.Enums;
+using LAP.Assets.TextureRegister;
 
 namespace UCA.Content.Particiles
 {
@@ -43,7 +44,7 @@ namespace UCA.Content.Particiles
         }
         public override void Draw(SpriteBatch spriteBatch)
         {
-            Texture2D texture = UCATextureRegister.OpticalFlaresLine.Value;
+            Texture2D texture = LAPTextureRegister.OpticalFlaresLine.Value;
             spriteBatch.Draw(texture, Position - Main.screenPosition, null, DrawColor * Opacity, Rotation, texture.Size() / 2, Scale, SpriteEffects.None, 0);
         }
     }

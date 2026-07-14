@@ -13,7 +13,6 @@ namespace UCA.Assets
         public static Asset<Texture2D> TerrarRayFlow { get; private set; }
         public static Asset<Texture2D> TerraMatrix { get; private set; }
         public static Asset<Texture2D> FireNoise { get; private set; }
-        public static Asset<Texture2D> SolarBlade { get; private set; }
         public static Asset<Texture2D> SolarThinBlade { get; private set; }
         public static Asset<Texture2D> SolarBladeGlowMask { get; private set; }
         public static Asset<Texture2D> ElementalRayFlow { get; private set; }
@@ -27,10 +26,8 @@ namespace UCA.Assets
         public static Asset<Texture2D> Lightning { get; private set; }
         public static Asset<Texture2D> FusableBall { get; private set; }
         public static Asset<Texture2D> BloomRing { get; private set; }
-        public static Asset<Texture2D> SoftEdgeCircle { get; private set; }
         public static Asset<Texture2D> BloomLine { get; private set; }
         public static Asset<Texture2D> SolarBladeGlowMask_Blue { get; private set; }
-        public static Asset<Texture2D> SolarBladeGlowMask_Grey { get; private set; }
         public static Asset<Texture2D> LaserHighContrast { get; private set; }
         public static Asset<Texture2D> CosmicBG { get; private set; }
         public static Asset<Texture2D> SlashLine01 { get; private set; }
@@ -38,7 +35,8 @@ namespace UCA.Assets
         public static Asset<Texture2D> SlashLine03 { get; private set; }
         public static Asset<Texture2D> SoulGreatSword { get; private set; }
         public static Asset<Texture2D> HarshNoise { get; private set; }
-        public static Asset<Texture2D> OpticalFlaresLine { get; private set; }
+        public static Asset<Texture2D> TechCircle { get; private set; }
+        public static Asset<Texture2D> VividClarityBlade { get; private set; }
         public static void LoadExtraTextures()
         {
             NebulaBG = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/MetaBall/NebulaBG");
@@ -52,7 +50,6 @@ namespace UCA.Assets
             TerrarRayFlow = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/TerraRayFlow");
             TerraMatrix = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/TerraMatrix");
             FireNoise = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/FireNoise");
-            SolarBlade = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/SolarBlade");
             SolarThinBlade = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/SolarThinBlade");
             SolarBladeGlowMask = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/SolarBladeGlowMask");
             ElementalRayFlow = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/ElementalRayFlow");
@@ -63,17 +60,17 @@ namespace UCA.Assets
             Lightning = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/Lightning");
             FusableBall = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/FusableBall");
             BloomRing = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/BloomRing");
-            SoftEdgeCircle = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/SoftEdgeCircle");
             BloomLine = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/BloomLine");
             SolarBladeGlowMask_Blue = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/SolarBladeGlowMask_Blue");
-            SolarBladeGlowMask_Grey = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/SolarBladeGlowMask_Grey");
             LaserHighContrast = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/LaserHighContrast");
             SlashLine01 = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/SlashLine01");
             SlashLine02 = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/SlashLine02");
             SlashLine03 = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/SlashLine03");
             SoulGreatSword = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/SoulGreatSword");
             HarshNoise = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/HarshNoise");
-            OpticalFlaresLine = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/OpticalFlaresLine");
+
+            TechCircle = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/TechCircle");
+            VividClarityBlade = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/VividClarityBlade");
         }
         public static void UnLoadExtraTextures()
         {
@@ -87,7 +84,6 @@ namespace UCA.Assets
             TerrarRayFlow = null;
             TerraMatrix = null;
             FireNoise = null;
-            SolarBlade = null;
             SolarThinBlade = null;
             SolarBladeGlowMask = null;
             ElementalRayFlow = null;
@@ -98,7 +94,6 @@ namespace UCA.Assets
             Lightning = null;
             FusableBall = null;
             BloomRing = null;
-            SoftEdgeCircle = null;
             BloomLine = null;
             SolarBladeGlowMask_Blue = null;
             LaserHighContrast = null;
@@ -107,7 +102,9 @@ namespace UCA.Assets
             SlashLine03 = null;
             SoulGreatSword = null;
             HarshNoise = null;
-            OpticalFlaresLine = null;
+
+            TechCircle = null;
+            VividClarityBlade = null;
         }
     }
 }

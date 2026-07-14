@@ -6,6 +6,7 @@ using UCA.Assets;
 using LAP.Core.ParticleSystem;
 using LAP.Core.Utilities;
 using LAP.Core.Enums;
+using LAP.Core.Graphics.DeepGlow;
 namespace UCA.Content.Particiles
 {
     public class Petal : BaseParticle

@@ -1,6 +1,6 @@
 ﻿using LAP.Assets.Effects;
 using LAP.Assets.TextureRegister;
-using LAP.Core.Enums;
+using LAP.Content.Configs;
 using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
@@ -10,10 +10,9 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets;
-using UCA.Assets.Effects;
-using UCA.Content.DrawNodes;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld;
+using UCA.Content.VFXs;
 using UCA.Core.BaseClass;
 
 namespace UCA.Content.Projectiles.Magic.Ray
@@ -141,32 +140,35 @@ namespace UCA.Content.Projectiles.Magic.Ray
             Vector2 ProjFireOffset = new Vector2(-24, 0).RotatedBy(Projectile.velocity.ToRotation());
             Vector2 firPos = Projectile.Center + ProjFireOffset;
             int Filp = Main.rand.NextBool() ? 1 : -1;
-            for (int i = 0; i < 2; i++)
+            if (!LAPConfig.Instance.PerformanceMode)
             {
-                if (WeaponStates == ElementalRayState.Solar)
+                for (int i = 0; i < 2; i++)
                 {
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.OrangeRed, 0, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.Orange, 0, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
-                }
-                else if (WeaponStates == ElementalRayState.Nebula)
-                {
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.Violet, 0, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.BlueViolet, 0, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
-                }
-                else if (WeaponStates == ElementalRayState.Vortex)
-                {
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.Turquoise, 0, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.DarkTurquoise, 0, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
-                }
-                else if (WeaponStates == ElementalRayState.StarDust)
-                {
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.SkyBlue, 0, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.DeepSkyBlue, 0, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
-                }
-                else
-                {
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.White, 0, Main.rand.NextFloat(2, 5), -1 * Filp, Main.rand.NextFloat(9, 18f)).Spawn();
-                    new TerraTree(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.GhostWhite, 0, Main.rand.NextFloat(3, 6), 1 * Filp, Main.rand.NextFloat(11, 22)).Spawn();
+                    if (WeaponStates == ElementalRayState.Solar)
+                    {
+                        TerraVine.Spawn(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.OrangeRed, 1 * Filp, 1.5f, Main.rand.NextFloat(12, 20), Main.rand.NextFloat(0.4f, 1f));
+                        TerraVine.Spawn(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.Orange, 1 * Filp, 1.5f, Main.rand.NextFloat(12, 20), Main.rand.NextFloat(0.4f, 1f));
+                    }
+                    else if (WeaponStates == ElementalRayState.Nebula)
+                    {
+                        TerraVine.Spawn(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.Violet, 1 * Filp, 1.5f, Main.rand.NextFloat(12, 20), Main.rand.NextFloat(0.4f, 1f));
+                        TerraVine.Spawn(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.BlueViolet, 1 * Filp, 1.5f, Main.rand.NextFloat(12, 20), Main.rand.NextFloat(0.4f, 1f));
+                    }
+                    else if (WeaponStates == ElementalRayState.Vortex)
+                    {
+                        TerraVine.Spawn(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.Turquoise, 1 * Filp, 1.5f, Main.rand.NextFloat(12, 20), Main.rand.NextFloat(0.4f, 1f));
+                        TerraVine.Spawn(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.DarkTurquoise, 1 * Filp, 1.5f, Main.rand.NextFloat(12, 20), Main.rand.NextFloat(0.4f, 1f));
+                    }
+                    else if (WeaponStates == ElementalRayState.StarDust)
+                    {
+                        TerraVine.Spawn(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.SkyBlue, 1 * Filp, 1.5f, Main.rand.NextFloat(12, 20), Main.rand.NextFloat(0.4f, 1f));
+                        TerraVine.Spawn(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.DeepSkyBlue, 1 * Filp, 1.5f, Main.rand.NextFloat(12, 20), Main.rand.NextFloat(0.4f, 1f));
+                    }
+                    else
+                    {
+                        TerraVine.Spawn(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.White, 1 * Filp, 1.5f, Main.rand.NextFloat(12, 20), Main.rand.NextFloat(0.4f, 1f));
+                        TerraVine.Spawn(firPos, firVec * Main.rand.NextFloat(6, 7f), Color.GhostWhite, 1 * Filp, 1.5f, Main.rand.NextFloat(12, 20), Main.rand.NextFloat(0.4f, 1f));
+                    }
                 }
             }
             #endregion

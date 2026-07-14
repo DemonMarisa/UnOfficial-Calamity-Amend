@@ -3,14 +3,12 @@ using LAP.Core.StateMachine.SynedHitEffect;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
 using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
-using UCA.Content.DrawNodes;
 using UCA.Content.HitEffect;
 using UCA.Content.Particiles;
 using UCA.Core.BaseClass;
@@ -25,7 +23,6 @@ namespace UCA.Content.Projectiles.Magic.Ray
         public int MaxFade = 30;
         public float LaserLength = 0;
         public Vector2 BeginPos = Vector2.Zero;
-        public List<TerraEnergyTree> Vine = [];
         public float Opacity = 0;
         public bool inToFadeOut = false;
 
@@ -59,26 +56,10 @@ namespace UCA.Content.Projectiles.Magic.Ray
         {
             if (Projectile.LAP().FirstFrame)
             {
-                #region 生成伴随主弹幕的树
-                for (int i = 0; i < 1; i++)
-                {
-                    float XScale = Main.rand.NextFloat(4, 12);
-                    float Height = Main.rand.NextFloat(1f, 3);
-
-                    Vine.Add(new TerraEnergyTree(Projectile.Center, Projectile.velocity, Color.SaddleBrown, MaxTime, XScale, 1, Height));
-                    Vine.Add(new TerraEnergyTree(Projectile.Center, Projectile.velocity, Color.LightGreen, MaxTime, XScale, -1, Height));
-
-                    float XScale2 = Main.rand.NextFloat(5, 10);
-                    float Height2 = Main.rand.NextFloat(3, 6);
-                    Vine.Add(new TerraEnergyTree(Projectile.Center, Projectile.velocity, Color.DarkGreen, MaxTime, XScale2, 1, Height2));
-                    Vine.Add(new TerraEnergyTree(Projectile.Center, Projectile.velocity, Color.ForestGreen, MaxTime, XScale2, -1, Height2));
-                }
-                #endregion
                 BeginPos = Projectile.Center;
             }
             Projectile.rotation = Projectile.velocity.ToRotation();
             LaserLength = (Projectile.Center - BeginPos).Length();
-            UpdateVine();
             if (inToFadeOut)
             {
                 Opacity = MathHelper.Lerp(Opacity, 0f, 0.01f);
@@ -104,37 +85,11 @@ namespace UCA.Content.Projectiles.Magic.Ray
             }
             if (Projectile.timeLeft < MaxTime / 2)
                 inToFadeOut = true;
-
-            if (inToFadeOut)
-            {
-                for (int i = 0; i < Vine.Count; i++)
-                    Vine[i].CanAdd = false;
-            }
-        }
-        public void UpdateVine()
-        {
-            for (int i = 0; i < Vine.Count; i++)
-            {
-                Vine[i].Update();
-                Vine[i].Position += Vine[i].Velocity;
-                Vine[i].Time++;
-
-                if (Vine[i].Time >= Vine[i].Lifetime)
-                {
-                    Vine[i].OnKill();
-                    Vine.Remove(Vine[i]);
-                }
-            }
         }
         public override bool PreDraw(ref Color lightColor)
         {
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
-
-            for (int i = 0; i < Vine.Count; i++)
-            {
-                Vine[i].Draw(Main.spriteBatch);
-            }
             
             DrawLaser(Color.ForestGreen, 0.15f);
             DrawLaser(Color.White, 0.02f);

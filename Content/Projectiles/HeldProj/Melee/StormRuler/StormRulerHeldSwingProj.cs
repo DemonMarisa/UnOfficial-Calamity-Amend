@@ -5,6 +5,7 @@ using LAP.Content.Configs;
 using LAP.Content.Particles;
 using LAP.Core.AnimationHandle;
 using LAP.Core.Enums;
+using LAP.Core.Graphics.DeepGlow;
 using LAP.Core.Graphics.PixelatedRender;
 using LAP.Core.Graphics.Primitives.Trail;
 using LAP.Core.Keybind;
@@ -14,7 +15,6 @@ using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Mono.Cecil;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
@@ -23,14 +23,11 @@ using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Content.Items.Weapons.Melee.GreatSword;
 using UCA.Content.Projectiles.Melee.NormalProj;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
 {
     public class StormRulerHeldSwingProj : ModProjectile, ILocalizedModType, IPixelatedRenderer
     {
-        public static SoundStyle WindAttack1 => new($"{LAPSoundsMenu.AttackSoundRoute}/WindAttack1") { Volume = 1f, Pitch = Main.rand.NextFloat(-0.2f, 0.2f), MaxInstances = -1 };
-        public static SoundStyle WindAttack2 => new($"{LAPSoundsMenu.AttackSoundRoute}/WindAttack2") { Volume = 1f, Pitch = Main.rand.NextFloat(-0.2f, 0.2f), MaxInstances = -1 };
         public DrawLayer LayerToRenderTo => DrawLayer.BeforeDusts;
         public BlendState BlendState => BlendState.Additive;
         public override LocalizedText DisplayName => LAPUtilities.GetItemName<StormRulerAlt>();
@@ -129,9 +126,8 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
             Vector2 TargetPos = Vector2.Transform(Vector2.UnitX, transform) * 1.25f;
             Projectile.scale = TargetPos.Length();
             Projectile.rotation = TargetPos.ToRotation() + TargetRot;
-            if (AniHelper.AniProgress[AniState.Begin] == 60)
+            if (AniHelper.AniProgress[AniState.Begin] == Owner.ApplyWeaponAttackSpeed(Owner.HeldItem, 100, 10))
             {
-                // SoundEngine.PlaySound(SoundID.DD2_BetsyWindAttack, Projectile.Center);
                 if (Projectile.IsLocalPlayer())
                 {
                     Vector2 fireVel = Projectile.velocity.SafeNormalize(Vector2.UnitX) * 42;
@@ -152,7 +148,7 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
                 Vector2 Pos2 = Vector2.Lerp(Projectile.Center, Projectile.Center + TargetPos.RotatedBy(TargetRot) * 160, Main.rand.NextFloat(0.35f, 1f));
                 new SmallGlowBall(Pos2, Vector2.Zero, Color.White, Main.rand.Next(30, 120), 0.1f, 3f).Spawn();
 
-                float baseSlashRotation = AniHelper.UpDateAngle(-135 * Filp, 145 * Filp, Owner.direction, easedProgress);
+                float baseSlashRotation = AniHelper.UpDateAngle(-140 * Filp, 140 * Filp, Owner.direction, easedProgress);
                 Matrix Slashtransform = Matrix.CreateRotationZ(baseSlashRotation) * Matrix.CreateScale(1.2f, Heigh, 1f);
                 Vector2 SlashTargetPos = Vector2.Transform(Vector2.UnitX, Slashtransform) * 1.25f;
                 Vector2 FinalPos = SlashTargetPos.RotatedBy(TargetRot) * SwordLength;
@@ -225,7 +221,7 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
             DrawSlash(texture, Color.White * 0.3f, 0f);
             if (!LAPConfig.Instance.PerformanceMode)
             {
-                Texture2D texture2 = UCATextureRegister.Aura_01.Value;
+                Texture2D texture2 = LAPTextureRegister.Aura_01.Value;
                 Effect effect2 = LAPShaderRegister.AlphaFade_Noise_OColor.Value;
                 effect2.Parameters["uFadeoutLeftLength"].SetValue(0.2f);
                 effect2.Parameters["uFadeinRigtLength"].SetValue(0.2f);

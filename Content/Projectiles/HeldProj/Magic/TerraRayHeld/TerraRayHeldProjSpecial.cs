@@ -10,13 +10,12 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using UCA.Assets;
 using UCA.Assets.Sounds;
-using UCA.Content.DrawNodes;
 using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Particiles;
 using UCA.Content.Paths;
 using UCA.Content.Projectiles.Magic.Ray;
+using UCA.Content.VFXs;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
 {
@@ -257,12 +256,11 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
             for (int i = 0; i < 9; i++)
             {
                 float rot = MathHelper.TwoPi / 9;
-                float XScale = Main.rand.NextFloat(9, 12);
-                float Height = Main.rand.NextFloat(4f, 6f);
 
                 Vector2 firVec = Vector2.UnitX.RotatedBy(rot * i);
                 Color color = Main.rand.NextBool() ? Color.DarkGreen : Color.SaddleBrown;
-                new TerraTree(firPos, firVec * Main.rand.NextFloat(0.3f, 0.6f), color, 0, XScale, Main.rand.NextBool() ? 1 : -1, Height).Spawn();
+                TerraVine.Spawn(firPos, firVec * Main.rand.NextFloat(0.3f, 0.6f), color, Main.rand.NextBool() ? 1 : -1, 1.5f,
+                    Main.rand.NextFloat(3, 6), Main.rand.NextFloat(7f, 10f));
             }
             #region 生成环形粒子
             for (int i = 0; i < 20; i++)
@@ -307,7 +305,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
             int Damage = (int)(Projectile.damage * 2);
             if (fromMouse)
             {
-                NPC target = LAPUtilities.FindClosestTarget(Projectile.Center, 1500, true);
+                NPC target = LAPUtilities.FindClosestTarget(Owner.LocalMouseWorld(), 300, true);
                 if (target is not null)
                     genPos = target.Center;
                 SoundEngine.PlaySound(SoundsMenu.NightRayHit, Projectile.Center);

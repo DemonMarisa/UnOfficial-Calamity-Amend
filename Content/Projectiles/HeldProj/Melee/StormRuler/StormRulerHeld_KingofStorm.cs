@@ -1,7 +1,6 @@
 ﻿using LAP.Assets.Effects;
 using LAP.Assets.Sounds;
 using LAP.Assets.TextureRegister;
-using LAP.Common.Blance;
 using LAP.Content.Configs;
 using LAP.Content.Particles;
 using LAP.Core.AnimationHandle;
@@ -21,6 +20,7 @@ using Terraria.Audio;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets;
+using UCA.Common.Blance;
 using UCA.Content.Items.Weapons.Melee.GreatSword;
 using UCA.Content.Projectiles.Melee.NormalProj;
 using UCA.Core.Utilities;
@@ -104,7 +104,7 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
             if (!Projectile.LAP().FirstFrame)
                 return;
             Owner.UCA().KingOfStorm = false;
-            HasFocus = Owner.CheckFocus(Owner.ActiveItem().LAP().WeaponSkillRealFocusCost * 2);
+            HasFocus = Owner.CheckFocus(Owner.ActiveItem().LAP().WeaponSkillRealFocusCost);
             SoundEngine.PlaySound(LAPSoundsMenu.SwingAttack with { Volume = 1f, Pitch = Main.rand.NextFloat(-0.4f, -0.2f), MaxInstances = -1 }, Projectile.Center);
             SoundEngine.PlaySound(LAPSoundsMenu.SPSwing with { Volume = 1f, Pitch = Main.rand.NextFloat(-0.4f, -0.2f), MaxInstances = -1 }, Projectile.Center);
             SoundEngine.PlaySound(LAPSoundsMenu.StormRulerAttack with { Volume = 1f, Pitch = Main.rand.NextFloat(-0.2f, 0.2f), MaxInstances = -1 }, Projectile.Center);
@@ -289,7 +289,7 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
                 HitCooldown = 5;
             }
             if (Projectile.LAP().OnceHitEffect)
-                ScreenShakeSystem.AddScreenShakes(Projectile.Center, -75 * -Owner.direction, 45, MathHelper.TwoPi, 0.5f, true, 1000);
+                ScreenShakeSystem.AddScreenShake_Sin(Projectile.Center, 40, 75, MathHelper.PiOver2);
         }
         public override void OnKill(int timeLeft)
         {
@@ -333,7 +333,7 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
             DrawSlash(texture, Color.White * 0.3f, 0f);
             if (!LAPConfig.Instance.PerformanceMode)
             {
-                Texture2D texture2 = UCATextureRegister.Aura_01.Value;
+                Texture2D texture2 = LAPTextureRegister.Aura_01.Value;
                 Effect effect2 = LAPShaderRegister.AlphaFade_Noise_OColor.Value;
                 effect2.Parameters["uFadeoutLeftLength"].SetValue(0.1f);
                 effect2.Parameters["uFadeinRigtLength"].SetValue(0.2f);
@@ -356,7 +356,7 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
             DrawSlash2(texture, Color.White * 0.5f, 0f);
             if (!LAPConfig.Instance.PerformanceMode)
             {
-                Texture2D texture2 = UCATextureRegister.Aura_01.Value;
+                Texture2D texture2 = LAPTextureRegister.Aura_01.Value;
                 Effect effect2 = LAPShaderRegister.AlphaFade_Noise_OColor.Value;
                 effect2.Parameters["uFadeoutLeftLength"].SetValue(0.1f);
                 effect2.Parameters["uFadeinRigtLength"].SetValue(0.2f);

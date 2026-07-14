@@ -2,9 +2,11 @@
 using LAP.Content.Configs;
 using LAP.Core.Graphics.DeepGlow;
 using LAP.Core.Graphics.Primitives.Trail;
+using LAP.Core.Graphics.VFX;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Terraria;
@@ -14,9 +16,9 @@ using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Effects;
 using UCA.Assets.Sounds;
-using UCA.Content.DrawNodes;
 using UCA.Content.Particiles;
 using UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld;
+using UCA.Content.VFXs;
 using UCA.Core.BaseClass;
 
 namespace UCA.Content.Projectiles.Magic.Ray
@@ -28,7 +30,6 @@ namespace UCA.Content.Projectiles.Magic.Ray
         public float LaserLength = 0;
         public float Opacity = 0;
         public List<Vector2> AvailableOldPos = [];
-        public List<TerraLanceVine> Vine = [];
         public bool CanFadeOut = false;
         public int FadeOut;
         public override void SetStaticDefaults()
@@ -74,16 +75,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             if (Projectile.LAP().FirstFrame)
             {
                 SoundEngine.PlaySound(SoundsMenu.TerraLanceShoot, Projectile.Center);
-                float XScale = Main.rand.NextFloat(6, 12);
-                float Height = Main.rand.NextFloat(2, 6);
-                Vine.Add(new TerraLanceVine(Projectile.Center, Projectile.velocity, Color.ForestGreen, MaxLife, XScale, 1, Height));
-                if (!LAPConfig.Instance.PerformanceMode)
-                    Vine.Add(new TerraLanceVine(Projectile.Center, Projectile.velocity, Color.LightGreen, MaxLife, XScale, -1, Height));
-                float XScale2 = Main.rand.NextFloat(12, 18);
-                float Height2 = Main.rand.NextFloat(3, 11);
-                Vine.Add(new TerraLanceVine(Projectile.Center, Projectile.velocity, Color.DarkGreen, MaxLife, XScale2, 1, Height2));
-                if (!LAPConfig.Instance.PerformanceMode)
-                    Vine.Add(new TerraLanceVine(Projectile.Center, Projectile.velocity, Color.SaddleBrown, MaxLife, XScale2, -1, Height2));
+
                 if (Projectile.ai[0] != 0)
                 {
                     TerraRayHeldProj.GenStar(Projectile.Center, MathHelper.PiOver2+ Projectile.rotation);
@@ -91,7 +83,6 @@ namespace UCA.Content.Projectiles.Magic.Ray
             }
             FadeInOut();
             CatchLength();
-            UpdateVine();
             if (CanFadeOut)
             {
                 Projectile.velocity *= 0.94f;
@@ -108,24 +99,6 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 SoundEngine.PlaySound(SoundsMenu.TerraRayHit, Projectile.Center);
             }
         }
-        #region 更新藤蔓
-        public void UpdateVine()
-        {
-            for (int i = 0; i < Vine.Count; i++)
-            {
-                Vine[i].Update();
-                Vine[i].Time++;
-                Vine[i].Position = Projectile.Center;
-                Vine[i].Velocity = Projectile.velocity;
-
-                if (Vine[i].Time >= Vine[i].Lifetime)
-                {
-                    Vine[i].OnKill();
-                    Vine.Remove(Vine[i]);
-                }
-            }
-        }
-        #endregion
         #region 记录所有点的长度
         public void CatchLength()
         {
@@ -143,7 +116,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
         #region 淡入淡出
         public void FadeInOut()
         {
-            if (Projectile.timeLeft > MaxLife / 2)
+            if (Projectile.timeLeft > MaxLife / 7)
             {
                 Opacity = MathHelper.Lerp(Opacity, 1f, 0.1f);
             }
@@ -188,16 +161,10 @@ namespace UCA.Content.Projectiles.Magic.Ray
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
-
-            for (int i = 0; i < Vine.Count; i++)
-            {
-                Vine[i].Draw(Main.spriteBatch);
-            }
            
             DrawLaser(Color.DarkGreen, 0.8f);
             DrawLaser(Color.LightGreen, 0.4f);
             DrawLaser(Color.White, 0.2f);
-
 
             DeepGlow.SubmitCustomGlow(() =>
             {

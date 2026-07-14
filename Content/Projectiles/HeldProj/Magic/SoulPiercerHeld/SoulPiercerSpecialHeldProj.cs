@@ -180,7 +180,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
             Vector2 rotationPoint = texture.Size() / 2f;
             SpriteEffects flipSprite = Projectile.spriteDirection * Main.player[Projectile.owner].gravDir == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             // spriteBatch会自动把textures0设置为当前使用的材质，所以需要你手动改一下
-            Main.spriteBatch.Draw(texture, drawPosition, null, Color.White, drawRotation, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, null, lightColor, drawRotation, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
             return false;
         }
     }

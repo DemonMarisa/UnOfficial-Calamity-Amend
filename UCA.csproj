@@ -28,8 +28,8 @@
 	  <None Include="C:\Users\Administrator\Documents\My Games\Terraria\tModLoader\ModSources\UCA\.editorconfig" />
 	</ItemGroup>
 	<ItemGroup>
+	  <Folder Include="Assets\Sounds\ER\" />
 	  <Folder Include="Content\ItemOverride\Magic\" />
-	  <Folder Include="Content\Projectiles\Misc\Test\" />
 	  <Folder Include="Core\UI\" />
 	</ItemGroup>
 

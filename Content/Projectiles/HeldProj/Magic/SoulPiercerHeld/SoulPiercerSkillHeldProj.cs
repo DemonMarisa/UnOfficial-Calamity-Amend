@@ -1,15 +1,19 @@
-﻿using LAP.Content.Configs;
+﻿using LAP.Assets.TextureRegister;
+using LAP.Content.Configs;
 using LAP.Content.Particles;
 using LAP.Core.AnimationHandle;
 using LAP.Core.Enums;
 using LAP.Core.Graphics.DeepGlow;
 using LAP.Core.Graphics.Primitives.Trail;
+using LAP.Core.Keybind;
 using LAP.Core.SpecificEffectManagers;
 using LAP.Core.StateMachine.SynedHitEffect;
 using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Mono.Cecil;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
@@ -25,6 +29,7 @@ using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Particiles;
 using UCA.Content.Paths;
 using UCA.Core.Utilities;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
 {
@@ -33,19 +38,25 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
         public override LocalizedText DisplayName => LAPUtilities.GetItemName<SoulPiercerAlt>();
         public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/SoulPiercerHeld/SoulPiercerHeldProj";
         public Player Owner => Main.player[Projectile.owner];
+        public bool Countine => Projectile.ai[0] != 0;
+        public bool Filp => Projectile.ai[1] != 0;
+        public bool HasPressSkillKey;
+
         public bool CanHit;
         public bool CanUpdateAngle = true;
         public int SwordLength = 900;
         public float TargetRot;
         public AniHelper AniHelper = new AniHelper(3);
         public List<Vector2> OldAimPos = [];
+        public List<float> Oldheight = [];
         public List<float> OldRot = [];
-        public List<float> OldScale = [];
         public bool BeginRemovePos;
         public float Opacity;
         public float XScale = 0.5f;
         public int Time = 0;
         public int HitCount;
+        public Vector2 PlayerVelPoints;
+        public int UpdateCount;
         public Vector2 SourceOffset => new Vector2(0, 75 * Owner.direction);
         public override void SetStaticDefaults()
         {
@@ -85,11 +96,21 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
             Time++;
             if (Projectile.LAP().FirstFrame)
             {
-                SoundEngine.PlaySound(SoundsMenu.MAGNOLIASPRelease, Projectile.Center);
-                SoundEngine.PlaySound(SoundsMenu.MagicStaffCharge, Projectile.Center);
-                AniHelper.MaxAniProgress[AniState.Begin] = 30; 
+                if (!Countine)
+                {
+                    SoundEngine.PlaySound(SoundsMenu.MagicStaffCharge, Projectile.Center);
+                }
+                    SoundEngine.PlaySound(SoundsMenu.MAGNOLIASPRelease, Projectile.Center);
+
+                AniHelper.MaxAniProgress[AniState.Begin] = 30;
                 AniHelper.MaxAniProgress[AniState.Middle] = 50;
                 AniHelper.MaxAniProgress[AniState.End] = 300;
+                if (Countine)
+                {
+                    AniHelper.MaxAniProgress[AniState.Begin] = 20;
+                    AniHelper.MaxAniProgress[AniState.Middle] = 50;
+                    AniHelper.MaxAniProgress[AniState.End] = 250;
+                }
                 TargetRot = Owner.GetPlayerToMouseVector2().ToRotation();
             }
             Projectile.SetHeldProj(Owner, false, CanUpdateAngle);
@@ -97,7 +118,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
                 TargetRot = Utils.AngleLerp(TargetRot, Owner.GetPlayerToMouseVector2().ToRotation(), 0.2f);
             HandleAni();
             Projectile.velocity = Projectile.rotation.ToRotationVector2();
-            Projectile.Center = Owner.Center;
+            if (Projectile.FinalExtraUpdate())
+                Projectile.Center = Owner.Center;
             Projectile.spriteDirection = Owner.direction;
             float baseRotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
             Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, baseRotation);
@@ -106,32 +128,71 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
         #region 对动画的处理
         public void HandleAni()
         {
-            if (!AniHelper.HasFinish[AniState.Begin]) {
+            int max = 10;
+            if (!AniHelper.HasFinish[AniState.Begin])
+            {
                 HandleBeginAni();
-                AniHelper.UpDateAni(AniState.Begin, 30);
+                if (Countine)
+                    AniHelper.UpDateAni(AniState.Begin);
+                else
+                    AniHelper.UpDateAni(AniState.Begin, 30);
             }
-            else if (!AniHelper.HasFinish[AniState.Middle]) {
+            else if (!AniHelper.HasFinish[AniState.Middle])
+            {
                 HandleMiddleAni();
                 AniHelper.UpDateAni(AniState.Middle);
+                max = 200;
             }
-            else if (!AniHelper.HasFinish[AniState.End]) {
+            else if (!AniHelper.HasFinish[AniState.End])
+            {
                 HandleEndAni();
                 AniHelper.UpDateAni(AniState.End);
+                max = 100;
             }
-            else Projectile.Kill();
+            else
+            {
+                if (HasPressSkillKey && Owner.CheckMana(Owner.ActiveItem().LAP().WeaponSkillRealManaCost, true))
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, Projectile.type, Projectile.damage, Projectile.knockBack, Projectile.owner, 1, Projectile.ai[1] == 0 ? 1 : 0);
+                }
+                Projectile.Kill();
+            }
+            if (OldAimPos.Count > max)
+                OldAimPos.RemoveAt(0);
+            if (Oldheight.Count > max)
+                Oldheight.RemoveAt(0);
+            if (OldRot.Count > max)
+                OldRot.RemoveAt(0);
+            if (AniHelper.HasFinish[AniState.Begin] && Owner.LAP().MouseLeft)
+            {
+                HasPressSkillKey = true;
+            }
         }
         public void HandleBeginAni()
         {
             float easedProgress = EasingHelper.EaseOutCubic(AniHelper.GetProgress(AniState.Begin));
             float baseRotation = AniHelper.UpDateAngle(-45, -145, Owner.direction, easedProgress);
+            if (Countine)
+            {
+                if (Filp)
+                    baseRotation = AniHelper.UpDateAngle(145, 145, Owner.direction, easedProgress);
+                else
+                    baseRotation = AniHelper.UpDateAngle(-145, -145, Owner.direction, easedProgress);
+            }
+
             Opacity = easedProgress;
             // 确定椭圆的点
             Vector2 TargetPos = new Vector2(SwordLength, 0).BetterRotatedBy(baseRotation, SourceOffset, 1, XScale);
             Projectile.scale = TargetPos.Distance(Vector2.Zero) / (float)SwordLength;
             Projectile.rotation = TargetPos.ToRotation() + TargetRot;
+
+            Vector2 RealAimPoint = TargetPos.RotatedBy(TargetRot);
+            OldAimPos.Add(RealAimPoint * 0.5f + Projectile.Center);
+            OldRot.Add(Projectile.rotation - MathHelper.PiOver2);
+            Oldheight.Add(RealAimPoint.Length());
+
             if (Time % 4 == 0)
             {
-                Vector2 RealAimPoint = TargetPos.RotatedBy(TargetRot);
                 Vector2 beginSpawnPos = Projectile.Center + new Vector2(64, 0).RotatedBy(Projectile.rotation);
                 Vector2 EndSpawnPos = Projectile.Center + RealAimPoint;
                 Color DrawColor = Color.Lerp(Color.DarkViolet, Color.SkyBlue, Main.rand.NextFloat());
@@ -158,19 +219,36 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
         {
             CanHit = true;
             CanUpdateAngle = false;
-            Projectile.extraUpdates = 10;
+            Projectile.extraUpdates = 8;
             float easedProgress = AniHelper.GetProgress(AniState.Middle);
             if (easedProgress == 0)
                 SoundEngine.PlaySound(SoundsMenu.SoulGreatSwordSwimg with { Volume = 0.6f, Pitch = 0f });
             float baseRotation = AniHelper.UpDateAngle(-145, 125, Owner.direction, easedProgress);
+            if (Countine)
+            {
+                if (Filp)
+                    baseRotation = AniHelper.UpDateAngle(145, -125, Owner.direction, easedProgress);
+            }
             // 确定椭圆的点
             Vector2 TargetPos = new Vector2(SwordLength, 0).BetterRotatedBy(baseRotation, SourceOffset, 1, XScale);
             Projectile.scale = TargetPos.Distance(Vector2.Zero) / (float)SwordLength;
             Projectile.rotation = TargetPos.ToRotation() + TargetRot;
+
+
+            int k = Projectile.extraUpdates - Projectile.numUpdates;
+            int totalUpdates = Projectile.extraUpdates + 1;
+            // 玩家本帧真正的物理位移
+            Vector2 realFrameVelocity = Owner.position - Owner.oldPosition;
+            // 基于上一帧的绝对位置进行精准线性分步
+            Vector2 smoothPlayerCenter = Owner.oldPosition + Owner.Size / 2f + realFrameVelocity * ((float)(k + 1) / totalUpdates);
+            Projectile.Center = smoothPlayerCenter;
+
+
             Vector2 RealAimPoint = TargetPos.RotatedBy(TargetRot);
-            OldAimPos.Add(RealAimPoint);
-            OldRot.Add(Projectile.rotation);
-            OldScale.Add(Projectile.scale);
+            OldAimPos.Add(RealAimPoint * 0.5f + Projectile.Center);
+            OldRot.Add(Projectile.rotation - MathHelper.PiOver2);
+            Oldheight.Add(RealAimPoint.Length());
+
             if (Time % 2 == 0)
             {
                 float SpawRate = 2f;
@@ -200,20 +278,24 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
             CanHit = false;
             float easedProgress = EasingHelper.EaseOutCubic(AniHelper.GetProgress(AniState.End));
             Opacity = 1 - easedProgress;
+
             float baseRotation = AniHelper.UpDateAngle(125, 145, Owner.direction, easedProgress);
-            // 确定椭圆的点
-            Vector2 TargetPos = new Vector2(SwordLength, 0).BetterRotatedBy(baseRotation, SourceOffset, 1, XScale);
+            if (Countine)
+            {
+                if (Filp)
+                    baseRotation = AniHelper.UpDateAngle(-125, -145, Owner.direction, easedProgress);
+            }
+                // 确定椭圆的点
+                Vector2 TargetPos = new Vector2(SwordLength, 0).BetterRotatedBy(baseRotation, SourceOffset, 1, XScale);
             Projectile.scale = TargetPos.Distance(Vector2.Zero) / (float)SwordLength;
             Projectile.rotation = TargetPos.ToRotation() + TargetRot;
-            if (LAPUtilities.FinalExtraUpdate(Projectile))
+
+            if (Projectile.FinalExtraUpdate())
             {
                 Vector2 RealAimPoint = TargetPos.RotatedBy(TargetRot);
-                OldAimPos.Add(RealAimPoint);
-                OldRot.Add(Projectile.rotation);
-                OldScale.Add(Projectile.scale);
-                OldAimPos.RemoveAt(0);
-                OldRot.RemoveAt(0);
-                OldScale.RemoveAt(0);
+                OldAimPos.Add(RealAimPoint * 0.5f + Projectile.Center);
+                OldRot.Add(Projectile.rotation - MathHelper.PiOver2);
+                Oldheight.Add(RealAimPoint.Length());
             }
         }
         #endregion
@@ -230,6 +312,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
         }
         public override bool PreDraw(ref Color lightColor)
         {
+            if (Projectile.LAP().FirstFrame)
+                return false;
             Texture2D texture = TextureAssets.Projectile[Type].Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             float drawRotation = Projectile.rotation + (Projectile.spriteDirection == -1 ? MathHelper.PiOver2 + MathHelper.PiOver4 : MathHelper.PiOver4);
@@ -258,7 +342,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
             shader.Parameters["UVOffset"].SetValue(new Vector2(-Main.GlobalTimeWrappedHourly * Owner.direction, 0));
             shader.Parameters["NoiseTextureScale"].SetValue(new Vector2(2f, 1f));
             shader.CurrentTechnique.Passes[0].Apply();
-            LAPUtilities.SetTexture(UCATextureRegister.Aura_01.Value, SamplerState.LinearWrap, 1);
+            LAPUtilities.SetTexture(LAPTextureRegister.Aura_01.Value, SamplerState.LinearWrap, 1);
             Vector2 DrawOffset2 = new Vector2(-90, 0).RotatedBy(Projectile.rotation);
             Main.spriteBatch.Draw(Ball, drawPosition + DrawOffset2, null, Color.White * 1f * Opacity, Ballrot, BallrotPoint, Projectile.scale * Main.player[Projectile.owner].gravDir * new Vector2(1.8f, 0.4f), flipSprite, 0f);
             shader.Parameters["NoiseTextureScale"].SetValue(new Vector2(1.5f, 0.5f));
@@ -287,20 +371,28 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
 
             if (OldAimPos.Count > 2)
             {
+                List<float> Length = [];
+                for (int i = 0; i < Oldheight.Count; i++)
+                {
+                    Length.Add(Oldheight[i] * 0.41f);
+                }
                 // 绘制拖尾
                 Vector2 UVOffset = new Vector2(Main.GlobalTimeWrappedHourly * 0.1f, 0);
                 Vector2 TextureScale = new Vector2(0.75f, 1f);
                 LAPUtilities.ApplyTrailShader(UVOffset, TextureScale, 1 - Opacity, TextureScale, Vector2.Zero, true);
-                LAPUtilities.SetTexture(UCATextureRegister.Slash2.Value, SamplerState.LinearWrap, 0);
+
+                DrawSetting drawSetting = new(UCATextureRegister.Slash2.Value, smoothUV : true, trailEffect: TrailEffects.FlipVertically, smoothSegments: 10, xuvOffset: -0.035f);
                 LAPUtilities.SetTexture(UCATextureRegister.HarshNoise.Value, SamplerState.LinearWrap, 1);
                 LAPUtilities.SetTexture(UCATextureRegister.HarshNoise.Value, SamplerState.LinearWrap, 2);
-                DrawTrail(0.9f, 0.2f);
-                DrawTrail(0.9f, 0.2f);
+                LAPContent.DrawTrail(OldAimPos, OldRot, Vector2.Zero, Color.DarkViolet, Length, drawSetting);
+                LAPContent.DrawTrail(OldAimPos, OldRot, Vector2.Zero, Color.DarkViolet, Length, drawSetting);
+
+                DrawSetting drawSetting2 = new(UCATextureRegister.Slash.Value, smoothUV: true, trailEffect: TrailEffects.FlipVertically, smoothSegments: 10, xuvOffset: -0.035f);
                 LAPUtilities.SetTexture(UCATextureRegister.Slash.Value, SamplerState.LinearWrap, 0);
                 LAPUtilities.SetTexture(UCATextureRegister.HarshNoise.Value, SamplerState.LinearWrap, 1);
                 LAPUtilities.SetTexture(UCATextureRegister.HarshNoise.Value, SamplerState.LinearWrap, 2);
-                DrawTrail(0.9f, 0.2f);
-                DrawTrail(0.9f, 0.2f);
+                LAPContent.DrawTrail(OldAimPos, OldRot, Vector2.Zero, Color.DarkViolet, Length, drawSetting2);
+                LAPContent.DrawTrail(OldAimPos, OldRot, Vector2.Zero, Color.DarkViolet, Length, drawSetting2);
             }
             LAPUtilities.ReSetToEndShader();
 
@@ -308,40 +400,31 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
             {
                 if (OldAimPos.Count > 2)
                 {
+                    List<float> Length = [];
+                    for (int i = 0; i < Oldheight.Count; i++)
+                    {
+                        Length.Add(Oldheight[i] * 0.41f);
+                    }
                     LAPUtilities.ReSetToBeginShader(BlendState.Additive);
-                    // 绘制拖尾
                     Vector2 UVOffset = new Vector2(Main.GlobalTimeWrappedHourly * 0.1f, 0);
                     Vector2 TextureScale = new Vector2(0.75f, 1f);
                     LAPUtilities.ApplyTrailShader(UVOffset, TextureScale, 1 - Opacity, TextureScale, Vector2.Zero, true);
-                    LAPUtilities.SetTexture(UCATextureRegister.Slash2.Value, SamplerState.LinearWrap, 0);
+
+                    DrawSetting drawSetting = new(UCATextureRegister.Slash.Value, smoothUV: true, trailEffect: TrailEffects.FlipVertically, smoothSegments: 10, xuvOffset: -0.035f);
                     LAPUtilities.SetTexture(UCATextureRegister.HarshNoise.Value, SamplerState.LinearWrap, 1);
                     LAPUtilities.SetTexture(UCATextureRegister.HarshNoise.Value, SamplerState.LinearWrap, 2);
-                    DrawTrail(0.9f, 0.2f);
-                    DrawTrail(0.9f, 0.2f);
-                    LAPUtilities.SetTexture(UCATextureRegister.Slash.Value, SamplerState.LinearWrap, 0);
+                    LAPContent.DrawTrail(OldAimPos, OldRot, Vector2.Zero, Color.DarkViolet * (2f + MathF.Sin(Main.GlobalTimeWrappedHourly * 4) * 0.8f), Length, drawSetting);
+
+                    DrawSetting drawSetting2 = new(UCATextureRegister.Slash2.Value, smoothUV: true, trailEffect: TrailEffects.FlipVertically, smoothSegments: 10, xuvOffset: -0.035f);
                     LAPUtilities.SetTexture(UCATextureRegister.HarshNoise.Value, SamplerState.LinearWrap, 1);
                     LAPUtilities.SetTexture(UCATextureRegister.HarshNoise.Value, SamplerState.LinearWrap, 2);
-                    DrawTrail(0.9f, 0.2f);
-                    DrawTrail(0.9f, 0.2f);
+                    LAPContent.DrawTrail(OldAimPos, OldRot, Vector2.Zero, Color.DarkViolet * (2f + MathF.Sin(Main.GlobalTimeWrappedHourly * 4) * 0.8f) * 0.5f, Length, drawSetting2);
                     LAPUtilities.ReSetToEndShader();
                 }
             });
-            Main.spriteBatch.Draw(texture, drawPosition, null, Color.White, drawRotation, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, null, lightColor, drawRotation, rotationPoint, Projectile.scale * Main.player[Projectile.owner].gravDir, flipSprite, 0f);
 
             return false;
-        }
-        public void DrawTrail(float BeginScale , float EndScale)
-        {
-            List<VertexPositionColorTexture2D> Vertexlist = new List<VertexPositionColorTexture2D>();
-            for (int i = 0; i < OldAimPos.Count; i++)
-            {
-                float progress = (float)i / OldAimPos.Count;
-                Vector2 DrawPos_Head = OldAimPos[i] * BeginScale + Projectile.Center - Main.screenPosition;
-                Vector2 DrawPos_Source = OldAimPos[i] * EndScale + Projectile.Center - Main.screenPosition;
-                Vertexlist.Add(new VertexPositionColorTexture2D(DrawPos_Head, Color.DarkViolet, new Vector3(progress, 0, 0)));
-                Vertexlist.Add(new VertexPositionColorTexture2D(DrawPos_Source, Color.LightPink * Opacity, new Vector3(progress, 1, 0)));
-            }
-            Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, Vertexlist.ToArray(), 0, Vertexlist.Count - 2);
         }
     }
 }

@@ -6,6 +6,7 @@ using UCA.Assets.Effects;
 using LAP.Core.ParticleSystem;
 using LAP.Core.Utilities;
 using LAP.Core.Enums;
+using LAP.Assets.TextureRegister;
 
 namespace UCA.Content.Particiles
 {
@@ -78,7 +79,7 @@ namespace UCA.Content.Particiles
 
             Main.instance.GraphicsDevice.Textures[1] = UCATextureRegister.BloomRing.Value;
 
-            Texture2D texture = UCATextureRegister.Aura_01.Value;
+            Texture2D texture = LAPTextureRegister.Aura_01.Value;
             Vector2 orig = texture.Size() / 2;
             Main.spriteBatch.Draw(texture, Position - Main.screenPosition, null, DrawColor * Opacity, Rotation, orig, Scale, SpriteEffects.None, 0);
             Main.spriteBatch.Draw(texture, Position - Main.screenPosition, null, DrawColor * Opacity, Rotation, orig, Scale, SpriteEffects.None, 0);

@@ -21,16 +21,11 @@ namespace UCA.Assets
         public static Asset<Texture2D> Shine { get; private set; }
         public static Asset<Texture2D> Thrust01 { get; private set; }
         public static Asset<Texture2D> Thrust02 { get; private set; }
-        public static Asset<Texture2D> Lightning01 { get; private set; }
-        public static Asset<Texture2D> Lightning02 { get; private set; }
-        public static Asset<Texture2D> Lightning03 { get; private set; }
         public static Asset<Texture2D> Hahen01 { get; private set; }
         public static Asset<Texture2D> Hahen02 { get; private set; }
         #endregion
         #region 来自马格诺利亚的
-        public static Asset<Texture2D> BladeM { get; private set; }
         public static Asset<Texture2D> BladeAura { get; private set; }
-        public static Asset<Texture2D> Fire { get; private set; }
         public static Asset<Texture2D> Flower { get; private set; }
         public static Asset<Texture2D> LilyFlower { get; private set; }
         public static Asset<Texture2D> PoisonSmoke { get; private set; }
@@ -40,9 +35,6 @@ namespace UCA.Assets
         public static Asset<Texture2D> Tornade_Fire { get; private set; }
         public static Asset<Texture2D> MiscNoise01 { get; private set; }
         public static Asset<Texture2D> MiscNoise02 { get; private set; }
-        public static Asset<Texture2D> Aura_01 { get; private set; }
-        public static Asset<Texture2D> Aura_02 { get; private set; }
-        public static Asset<Texture2D> Flash_01 { get; private set; }
         public static Asset<Texture2D> BladeTrail { get; private set; }
         public static Asset<Texture2D> Slash2 { get; private set; }
         #endregion
@@ -65,24 +57,16 @@ namespace UCA.Assets
             Hahen01 = ModContent.Request<Texture2D>($"UCA/Assets/LILES/Hahen01");
             Hahen02 = ModContent.Request<Texture2D>($"UCA/Assets/LILES/Hahen02");
 
-            BladeM = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/BladeM");
             BladeAura = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/BladeAura");
-            Fire = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/Fire");
             Flower = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/Flower");
             LilyFlower = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/LilyFlower");
             PoisonSmoke = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/PoisonSmoke");
-            Lightning01 = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/Lightning01");
-            Lightning02 = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/Lightning02");
-            Lightning03 = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/Lightning03");
             Slash = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/Slash");
             Slash_Wrap = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/Slash_Wrap");
             Slash_Wrap2 = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/Slash_Wrap2");
             Tornade_Fire = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/Tornade_Fire");
             MiscNoise01 = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/MiscNoise01");
             MiscNoise02 = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/MiscNoise02");
-            Aura_01 = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/Aura_01");
-            Aura_02 = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/Aura_02");
-            Flash_01 = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/flash_01");
             BladeTrail = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/BladeTrail");
             Slash2 = ModContent.Request<Texture2D>($"UCA/Assets/MAGNOLIA/Slash2");
         }
@@ -103,24 +87,16 @@ namespace UCA.Assets
             Hahen01 = null;
             Hahen02 = null;
 
-            BladeM = null;
             BladeAura = null;
-            Fire = null;
             Flower = null;
             LilyFlower = null;
             PoisonSmoke = null;
-            Lightning01 = null;
-            Lightning02 = null;
-            Lightning03 = null;
             Slash = null;
             Slash_Wrap = null;
             Slash_Wrap2 = null;
             Tornade_Fire = null;
             MiscNoise01 = null;
             MiscNoise02 = null;
-            Aura_01 = null;
-            Aura_02 = null;
-            Flash_01 = null;
             BladeTrail = null;
             Slash2 = null;
         }

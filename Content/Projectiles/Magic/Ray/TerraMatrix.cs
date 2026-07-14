@@ -3,14 +3,15 @@ using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Assets.Sounds;
-using UCA.Content.DrawNodes;
 using UCA.Content.Particiles;
+using UCA.Content.VFXs;
 using UCA.Core.BaseClass;
 
 namespace UCA.Content.Projectiles.Magic.Ray
@@ -102,14 +103,17 @@ namespace UCA.Content.Projectiles.Magic.Ray
             }
             if (AniProgress < StaffBeginAni / 1.15f && !BeginFade)
             {
+                Owner.LAP().statFocus = 200;
                 if (Projectile.timeLeft % 3 == 0)
                 {
                     Color color = Color.Lerp(Color.DarkGreen, Color.LightGreen, Main.rand.NextFloat(0, 1f));
                     Vector2 pos = Projectile.position + new Vector2(Main.rand.Next(0, Projectile.width), Projectile.height / 2);
-                    new TerraTree(pos, -Vector2.UnitY.RotatedBy(MathHelper.PiOver4 * 0.5f * (Main.rand.NextBool() ? -1 : 1)) * Main.rand.NextFloat(0.6f, 1.4f), color, 0, Main.rand.NextFloat(12, 15), (Main.rand.NextBool() ? -1 : 1), Main.rand.NextFloat(9, 18f)).Spawn();
+                    Vector2 firvel = -Vector2.UnitY.RotatedBy(MathHelper.PiOver4 * 0.5f * (Main.rand.NextBool() ? -1 : 1)) * Main.rand.NextFloat(0.8f, 1.6f);
+                    TerraVine.Spawn(pos, firvel, color, Main.rand.NextBool() ? -1 : 1, 1.8f, Main.rand.NextFloat(12, 15), Main.rand.NextFloat(2f, 3.5f));
 
                     Vector2 pos2 = Projectile.position + new Vector2(Main.rand.Next(0, Projectile.width), Projectile.height / 2);
-                    new TerraTree(pos2, -Vector2.UnitY.RotatedBy(MathHelper.PiOver4 * 0.5f * (Main.rand.NextBool() ? -1 : 1)) * Main.rand.NextFloat(0.6f, 1.4f), Color.SaddleBrown, 0, Main.rand.NextFloat(12, 15), (Main.rand.NextBool() ? -1 : 1), Main.rand.NextFloat(9, 18f)).Spawn();
+                    Vector2 firvel2 = -Vector2.UnitY.RotatedBy(MathHelper.PiOver4 * 0.5f * (Main.rand.NextBool() ? -1 : 1)) * Main.rand.NextFloat(0.8f, 1.6f);
+                    TerraVine.Spawn(pos2, firvel2, Color.SaddleBrown, Main.rand.NextBool() ? -1 : 1, 1.8f, Main.rand.NextFloat(12, 15), Main.rand.NextFloat(2f, 3.5f));
                 }
                 if (Projectile.timeLeft % 5 == 0)
                     SoundEngine.PlaySound(SoundsMenu.TerraTreeBreak, Projectile.Center);
@@ -125,7 +129,7 @@ namespace UCA.Content.Projectiles.Magic.Ray
             int Life = Main.rand.Next(50, 55);
             int Filp = Main.rand.NextBool() ? -1 : 1;
             int Height = Main.rand.Next(75, 150);
-            new TerraGlowBallEmitting(Owner.Center + new Vector2(SpawnWidth, -SpawnHeight), Vector2.UnitY * 2, Life, Xscale, Filp, Height, Projectile.owner).Spawn();
+            TerraGlowBallEmitting.Spawn(Owner.Center + new Vector2(SpawnWidth, -SpawnHeight), Life, Xscale, Filp, Height, Projectile.owner);
         }
         #endregion
         public override bool PreDraw(ref Color lightColor)

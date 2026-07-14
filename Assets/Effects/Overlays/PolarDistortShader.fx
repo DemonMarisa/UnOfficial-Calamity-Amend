@@ -1,5 +1,5 @@
-﻿sampler source : register(s0); // 主纹理
-sampler alphaCut : register(s1); // 主纹理
+﻿sampler source : register(s0); // 主纹理，只能用于噪波图
+sampler alphaCut : register(s1); // 主纹理，用于遮罩
 float uXTime; // 游戏时间，用于动画
 float uYTime; // 游戏时间，用于动画
 float uRingMult; // 纵向的拼贴倍数

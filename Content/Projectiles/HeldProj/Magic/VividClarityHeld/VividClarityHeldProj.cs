@@ -1,6 +1,7 @@
 ﻿using LAP.Assets.TextureRegister;
 using LAP.Core.AnimationHandle;
 using LAP.Core.BaseClass.Projectiles;
+using LAP.Core.Graphics.DeepGlow;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -20,7 +21,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.VividClarityHeld
         public Vector2 RotVector => new Vector2(0, 10).BetterRotatedBy(Owner.GetPlayerToMouseVector2().ToRotation());
         public override Vector2 PositionOffset => RotVector * Owner.direction;
         public AniHelper AniHelper = new AniHelper(3);
-        public int NeedFireLeft;
+        public int NeedFireRemain;
         public bool DrawOnce = false;
         public override void SetDefaults()
         {
@@ -43,7 +44,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.VividClarityHeld
             if (Owner.LAP().MouseLeft && UseDelay <= 0 && Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.HeldItem.mana * Owner.manaCost), true, false))
             {
                 UseDelay = 90;
-                NeedFireLeft = 9;
+                NeedFireRemain = 9;
             }
             UpdateOpacity();
             CheckFire();
@@ -57,14 +58,14 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.VividClarityHeld
         }
         public void CheckFire()
         {
-            if (UseDelay % 6 == 0 && NeedFireLeft > 0)
+            if (UseDelay % 6 == 0 && NeedFireRemain > 0)
             {
                 Vector2 firePos = -Projectile.velocity.RotateRandom(MathHelper.PiOver4) * Main.rand.Next(450, 600);
                 Vector2 Spawn = Projectile.Center + firePos;
                 Vector2 firvel = LAPUtilities.GetVector2(Spawn, Owner.LAP().SyncedMouseWorld) * 12;
 
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Spawn, firvel, ProjectileType<VividBeam>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
-                NeedFireLeft--;
+                NeedFireRemain--;
             }
         }
         public override void SetPlayerVisuals()
@@ -85,20 +86,39 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.VividClarityHeld
             Projectile.velocity = Vector2.Lerp(Projectile.velocity, target, RotAmount);
             Projectile.rotation = Projectile.velocity.ToRotation();
         }
+        public override void OnKill(int timeLeft)
+        {
+            Owner.SetItemAnimation(0);
+            Owner.SetItemTime(0);
+        }
         public override bool PreDraw(ref Color lightColor)
         {
             LAPUtilities.ReSetToBeginShader(BlendState.AlphaBlend);
 
             Projectile.GetProjDrawInfo_Staff(out Texture2D texture, out Vector2 drawPosition, out float drawRotation, out Vector2 rotationPoint, out SpriteEffects flipSprite);
 
-            Main.graphics.GraphicsDevice.Textures[1] = LAPTextureRegister.Noise.Value;
-            Main.graphics.GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
+            LAPUtilities.SetTexture(LAPTextureRegister.Noise.Value, SamplerState.PointWrap, 1);
 
             LAPUtilities.FastApplyEdgeMeltsShader(1 - Projectile.Opacity, texture.Size(), Color.GhostWhite, 0.01f, 0);
 
             Main.spriteBatch.Draw(texture, drawPosition + DrawPosOffset, null, lightColor, drawRotation + DrawRotOffset, rotationPoint, Projectile.scale, flipSprite, 0);
 
             LAPUtilities.ReSetToEndShader();
+
+            DeepGlow.SubmitCustomGlow(() =>
+            {
+                LAPUtilities.ReSetToBeginShader(BlendState.AlphaBlend);
+
+                Projectile.GetProjDrawInfo_Staff(out Texture2D texture, out Vector2 drawPosition, out float drawRotation, out Vector2 rotationPoint, out SpriteEffects flipSprite);
+
+                LAPUtilities.SetTexture(LAPTextureRegister.Noise.Value, SamplerState.PointWrap, 1);
+
+                LAPUtilities.FastApplyEdgeMeltsShader(1 - Projectile.Opacity, texture.Size(), Color.GhostWhite, 0.01f, 0);
+
+                Main.spriteBatch.Draw(texture, drawPosition + DrawPosOffset, null, Color.Transparent, drawRotation + DrawRotOffset, rotationPoint, Projectile.scale, flipSprite, 0);
+
+                LAPUtilities.ReSetToEndShader();
+            });
             return false;
         }
     }

@@ -1,7 +1,6 @@
 ﻿using LAP.Assets.Effects;
 using LAP.Assets.Sounds;
 using LAP.Assets.TextureRegister;
-using LAP.Common.Blance;
 using LAP.Content.Particles;
 using LAP.Core.AnimationHandle;
 using LAP.Core.Enums;
@@ -18,6 +17,7 @@ using Terraria.Audio;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using UCA.Assets;
+using UCA.Common.Blance;
 using UCA.Content.Items.Weapons.Melee.GreatSword;
 using UCA.Content.Projectiles.Melee.NormalProj;
 
@@ -255,7 +255,7 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
 
             Vector2 drawPosition2 = BeginPos - Main.screenPosition + Vector2.UnitX.RotatedBy(Projectile.rotation + ProjRotOffset) * 1000 - Vector2.UnitY * 18 * Owner.direction;
 
-            Texture2D texture2 = UCATextureRegister.Aura_01.Value;
+            Texture2D texture2 = LAPTextureRegister.Aura_01.Value;
             Effect effect2 = LAPShaderRegister.AlphaFade_Noise_OColor.Value;
             effect2.Parameters["uFadeoutLeftLength"].SetValue(0.2f);
             effect2.Parameters["uFadeinRigtLength"].SetValue(0.3f);
@@ -266,7 +266,7 @@ namespace UCA.Content.Projectiles.HeldProj.Melee.StormRuler
 
             Main.spriteBatch.Draw(texture2, drawPosition2, null, Color.White * Projectile.Opacity, Projectile.rotation + ProjRotOffset, orig, new Vector2(7f, 0.3f), SpriteEffects.FlipHorizontally, 0f);
 
-            Texture2D texture3 = UCATextureRegister.Aura_02.Value;
+            Texture2D texture3 = LAPTextureRegister.Aura_02.Value;
 
             Main.spriteBatch.Draw(texture3, drawPosition2, null, Color.White * Projectile.Opacity, Projectile.rotation + ProjRotOffset, orig, new Vector2(7f, 0.3f), SpriteEffects.FlipHorizontally, 0f);
 

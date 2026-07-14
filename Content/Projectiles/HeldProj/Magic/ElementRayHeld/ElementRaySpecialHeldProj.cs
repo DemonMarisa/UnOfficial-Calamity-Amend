@@ -188,7 +188,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<SolarBlast>(), (int)(Projectile.damage * DamageMult), Projectile.knockBack, Projectile.owner, 15, 0.3f, 1); ;
                 HitCooldown = 3;
             }
-
+            ScreenShakeSystem.AddScreenShake_Sin(Projectile.Center, 40, 90, MathHelper.PiOver2);
             if (Projectile.LAP().OnceHitEffect)
                 ScreenShakeSystem.AddScreenShakes(Projectile.Center, -250 * -Owner.direction, 40, Projectile.rotation + MathHelper.PiOver2, 0.5f, true, 1000);
             Owner.AddCD(LAPContent.CDType<SolorShield>(), 1200);

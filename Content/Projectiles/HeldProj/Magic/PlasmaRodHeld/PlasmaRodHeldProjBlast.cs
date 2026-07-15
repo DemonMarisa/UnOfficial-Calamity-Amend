@@ -20,7 +20,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.PlasmaRodHeld
     public class PlasmaRodHeldProjBlast : ModProjectile, ILocalizedModType
     {
         public override LocalizedText DisplayName => LAPUtilities.GetItemName<PlasmaRodAlt>();
-        public override string Texture => $"{ItemPath.MagicRayWeaponsPath}" + "PlasmaRodAlt";
+        public override string Texture => GetInstance<PlasmaRodAlt>().Texture;
 
         public AniHelper AniHelper = new AniHelper(3);
 

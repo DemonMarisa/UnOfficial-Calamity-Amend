@@ -36,7 +36,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.SoulPiercerHeld
     public class SoulPiercerSkillHeldProj : ModProjectile, ILocalizedModType
     {
         public override LocalizedText DisplayName => LAPUtilities.GetItemName<SoulPiercerAlt>();
-        public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/SoulPiercerHeld/SoulPiercerHeldProj";
+        public override string Texture => GetInstance<SoulPiercerHeldProj>().Texture;
         public Player Owner => Main.player[Projectile.owner];
         public bool Countine => Projectile.ai[0] != 0;
         public bool Filp => Projectile.ai[1] != 0;

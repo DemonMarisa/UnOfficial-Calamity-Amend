@@ -19,11 +19,12 @@ using UCA.Core.BaseClass;
 
 namespace UCA.Content.Projectiles.Magic.Ray
 {
-    public class VividBeam : BaseMagicProj
+    public class VividBeam_Weak : BaseMagicProj
     {
         public override string Texture => LAPTextureRegister.InvisibleTexturePath;
         public Vector2 BeginPos;
         public float LaserLength => Vector2.Distance(BeginPos, Projectile.Center);
+        public bool Weak => Projectile.ai[0] != 0;
         public int MaxTime = 360;
         public Color StartColor;
         public bool BeginFadeOut;
@@ -95,21 +96,17 @@ namespace UCA.Content.Projectiles.Magic.Ray
                     int time = MaxTime - Projectile.timeLeft;
                     for (int d = 0; d < 2; d++)
                     {
-                        Vector2 offset = -Vector2.UnitY.RotatedBy((time * MathHelper.Pi / 24f + d * MathHelper.Pi), default) * new Vector2(5f, 10f) - Projectile.rotation.ToRotationVector2() * 10f;
+                        Vector2 offset = -Vector2.UnitY.RotatedBy((time * MathHelper.Pi / 24f + d * MathHelper.Pi), default) * new Vector2(5f, 6f) - Projectile.rotation.ToRotationVector2() * 10f;
                         ParticlePreset.NewTGlowBall(Projectile.Center + offset, Vector2.Zero, color, 60, 0.1f, 0.2f);
                     }
                 }
                 else
                 {
                     Color color = LAPUtilities.LerpColor(Color.WhiteSmoke, Color.LightGreen);
-                    if (Projectile.timeLeft % 2 == 0)
-                    {
-                        ParticlePreset.NewTrailGlowBall(Projectile.Center + Main.rand.NextVector2Circular(9, 9), Projectile.velocity * 0.3f, color * 0.7f, Main.rand.Next(120, 180), 0.08f, true);
-                    }
                     int time = MaxTime - Projectile.timeLeft;
                     for (int d = 0; d < 2; d++)
                     {
-                        Vector2 offset = -Vector2.UnitY.RotatedBy((time * MathHelper.Pi / 24f + d * MathHelper.Pi), default) * new Vector2(5f, 10f) - Projectile.rotation.ToRotationVector2() * 10f;
+                        Vector2 offset = -Vector2.UnitY.RotatedBy((time * MathHelper.Pi / 24f + d * MathHelper.Pi), default) * new Vector2(5f, 6f) - Projectile.rotation.ToRotationVector2() * 10f;
                         ParticlePreset.NewTGlowBall(Projectile.Center + offset, Vector2.Zero, color, 60, 0.1f, 0.2f);
                     }
                     if (Projectile.timeLeft % 20 == 0 && Projectile.timeLeft < MaxTime - 10)
@@ -154,34 +151,26 @@ namespace UCA.Content.Projectiles.Magic.Ray
                 new CrossGlow(Projectile.Center, Vector2.Zero, color, 60, 1f, 0.23f).Spawn();
                 return;
             }
-            LAPContent.AddScreenDistortion(30, Projectile.Center, 4f, 0.015f);
             for (int i = 0; i < rotArg2Total; i++)
             {
                 float rorate = i * rotArg2;
-                Vector2 dustVelocity = new Vector2(3.5f, 0).BetterRotatedBy(rorate, default, 0.35f);
+                Vector2 dustVelocity = new Vector2(3f, 0).BetterRotatedBy(rorate, default, 0.35f);
                 dustVelocity = dustVelocity.RotatedBy(Projectile.rotation);
                 ParticlePreset.NewTGlowBall(Projectile.Center - Projectile.velocity * 3, dustVelocity, color, 60, 0.2f, 0f);
             }
             for (int i = 0; i < rotArgTotal; i++)
             {
                 float rorate = i * rotArg;
-                Vector2 dustVelocity = new Vector2(5, 0).BetterRotatedBy(rorate, default, 0.35f);
+                Vector2 dustVelocity = new Vector2(4, 0).BetterRotatedBy(rorate, default, 0.35f);
                 dustVelocity = dustVelocity.RotatedBy(Projectile.rotation);
                 ParticlePreset.NewTGlowBall(Projectile.Center, dustVelocity, color, 60, 0.2f, 0f);
             }
             for (int i = 0; i < rotArg2Total; i++)
             {
                 float rorate = i * rotArg2;
-                Vector2 dustVelocity = new Vector2(3.5f, 0).BetterRotatedBy(rorate, default, 0.35f);
+                Vector2 dustVelocity = new Vector2(3f, 0).BetterRotatedBy(rorate, default, 0.35f);
                 dustVelocity = dustVelocity.RotatedBy(Projectile.rotation);
-                ParticlePreset.NewTGlowBall(Projectile.Center + Projectile.velocity * 3, dustVelocity, color, 60, 0.2f, 0f);
-            }
-            for (int i = 0; i < rotArg2Total; i++)
-            {
-                float rorate = i * rotArg2;
-                Vector2 dustVelocity = new Vector2(2.5f, 0).BetterRotatedBy(rorate, default, 0.35f);
-                dustVelocity = dustVelocity.RotatedBy(Projectile.rotation);
-                ParticlePreset.NewTGlowBall(Projectile.Center + Projectile.velocity * 6, dustVelocity, color, 60, 0.2f, 0f);
+                ParticlePreset.NewTGlowBall(Projectile.Center + Projectile.velocity * 4, dustVelocity, color, 60, 0.2f, 0f);
             }
             for (int i = 0; i < rotArg2Total; i++)
             {
@@ -194,30 +183,56 @@ namespace UCA.Content.Projectiles.Magic.Ray
             {
                 ParticlePreset.NewTGlowBall(Projectile.Center, Vector2.Zero, color, 90, 0.1f, 2.5f);
             }
-            for (int j = 0; j < 10; j++)
+            for (int j = 0; j < 5; j++)
             {
-                Vector2 vel = -Projectile.velocity.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.7f, 1f) * 1.6f;
+                Vector2 vel = -Projectile.velocity.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.7f, 1f) * 1f;
                 ParticlePreset.NewGlowLozenge(Projectile.Center + Main.rand.NextVector2Circular(9, 9), vel, color, 45, 0.2f);
             }
-            for (int j = 0; j < 15; j++)
+            for (int j = 0; j < 8; j++)
             {
-                Vector2 vel = Projectile.velocity.RotatedByRandom(MathHelper.PiOver4 * 0.2f) * Main.rand.NextFloat(0.2f, 1f) * 3f;
+                Vector2 vel = Projectile.velocity.RotatedByRandom(MathHelper.PiOver4 * 0.2f) * Main.rand.NextFloat(0.2f, 1f) * 2f;
                 ParticlePreset.NewGlowLozenge(Projectile.Center + Main.rand.NextVector2Circular(9, 9), vel, color, 45, 0.2f);
             }
-            new CrossGlow(Projectile.Center, Vector2.Zero, color, 60, 1f, 0.23f).Spawn();
-            new CrossGlow(Projectile.Center, Vector2.Zero, color, 60, 1f, 0.23f).Spawn();
+            new CrossGlow(Projectile.Center, Vector2.Zero, color, 60, 1f, 0.15f).Spawn();
+            new CrossGlow(Projectile.Center, Vector2.Zero, color, 60, 1f, 0.15f).Spawn();
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity.RotatedBy(MathHelper.PiOver2), ProjectileType<ExoLightning>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ProjectileType<ExoBlast>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
-            float spread = MathHelper.TwoPi / 3f;
-            float add = Main.rand.NextFloat(MathHelper.TwoPi);
-            for (int i = 0; i < 3; i++)
+            if (Weak)
             {
-                float fireAngle = spread * i;
-                Vector2 fireVel = Vector2.UnitX.RotatedBy(fireAngle + add);
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, fireVel * 6f, ProjectileType<ExoEnergy>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                int rng = Main.rand.Next(3);
+                if (rng == 0)
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity.RotatedBy(MathHelper.PiOver2), ProjectileType<ExoLightning>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                }
+                else if (rng == 1)
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ProjectileType<ExoBlast>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                }
+                else if (rng == 2)
+                {
+                    float spread = MathHelper.TwoPi / 3f;
+                    float add = Main.rand.NextFloat(MathHelper.TwoPi);
+                    for (int i = 0; i < 3; i++)
+                    {
+                        float fireAngle = spread * i;
+                        Vector2 fireVel = Vector2.UnitX.RotatedBy(fireAngle + add);
+                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, fireVel * 6f, ProjectileType<ExoEnergy>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                    }
+                }
+            }
+            else
+            {
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity.RotatedBy(MathHelper.PiOver2), ProjectileType<ExoLightning>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ProjectileType<ExoBlast>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                float spread = MathHelper.TwoPi / 3f;
+                float add = Main.rand.NextFloat(MathHelper.TwoPi);
+                for (int i = 0; i < 3; i++)
+                {
+                    float fireAngle = spread * i;
+                    Vector2 fireVel = Vector2.UnitX.RotatedBy(fireAngle + add);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, fireVel * 6f, ProjectileType<ExoEnergy>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                }
             }
             Projectile.timeLeft = 120;
             BeginFadeOut = true;

@@ -1,5 +1,7 @@
 ﻿using Terraria.ModLoader;
+using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld;
+using UCA.Core.Enum;
 
 namespace UCA.Core.GlobalInstance.Players
 {
@@ -29,6 +31,8 @@ namespace UCA.Core.GlobalInstance.Players
         public int SoulPiercerSGSUse = 0;
         // 风暴管束者
         public bool KingOfStorm;
+        // 耀界之光
+        public int VividClarityStates = VividClarityState.Attack;
         #endregion
     }
 }

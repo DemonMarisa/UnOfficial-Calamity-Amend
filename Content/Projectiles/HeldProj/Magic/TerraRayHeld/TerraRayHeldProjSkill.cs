@@ -25,7 +25,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
     public class TerraRayHeldProjSkill : ModProjectile, ILocalizedModType
     {
         public override LocalizedText DisplayName => LAPUtilities.GetItemName<TerraRay>();
-        public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/TerraRayHeld/TerraRayHeldProj";
+        public override string Texture => GetInstance<TerraRayHeldProj>().Texture;
         public Player Owner => Main.player[Projectile.owner];
         public float Opacity = 1f;
         public AniHelper AniHelper = new AniHelper(4);

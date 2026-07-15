@@ -139,6 +139,50 @@ SoulPiercerAlt: {
 }
 
 VividClarityAlt: {
-	DisplayName: Vivid Clarity Alt
-	Tooltip: ""
+	DisplayName: Vivid Clarity
+	Tooltip:
+		'''
+			Left-click to attack with the staff, right-click to use the current mode's special ability
+			Hold [KEY] to open the mode wheel and switch attack modes
+			[UCAVividClarityReplaceKey]
+			[c/F0FFFF:Its majesty inspires feats of unparalleled genius]
+			
+		'''
 }
+
+VividClarityAttack:
+	'''
+	[c/98FB98:Current Mode: Assault]
+	Fires 9 astral beams in quick succession towards the cursor
+	Each beam triggers an explosion and calls down astral lightning from the sky
+	[c/98FB98:Current Skill: Blade of White Light]
+	Consumes [LAPManaCost] mana to charge, then hold left-click to unleash a forward slash dealing 100x base damage
+	Damage decreases per enemy hit, down to a minimum of 10x base damage
+	Hold left-click to chain up to 3 consecutive slashes
+	'''
+VividClarityDefense:
+	'''
+	[c/98FB98:Current Mode: Defense]
+	Left-click fires a powerful beam that splits into additional lasers to attack enemies
+	Direct hits trigger an explosion and astral lightning
+	While left-clicking, press right-click to consume [LAPFocusCost] focus and perform a parry
+	Parry window: 8 frames, recovery: 22 frames
+	[c/98FB98:Current Skill: Astral Requital]
+	Consumes [LAPFocusCost] focus to perform a parry
+	Parry window: 30 frames, recovery: 15 frames
+	A successful parry restores 10% of max life, triggers an explosion, and resets this skill's cooldown
+	'''
+VividClaritySupport:
+	'''
+	[c/98FB98:Current Mode: Support]
+	Left-click continuously fires 5 astral beams
+	The beams randomly cause explosions, lightning, or additional projectiles
+	[c/66CDAA:Current Skill: Dawn Cleaver]
+	Consumes [LAPFocusCost] Focus to summon an autonomous Vivid Clarity Blade, lasting 2 minutes.
+	While the blade is active, left-click toggles Healing Mode.
+	When toggled, the blade stops attacking and follows you, healing you.
+	Press left-click again to deactivate Healing Mode.
+	Press right-click while the blade is active to dismiss it.
+	The blade prioritizes the nearest enemy.
+	It alternates between firing projectiles at enemies and dashing through them.
+	'''

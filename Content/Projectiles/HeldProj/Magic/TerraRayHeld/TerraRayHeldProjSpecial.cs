@@ -22,7 +22,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.TerraRayHeld
     public class TerraRayHeldProjSpecial : ModProjectile, ILocalizedModType
     {
         public override LocalizedText DisplayName => LAPUtilities.GetItemName<TerraRay>();
-        public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/TerraRayHeld/TerraRayHeldProj";
+        public override string Texture => GetInstance<TerraRayHeldProj>().Texture;
         public AniHelper AniHelper = new AniHelper(4);
         public int OwnerDir = 0;
         // 动画的旋转标准

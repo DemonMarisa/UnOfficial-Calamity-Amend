@@ -1,6 +1,8 @@
 ﻿using LAP.Assets.TextureRegister;
 using LAP.Core.BaseClass.Projectiles;
 using LAP.Core.Graphics.DeepGlow;
+using LAP.Core.Graphics.PixelatedRender;
+using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,10 +10,9 @@ using System;
 using Terraria;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using UCA.Assets;
 using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Projectiles.Magic.Ray;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.VividClarityHeld
 {
@@ -25,6 +26,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.VividClarityHeld
         public const int MaxRecoilTimer = 30;
         public int MaxTimer = 30;
         public float RecoilRotOffset;
+
+        public float ShieldScale;
         public override void SetDefaults()
         {
             Projectile.width = 142;
@@ -51,6 +54,18 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.VividClarityHeld
             }
             UpdateOpacity();
             HandleRecoil();
+            if (Owner.LAP().MouseRight && !Owner.HasProj<VividWeakParryProj>())
+            {
+                if (Owner.CheckFocus(Owner.HeldItem.LAP().WeaponSkillRealFocusCost, true))
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center,Projectile.velocity, ProjectileType<VividWeakParryProj>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+            }
+        }
+        public override void ExPostAI()
+        {
+            if (!Owner.LAP().MouseLeft && Owner.LAP().MouseRight && UseDelay == 0)
+            {
+                Projectile.Kill();
+            }
         }
         public void Fire()
         {
@@ -69,7 +84,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.VividClarityHeld
         }
         public void UpdateOpacity()
         {
-            if (Owner.LAP().MouseLeft)
+            if (Owner.LAP().MouseLeft || UseDelay > 10)
                 Projectile.Opacity = MathHelper.Lerp(Projectile.Opacity, 1f, 0.12f);
             else
                 Projectile.Opacity = MathHelper.Lerp(Projectile.Opacity, 0f, 0.12f);
@@ -93,9 +108,20 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.VividClarityHeld
         {
             Owner.SetItemAnimation(0);
             Owner.SetItemTime(0);
+            Owner.SetDummyItemTime(0);
         }
         public override bool PreDraw(ref Color lightColor)
         {
+            PixelatedRenderManger.BeginDrawProj = true;
+
+            LAPUtilities.ReSetToBeginShader(BlendState.Additive, SamplerState.PointClamp);
+
+            Vector4 cut = new Vector4(0.5f, 1f, 0f, 1f);
+            LAPUtilities.ApplyUVRot(cut, 1f);
+            DrawControlCircle(0.2f, 20);
+            LAPUtilities.ApplyUVRot(cut, -1f);
+            DrawControlCircle(0.15f, -15);
+
             LAPUtilities.ReSetToBeginShader(BlendState.AlphaBlend);
 
             Projectile.GetProjDrawInfo_Staff(out Texture2D texture, out Vector2 drawPosition, out float drawRotation, out Vector2 rotationPoint, out SpriteEffects flipSprite);
@@ -103,20 +129,42 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.VividClarityHeld
             LAPUtilities.FastApplyEdgeMeltsShader(1 - Projectile.Opacity, texture.Size(), Color.GhostWhite, 0.01f, 0);
             Main.spriteBatch.Draw(texture, drawPosition + DrawPosOffset, null, lightColor, drawRotation + DrawRotOffset, rotationPoint, Projectile.scale, flipSprite, 0);
 
+            LAPUtilities.ReSetToBeginShader(BlendState.Additive, SamplerState.PointClamp);
+
+            Vector4 Frontcut = new Vector4(0f, 0.5f, 0f, 1f);
+            LAPUtilities.ApplyUVRot(Frontcut, 1f);
+            DrawControlCircle(0.2f, 20);
+            LAPUtilities.ApplyUVRot(Frontcut, -1f);
+            DrawControlCircle(0.15f, -15);
+
             LAPUtilities.ReSetToEndShader();
+
 
             DeepGlow.SubmitCustomGlow(() =>
             {
                 LAPUtilities.ReSetToBeginShader(BlendState.AlphaBlend);
 
-                Projectile.GetProjDrawInfo_Staff(out Texture2D texture, out Vector2 drawPosition, out float drawRotation, out Vector2 rotationPoint, out SpriteEffects flipSprite);
                 LAPUtilities.SetTexture(LAPTextureRegister.Noise.Value, SamplerState.PointWrap, 1);
                 LAPUtilities.FastApplyEdgeMeltsShader(1 - Projectile.Opacity, texture.Size(), Color.GhostWhite, 0.01f, 0);
                 Main.spriteBatch.Draw(texture, drawPosition + DrawPosOffset, null, Color.Transparent, drawRotation + DrawRotOffset, rotationPoint, Projectile.scale, flipSprite, 0);
 
+                LAPUtilities.ReSetToBeginShader(BlendState.Additive, SamplerState.PointClamp);
+
+                Vector4 Frontcut = new Vector4(0f, 0.5f, 0f, 1f);
+                LAPUtilities.ApplyUVRot(Frontcut, 1f);
+                DrawControlCircle(0.2f, 20);
+                LAPUtilities.ApplyUVRot(Frontcut, -1f);
+                DrawControlCircle(0.15f, -15);
+
                 LAPUtilities.ReSetToEndShader();
             });
             return false;
+        }
+        public void DrawControlCircle(float scale = 1f, float YOffset = 24f)
+        {
+            Vector2 offset = new Vector2(YOffset, 0).RotatedBy(Projectile.rotation) + new Vector2(0, 12).RotatedBy(Projectile.rotation - MathHelper.PiOver2);
+            Texture2D circle = UCATextureRegister.TechCircle.Value;
+            LAPUtilities.Draw(circle, Projectile.Center - Main.screenPosition + offset + DrawPosOffset, null, Color.White * Projectile.Opacity, Projectile.rotation + DrawRotOffset, circle.Size() / 2, new Vector2(0.25f, 1f) * scale, 0);
         }
     }
 }

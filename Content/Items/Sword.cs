@@ -49,7 +49,7 @@ namespace UCA.Content.Items
         }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo projSource, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            Projectile.NewProjectile(projSource, position, velocity, ProjectileType<VividSmallBeam>(), damage, knockback, player.whoAmI, Main.MouseWorld.X, Main.MouseWorld.Y);
+            // Projectile.NewProjectile(projSource, position, velocity, ProjectileType<VividSmallBeam>(), damage, knockback, player.whoAmI, Main.MouseWorld.X, Main.MouseWorld.Y);
             return false;
         }
         public override bool? UseItem(Player player)

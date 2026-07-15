@@ -30,12 +30,13 @@ namespace UCA.Content.VFXs
         public ref float BladeXScale => ref VFXInstance.AiFloat[2];
         public ref bool SpawmCharge => ref VFXInstance.AiBool[0];
         public ref bool FullCharge => ref VFXInstance.AiBool[1];
+        public ref bool Follow => ref VFXInstance.AiBool[2];
         public int Time;
         public float InhaleOpacity = 1f;
         public List<VFXInstance> blast = [];
         public override void OnSpawn()
         {
-            blast = [];
+            blast = new List<VFXInstance>(4);
             VFXInstance.Lifetime = 2;
             VFXInstance.Time = 0;
             VFXInstance.Scale = 0;
@@ -54,24 +55,21 @@ namespace UCA.Content.VFXs
         }
         public void UpdateFollow()
         {
-            if (Father.type != ProjectileType<VividClarityGreatSword>() || !Father.active)
-            {
-                VFXInstance.Kill();
-            }
-            else
-            {
-                VFXInstance.Lifetime = 2;
-                VFXInstance.Time = 0;
-            }
+            VFXInstance.Lifetime = 2;
+            VFXInstance.Time = 0;
             VFXInstance.Position = Father.Center;
             VFXInstance.Rotation = Father.rotation;
             VFXInstance.Scale = MathHelper.Lerp(VFXInstance.Scale, TargetScale, 0.16f);
+
             for (int i = 0; i < blast.Count; i++)
             {
-                Vector2 InhaleOffset = new Vector2(42, 0).RotatedBy(VFXInstance.Rotation);
-                blast[i].Position = VFXInstance.Position + InhaleOffset;
-                blast[i].Velocity = VFXInstance.Velocity;
-                blast[i].Rotation = VFXInstance.Rotation;
+                if (blast[i].Behavior.Type == LAPContent.VFXType<VGSChargeBlast>())
+                {
+                    Vector2 InhaleOffset = new Vector2(42, 0).RotatedBy(VFXInstance.Rotation);
+                    blast[i].Position = VFXInstance.Position + InhaleOffset;
+                    blast[i].Velocity = VFXInstance.Velocity;
+                    blast[i].Rotation = VFXInstance.Rotation;
+                }
             }
         }
         public void SpawnInhaleDust()
@@ -117,8 +115,10 @@ namespace UCA.Content.VFXs
         }
         public override void Draw()
         {
-            if (Father.type != ProjectileType<VividClarityGreatSword>() || !Father.active)
+            if ((Father.type != ProjectileType<VividClarityGreatSword>() && Father.type != ProjectileType<VividClaritySupportMinion>()) || !Father.active)
+            {
                 VFXInstance.Kill();
+            }
             DrawBlade();
             DrawInhale();
             DrawCoreLight();

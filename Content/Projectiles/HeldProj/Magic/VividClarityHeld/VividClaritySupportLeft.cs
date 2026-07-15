@@ -14,7 +14,7 @@ using UCA.Content.Projectiles.Magic.Ray;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.VividClarityHeld
 {
-    public class VividClarityHeldProj : BaseHeldProj
+    public class VividClaritySupportLeft : BaseHeldProj
     {
         public override string Texture => GetInstance<VividClarityAlt>().Texture;
         public override LocalizedText DisplayName => LAPUtilities.GetItemName<VividClarityAlt>();
@@ -43,18 +43,11 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.VividClarityHeld
         {
             if (Owner.LAP().MouseLeft && UseDelay <= 0 && Owner.CheckMana(Owner.ActiveItem(), (int)(Owner.HeldItem.mana * Owner.manaCost), true, false))
             {
-                UseDelay = 90;
-                NeedFireRemain = 9;
+                UseDelay = 35;
+                NeedFireRemain = 5;
             }
             UpdateOpacity();
             CheckFire();
-            if (!Owner.LAP().MouseLeft && Owner.LAP().MouseRight && UseDelay == 0)
-            {
-                Main.mouseRight = false;
-                Owner.itemTime = 0;
-                Owner.itemAnimation = 0;
-                Projectile.Kill();
-            }
         }
         public void UpdateOpacity()
         {
@@ -65,13 +58,14 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.VividClarityHeld
         }
         public void CheckFire()
         {
-            if (UseDelay % 6 == 0 && NeedFireRemain > 0)
+            if (UseDelay % 3 == 0 && NeedFireRemain > 0)
             {
-                Vector2 firePos = -Projectile.velocity.RotateRandom(MathHelper.PiOver4) * Main.rand.Next(450, 600);
-                Vector2 Spawn = Projectile.Center + firePos;
-                Vector2 firvel = LAPUtilities.GetVector2(Spawn, Owner.LAP().SyncedMouseWorld) * 12;
-
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Spawn, firvel, ProjectileType<VividBeam>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                float f = Main.rand.NextFloat() * MathHelper.TwoPi;
+                float spreadX = 80f;
+                float spreadY = 120f;
+                Vector2 source = Owner.Center + f.ToRotationVector2() * MathHelper.Lerp(spreadX, spreadY, Main.rand.NextFloat());
+                Vector2 firvel = LAPUtilities.GetVector2(source, Owner.LAP().SyncedMouseWorld) * 12;
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), source, firvel, ProjectileType<VividBeam_Weak>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 1f);
                 NeedFireRemain--;
             }
         }

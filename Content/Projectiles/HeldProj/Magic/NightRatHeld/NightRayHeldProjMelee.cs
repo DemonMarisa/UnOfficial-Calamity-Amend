@@ -299,7 +299,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.NightRatHeld
                     projectile.netSpam = 0;
                     projectile.netUpdate = true;
 
-                    projectile.SyncedReflectProj();
+                    projectile.SyncedParryProj();
                 }
             }
         }

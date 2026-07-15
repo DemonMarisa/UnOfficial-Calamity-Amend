@@ -4,8 +4,12 @@ using LAP.Core.SystemsLoader;
 using LAP.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Graphics;
 using Terraria;
+using Terraria.GameContent;
+using Terraria.UI.Chat;
 using UCA.Assets;
+using UCA.Content.Paths;
 using UCA.Content.Projectiles.HeldProj.Magic.ElementRayHeld;
 using UCA.Core.Utilities;
 
@@ -43,6 +47,13 @@ namespace UCA.Content.GUI.ERayUI
             if (IsHover)
             {
                 Main.spriteBatch.Draw(outLine, DrawPos, null, Color.White * Opacity, DrawRot - MathHelper.PiOver4 * 3, outLineorigin, 1f * Scale * Scale2, SpriteEffects.None, 0f);
+                DynamicSpriteFont font = FontAssets.MouseText.Value;
+                string text = LocalizedPath.ElementalRaySolor;
+                // 计算文本尺寸
+                Vector2 textSize = ChatManager.GetStringSize(font, text, new Vector2(1f));
+                Vector2 orig = new Vector2(textSize.X / 2, textSize.Y);
+                TextSnippet[] snippets = ChatManager.ParseMessage(text, Color.White).ToArray();
+                ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, font, snippets, Main.MouseWorld - Main.screenPosition, 0, orig, new Vector2(1), out _);
             }
         }
     }

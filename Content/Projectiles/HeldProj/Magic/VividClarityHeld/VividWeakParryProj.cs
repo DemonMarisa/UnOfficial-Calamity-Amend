@@ -17,24 +17,21 @@ using Terraria.ModLoader;
 using UCA.Content.HitEffect;
 using UCA.Content.Items.Weapons.Magic.Ray;
 using UCA.Content.Projectiles.Magic.Ray;
-using UCA.Content.Projectiles.Misc;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.VividClarityHeld
 {
-    public class VividClarityHeldParry : ModProjectile
+    public class VividWeakParryProj : ModProjectile
     {
-        public override string Texture => GetInstance<VividClarityAlt>().Texture;
+        public override string Texture => LAPTextureRegister.InvisibleTexturePath;
         public override LocalizedText DisplayName => LAPUtilities.GetItemName<VividClarityAlt>();
         public Player Owner => Main.player[Projectile.owner];
 
         public Rectangle[] ParryHitBox = new Rectangle[10];
-        public AniHelper AniHelper = new AniHelper(3);
-        public float ToMouseRotation;
         public float EffectScale;
         public float EffectOpacity;
 
         public int EffectTimer;
-        public int MaxParryTimer = 30;
+        public int MaxParryTimer = 8;
         public bool HasParry;
         public bool PlayEffect;
         public Vector2 parryKnockBack;
@@ -53,7 +50,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.VividClarityHeld
             Projectile.ignoreWater = true;
             Projectile.extraUpdates = 0;
             Projectile.Opacity = 1f;
-            Projectile.timeLeft = 5;
+            Projectile.timeLeft = 30;
         }
         public override bool? CanHitNPC(NPC target)
         {
@@ -62,11 +59,9 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.VividClarityHeld
         public override void AI()
         {
             Owner.SetUseFocus(2);
+            Projectile.Center = Owner.MountedCenter;
             UpdataInPut();
             Init();
-            UpdateAni();
-            UpdateGeneral();
-            UpdateRotation();
             UpdateEffect();
             CheckColliding();
             ParryProtect();
@@ -74,14 +69,13 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.VividClarityHeld
             {
                 Owner.NCHeal(Owner.statLifeMax2 / 10);
                 Owner.SetImmuneTimeForAllTypes(60);
-                HitEffectManager.SpawnHitEffect(HitEffectManager.HEType<VividClarityParryHit>(), Projectile.owner, Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero);
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ProjectileType<ExoBlast>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                HitEffectManager.SpawnHitEffect(HitEffectManager.HEType<VividClarityWeakParryHit>(), Projectile.owner, Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero);
                 Owner.velocity += parryKnockBack * 6f;
                 if (Owner.velocity.Y == 0 && Math.Abs(Owner.velocity.X) > 1f)
                     Owner.velocity.Y -= 2.5f;
-                float rotAngle = MathHelper.TwoPi / 9f;
+                float rotAngle = MathHelper.TwoPi / 6f;
                 float BeginOffset = Main.rand.NextFloat() * MathHelper.TwoPi;
-                for (int i = 0; i < 9; i++)
+                for (int i = 0; i < 6; i++)
                 {
                     Vector2 vel = Vector2.UnitX.RotatedBy(rotAngle * i + BeginOffset) * 9f;
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, vel, ProjectileType<ExoEnergy>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
@@ -95,21 +89,8 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.VividClarityHeld
             {
                 Projectile.velocity = Vector2.Zero;
                 SoundEngine.PlaySound(LAPSoundsMenu.MagicTrigger02 with { Volume = 1f }, Projectile.Center);
-                ToMouseRotation = Projectile.Center.AngleTo(Owner.LocalMouseWorld());
-                AniHelper.MaxAniProgress[0] = 25;
-                Projectile.rotation = ToMouseRotation;
                 Projectile.Center = Owner.MountedCenter;
             }
-        }
-        public void UpdateGeneral()
-        {
-            Projectile.SetHeldProj(Owner, false);
-            Projectile.timeLeft = 2;
-            Owner.SetArmRot(Projectile.rotation);
-        }
-        public void UpdateRotation()
-        {
-            ToMouseRotation = Utils.AngleLerp(ToMouseRotation, Owner.Center.AngleTo(Owner.LocalMouseWorld()), 0.2f);
         }
         public void UpdateEffect()
         {
@@ -118,30 +99,6 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.VividClarityHeld
             float progress = EffectTimer / (float)MaxParryTimer;
             EffectScale = EasingHelper.EaseOutCubic(progress);
             EffectOpacity = MathHelper.Lerp(1f, 0f, EasingHelper.EaseInCubic(progress));
-        }
-        public void UpdateAni()
-        {
-            // 蓄力
-            if (!AniHelper.HasFinish[0])
-            {
-                AniHelper.UpDateAni(0, 20);
-                HandleBeginAni();
-            }
-            else
-                Projectile.Kill();
-        }
-        public void HandleBeginAni()
-        {
-            float progress = AniHelper.GetProgress(0);
-            float easedProgress = EasingHelper.EaseOutBack(progress);
-            float UpdateRot = AniHelper.UpDateAngle(-135, 135, Owner.direction, easedProgress);
-
-            Projectile.Center = Owner.MountedCenter;
-            Projectile.rotation = UpdateRot + ToMouseRotation;
-            Projectile.spriteDirection = Owner.direction;
-
-            float BreakTimer = AniHelper.BreakTime[0];
-            Projectile.Opacity = MathHelper.Lerp(1f, 0f, BreakTimer / 20f);
         }
         public void CheckColliding()
         {

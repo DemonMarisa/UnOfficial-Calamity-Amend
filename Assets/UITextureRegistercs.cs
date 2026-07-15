@@ -6,11 +6,20 @@ namespace UCA.Assets
 {
     public partial class UCATextureRegister : ModSystem
     {
-        public void LoadUITexture()
-        {
+        public static Asset<Texture2D> VividClarityAttack { get; private set; }
+        public static Asset<Texture2D> VividClarityDefense { get; private set; }
+        public static Asset<Texture2D> VividClaritySupport { get; private set; }
+        public static void LoadUITexture()
+        { 
+            VividClarityAttack = Request<Texture2D>($"UCA/Assets/Textures/UIs/VividClarityAttack");
+            VividClarityDefense = Request<Texture2D>($"UCA/Assets/Textures/UIs/VividClarityDefense");
+            VividClaritySupport = Request<Texture2D>($"UCA/Assets/Textures/UIs/VividClaritySupport");
         }
-        public void UnLoadUITexture()
+        public static void UnLoadUITexture()
         {
+            VividClarityAttack = null;
+            VividClarityDefense = null;
+            VividClaritySupport = null;
         }
     }
 }

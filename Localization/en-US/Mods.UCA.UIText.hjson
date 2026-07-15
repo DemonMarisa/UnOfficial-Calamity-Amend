@@ -3,3 +3,6 @@ ElementalRayUIInfoMisc: Switch to Mixed Mode
 ElementalRayUIInfoVortex: Switch to Vortex Mode
 ElementalRayUIInfoNebula: Switch to Nebula Mode
 ElementalRayUIInfoStarDust: Switch to StarDust Mode
+VividClarity_Attack: Switch to Assault Mode
+VividClarity_Defense: Switch to Defense Mode
+VividClarity_Support: Switch to Support Mode

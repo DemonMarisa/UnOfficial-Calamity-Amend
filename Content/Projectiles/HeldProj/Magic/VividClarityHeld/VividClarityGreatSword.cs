@@ -16,6 +16,8 @@ using Terraria.Audio;
 using Terraria.ModLoader;
 using UCA.Assets;
 using UCA.Content.Items.Weapons.Magic.Ray;
+using UCA.Content.Projectiles.Magic.Ray;
+using UCA.Content.Projectiles.Misc;
 using UCA.Content.VFXs;
 
 namespace UCA.Content.Projectiles.HeldProj.Magic.VividClarityHeld
@@ -40,6 +42,9 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.VividClarityHeld
         public bool CanSlash2;
         public bool CanSlash3;
         public bool BeginHit;
+        public int HitCooldown;
+        public int SlashHitCooldown;
+        public int HitCount;
         public override void SetDefaults()
         {
             Projectile.width = 8;
@@ -57,6 +62,10 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.VividClarityHeld
             float _ = float.NaN;
             bool c = Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Owner.Center, Projectile.Center + Projectile.rotation.ToRotationVector2() * SwordLength * Projectile.scale * 0.9f, 128f, ref _);
             return c;
+        }
+        public override bool ShouldUpdatePosition()
+        {
+            return false;
         }
         public override void AI()
         {
@@ -82,6 +91,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.VividClarityHeld
                 AniHelper.MaxAniProgress[5] = 20;
                 AniHelper.MaxAniProgress[6] = 200;
                 AniHelper.MaxAniProgress[7] = 20;
+                Projectile.velocity = Vector2.Zero;
                 Projectile.rotation = ToMouseRotation;
                 Projectile.Center = Owner.MountedCenter;
                 CanUpdateToMouseRotation = true;
@@ -89,6 +99,11 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.VividClarityHeld
         }
         public void UpdateGeneral()
         {
+            if (SlashHitCooldown > 0)
+                SlashHitCooldown--;
+            
+            if (HitCooldown > 0)
+                HitCooldown--;
             Projectile.SetHeldProj(Owner, false, CanUpdateToMouseRotation);
             Owner.SetArmRot(LAPUtilities.GetVector2(Owner.Center, Projectile.Center).ToRotation());
             // 蓄力后坐力
@@ -459,17 +474,30 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.VividClarityHeld
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
+            HitCount++;
             if (Projectile.LAP().OnceHitEffect)
             {
                 ScreenShakeSystem.AddScreenShake_Sin(Projectile.Center, 30, 90, MathHelper.PiOver2);
                 ScreenShakeSystem.AddScreenShakes(Projectile.Center, 25, 15, 0);
                 Projectile.LAP().OnceHitEffect = false;
             }
+            if (HitCooldown <= 0)
+            {
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ProjectileType<ExoBlast>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                HitCooldown = 3;
+            }
+            if (SlashHitCooldown <= 0)
+            {
+                Vector2 vel = Vector2.UnitX.RotatedByRandom(MathHelper.TwoPi);
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center - vel * 900, vel, ProjectileType<ExoSlash>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                SlashHitCooldown = 10;
+            }
         }
-        public override void OnKill(int timeLeft)
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            Owner.SetItemAnimation(0);
-            Owner.SetItemTime(0);
+            if (HitCount > 10)
+                HitCount = 10;
+            modifiers.SourceDamage *= MathHelper.Lerp(100f, 10f, HitCount / 10f);
         }
         public override bool PreDraw(ref Color lightColor)
         {

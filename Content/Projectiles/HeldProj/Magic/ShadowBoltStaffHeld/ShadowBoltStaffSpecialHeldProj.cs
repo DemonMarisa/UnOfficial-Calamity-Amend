@@ -20,7 +20,7 @@ namespace UCA.Content.Projectiles.HeldProj.Magic.ShadowBoltStaffHeld
     public class ShadowBoltStaffSpecialHeldProj : ModProjectile, ILocalizedModType
     {
         public override LocalizedText DisplayName => LAPUtilities.GetItemName<ShadowBoltStaffAlt>();
-        public override string Texture => $"{ProjPath.HeldProjPath}" + "Magic/ShadowBoltStaffHeld/ShadowBoltStaffHeldProj";
+        public override string Texture => GetInstance<ShadowBoltStaffHeldProj>().Texture;
         public AniHelper AniHelper = new AniHelper(3);
         public BasePartInfo ShadowOrb;
         public float Opacity = 1f;

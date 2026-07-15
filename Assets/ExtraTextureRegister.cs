@@ -37,6 +37,7 @@ namespace UCA.Assets
         public static Asset<Texture2D> HarshNoise { get; private set; }
         public static Asset<Texture2D> TechCircle { get; private set; }
         public static Asset<Texture2D> VividClarityBlade { get; private set; }
+        
         public static void LoadExtraTextures()
         {
             NebulaBG = ModContent.Request<Texture2D>($"UCA/Assets/ExtraTextures/MetaBall/NebulaBG");

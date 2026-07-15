@@ -15,5 +15,13 @@ namespace UCA.Content.Paths
         public static string ElementalRayStarDustTooltip => Language.GetTextValue("Mods.UCA.MagicWeapons.ElementRayStarDust");
         public static string ElementalRayNebulaTooltip => Language.GetTextValue("Mods.UCA.MagicWeapons.ElementRayNebula");
         public static string ElementalRaySolorTooltip => Language.GetTextValue("Mods.UCA.MagicWeapons.ElementRaySolor");
+
+        public static string VividClarity_Assault => Language.GetTextValue("Mods.UCA.UIText.VividClarity_Attack");
+        public static string VividClarity_Defense => Language.GetTextValue("Mods.UCA.UIText.VividClarity_Defense");
+        public static string VividClarity_Support => Language.GetTextValue("Mods.UCA.UIText.VividClarity_Support");
+
+        public static string VividClarity_AssaultTooltip => Language.GetTextValue("Mods.UCA.MagicWeapons.VividClarityAttack");
+        public static string VividClarity_DefenseTooltip => Language.GetTextValue("Mods.UCA.MagicWeapons.VividClarityDefense");
+        public static string VividClarity_SupportTooltip => Language.GetTextValue("Mods.UCA.MagicWeapons.VividClaritySupport");
     }
 }
